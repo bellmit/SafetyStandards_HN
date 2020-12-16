@@ -1,0 +1,95 @@
+server:
+  port: 8200
+
+# 需要配置的服务名
+blade:
+  service:
+    blade-auth: blade-auth
+    blade-desk: blade-desk
+    blade-system: blade-system
+    blade-anbiao: blade-anbiao
+    blade-manage: blade-manage
+    blade-doc: blade-doc
+    blade-upload: blade-upload
+    blade-alarm: blade-alarm
+    blade-user: blade-user
+    blade-app: blade-app
+    blade-gps: blade-gps
+
+spring:
+  cloud:
+    gateway:
+      routes:
+      # 认证中心
+      - id: ${blade.service.blade-auth}
+        uri: lb://${blade.service.blade-auth}
+        predicates:
+        - Path=/${blade.service.blade-auth}/**
+        filters:
+        - name: RequestRateLimiter
+          args:
+            # 使用SpEL按名称引用bean
+            key-resolver: '#{@remoteAddrKeyResolver}'
+            # 允许用户每秒处理多少个请求
+            redis-rate-limiter.replenishRate: 10
+            # 允许在一秒钟内完成的最大请求数
+            redis-rate-limiter.burstCapacity: 20
+        - StripPrefix=1
+      # 首页模块
+      - id: ${blade.service.blade-desk}
+        uri: lb://${blade.service.blade-desk}
+        predicates:
+        - Path=/${blade.service.blade-desk}/**
+      # 系统模块
+      - id: ${blade.service.blade-system}
+        uri: lb://${blade.service.blade-system}
+        predicates:
+        - Path=/${blade.service.blade-system}/**
+      # 人员模块
+      - id: ${blade.service.blade-user}
+        uri: lb://${blade.service.blade-user}
+        predicates:
+        - Path=/${blade.service.blade-user}/**
+      # 安标模块
+      - id: ${blade.service.blade-anbiao}
+        uri: lb://${blade.service.blade-anbiao}
+        predicates:
+        - Path=/${blade.service.blade-anbiao}/**
+      # 经营模块
+      - id: ${blade.service.blade-manage}
+        uri: lb://${blade.service.blade-manage}
+        predicates:
+        - Path=/${blade.service.blade-manage}/**
+      # doc模块
+      - id: ${blade.service.blade-doc}
+        uri: lb://${blade.service.blade-doc}
+        predicates:
+        - Path=/${blade.service.blade-doc}/**
+      # 附件
+      - id: ${blade.service.blade-upload}
+        uri: lb://${blade.service.blade-upload}
+        predicates:
+        - Path=/${blade.service.blade-upload}/**
+      #App模块
+      - id: ${blade.service.blade-app}
+        uri: lb://${blade.service.blade-app}
+        predicates:
+          - Path=/${blade.service.blade-app}/**
+      # 报警模块
+      - id: ${blade.service.blade-alarm}
+        uri: lb://${blade.service.blade-alarm}
+        predicates:
+           - Path=/${blade.service.blade-alarm}/**
+     # GPS报警模块
+      - id: ${blade.service.blade-gps}
+        uri: lb://${blade.service.blade-gps}
+        predicates:
+           - Path=/${blade.service.blade-gps}/**
+      discovery:
+        locator:
+          enabled: true
+    loadbalancer:
+      retry:
+        enabled: true
+
+

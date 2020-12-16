@@ -1,0 +1,52 @@
+/**
+ * Copyright (C), 2015-2020,
+ * FileName: IXinXiJiaoHuZhuService
+ * Author:   呵呵哒
+ * Date:     2020/6/20 17:18
+ * Description:
+ */
+package org.springblade.anbiao.qiyeshouye.service;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import org.apache.ibatis.annotations.Param;
+import org.springblade.anbiao.qiyeshouye.entity.QiYeShouYe;
+
+import java.io.UnsupportedEncodingException;
+import java.util.List;
+
+/**
+ * @author 呵呵哒
+ * @创建人 hyp
+ * @创建时间 2020/7/4
+ * @描述
+ */
+public interface IQiYeShouYeService extends IService<QiYeShouYe> {
+
+	/**
+	 * 本月车辆情况
+	 * @param deptId
+	 * @return
+	 */
+	QiYeShouYe selectMonthVehcile(@Param("deptId") String deptId);
+
+	/**
+	 * 报警统计（年）
+	 * @param deptId
+	 * @return
+	 */
+	QiYeShouYe selectYearAlarm(@Param("deptId") String deptId, @Param("year") String year);
+
+	/**
+	 * 处理趋势图
+	 * @param deptId
+	 * @return
+	 */
+	List<QiYeShouYe> selectYearAlarmTendency(@Param("deptId") String deptId,@Param("year") String year);
+
+	/**
+	 * 近七天报警统计
+	 * @param deptId
+	 * @return
+	 */
+	QiYeShouYe selectSevenAlarmStatistics(@Param("deptId") String deptId) throws UnsupportedEncodingException;
+}

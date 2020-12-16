@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.anbiao.orgmap.mapper.OrgmapMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="orgmapResultMap" type="org.springblade.anbiao.orgmap.entity.Orgmap">
+        <id column="id" property="id"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="dept_name" property="deptName"/>
+        <result column="fuzeren" property="fuzeren"/>
+        <result column="dept_id" property="deptId"/>
+        <result column="photo" property="photo"/>
+        <result column="gangweizhize" property="gangweizhize"/>
+        <result column="anquanzhize" property="anquanzhize"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="createtime" property="createtime"/>
+        <result column="createuser" property="createuser"/>
+        <result column="updatetime" property="updatetime"/>
+        <result column="updateuser" property="updateuser"/>
+    </resultMap>
+
+    <resultMap id="treeNodeResultMap" type="org.springblade.anbiao.orgmap.vo.OrgmapVO">
+        <id column="id" property="id"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="label" property="label"/>
+        <result column="existChild" property="existChild"/>
+    </resultMap>
+
+
+    <select id="selectOrgmapPage" resultMap="orgmapResultMap">
+        select * from blade_orgmap where is_deleted = 0
+    </select>
+
+    <select id="tree" resultMap="treeNodeResultMap">
+       SELECT
+        id,
+        parent_id,
+        dept_name,
+        dept_id,
+        fuzeren,
+        gangweizhize,
+        anquanzhize,
+        photo,
+        case when (select COUNT(*) from blade_orgmap as t1 where t1.parent_id=a.id)>0 then 1 else 0 end existChild
+    FROM
+        blade_orgmap a
+    WHERE
+        is_deleted = 0
+        and  dept_id=#{deptId}
+    </select>
+
+    <select id="selectByCretaTime"   resultMap="orgmapResultMap">
+            select  * from blade_orgmap where is_deleted = 0 and  createtime=#{createtime}
+            and dept_name=#{deptName}
+    </select>
+
+    <select id="Countorg"   parameterType="org.springblade.anbiao.orgmap.entity.Orgmap" resultType="int">
+            select  count(1) from blade_orgmap where is_deleted = 0 and  parent_id=#{parentId}
+    </select>
+
+
+
+</mapper>

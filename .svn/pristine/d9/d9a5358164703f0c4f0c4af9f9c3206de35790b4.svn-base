@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.alarm.mapper.OfflinedetailMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="offlinedetailResultMap" type="org.springblade.alarm.vo.OfflinedetailVO">
+
+    </resultMap>
+
+
+    <sql id="tableSql">
+        SELECT
+        a.ofid,
+        a.cid,
+        a.company,
+        a.vid,
+        a.plate,
+        a.color,
+        a.operatType,
+        a.lastTime,
+        a.systime,
+        a.lastlocateTime,
+        a.offlineTime,
+        a.offlineTimes,
+        a.handleResult,
+        a.createDate,
+        b.chulizhuangtai,
+        b.chulixingshi,
+        b.chulimiaoshu,
+        b.chuliren,
+        b.chulirenid,
+        b.chulishijian,
+        b.fujian,
+        b.beizhu,
+        b.remark
+        FROM
+        baobiao_offlinedetail AS a
+        <if test="deptId != 1 ">
+            INNER JOIN ( SELECT DISTINCT
+            xiaji.id,
+            xiaji.parent_id,
+            xiaji.dept_name,
+            xiaji.is_deleted
+            FROM
+            blade_dept shangji,
+            blade_dept xiaji
+            WHERE xiaji.tree_code LIKE CONCAT(shangji.tree_code,'%')
+            AND xiaji.is_deleted = 0 AND xiaji.extend_type='机构'
+            and shangji.id=#{deptId}
+            ) dept on a.company=dept.dept_name
+        </if>
+        LEFT JOIN baobiao_alarmhandleresult AS b ON a.ofid = b.baojingid AND b.remark = 1 and ifnull(b.is_deleted,0) = 0
+        where 1=1
+        <if test="deptName != null and deptName != ''">
+            and a.company = #{deptName}
+        </if>
+        <if test="beginTime != null and beginTime != ''">
+            and a.createDate >= #{beginTime}
+
+        </if>
+        <if test="endTime != null and endTime != ''">
+            and a.createDate &lt;= #{endTime}
+
+        </if>
+    </sql>
+    <sql id="querySql">
+        <if test="shifouchuli != null and shifouchuli != '' ">
+            <if test="shifouchuli=='已处理'.toString()">
+                and chulizhuangtai = '1' and remark=1
+            </if>
+            <if test="shifouchuli=='未处理'.toString()">
+                and chulizhuangtai is null
+            </if>
+
+        </if>
+        <if test="shifoushenshu != null and shifoushenshu != '' ">
+            <if test="shifoushenshu=='已申诉'.toString()">
+                and chulizhuangtai = '1' and remark=0
+            </if>
+            <if test="shifoushenshu=='未申诉'.toString()">
+                and chulizhuangtai is null
+            </if>
+
+        </if>
+        <if test="chepaihao != null and chepaihao != '' ">
+            and plate like concat('%', #{chepaihao} ,'%')
+        </if>
+    </sql>
+    <sql id="orderSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by plate
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+    </sql>
+
+    <select id="selectOfflinePage" resultMap="offlinedetailResultMap"
+            parameterType="org.springblade.alarm.page.OfflinePage">
+        <if test="size == 0">
+            select * from (
+            <include refid="tableSql"/>
+            )b
+            where 1=1
+            <include refid="querySql"/>
+            <include refid="orderSql"/>
+            limit ${total}
+        </if>
+        <if test="current != 0">
+            select * from (
+            <include refid="tableSql"/>
+            )b
+            where 1=1
+            <include refid="querySql"/>
+            <include refid="orderSql"/>
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <select id="selectOfflineTotal"
+            parameterType="org.springblade.alarm.page.OfflinePage"
+            resultType="int">
+        select COUNT(1) from (
+        <include refid="tableSql"/>
+        )d where 1 = 1
+        <include refid="querySql"/>
+    </select>
+
+    <select id="selectBaojingtongji" parameterType="org.springblade.alarm.page.OfflinePage"
+            resultType="org.springblade.alarm.entity.AlarmBaojingTongji">
+        select a.company,
+        COUNT(DISTINCT a.plate,a.color) as vehCount,
+        COUNT(a.ofid) as alarmCount,
+        COUNT(CASE WHEN b.chulizhuangtai is not null THEN 1 END) as handledCount
+        from baobiao_offlinedetail as a
+            left join baobiao_alarmhandleresult as b
+            on a.ofid = b.baojingid and ifnull(b.is_deleted,0) = 0 AND b.remark = 1
+        where company = #{deptName}
+       and createDate >= #{beginTime}
+          and createDate &lt;= #{endTime}
+    </select>
+
+</mapper>

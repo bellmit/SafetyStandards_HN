@@ -1,0 +1,10 @@
+#服务器端口
+server:
+  port: 8103
+
+#数据源配置
+spring:
+  datasource:
+    url: ${log.datasource.dev.url}
+    username: ${log.datasource.dev.username}
+    password: ${log.datasource.dev.password}

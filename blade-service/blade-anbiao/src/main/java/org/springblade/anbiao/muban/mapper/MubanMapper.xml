@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.anbiao.muban.mapper.MubanMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="mubanResultMap" type="org.springblade.anbiao.muban.entity.Muban">
+        <id column="id" property="id"/>
+        <result column="muban" property="muban"/>
+        <result column="view_field" property="viewField"/>
+        <result column="insert_field" property="insertField"/>
+        <result column="update_field" property="updateField"/>
+        <result column="remove_field" property="removeField"/>
+        <result column="view_model" property="viewModel"/>
+        <result column="insert_model" property="insertModel"/>
+        <result column="update_model" property="updateModel"/>
+        <result column="remove_model" property="removeModel"/>
+        <result column="detail_model" property="detailModel"/>
+        <result column="is_deleted" property="is_deleted"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="token" property="token"/>
+        <result column="leixing" property="leixing"/>
+        <result column="biaoming" property="biaoming"/>
+    </resultMap>
+
+    <resultMap id="mubanVOResultMap" type="org.springblade.anbiao.muban.vo.MubanVO">
+        <id column="id" property="id"/>
+        <result column="muban" property="muban"/>
+        <result column="view_field" property="viewField"/>
+        <result column="insert_field" property="insertField"/>
+        <result column="update_field" property="updateField"/>
+        <result column="remove_field" property="removeField"/>
+        <result column="view_model" property="viewModel"/>
+        <result column="insert_model" property="insertModel"/>
+        <result column="update_model" property="updateModel"/>
+        <result column="remove_model" property="removeModel"/>
+        <result column="detail_model" property="detailModel"/>
+        <result column="is_deleted" property="is_deleted"/>
+        <result column="token" property="token"/>
+        <result column="parentId" property="parentId"/>
+        <result column="leixing" property="leixing"/>
+        <result column="label" property="label"/>
+        <result column="existChild" property="existChild"/>
+        <result column="biaoming" property="biaoming"/>
+    </resultMap>
+
+
+    <select id="selectMubanPage" resultMap="mubanVOResultMap">
+       SELECT
+        id,
+        parent_id parentId,
+        muban AS label,
+        muban ,
+        leixing,
+        view_field,
+        insert_field,
+        update_field,
+        remove_field,detail_model,
+        view_model,
+        insert_model,
+        update_model,
+        remove_model,token,
+        id AS 'value',
+        id AS 'key',biaoming ,
+        case when (select COUNT(*) from anbiao_muban as t1 where t1.parent_id=t.id)>0 then 1 else 0 end existChild
+    FROM
+        anbiao_muban t
+    WHERE
+        is_deleted = 0
+        <choose>
+            <when test="_parameter==null">
+                AND  id=1 
+            </when>
+            <otherwise>
+                AND  parent_id=#{_parameter}
+            </otherwise>
+        </choose>
+    </select>
+
+
+    <select id="selectByToken" resultMap="mubanVOResultMap">
+       SELECT
+        id,
+        parent_id parentId,
+        muban AS label,
+        muban ,
+        leixing,
+        view_field,
+        insert_field,
+        update_field,
+        remove_field,
+        view_model,
+        insert_model,
+        update_model,detail_model,
+        remove_model,token,biaoming,
+         0 existChild,is_deleted
+    FROM
+        anbiao_muban
+    WHERE
+        is_deleted = 0 and token=#{token} LIMIT 1
+    </select>
+
+    <select id="selectByName" resultMap="mubanVOResultMap">
+       SELECT
+        id,
+        parent_id parentId,
+        muban AS label,
+        muban ,
+        leixing,
+        view_field,
+        insert_field,
+        update_field,
+        remove_field,
+        view_model,
+        insert_model,
+        update_model,detail_model,
+        remove_model,token,biaoming,
+         0 existChild,is_deleted
+    FROM
+        anbiao_muban
+    WHERE
+        is_deleted = 0 and muban=#{muban}
+    </select>
+
+    <select id="CountToken"   parameterType="org.springblade.anbiao.muban.entity.Muban" resultType="int">
+            select  count(1) from anbiao_muban where is_deleted = 0 and  token=#{token}
+    </select>
+
+    <select id="CountMuban"   parameterType="org.springblade.anbiao.muban.entity.Muban" resultType="int">
+            select  count(1) from anbiao_muban where is_deleted = 0 and  muban=#{muban}
+    </select>
+
+    <select id="selectBiaoMing" resultMap="mubanVOResultMap">
+          SELECT
+        biaoming
+    FROM
+        anbiao_muban t
+    WHERE
+        is_deleted = 0  and biaoming  is not null and leixing=1
+    </select>
+
+
+
+</mapper>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.doc.biaozhunhuamuban.mapper.BiaozhunhuawenjianMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="biaozhunhuawenjianResultMap" type="org.springblade.doc.biaozhunhuamuban.entity.Biaozhunhuawenjian">
+        <id column="id" property="id"/>
+        <result column="biaozhunhuamuban_id" property="biaozhunhuamubanId"/>
+        <result column="dept_id" property="deptId"/>
+        <result column="caozuorenid" property="caozuorenid"/>
+        <result column="caozuoren" property="caozuoren"/>
+        <result column="caozuoshijian" property="caozuoshijian"/>
+        <result column="createtime" property="createtime"/>
+        <result column="fileType" property="fileType"/>
+        <result column="path" property="path"/>
+        <result column="cumulative_visits" property="cumulativeVisits"/>
+        <result column="last_preview_time" property="lastPreviewTime"/>
+    </resultMap>
+
+    <resultMap id="biaozhunhuawenjianVOResultMap" type="org.springblade.doc.biaozhunhuamuban.vo.BiaozhunhuawenjianVO">
+        <id column="id" property="id"/>
+        <result column="biaozhunhuamuban_id" property="biaozhunhuamubanId"/>
+        <result column="dept_id" property="deptId"/>
+        <result column="caozuorenid" property="caozuorenid"/>
+        <result column="caozuoren" property="caozuoren"/>
+        <result column="caozuoshijian" property="caozuoshijian"/>
+        <result column="createtime" property="createtime"/>
+        <result column="fileType" property="fileType"/>
+        <result column="path" property="path"/>
+        <result column="cumulative_visits" property="cumulativeVisits"/>
+        <result column="last_preview_time" property="lastPreviewTime"/>
+    </resultMap>
+
+    <!--根据模板id逻辑删除文件-->
+    <update id="removeByMubanId">
+         update anbiao_biaozhunhuawenjian set is_deleted = 1 where biaozhunhuamuban_id = #{mubanId}
+    </update>
+    <!--更新访问记录-->
+    <update id="updatePreviewRecordById">
+        UPDATE anbiao_biaozhunhuawenjian
+         SET cumulative_visits = IFNULL(cumulative_visits, 0) + 1,
+         last_preview_time = DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')
+         WHERE
+            id = #{id}
+    </update>
+
+
+    <select id="selectBiaozhunhuawenjianPage" resultMap="biaozhunhuawenjianResultMap">
+        select * from anbiao_biaozhunhuawenjian where is_deleted = 0
+    </select>
+
+    <select id="selectPicPath" resultMap="biaozhunhuawenjianVOResultMap">
+        SELECT id,biaozhunhuamuban_id,dept_id,fileType,path,cumulative_visits,last_preview_time
+         from anbiao_biaozhunhuawenjian
+        where  biaozhunhuamuban_id = #{param1} and fileType=#{param2} and is_deleted = 0
+    </select>
+
+    <!--根据模板id获取文件-->
+    <select id="getByMubanId" resultType="org.springblade.doc.biaozhunhuamuban.entity.Biaozhunhuawenjian">
+        SELECT
+            id,
+            biaozhunhuamuban_id,
+            dept_id,
+            caozuorenid,
+            caozuoren,
+            caozuoshijian,
+            createtime,
+            fileType,
+            path,
+            is_deleted
+        FROM
+            anbiao_biaozhunhuawenjian
+        WHERE
+            biaozhunhuamuban_id = #{mubanId}
+        AND is_deleted = 0
+    </select>
+
+    <!--根据文件所属人查询文件路径-->
+    <select id="selectPicPathBySuoshurenId" resultType="org.springblade.doc.biaozhunhuamuban.vo.BiaozhunhuawenjianVO">
+         SELECT
+            wenjian.id,
+            wenjian.biaozhunhuamuban_id,
+            wenjian.dept_id,
+            wenjian.fileType,
+            wenjian.path
+        FROM
+            anbiao_biaozhunhuawenjian wenjian
+        INNER JOIN anbiao_biaozhunhuamuban muban ON muban.id = wenjian.biaozhunhuamuban_id
+        WHERE
+            muban.file_property = #{fileProperty}
+        AND muban.file_suoshuren_id = #{fileSuoshurenId}
+        AND wenjian.fileType = 3 and wenjian.is_deleted = 0
+        LIMIT 1
+    </select>
+
+
+</mapper>

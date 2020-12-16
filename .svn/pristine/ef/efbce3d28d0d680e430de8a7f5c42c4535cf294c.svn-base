@@ -1,0 +1,24 @@
+package org.springblade.anbiao.jiashiyuan.service;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import org.springblade.anbiao.jiashiyuan.entity.JiaShiYuan;
+import org.springblade.anbiao.jiashiyuan.page.JiaShiYuanPage;
+import org.springblade.anbiao.jiashiyuan.vo.JiaShiYuanVO;
+
+/**
+ * Created by you on 2019/4/22.
+ */
+public interface IJiaShiYuanService extends IService<JiaShiYuan> {
+	boolean insertJSY(JiaShiYuan jiaShiYuan);
+
+	boolean updateDel(String id);
+
+	/**
+	 * 自定义 分页
+	 * @param
+	 * @return
+	 */
+	JiaShiYuanPage<JiaShiYuanVO> selectPageList(JiaShiYuanPage jiaShiYuanPage);
+
+	JiaShiYuanVO selectByIds(String id);
+}

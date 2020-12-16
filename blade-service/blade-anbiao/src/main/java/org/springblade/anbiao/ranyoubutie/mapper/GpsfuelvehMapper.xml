@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.anbiao.ranyoubutie.mapper.GpsfuelvehMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="gpsfuelvehResultMap" type="org.springblade.anbiao.ranyoubutie.vo.GpsfuelvehVO">
+        <result column="cid" property="cid"/>
+        <result column="company" property="company"/>
+        <result column="vehid" property="vehid"/>
+        <result column="plate" property="plate"/>
+        <result column="color" property="color"/>
+        <result column="OperatType" property="operatType"/>
+        <result column="seatnumber" property="seatnumber"/>
+        <result column="Agroup" property="agroup"/>
+        <result column="schname" property="schname"/>
+        <result column="riqi" property="riqi"/>
+    </resultMap>
+
+
+
+
+    <select id="selectPageList"  resultType="java.util.Map" parameterType="org.springblade.anbiao.ranyoubutie.page.GpsfuelvehPage" statementType="CALLABLE">
+        call Proc_fuel(#{beginTime,mode=IN,jdbcType=VARCHAR},
+        #{endTime,mode=IN,jdbcType=VARCHAR},
+        #{deptId,mode=IN,jdbcType=INTEGER})
+    </select>
+
+    <sql id="Datesql">
+        select a.riqi  from ( select curdate() - INTERVAL (a.a + (10 * b.a) + (100 * c.a)) DAY as riqi from (
+        select 0 as a union all select 1 union all select 2 union all select 3 union all select 4 union all
+        select 5 union all select 6 union all select 7 union all select 8 union all select 9) as a cross join (
+        select 0 as a union all select 1 union all select 2 union all select 3 union all select 4 union all
+        select 5 union all select 6 union all select 7 union all select 8 union all select 9) as b cross join (
+        select 0 as a union all select 1 union all select 2 union all select 3 union all select 4 union all
+        select 5 union all select 6 union all select 7 union all select 8 union all select 9) as c ) a where a.riqi
+        between '${beginTime}' and '${endTime}'
+    </sql>
+    <sql id="selectSql">
+        SELECT
+        cs.company ,
+        cs.VehId,
+        cs.plate,
+        cs.color,
+        cs.schname ,
+        cs.SeatNumber,
+        cs.Agroup,
+        cs.riqi,
+        cs.date,
+        CASE
+        WHEN cs2.kaishishijian IS NULL THEN
+        '×' ELSE '√'
+        END count,
+        ifnull( jishu.zongshu, 0 ) zongshu
+        FROM
+        (
+        SELECT DISTINCT
+        d.company ,
+        d.VehId,
+        d.plate,
+        d.color,
+        d.schname ,
+        d.SeatNumber,
+        d.Agroup,
+        c.riqi,
+        concat('yy',cast(Month(c.riqi) as char),cast(Day(c.riqi) as char )) AS date
+        from  baobiao_gpsfuelveh  d,
+        (
+        <include refid="Datesql"/>
+        )c
+        ) cs
+        left join
+        (SELECT
+        DISTINCT
+        a1.VehId,
+        DATE_FORMAT(a1.starttime,'%y%m%d') AS kaishishijian
+        FROM   baobiao_fueltotalreport a1
+        WHERE  a1.endtime IS NOT NULL
+        )cs2
+        on cs.riqi=cs2.kaishishijian
+        and cs.VehId=cs2.VehId
+        left join
+        (select
+        count(*) zongshu,
+        a.VehId
+        from
+        (
+        SELECT
+        DISTINCT
+        a.VehId ,
+        DATE_FORMAT(a.starttime,'%y%m%d') AS kaishishijian
+        FROM   baobiao_fueltotalreport a
+        WHERE  a.endtime IS NOT NULL
+        and a.starttime &gt;='${beginTime}'
+        and a.endtime &lt;='${endTime}'
+        )a
+        group by a.VehId
+        )jishu
+        on cs.VehId=jishu.VehId
+    </sql>
+
+    <sql id="tableSql">
+        select tt.vehid,
+        tt.plate,
+        tt.company,
+        tt.color,
+        tt.schname,
+        tt.SeatNumber,
+        tt.Agroup,
+        tt.zongshu,${sql}
+        from (
+        <include refid="selectSql"/>
+        ) tt group by tt.vehid,tt.plate,tt.company,tt.color,tt.schname,tt.SeatNumber,tt.Agroup,tt.zongshu
+    </sql>
+
+    <sql id="querySql">
+        <if test="deptName!=null and deptName!=''">
+            and company like CONCAT('%',#{deptName},'%')
+        </if>
+        <if test="chepaihao!='' and chepaihao!=null">
+            and plate like CONCAT('%',#{chepaihao},'%')
+        </if>
+    </sql>
+
+    <sql id="orderSql">
+        order by company desc
+    </sql>
+
+    <select id="selectConcat" parameterType="org.springblade.anbiao.ranyoubutie.page.GpsfuelvehPage" resultType="java.lang.String">
+        SELECT
+          GROUP_CONCAT( DISTINCT
+          CONCAT("MAX(CASE when tt.riqi = '", c.riqi, "' and tt.count = '√' THEN '√' ELSE '×' END ) '",  c.riqi,"'")
+          )
+        FROM (
+                <include refid="Datesql"/>
+            ) c
+    </select>
+
+    <select id="selectAllList" parameterType="org.springblade.anbiao.ranyoubutie.page.GpsfuelvehPage" resultType="java.util.Map">
+        <if test="size == 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${total}
+        </if>
+        <if test="current != 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <select id="selectTotal" parameterType="org.springblade.anbiao.ranyoubutie.page.GpsfuelvehPage" resultType="int">
+        select COUNT(1) from (
+        <include refid="tableSql" />
+        )d
+        where 1 = 1
+        <include refid="querySql" />
+    </select>
+
+
+
+</mapper>

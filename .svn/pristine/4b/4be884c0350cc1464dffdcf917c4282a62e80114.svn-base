@@ -1,0 +1,4 @@
+net.dreamlu.mica.feign.MicaFeignAutoConfiguration=\
+  org.springblade.alarm.feign.IVehicleStopClientBack
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  org.springblade.alarm.feign.IVehicleStopClient

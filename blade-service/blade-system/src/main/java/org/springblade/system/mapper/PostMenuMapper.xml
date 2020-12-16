@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.system.mapper.PostMenuMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="postMenuResultMap" type="org.springblade.system.entity.PostMenu">
+        <id column="id" property="id"/>
+        <result column="menu_id" property="menuId"/>
+        <result column="post_id" property="postId"/>
+        <result column="type" property="type"/>
+    </resultMap>
+
+    <delete id="deleteByPostId" parameterType="org.springblade.system.entity.PostMenu">
+        delete  blade_post_menu where  post_id=#{param1} and type=#{param2}
+    </delete>
+    <!--根据postIds批量删除权限-->
+    <delete id="deleteByPostIds">
+        delete  blade_post_menu where post_id in
+        <foreach collection="postIds" item="item" index="index" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+         and type=#{type}
+    </delete>
+
+    <select id="selectListByPostId" resultMap="postMenuResultMap">
+        SELECT
+            a.id,
+            menu_id,
+            post_id,
+            a.type
+        FROM
+            blade_post_menu a
+        INNER JOIN (
+        SELECT
+            id
+        FROM
+            blade_menu
+        WHERE
+            id NOT IN (
+                SELECT	DISTINCT
+            shangji.id
+        FROM
+            blade_menu shangji,
+            blade_menu xiaji
+        WHERE
+            xiaji.parent_id = shangji.id
+        AND shangji.type = #{type}
+            )
+        AND type=#{type}
+        ) b ON a.menu_id=b.id
+      and post_id = #{postId}
+      AND a.type  = #{type}
+    </select>
+
+    <select id="selectListByPostIdBusiness" resultMap="postMenuResultMap">
+        SELECT
+            a.id,
+            menu_id,
+            post_id,
+            a.type
+        FROM
+            blade_post_menu a
+        INNER JOIN (
+        SELECT
+            id
+        FROM
+            blade_business
+        ) b ON a.menu_id=b.id
+      and post_id = #{postId}
+      AND a.type  = #{type}
+    </select>
+
+    <select id="selectListByPostIdApp" resultMap="postMenuResultMap">
+       SELECT
+            a.id,
+            menu_id,
+            post_id,
+            a.type
+        FROM
+            blade_post_menu a
+        INNER JOIN (
+        SELECT
+            id
+        FROM
+            blade_app
+        WHERE
+            id NOT IN (
+                SELECT	DISTINCT
+            shangji.id
+        FROM
+            blade_app shangji,
+            blade_app xiaji
+        WHERE
+            xiaji.parent_id = shangji.id
+            )
+        ) b ON a.menu_id=b.id
+      and post_id = #{postId}
+      AND a.type  = #{type}
+    </select>
+    <!--根据所有postIds获取所有postmenu-->
+    <select id="getByPostIds" resultType="org.springblade.system.entity.PostMenu">
+        select * from blade_post_menu where post_id in
+        <foreach collection="postIds" item="item" index="index" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+        and type=#{type}
+    </select>
+</mapper>

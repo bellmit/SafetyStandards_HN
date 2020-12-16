@@ -1,0 +1,6 @@
+net.dreamlu.mica.feign.MicaFeignAutoConfiguration=\
+  org.springblade.system.user.feign.IUserClient,\
+  org.springblade.system.user.feign.IUserFiegn
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  org.springblade.system.user.feign.IUserClientBack,\
+  org.springblade.system.user.feign.IUserFiegnBack

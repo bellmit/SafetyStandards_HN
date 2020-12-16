@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="blade-gateway" />
+        <module name="blade-deadline-api" />
+        <module name="blade-desk-api" />
+        <module name="blade-alarm-api" />
+        <module name="blade-app" />
+        <module name="blade-user-api" />
+        <module name="blade-doc" />
+        <module name="blade-job" />
+        <module name="blade-app-api" />
+        <module name="blade-common" />
+        <module name="blade-desk" />
+        <module name="blade-dict-api" />
+        <module name="blade-alarm" />
+        <module name="blade-upload-api" />
+        <module name="blade-anbiao-api" />
+        <module name="blade-demo-api" />
+        <module name="blade-upload" />
+        <module name="blade-doc-api" />
+        <module name="blade-demo" />
+        <module name="blade-auth" />
+        <module name="blade-gps-api" />
+        <module name="blade-user" />
+        <module name="blade-admin" />
+        <module name="blade-log" />
+        <module name="blade-manage-api" />
+        <module name="blade-manage" />
+        <module name="blade-system-api" />
+        <module name="blade-deadline" />
+        <module name="blade-gps" />
+        <module name="blade-system" />
+        <module name="blade-develop" />
+        <module name="blade-anbiao" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="blade-admin" target="1.8" />
+      <module name="blade-alarm" target="1.8" />
+      <module name="blade-alarm-api" target="1.8" />
+      <module name="blade-anbiao" target="1.8" />
+      <module name="blade-anbiao-api" target="1.8" />
+      <module name="blade-app" target="1.8" />
+      <module name="blade-app-api" target="1.8" />
+      <module name="blade-auth" target="1.8" />
+      <module name="blade-common" target="1.8" />
+      <module name="blade-deadline" target="1.8" />
+      <module name="blade-deadline-api" target="1.8" />
+      <module name="blade-demo" target="1.8" />
+      <module name="blade-demo-api" target="1.8" />
+      <module name="blade-desk" target="1.8" />
+      <module name="blade-desk-api" target="1.8" />
+      <module name="blade-develop" target="1.8" />
+      <module name="blade-dict-api" target="1.8" />
+      <module name="blade-doc" target="1.8" />
+      <module name="blade-doc-api" target="1.8" />
+      <module name="blade-gateway" target="1.8" />
+      <module name="blade-gps" target="1.8" />
+      <module name="blade-gps-api" target="1.8" />
+      <module name="blade-job" target="1.8" />
+      <module name="blade-log" target="1.8" />
+      <module name="blade-manage" target="1.8" />
+      <module name="blade-manage-api" target="1.8" />
+      <module name="blade-ops" target="1.8" />
+      <module name="blade-service" target="1.8" />
+      <module name="blade-service-api" target="1.8" />
+      <module name="blade-system" target="1.8" />
+      <module name="blade-system-api" target="1.8" />
+      <module name="blade-upload" target="1.8" />
+      <module name="blade-upload-api" target="1.8" />
+      <module name="blade-user" target="1.8" />
+      <module name="blade-user-api" target="1.8" />
+      <module name="SpringBlade" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="blade-admin" options="-parameters" />
+      <module name="blade-alarm" options="-parameters" />
+      <module name="blade-alarm-api" options="-parameters" />
+      <module name="blade-anbiao" options="-parameters" />
+      <module name="blade-anbiao-api" options="-parameters" />
+      <module name="blade-app" options="-parameters" />
+      <module name="blade-app-api" options="-parameters" />
+      <module name="blade-auth" options="-parameters" />
+      <module name="blade-common" options="-parameters" />
+      <module name="blade-deadline" options="-parameters" />
+      <module name="blade-deadline-api" options="-parameters" />
+      <module name="blade-demo" options="-parameters" />
+      <module name="blade-demo-api" options="-parameters" />
+      <module name="blade-desk" options="-parameters" />
+      <module name="blade-desk-api" options="-parameters" />
+      <module name="blade-develop" options="-parameters" />
+      <module name="blade-dict-api" options="-parameters" />
+      <module name="blade-doc" options="-parameters" />
+      <module name="blade-doc-api" options="-parameters" />
+      <module name="blade-gateway" options="-parameters" />
+      <module name="blade-gps" options="-parameters" />
+      <module name="blade-gps-api" options="-parameters" />
+      <module name="blade-job" options="-parameters" />
+      <module name="blade-log" options="-parameters" />
+      <module name="blade-manage" options="-parameters" />
+      <module name="blade-manage-api" options="-parameters" />
+      <module name="blade-system" options="-parameters" />
+      <module name="blade-system-api" options="-parameters" />
+      <module name="blade-upload" options="-parameters" />
+      <module name="blade-upload-api" options="-parameters" />
+      <module name="blade-user" options="-parameters" />
+      <module name="blade-user-api" options="-parameters" />
+    </option>
+  </component>
+</project>

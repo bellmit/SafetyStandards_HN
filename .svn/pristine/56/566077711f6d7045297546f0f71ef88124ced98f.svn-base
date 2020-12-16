@@ -1,0 +1,4 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  org.springblade.common.configurationBean.FileServer,\
+  org.springblade.common.configurationBean.GPSServer,\
+  org.springblade.common.config.BladeCommonConfiguration

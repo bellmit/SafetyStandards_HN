@@ -1,0 +1,99 @@
+/**
+ * Copyright (C), 2015-2020, 重庆铭信长兴科技有限公司
+ * FileName: XinXiJiaoHuZhuServiceImpl
+ * Author:   呵呵哒
+ * Date:     2020/6/20 17:18
+ * Description:
+ */
+package org.springblade.anbiao.qiyeshouye.service.impl;
+
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.AllArgsConstructor;
+import org.springblade.anbiao.qiyeshouye.entity.QiYeTongJi;
+import org.springblade.anbiao.qiyeshouye.mapper.QiYeTongJiMapper;
+import org.springblade.anbiao.qiyeshouye.page.QiYeTongJiPage;
+import org.springblade.anbiao.qiyeshouye.service.IQiYeTongJiService;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+/**
+ * @author 呵呵哒
+ * @创建人 hyp
+ * @创建时间 2020/7/4
+ * @描述
+ */
+@Service
+@AllArgsConstructor
+public class QiYeTongJiServiceImpl extends ServiceImpl<QiYeTongJiMapper, QiYeTongJi> implements IQiYeTongJiService {
+
+	private QiYeTongJiMapper qiYeTongJiMapper;
+
+	@Override
+	public QiYeTongJiPage selectGetBJTJ(QiYeTongJiPage qiYeTongJiPage) {
+		Integer total = qiYeTongJiMapper.selectGetBJTJTotal(qiYeTongJiPage);
+		if(qiYeTongJiPage.getSize()==0){
+			if(qiYeTongJiPage.getTotal()==0){
+				qiYeTongJiPage.setTotal(total);
+			}
+
+			List<QiYeTongJi> zhengFuBaoJingTongJiList = qiYeTongJiMapper.selectGetBJTJ(qiYeTongJiPage);
+			qiYeTongJiPage.setRecords(zhengFuBaoJingTongJiList);
+			return qiYeTongJiPage;
+		}
+		Integer pagetotal = 0;
+		if (total > 0) {
+			if(total%qiYeTongJiPage.getSize()==0){
+				pagetotal = total / qiYeTongJiPage.getSize();
+			}else {
+				pagetotal = total / qiYeTongJiPage.getSize() + 1;
+			}
+		}
+		if (pagetotal >= qiYeTongJiPage.getCurrent()) {
+			qiYeTongJiPage.setPageTotal(pagetotal);
+			Integer offsetNo = 0;
+			if (qiYeTongJiPage.getCurrent() > 1) {
+				offsetNo = qiYeTongJiPage.getSize() * (qiYeTongJiPage.getCurrent() - 1);
+			}
+			qiYeTongJiPage.setTotal(total);
+			qiYeTongJiPage.setOffsetNo(offsetNo);
+			List<QiYeTongJi> zhengFuBaoJingTongJiList = qiYeTongJiMapper.selectGetBJTJ(qiYeTongJiPage);
+			qiYeTongJiPage.setRecords(zhengFuBaoJingTongJiList);
+		}
+		return qiYeTongJiPage;
+	}
+
+	@Override
+	public QiYeTongJiPage selectBJPMTJ(QiYeTongJiPage qiYeTongJiPage) {
+		Integer total = qiYeTongJiMapper.selectBJTJPMTotal(qiYeTongJiPage);
+		if(qiYeTongJiPage.getSize()==0){
+			if(qiYeTongJiPage.getTotal()==0){
+				qiYeTongJiPage.setTotal(total);
+			}
+
+			List<QiYeTongJi> zhengFuBaoJingTongJiList = qiYeTongJiMapper.selectBJPMTJ(qiYeTongJiPage);
+			qiYeTongJiPage.setRecords(zhengFuBaoJingTongJiList);
+			return qiYeTongJiPage;
+		}
+		Integer pagetotal = 0;
+		if (total > 0) {
+			if(total%qiYeTongJiPage.getSize()==0){
+				pagetotal = total / qiYeTongJiPage.getSize();
+			}else {
+				pagetotal = total / qiYeTongJiPage.getSize() + 1;
+			}
+		}
+		if (pagetotal >= qiYeTongJiPage.getCurrent()) {
+			qiYeTongJiPage.setPageTotal(pagetotal);
+			Integer offsetNo = 0;
+			if (qiYeTongJiPage.getCurrent() > 1) {
+				offsetNo = qiYeTongJiPage.getSize() * (qiYeTongJiPage.getCurrent() - 1);
+			}
+			qiYeTongJiPage.setTotal(total);
+			qiYeTongJiPage.setOffsetNo(offsetNo);
+			List<QiYeTongJi> zhengFuBaoJingTongJiList = qiYeTongJiMapper.selectBJPMTJ(qiYeTongJiPage);
+			qiYeTongJiPage.setRecords(zhengFuBaoJingTongJiList);
+		}
+		return qiYeTongJiPage;
+	}
+}

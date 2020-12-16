@@ -1,0 +1,6 @@
+org\springblade\app\yingjichuzhi\vo\YingjichuzhileiVO.class
+org\springblade\app\yingjichuzhi\vo\YingjichuzhiVO.class
+org\springblade\app\yingjichuzhi\entity\Yingjichuzhi.class
+org\springblade\app\yingjichuzhi\page\YingjichuzhiPage.class
+org\springblade\app\yingjichuzhi\page\YingjichuzhileiPage.class
+org\springblade\app\yingjichuzhi\entity\Yingjichuzhilei.class

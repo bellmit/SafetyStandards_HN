@@ -1,0 +1,138 @@
+version: '3'
+services:
+  nacos:
+    image: nacos/nacos-server:0.9.0
+    hostname: "nacos-standalone"
+    environment:
+      - MODE=standalone
+    volumes:
+      - /docker/nacos/standalone-logs/:/home/nacos/logs
+      - /docker/nacos/init.d/custom.properties:/home/nacos/init.d/custom.properties
+    ports:
+      - 8848:8848
+    networks:
+      blade_net:
+        ipv4_address: 172.30.0.48
+
+  sentinel:
+    image: bladex/sentinel-dashboard:1.4.2
+    hostname: "sentinel"
+    ports:
+      - 8858:8858
+    restart: on-failure
+    networks:
+      blade_net:
+        ipv4_address: 172.30.0.58
+
+  blade-nginx:
+    image: nginx:stable-alpine-perl
+    hostname: "blade-nginx"
+    ports:
+    - 88:88
+    volumes:
+    - /docker/nginx/gateway/nginx.conf:/etc/nginx/nginx.conf
+    privileged: true
+    restart: always
+    networks:
+    - blade_net
+
+  web-nginx:
+    image: nginx:stable-alpine-perl
+    hostname: "web-nginx"
+    ports:
+      - 8000:8000
+    volumes:
+      - /docker/nginx/web/html:/usr/share/nginx/html
+      - /docker/nginx/web/nginx.conf:/etc/nginx/nginx.conf
+    privileged: true
+    restart: always
+    networks:
+      - blade_net
+
+  blade-redis:
+    image: redis:5.0.2-alpine
+    hostname: "blade-redis"
+    ports:
+    - 3379:6379
+    volumes:
+    - /docker/redis/data:/data
+    command: "redis-server --appendonly yes"
+    privileged: true
+    restart: always
+    networks:
+    - blade_net
+
+  blade-admin:
+    image: "10.211.55.5/blade/blade-admin:2.0.0.RC6"
+    ports:
+    - 7002:7002
+    privileged: true
+    restart: always
+    networks:
+    - blade_net
+
+  blade-gateway1:
+    image: "10.211.55.5/blade/blade-gateway:2.0.0.RC6"
+    privileged: true
+    restart: always
+    networks:
+      blade_net:
+        ipv4_address: 172.30.0.81
+
+  blade-gateway2:
+    image: "10.211.55.5/blade/blade-gateway:2.0.0.RC6"
+    privileged: true
+    restart: always
+    networks:
+      blade_net:
+        ipv4_address: 172.30.0.82
+
+  blade-gateway3:
+    image: "10.211.55.5/blade/blade-gateway:2.0.0.RC6"
+    privileged: true
+    restart: always
+    networks:
+      blade_net:
+        ipv4_address: 172.30.0.83
+
+  blade-auth:
+    image: "10.211.55.5/blade/blade-auth:2.0.0.RC6"
+    privileged: true
+    restart: always
+    networks:
+    - blade_net
+
+  blade-log:
+    image: "10.211.55.5/blade/blade-log:2.0.0.RC6"
+    privileged: true
+    restart: always
+    networks:
+    - blade_net
+
+  blade-desk:
+    image: "10.211.55.5/blade/blade-desk:2.0.0.RC6"
+    privileged: true
+    restart: always
+    networks:
+    - blade_net
+
+  blade-user:
+    image: "10.211.55.5/blade/blade-user:2.0.0.RC6"
+    privileged: true
+    restart: always
+    networks:
+    - blade_net
+
+  blade-system:
+    image: "10.211.55.5/blade/blade-system:2.0.0.RC6"
+    privileged: true
+    restart: always
+    networks:
+    - blade_net
+
+networks:
+  blade_net:
+    driver: bridge
+    ipam:
+      config:
+      - subnet: 172.30.0.0/16

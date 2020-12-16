@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.alarm.mapper.DataCenterMapper">
+
+    <!--月车辆运营情况-->
+    <select id="alarmMothqingkaung" resultType="org.springblade.alarm.vo.AlarmMonthQingkuang">
+        SELECT
+			a.`key` AS day,
+			b.company,
+			b.date,
+			vehicleCount,
+			onlineCount,
+			stopCount,
+			offlineCount,
+			onlineRate,
+			locateCount,
+			locateRate,
+			createtime
+		FROM
+			nums a
+			LEFT JOIN baobiao_clientdailyreport b ON a.KEY = DAY (b.date)
+		WHERE
+			b.company = #{company}
+		AND MONTH (NOW()) = MONTH (b.date)
+		AND YEAR (NOW()) = YEAR (b.date)
+		ORDER BY a.KEY
+    </select>
+    <!--月车辆报警趋势-->
+    <select id="alarmMonthQushi" resultType="org.springblade.alarm.vo.AlarmMonthQushi">
+			  SELECT
+				aa.KEY AS day,
+				aa.company,
+				aa.vehicleCount,
+				aa.onlineCount,
+				aa.stopCount,
+				aa.offlineCount,
+				bb.vehiclealarmCount
+			FROM
+				(
+					SELECT
+						*
+					FROM
+						nums a
+					LEFT JOIN baobiao_clientdailyreport b ON a.KEY = DAY (b.date)
+					WHERE
+						company = #{company}
+					AND MONTH (NOW()) = MONTH (b.date)
+					AND YEAR (NOW()) = YEAR (b.date)
+				) aa
+			LEFT JOIN (
+				SELECT
+					COUNT(1) AS vehiclealarmCount,
+					date
+				FROM
+					baobiao_alarmvehdailyreport
+				WHERE
+					company = #{company}
+				AND MONTH (NOW()) = MONTH (date)
+				AND YEAR (NOW()) = YEAR (NOW())
+				AND (
+					baojingcishu > 0
+					OR zhudongbaojingcishu > 0
+				)
+				GROUP BY
+					date
+			) bb ON aa.date = bb.date
+			ORDER BY
+                	aa.KEY
+    </select>
+    <!--车辆报警 主动防御报警-->
+    <select id="alarmZhudongCount" resultType="org.springblade.alarm.vo.AlarmZhudongCount">
+            SELECT
+				SUM(baojingcishu) alarmCount,
+	            SUM(zhudongbaojingcishu) zhudongCunt,
+	            MIN(date) beginTime,
+	            MAX(date)  endTime
+            FROM
+	            baobiao_alarmvehdailyreport
+            WHERE
+	            company = #{company}
+            AND MONTH (NOW()) = MONTH (date)
+            AND YEAR (NOW()) = YEAR (date)
+    </select>
+    <!--车辆报警 主动防御报警 上一个月-->
+    <select id="alarmZhudongCountLastmonth" resultType="org.springblade.alarm.vo.AlarmZhudongCount">
+        SELECT
+	        SUM(baojingcishu) alarmCount,
+            SUM(zhudongbaojingcishu) zhudongCunt,
+	        MIN(date) beginTime,
+	        MAX(date)  endTime
+        FROM
+	            baobiao_alarmvehdailyreport
+        WHERE
+	            company = #{company}
+            AND (MONTH (NOW()) - 1) = MONTH (date)
+            AND YEAR (NOW()) = YEAR (date)
+            AND DAY (NOW()) > DAY (date)
+
+
+    </select>
+    <!--主动防御 当月统计-->
+	<select id="monthZhudong" resultType="java.util.Map">
+		SELECT
+        	SUM(pilaoshipin) as '疲劳视频报警',
+        	sum(dadianhua) as '接打电话',
+        	sum(chouyan) as '抽烟驾驶',
+        	SUM(fenshen) as '分神驾驶'
+        FROM
+        	baobiao_alarmvehdailyreport
+        WHERE
+        	company = #{company}
+        AND MONTH (NOW()) = MONTH (date)
+        AND YEAR (NOW()) = YEAR (date)
+
+    </select>
+    <!--车辆报警 当月统计-->
+    <select id="monthAlarm" resultType="java.util.Map">
+		SELECT
+			sum(chaosu) as '超速报警',
+			sum(pilao) as '疲劳报警',
+			sum(yejian) as '夜间报警',
+			SUM(buzaixian+buzaixian) as '异常报警'
+
+		FROM
+			baobiao_alarmvehdailyreport
+		WHERE
+			company = #{company}
+		AND MONTH (NOW()) = MONTH (date)
+		AND YEAR (NOW()) = YEAR (date)
+    </select>
+	<!--报警处理统计-->
+    <select id="alarmChuliCount" resultType="java.util.Map">
+		SELECT
+			sum(baojingcishu) baojingcishu,sum(baojingclcishu) yichulicishu,sum(baojingcishu)-sum(baojingclcishu) weichulicishu
+		FROM
+			baobiao_alarmdailyreport
+		WHERE
+			company =  #{company}
+		AND MONTH (NOW()) = MONTH (date)
+		AND YEAR (NOW()) = YEAR (date)
+		ORDER BY date
+	</select>
+    <!--一个星期车辆运行情况分页total-->
+    <select id="selectrunvehicletotal" resultType="java.lang.Integer" parameterType="org.springblade.alarm.page.VehicleRunPage">
+        select count(*) from (
+            <include refid="RunTable"/>
+            <include refid="RunTableQuer"/>
+        ) a
+
+
+
+    </select>
+    <!--一个星期车辆运行情况分页-->
+    <select id="selectrunvehiclepage" resultType="org.springblade.alarm.entity.VehicleRun" parameterType="org.springblade.alarm.page.VehicleRunPage">
+        <if test="size ==0">
+            select  * from (
+            <include refid="RunTable"/>
+            <include refid="RunTableQuer"/>
+            )b
+            <include refid="RunTableOrder"/>
+            LIMIT #{total}
+        </if>
+        <if test="current != 0">
+            select  * from (
+            <include refid="RunTable"/>
+            <include refid="RunTableQuer"/>
+            )b
+            <include refid="RunTableOrder"/>
+            LIMIT #{offsetNo},#{size}
+        </if>
+
+
+
+
+
+
+
+    </select>
+    <select id="selectrunvehicleDetailstotal" resultType="java.lang.Integer" parameterType="org.springblade.alarm.page.VehicleRunDetailsPage">
+        select count(*) from (
+        <include refid="RunTableDetails"/>
+        <include refid="RunTableDetailsQuery"/>
+        ) a
+
+
+
+
+
+
+
+    </select>
+    <select id="selectrunvehicleDetailsPage" resultType="org.springblade.alarm.entity.VehicleRundetails" parameterType="org.springblade.alarm.page.VehicleRunDetailsPage">
+        <if test="size ==0">
+            select  * from (
+            <include refid="RunTableDetails"/>
+            <include refid="RunTableDetailsQuery"/>
+            )b
+            <include refid="RunTableDetailsOrder"/>
+            LIMIT #{total}
+        </if>
+        <if test="current != 0">
+            select  * from (
+            <include refid="RunTableDetails"/>
+            <include refid="RunTableDetailsQuery"/>
+            )b
+            <include refid="RunTableDetailsOrder"/>
+            LIMIT #{offsetNo},#{size}
+        </if>
+
+
+
+    </select>
+    <sql id="RunTableDetails">
+    SELECT
+	    plate,
+	    date,
+	    mileageCount licheng,
+	    color,
+	    runSeconds,
+	CONCAT(
+		(floor(runSeconds / 86400)),
+		'天',
+		(floor(runSeconds / 3600) % 24),
+		'时',
+		(floor(runSeconds / 60) % 60),
+		'分',
+		(runSeconds % 60),
+		'秒'
+	    ) AS xingshishijian,
+	    CONCAT(
+		(floor(stopSeconds / 86400)),
+		'天',
+		(floor(stopSeconds / 3600) % 24),
+		'时',
+		(floor(stopSeconds / 60) % 60),
+		'分',
+		(stopSeconds % 60),
+		'秒'
+	    ) AS stopshijian,
+	    loc1 AS kaishiweizhi,
+	    loc2 AS jieshuweizhi,
+	ROUND(
+		ROUND(mileageCount) / (ROUND(runSeconds / 3600, 2))
+	) AS pingjunsudu
+        FROM
+	baobiao_vehdailyreport
+    where 1=1
+
+
+    </sql>
+    <sql id="RunTableDetailsQuery">
+        AND date &gt;= DATE_SUB(curdate(), INTERVAL 7 DAY)
+        AND date &lt;= DATE_SUB(curdate(), INTERVAL 1 DAY)
+        AND plate = #{plate}
+        AND color = #{color}
+
+
+
+
+    </sql>
+    <sql id="RunTableDetailsOrder">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by runSeconds desc
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+
+    </sql>
+    <sql id="RunTable">
+        SELECT
+        plate,
+        color,
+        SUM(runSeconds) runSeconds,
+        CONCAT(
+        (
+        floor(sum(runSeconds) / 86400)
+        ),
+        '天',
+        (
+        floor(sum(runSeconds) / 3600) % 24
+        ),
+        '时',
+        (
+        floor(sum(runSeconds) / 60) % 60
+        ),
+        '分',
+        (sum(runSeconds) % 60),
+        '秒'
+        ) AS xingshishijian,
+        CONCAT(
+        (
+        floor(SUM(stopSeconds) / 3600) % 24
+        ),
+        '时',
+        (
+        floor(SUM(stopSeconds) / 60) % 60
+        ),
+        '分',
+        (SUM(stopSeconds) % 60),
+        '秒'
+        ) AS stopshijian,
+        DATE_SUB(curdate(), INTERVAL 7 DAY) begintime,
+        DATE_SUB(curdate(), INTERVAL 1 DAY) endtime,
+        SUM(mileageCount) licheng,
+        ROUND(
+        ROUND(SUM(mileageCount)) / (
+        ROUND(SUM(runSeconds) / 3600, 2)
+        )
+        ) AS pingjunsudu
+        FROM
+        baobiao_vehdailyreport
+        where 1=1
+    </sql>
+    <sql id="RunTableQuer">
+        AND date &gt;= DATE_SUB(curdate(), INTERVAL 7 DAY)
+        AND date &lt;= DATE_SUB(curdate(), INTERVAL 1 DAY)
+        AND company = #{company}
+        GROUP BY
+        plate,
+        color
+
+
+    </sql>
+    <sql id="RunTableOrder">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by runSeconds desc
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+    </sql>
+
+
+
+</mapper>

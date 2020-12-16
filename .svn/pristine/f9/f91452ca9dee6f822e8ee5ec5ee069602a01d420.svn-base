@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/SpringBlade.iml" filepath="$PROJECT_DIR$/SpringBlade.iml" />
+      <module fileurl="file://$PROJECT_DIR$/blade-ops/blade-admin/blade-admin.iml" filepath="$PROJECT_DIR$/blade-ops/blade-admin/blade-admin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/blade-service/blade-alarm/blade-alarm.iml" filepath="$PROJECT_DIR$/blade-service/blade-alarm/blade-alarm.iml" />
+      <module fileurl="file://$PROJECT_DIR$/blade-service-api/blade-alarm-api/blade-alarm-api.iml" filepath="$PROJECT_DIR$/blade-service-api/blade-alarm-api/blade-alarm-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/blade-service/blade-anbiao/blade-anbiao.iml" filepath="$PROJECT_DIR$/blade-service/blade-anbiao/blade-anbiao.iml" />
+      <module fileurl="file://$PROJECT_DIR$/blade-service-api/blade-anbiao-api/blade-anbiao-api.iml" filepath="$PROJECT_DIR$/blade-service-api/blade-anbiao-api/blade-anbiao-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/blade-service/blade-app/blade-app.iml" filepath="$PROJECT_DIR$/blade-service/blade-app/blade-app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/blade-service-api/blade-app-api/blade-app-api.iml" filepath="$PROJECT_DIR$/blade-service-api/blade-app-api/blade-app-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/blade-auth/blade-auth.iml" filepath="$PROJECT_DIR$/blade-auth/blade-auth.iml" />
+      <module fileurl="file://$PROJECT_DIR$/blade-common/blade-common.iml" filepath="$PROJECT_DIR$/blade-common/blade-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/blade-service/blade-deadline/blade-deadline.iml" filepath="$PROJECT_DIR$/blade-service/blade-deadline/blade-deadline.iml" />
+      <module fileurl="file://$PROJECT_DIR$/blade-service-api/blade-deadline-api/blade-deadline-api.iml" filepath="$PROJECT_DIR$/blade-service-api/blade-deadline-api/blade-deadline-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/blade-service/blade-desk/blade-desk.iml" filepath="$PROJECT_DIR$/blade-service/blade-desk/blade-desk.iml" />
+      <module fileurl="file://$PROJECT_DIR$/blade-service-api/blade-desk-api/blade-desk-api.iml" filepath="$PROJECT_DIR$/blade-service-api/blade-desk-api/blade-desk-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/blade-ops/blade-develop/blade-develop.iml" filepath="$PROJECT_DIR$/blade-ops/blade-develop/blade-develop.iml" />
+      <module fileurl="file://$PROJECT_DIR$/blade-service-api/blade-dict-api/blade-dict-api.iml" filepath="$PROJECT_DIR$/blade-service-api/blade-dict-api/blade-dict-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/blade-service/blade-doc/blade-doc.iml" filepath="$PROJECT_DIR$/blade-service/blade-doc/blade-doc.iml" />
+      <module fileurl="file://$PROJECT_DIR$/blade-service-api/blade-doc-api/blade-doc-api.iml" filepath="$PROJECT_DIR$/blade-service-api/blade-doc-api/blade-doc-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/blade-gateway/blade-gateway.iml" filepath="$PROJECT_DIR$/blade-gateway/blade-gateway.iml" />
+      <module fileurl="file://$PROJECT_DIR$/blade-service/blade-gps/blade-gps.iml" filepath="$PROJECT_DIR$/blade-service/blade-gps/blade-gps.iml" />
+      <module fileurl="file://$PROJECT_DIR$/blade-service-api/blade-gps-api/blade-gps-api.iml" filepath="$PROJECT_DIR$/blade-service-api/blade-gps-api/blade-gps-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/blade-service/blade-job/blade-job.iml" filepath="$PROJECT_DIR$/blade-service/blade-job/blade-job.iml" />
+      <module fileurl="file://$PROJECT_DIR$/blade-service/blade-log/blade-log.iml" filepath="$PROJECT_DIR$/blade-service/blade-log/blade-log.iml" />
+      <module fileurl="file://$PROJECT_DIR$/blade-service/blade-manage/blade-manage.iml" filepath="$PROJECT_DIR$/blade-service/blade-manage/blade-manage.iml" />
+      <module fileurl="file://$PROJECT_DIR$/blade-service-api/blade-manage-api/blade-manage-api.iml" filepath="$PROJECT_DIR$/blade-service-api/blade-manage-api/blade-manage-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/blade-ops/blade-ops.iml" filepath="$PROJECT_DIR$/blade-ops/blade-ops.iml" />
+      <module fileurl="file://$PROJECT_DIR$/blade-service/blade-service.iml" filepath="$PROJECT_DIR$/blade-service/blade-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/blade-service-api/blade-service-api.iml" filepath="$PROJECT_DIR$/blade-service-api/blade-service-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/blade-service/blade-system/blade-system.iml" filepath="$PROJECT_DIR$/blade-service/blade-system/blade-system.iml" />
+      <module fileurl="file://$PROJECT_DIR$/blade-service-api/blade-system-api/blade-system-api.iml" filepath="$PROJECT_DIR$/blade-service-api/blade-system-api/blade-system-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/blade-service/blade-upload/blade-upload.iml" filepath="$PROJECT_DIR$/blade-service/blade-upload/blade-upload.iml" />
+      <module fileurl="file://$PROJECT_DIR$/blade-service-api/blade-upload-api/blade-upload-api.iml" filepath="$PROJECT_DIR$/blade-service-api/blade-upload-api/blade-upload-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/blade-service/blade-user/blade-user.iml" filepath="$PROJECT_DIR$/blade-service/blade-user/blade-user.iml" />
+      <module fileurl="file://$PROJECT_DIR$/blade-service-api/blade-user-api/blade-user-api.iml" filepath="$PROJECT_DIR$/blade-service-api/blade-user-api/blade-user-api.iml" />
+    </modules>
+  </component>
+</project>

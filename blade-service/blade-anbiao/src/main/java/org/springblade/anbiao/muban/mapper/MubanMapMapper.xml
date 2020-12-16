@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.anbiao.muban.mapper.MubanMapMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="mubanResultMap" type="org.springblade.anbiao.muban.entity.MubanMap">
+        <id column="id" property="id"/>
+        <result column="shujubiaoziduan" property="shujubiaoziduan"/>
+        <result column="shijiziduan" property="shijiziduan"/>
+        <result column="label" property="label"/>
+        <result column="biaodancanshu" property="biaodancanshu"/>
+        <result column="is_deleted" property="isdeleted"/>
+        <result column="tableName" property="tableName"/>
+
+    </resultMap>
+
+    <delete id="delMap" parameterType="java.lang.String">
+        update anbiao_muban_map set  is_deleted=1 where  id=#{id}
+    </delete>
+    <!--清空-->
+    <delete id="delAll">
+        truncate table anbiao_muban_map
+    </delete>
+
+
+    <insert id="insertMap" parameterType="org.springblade.anbiao.muban.entity.MubanMap">
+        insert   into  anbiao_muban_map (id,shujubiaoziduan,shijiziduan,label,biaodancanshu,tableName)
+        values (#{id},#{shujubiaoziduan},#{shijiziduan},#{label},#{biaodancanshu},#{tableName})
+    </insert>
+    <!--批量插入mubanMap-->
+    <insert id="insertList">
+        insert into anbiao_muban_map
+        (shujubiaoziduan,shijiziduan,label,biaodancanshu,tableName)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+        (#{item.shujubiaoziduan},#{item.shijiziduan},#{item.label},#{item.biaodancanshu},#{item.tableName})
+        </foreach>
+    </insert>
+
+    <update id="updateMap" parameterType="org.springblade.anbiao.muban.entity.MubanMap">
+        update  anbiao_muban_map  set
+            shujubiaoziduan=#{shujubiaoziduan},
+            shijiziduan=#{shijiziduan},
+            label=#{label},
+            biaodancanshu=#{biaodancanshu},
+            tableName=#{tableName}
+        where id=#{id}
+    </update>
+
+    <select id="selectMapList" resultMap="mubanResultMap">
+        select * from anbiao_muban_map where is_deleted = 0 and  tableName=#{tableName}
+    </select>
+    <!--查询配置-->
+    <select id="getConfByDeptIdForTable" resultType="org.springblade.anbiao.muban.entity.MubanMap">
+    SELECT
+        shujubiaoziduan,
+        shijiziduan,
+        label,
+        biaodancanshu
+    FROM
+        ${table}
+    where dept_id=#{deptId} and is_deleted=0
+    </select>
+
+
+</mapper>

@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.anbiao.zhengfu.mapper.OrganizationMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="ResultMap" type="org.springblade.anbiao.zhengfu.entity.Organization">
+        <id column="id" property="id"/>
+    </resultMap>
+
+
+    <select id="selectGetSheng" resultType="org.springblade.anbiao.zhengfu.entity.Organization">
+        select
+            a.id,parent_id,a.dept_name,tree_code,province,city,country
+        from blade_dept a,anbiao_organization b
+        where a.id = b.dept_id
+            and b.isdelete = 0
+            and jigouleixing = 'shengZF'
+        <if test="deptId == null or deptId == '' ">
+            and a.id = #{deptId}
+        </if>
+    </select>
+
+    <select id="selectGetShi" resultType="org.springblade.anbiao.zhengfu.entity.Organization">
+        select
+            a.id,a.parent_id,a.dept_name,tree_code,province,city,country
+        from blade_dept a,anbiao_organization b
+        where a.id = b.dept_id
+            and jigouleixing in('shiZF')
+            and b.isdelete = 0
+            and a.parent_id = #{Id}
+    </select>
+
+    <select id="selectGetXian" resultType="org.springblade.anbiao.zhengfu.entity.Organization">
+        select
+            a.id,a.parent_id,a.dept_name,tree_code,province,city,country
+        from blade_dept a,anbiao_organization b
+        where a.id = b.dept_id
+            and jigouleixing in('xianZF')
+            and b.isdelete = 0
+            and a.parent_id = #{Id}
+    </select>
+
+    <select id="selectGetRenyuan" resultType="org.springblade.anbiao.zhengfu.entity.Organization">
+    <!--select
+            renyuanid as renYuanId,
+            account,
+            gangweiid as gangWeiId,
+            tree_code as treeCode,
+            parent_id as parentId
+        from(
+            select
+                a.id as renyuanid,a.account,b.post_id
+            from
+                blade_user a,blade_post b
+            where a.id = b.user_id
+                and b.Isdefault = 1
+                and a.is_deleted = 0
+            )a
+            inner join(
+                select
+                    id as gangweiid,tree_code,parent_id
+                from
+                    blade_dept
+                where tree_code like '000001005446%'
+                    and extend_type = '岗位'
+            )b on a.post_id = b.gangweiid
+        where 1=1
+        select
+            renyuanid as renYuanId,
+            account,
+            gangweiid as gangWeiId,
+            tree_code as treeCode,
+            parent_id as parentId
+        from(
+            select
+                a.id as renyuanid,a.account,a.dept_id
+            from
+                blade_user a
+            where 1=1
+                and a.is_deleted = 0
+            )a
+            inner join(
+                select
+                    id as gangweiid,tree_code,parent_id
+                from
+                    blade_dept
+                where tree_code like '000001005446%'
+                    and extend_type = '岗位'
+            )b on a.dept_id = b.parent_id
+        where 1=1
+            and a.renyuanid = #{Id}-->
+            select
+                renyuanid as renYuanId,
+                account,
+                gangweiid as gangWeiId,
+                tree_code as treeCode,
+                parent_id as parentId
+            from(
+                select
+                    a.id as renyuanid,a.account,a.dept_id,b.post_id
+                from
+                    blade_user a,
+                    blade_post b
+                where 1=1
+                    and a.is_deleted = 0
+                    and a.id = b.user_id
+                )a
+                inner join(
+                    select
+                        id as gangweiid,tree_code,parent_id
+                    from
+                        blade_dept
+                    where 1=1
+                        and extend_type = '岗位'
+                            and is_deleted = 0
+                )b on a.post_id = b.gangweiid
+            where 1=1
+                and a.renyuanid = #{Id}
+    </select>
+
+    <select id="selectGetGangWei" resultType="org.springblade.anbiao.zhengfu.entity.Organization">
+        select
+            a.id,parent_id,a.dept_name,tree_code,province,city,country
+        from
+            blade_dept a,anbiao_organization b
+        where a.id = b.dept_id
+        and jigouleixing in('xianZF','shiZF','shengZF')
+        and b.isdelete = 0
+        and a.id = #{Id}
+    </select>
+
+    <select id="selectGetZF" resultType="org.springblade.anbiao.zhengfu.entity.ZhengFuOrganization" parameterType="map">
+        select * from anbiao_zhengfu_qiye
+        where 1=1
+        <if test="province != null and province != '' ">
+            and province = #{province}
+        </if>
+        <if test="city != null and city != '' ">
+            and city = #{city}
+        </if>
+        <if test="country != null and country != '' ">
+            and country = #{country}
+        </if>
+        <if test="deptId != null and deptId != '' ">
+            and yunguanid = #{deptId}
+        </if>
+    </select>
+
+    <select id="selectGetZFJB" resultType="org.springblade.anbiao.zhengfu.entity.Organization">
+        select
+            province,city,country
+        from
+        blade_dept a,anbiao_organization b
+        where a.id = b.dept_id
+        and jigouleixing in('xianZF','shiZF','shengZF')
+        and b.isdelete = 0
+        <if test="deptId != null and deptId != '' ">
+            and a.id = #{deptId}
+        </if>
+    </select>
+
+    <!-- 查询列表 -->
+    <sql id="tableSql">
+        select
+            DISTINCT
+            a.areaname,
+            a.yunguanmingcheng,
+            a.yunguanid,
+            c.*
+        from(
+            select * from anbiao_zhengfu_qiye
+            where 1=1
+            <if test="province != null and province != '' ">
+                and province = #{province}
+            </if>
+
+            <if test="city != null and city != '' ">
+                and city = #{city}
+            </if>
+
+            <if test="country != null and country != '' ">
+                and country = #{country}
+            </if>
+            )a
+        inner join(
+            select
+                a.dept_id as Id,
+                a.dept_name as deptName,
+                IFNULL(b.full_name,'') as fullName,
+                IFNULL(jigoufuzeren,'') as jigoufuzeren,
+                IFNULL(jigouzizhi,'') as jigouzizhi,
+                IFNULL(farendaibiao,'') as farendaibiao,
+                IFNULL(lianxidianhua,'') as lianxidianhua,
+                IFNULL(zhuceziben,'') as zhuceziben,
+                IFNULL(cheliangguimo,'') as cheliangguimo,
+                IFNULL(congyerenshuliang,'') as congyerenshuliang,
+                IFNULL(chenglishijian,'') as chenglishijian,
+                IFNULL(left(createtime,19),'') as createtime
+            from
+                anbiao_organization a
+                inner join blade_dept b on a.dept_id = b.id
+            where 1=1
+                and b.is_deleted = 0
+            <if test="jigouleixing != null and jigouleixing != '' ">
+                <if test="jigouleixing == 'qiye' ">
+                    and a.jigouleixing = 'qiye'
+                </if>
+
+                <if test="jigouleixing == 'geti' ">
+                    and a.jigouleixing ='geti'
+                </if>
+            </if>
+
+            <if test="jigouleixing == null and jigouleixing == '' ">
+                and a.jigouleixing in ('qiye','geti')
+            </if>
+                and a.isdelete = 0
+            )c on a.qiyeid = c.Id
+        where 1=1
+        <if test="jigouleixing == 'geti' ">
+            and IFNULL(id,'') != ''
+        </if>
+
+    </sql>
+
+    <sql id="querySql">
+
+        <if test="farendaibiao != null and farendaibiao != '' ">
+            and farendaibiao like '%${farendaibiao}%'
+        </if>
+
+        <if test="jigouzizhi != null and jigouzizhi != ''">
+            and jigouzizhi like '%${jigouzizhi}%'
+        </if>
+
+        <if test="deptName != null and deptName != ''">
+            and deptName like '%${deptName}%'
+        </if>
+
+        <if test="yunguanmingcheng != null and yunguanmingcheng != ''">
+            and yunguanmingcheng like '%${yunguanmingcheng}%'
+        </if>
+
+    </sql>
+
+    <sql id="orderSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by createtime desc
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+    </sql>
+
+    <select timeout="600" id="selectALLPage" resultMap="ResultMap"
+            parameterType="org.springblade.anbiao.zhengfu.page.OrganizationPage">
+        <if test="size == 0">
+            select * from (
+            <include refid="tableSql"/>
+            )b
+            where 1=1
+            <include refid="querySql"/>
+            <include refid="orderSql"/>
+            limit ${total}
+        </if>
+        <if test="current != 0">
+            select * from (
+            <include refid="tableSql"/>
+            )b
+            where 1=1
+            <include refid="querySql"/>
+            <include refid="orderSql"/>
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <select timeout="90" id="selectAllTotal"
+            parameterType="org.springblade.anbiao.zhengfu.page.OrganizationPage"
+            resultType="int">
+        select COUNT(1) from (
+        <include refid="tableSql"/>
+        )d where 1 = 1
+        <include refid="querySql"/>
+    </select>
+
+</mapper>

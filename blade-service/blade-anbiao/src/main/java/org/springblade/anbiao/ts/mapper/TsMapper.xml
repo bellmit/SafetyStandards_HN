@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.anbiao.ts.mapper.TsMapper">
+
+
+    <insert id="insertDpet" parameterType="org.springblade.system.entity.Dept">
+        INSERT INTO blade_dept (
+            `id`,
+            `tenant_code`,
+            `parent_id`,
+            `dept_name`,
+            `full_name`,
+            `sort`,
+            `remark`,
+            `is_deleted`,
+            `tree_code`,
+            `extend_type`
+        )
+        VALUES
+            (
+                #{id},
+                '000000',
+                #{parentId},
+                #{deptName},
+                #{fullName},
+                '1',
+                '',
+                '0',
+                null,
+                '机构'
+            )
+    </insert>
+    <insert id="isnertOrg" parameterType="org.springblade.system.entity.Dept">
+        INSERT INTO anbiao_organization (
+            `id`,
+            `dept_id`,
+            `dept_name`
+        )
+        VALUES
+            (
+                UUID(),
+                #{id},
+                #{deptName}
+            )
+    </insert>
+    <select id="getDeptIdByDeptName" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT id from blade_dept where dept_name = #{deptName}
+    </select>
+    <insert id="insertVehicle" parameterType="org.springblade.anbiao.cheliangguanli.entity.Vehicle">
+        INSERT INTO anbiao_vehicle (
+        id,dept_id,cheliangpaizhao,chepaiyanse,shiyongxingzhi,jiashiyuanid,changpai,xinghao,chejiahao,luntaiguige,
+        cheshenyanse,hedingzaike,yingyunnianxian,dengjizhengshubianhao,chelianglaiyuan,zhucedengjishijian,ruhushijian,
+        guohushijian,tuishishijian,qiangzhibaofeishijian,jieboyunshuzhenghao,yuancheliangpaizhao,cheliangzhuangtai,
+        cheliangtingfangdiqu,danganhao,beiyongcheliang,yunyingshang,suoshuchedui,xingshifujian,fujian,fadongjixinghao,
+        fadongjihao,fadongjipailianggonglv,ranliaoleibie,ranyouxiaohao,paifangbiaozhun,zhuanxiangfangshi,chemenshezhi,
+        zhouju,chechang,chekuan,chegao,luntaishu,chezhoushu,gangbantanhuangpianshu,donglileixing,zongzhiliang,
+        zhengbeizhiliang,luntaizonglei,xuanguaxingshi,xingchezhidongfangshi,zhidongqiqianlun,zhidongqihoulun,abs,
+        kongtiaoxitong,huanshuqi,biansuxiangxingshi,zhizhaochangshang,gouzhishuizhenghao,chuchangriqi,leijilicheng,
+        zhongduanfuwuqi,cheliangdengji,weishengjian,fadongjipailiang,cheliangwaikuochicun,ranliaoxiaohaofujian,beizhu,
+        gpsanzhuangshijian,zhinenghuaxitong,gps,xingshijiluyi,zongduanid,zongduanxinghao,cheliangzhaopian,caozuoshijian
+        )
+        VALUES
+        (
+        #{id},#{deptId},#{cheliangpaizhao},#{chepaiyanse},#{shiyongxingzhi},#{jiashiyuanid},#{changpai},#{xinghao},#{chejiahao},#{luntaiguige},
+        #{cheshenyanse},#{hedingzaike},#{yingyunnianxian},#{dengjizhengshubianhao},#{chelianglaiyuan},#{zhucedengjishijian},#{ruhushijian},
+        #{guohushijian},#{tuishishijian},#{qiangzhibaofeishijian},#{jieboyunshuzhenghao},#{yuancheliangpaizhao},#{cheliangzhuangtai},
+        #{cheliangtingfangdiqu},#{danganhao},#{beiyongcheliang},#{yunyingshang},#{suoshuchedui},#{xingshifujian},#{fujian},#{fadongjixinghao},
+        #{fadongjihao},#{fadongjipailianggonglv},#{ranliaoleibie},#{ranyouxiaohao},#{paifangbiaozhun},#{zhuanxiangfangshi},#{chemenshezhi},
+        #{zhouju},#{chechang},#{chekuan},#{chegao},#{luntaishu},#{chezhoushu},#{gangbantanhuangpianshu},#{donglileixing},#{zongzhiliang},
+        #{zhengbeizhiliang},#{luntaizonglei},#{xuanguaxingshi},#{xingchezhidongfangshi},#{zhidongqiqianlun},#{zhidongqihoulun},#{abs},
+        #{kongtiaoxitong},#{huanshuqi},#{biansuxiangxingshi},#{zhizhaochangshang},#{gouzhishuizhenghao},#{chuchangriqi},#{leijilicheng},
+        #{zhongduanfuwuqi},#{cheliangdengji},#{weishengjian},#{fadongjipailiang},#{cheliangwaikuochicun},#{ranliaoxiaohaofujian},#{beizhu},
+        #{gpsanzhuangshijian},#{zhinenghuaxitong},#{gps},#{xingshijiluyi},#{zongduanid},#{zongduanxinghao},#{cheliangzhaopian},#{caozuoshijian}
+        )
+    </insert>
+    <insert id="insertCheliangbaoxian" parameterType="org.springblade.anbiao.cheliangguanli.vo.CheliangbaoxianVO">
+        INSERT INTO anbiao_cheliangbaoxian (
+        id,dept_id,caozuoren,zibianhao,cheliangid,zhaopian,jiluren,dengjiren,beibaoxianren,dengjishijian,beizhu,fujian,createtime
+        )
+        VALUES
+        (
+        #{id},#{deptId},#{caozuoren},#{zibianhao},#{cheliangid},#{zhaopian},#{jiluren},#{dengjiren},#{beibaoxianren},
+        #{dengjishijian},#{beizhu},#{fujian},#{createtime}
+        )
+    </insert>
+    <insert id="insertBaoxianmingxi" parameterType="org.springblade.anbiao.cheliangguanli.vo.BaoxianxinxiVO">
+        INSERT INTO anbiao_baoxianxinxi (
+         id,toubaogongsi,baoxiandanhao,toubaoleixing,goumaixiangmu,goumaijine,baofei,baoe,qibaoshijian,zhongbaoshijian,chudanshijian,
+lingquren,lingqushijian,zhengbenjieshouren,zhengbenjiaojieshijian,fapiaojiaojieshijian,fapiaojieshouren,beizhu,fujian,caozuoren,
+baoxianid,createtime  )
+        VALUES
+        (
+        #{id},#{toubaogongsi},#{baoxiandanhao},#{toubaoleixing},#{goumaixiangmu},#{goumaijine},#{baofei},#{baoe},#{qibaoshijian},#{zhongbaoshijian},#{chudanshijian},
+#{lingquren},#{lingqushijian},#{zhengbenjieshouren},#{zhengbenjiaojieshijian},#{fapiaojiaojieshijian},#{fapiaojieshouren},#{beizhu},
+#{fujian},#{caozuoren},#{baoxianid},#{createtime}
+        )
+    </insert>
+    <insert id="insertChelianganquan" parameterType="org.springblade.anbiao.cheliangguanli.vo.ChelianganquanshebeiVO">
+        INSERT INTO anbiao_chelianganquanshebei (
+        id,dept_id,cheliangid,caozuoren,guzhangjingshipai,shiyongnianxian,shijijiankong3G,anzhuangGPS,jingdianshifangxian,anquanchui,
+miehuoqi,sanjiaomu,fadongjimiehuo,fanghualian,jiaotongchui,tiechan,fanghuozhao,yingpanluxiangji,shadai,sanjiaopai,biaoshideng,
+beizhu,fujian,createtime
+        )
+        VALUES
+        (
+       #{id},#{deptId},#{cheliangid},#{caozuoren},#{guzhangjingshipai},#{shiyongnianxian},#{shijijiankong3G},#{anzhuangGPS},
+#{jingdianshifangxian},#{anquanchui},#{miehuoqi},#{sanjiaomu},#{fadongjimiehuo},#{fanghualian},#{jiaotongchui},#{tiechan},
+#{fanghuozhao},#{yingpanluxiangji},#{shadai},#{sanjiaopai},#{biaoshideng},#{beizhu},#{fujian},#{createtime}
+        )
+    </insert>
+    <insert id="insertCheliangdengjipingding" parameterType="org.springblade.anbiao.cheliangguanli.vo.CheliangdengjipingdingVO">
+        INSERT INTO anbiao_cheliangdengjipingding (
+       id,dept_id,caozuoren,cheliangid,leixingdengji,jishudengji,pingdingdanhao,pingdingdanwei,pingdingriqi,pingdingyouxiaoqi,
+jiancedanwei,jianceriqi,kechedengji,jilurenyuan,beizhu,youxiaozhengming,createtime
+        )
+        VALUES
+        (
+        #{id},#{deptId},#{caozuoren},#{cheliangid},#{leixingdengji},#{jishudengji},#{pingdingdanhao},#{pingdingdanwei},#{pingdingriqi},
+#{pingdingyouxiaoqi},#{jiancedanwei},#{jianceriqi},#{kechedengji},#{jilurenyuan},#{beizhu},#{youxiaozhengming},#{createtime}
+        )
+    </insert>
+    <insert id="insertCheliangguanchejiancha" parameterType="org.springblade.anbiao.cheliangguanli.vo.CheliangguanchejianchaVO">
+        INSERT INTO anbiao_cheliangguanchejiancha (
+        id,dept_id,cheliangid,caozuoren,chetoucheliangpaizhao,jianyanriqi,jianyanrenyuan,shifouhege,jianchadanwei,xiacijianyanshijian,
+xiacinianshenshijian,shiyongdengjibianhao,zhucedaima,jianyanjieguo,wentijichuli,fujian,createtime
+        )
+        VALUES
+        (
+         #{id},#{deptId},#{cheliangid},#{caozuoren},#{chetoucheliangpaizhao},#{jianyanriqi},#{jianyanrenyuan},#{shifouhege},#{jianchadanwei},
+#{xiacijianyanshijian},#{xiacinianshenshijian},#{shiyongdengjibianhao},#{zhucedaima},#{jianyanjieguo},#{wentijichuli},#{fujian},
+#{createtime}
+        )
+    </insert>
+    <insert id="insertJiashiyuan" parameterType="org.springblade.anbiao.jiashiyuan.vo.JiaShiYuanVO">
+        INSERT INTO anbiao_jiashiyuan (
+        id,jiashiyuanxingming,zhaopian,xingbie,shenfenzhenghao,chushengshijian,nianling,shoujihaoma,congyerenyuanleixing,shenfenzhengyouxiaoqi,
+wenhuachengdu,pingyongriqi,jidongjiashiyuan,jiashiyuanleixing,dept_id,shenfenzhengfujian,congyezhengfujian,jiashizhengfujian,
+jiatingzhuzhi,danganbianhao,jiashizhenghao,zhunjiachexing,jialing,weifajifen,jiashizhengchulingriqi,jiashizhengyouxiaoqi,tijianyouxiaoqi,
+congyezigezheng,congyeleibie,congyezhengyouxiaoqi,congyezhengchulingri,zhengjianhefajiguan,fazhengjiguan,chengxinkaoheshijian,
+xiacichengxinkaoheshijian,jixujiaoyushijian,xiacijixujiaoyushijian,congyezigeleibie,zhengjianzhuangtai,huzhaohaoma,huzhaoleibie,guojiama,
+huzhaoyouxiaoqi,zhunjiazhenghao,zhunjialeixing,zhunyunxian,zhunjiazhengyouxiaoqi,jiaonabiaozhun,jiaonajine,shifoujiaona,chaosuweifajilu,
+jiaotongweifajilu,zhirensiwangzeren,weiguileixing,jiachejingli,beizhu,fuyinjian,caozuorenid,caozuoshijian,caozuoren,bumen,lizhishijian,
+denglumima,createtime
+        )
+        VALUES
+        (
+        #{id},#{jiashiyuanxingming},#{zhaopian},#{xingbie},#{shenfenzhenghao},#{chushengshijian},#{nianling},#{shoujihaoma},
+#{congyerenyuanleixing},#{shenfenzhengyouxiaoqi},#{wenhuachengdu},#{pingyongriqi},#{jidongjiashiyuan},#{jiashiyuanleixing},#{deptId},
+#{shenfenzhengfujian},#{congyezhengfujian},#{jiashizhengfujian},#{jiatingzhuzhi},#{danganbianhao},#{jiashizhenghao},#{zhunjiachexing},
+#{jialing},#{weifajifen},#{jiashizhengchulingriqi},#{jiashizhengyouxiaoqi},#{tijianyouxiaoqi},#{congyezigezheng},#{congyeleibie},
+#{congyezhengyouxiaoqi},#{congyezhengchulingri},#{zhengjianhefajiguan},#{fazhengjiguan},#{chengxinkaoheshijian},
+#{xiacichengxinkaoheshijian},#{jixujiaoyushijian},#{xiacijixujiaoyushijian},#{congyezigeleibie},#{zhengjianzhuangtai},#{huzhaohaoma},
+#{huzhaoleibie},#{guojiama},#{huzhaoyouxiaoqi},#{zhunjiazhenghao},#{zhunjialeixing},#{zhunyunxian},#{zhunjiazhengyouxiaoqi},
+#{jiaonabiaozhun},#{jiaonajine},#{shifoujiaona},#{chaosuweifajilu},#{jiaotongweifajilu},#{zhirensiwangzeren},#{weiguileixing},
+#{jiachejingli},#{beizhu},#{fuyinjian},#{caozuorenid},#{caozuoshijian},#{caozuoren},#{bumen},#{lizhishijian},#{denglumima},#{createtime}
+        )
+    </insert>
+    <insert id="insertCheliangweihu" parameterType="org.springblade.anbiao.cheliangguanli.vo.CheliangweihuVO">
+        INSERT INTO anbiao_cheliangweihu (
+        id,dept_id,cheliangid,caozuoren,cheliangweihudanwei,weihuleibie,jinchangriqi,jinchanglichengdushu,chuchangriqi,weihujine,
+xiaciweihuriqi,xiacijinchanglicheng,shifouhege,rendingweixiudian,weihuhetongbianhao,lurushijian,weihuneirong,jiancebaogaofujian,
+fuyinjian,createtime
+        )
+        VALUES
+        (
+        #{id},#{deptId},#{cheliangid},#{caozuoren},#{cheliangweihudanwei},#{weihuleibie},#{jinchangriqi},#{jinchanglichengdushu},
+#{chuchangriqi},#{weihujine},#{xiaciweihuriqi},#{xiacijinchanglicheng},#{shifouhege},#{rendingweixiudian},#{weihuhetongbianhao},
+#{lurushijian},#{weihuneirong},#{jiancebaogaofujian},#{fuyinjian},#{createtime}
+        )
+    </insert>
+    <insert id="insertCheliangyuejian" parameterType="org.springblade.anbiao.cheliangguanli.vo.CheliangyuejianVO">
+        INSERT INTO anbiao_cheliangyuejian (
+        id,dept_id,cheliangid,caozuoren,jianchariqi,shifouhege,chelianglichengshu,jianchaqingkuang,beizhu,fujian,createtime
+        )
+        VALUES
+        (
+         #{id},#{deptId},#{cheliangid},#{caozuoren},#{jianchariqi},#{shifouhege},#{chelianglichengshu},#{jianchaqingkuang},#{beizhu},
+#{fujian},#{createtime}
+        )
+    </insert>
+    <insert id="insertCheliangjingying" parameterType="org.springblade.anbiao.cheliangguanli.vo.CheliangjingyingVO">
+        INSERT INTO anbiao_cheliangjingying (
+        id,dept_id,cheliangid,caozuoren,jingyingxingzhi,jingyingfanwei,daoluyunshuzheng,pinming,leixingdengji,jishudengji,
+yueguanlifei,xianlubiaozhibianhao,jingyingkaishiriqi,jingyingjiezhiriqi,nongcunkeyun,hetongbianhao,hetongyouxiaoqi,
+shiyebu,qiyechiyougufen,zibianhao,xingzhengxukebianhao,dengjizhengshubianhao,yunshuzhengfafangri,yunshuzhengyouxiaoqi,
+xingzhengxukeqixian,xingshizhengfafangri,xingshizhengzhuceri,jianyanyouxiaoqi,yunxingxianlu,fujian,yunshuzhengfujian,
+beizhu,createtime
+        )
+        VALUES
+        (
+        #{id},#{deptId},#{cheliangid},#{caozuoren},#{jingyingxingzhi},#{jingyingfanwei},#{daoluyunshuzheng},#{pinming},#{leixingdengji},
+#{jishudengji},#{yueguanlifei},#{xianlubiaozhibianhao},#{jingyingkaishiriqi},#{jingyingjiezhiriqi},#{nongcunkeyun},#{hetongbianhao},
+#{hetongyouxiaoqi},#{shiyebu},#{qiyechiyougufen},#{zibianhao},#{xingzhengxukebianhao},#{dengjizhengshubianhao},#{yunshuzhengfafangri},
+#{yunshuzhengyouxiaoqi},#{xingzhengxukeqixian},#{xingshizhengfafangri},#{xingshizhengzhuceri},#{jianyanyouxiaoqi},#{yunxingxianlu},
+#{fujian},#{yunshuzhengfujian},#{beizhu},#{createtime}
+        )
+    </insert>
+    <insert id="insertCheliangrenyuan" parameterType="org.springblade.anbiao.cheliangguanli.vo.CheliangrenyuanbangdingVO">
+        INSERT INTO anbiao_cheliangrenyuanbangding (
+       id,dept_id,jiashiyuanid,caozuoren,renyuanleixing,cheliangid,shifoudangban,createtime
+        )
+        VALUES
+        (
+        #{id},#{deptId},#{jiashiyuanid},#{caozuoren},#{renyuanleixing},#{cheliangid},#{shifoudangban},#{createtime}
+        )
+    </insert>
+    <insert id="insertCheliangbaofei" parameterType="org.springblade.anbiao.cheliangguanli.vo.CheliangbaofeiVO">
+        INSERT INTO anbiao_cheliangbaofei (
+        id,dept_id,caozuoren,caozuorenid,caozuoshijian,cheliangid,jishiyuan,zhucedengjishijian,leixingdengji,hedingzaike,qiangzhibaofeiriqi,
+shijibaofeiriqi,baofeiren,baofeiyuanyin,beizhu,fujian,createtime
+        )
+        VALUES
+        (
+        #{id},#{deptId},#{caozuoren},#{caozuorenid},#{caozuoshijian},#{cheliangid},#{jishiyuan},#{zhucedengjishijian},#{leixingdengji},
+#{hedingzaike},#{qiangzhibaofeiriqi},#{shijibaofeiriqi},#{baofeiren},#{baofeiyuanyin},#{beizhu},#{fujian},#{createtime}
+        )
+    </insert>
+    <insert id="insertguanchejianchamingxi" parameterType="org.springblade.anbiao.cheliangguanli.vo.GuanchejianchaxinxiVO">
+        INSERT INTO anbiao_guanchejianchaxinxi (
+        id,guanchejianchaid,jianchadanwei,jianchaxiang,jianceren,jianceshijian,caozuoren,caozuoshijian,daoqishijian,beizhu,createtime
+        )
+        VALUES
+        (
+        #{id},#{guanchejianchaid},#{jianchadanwei},#{jianchaxiang},#{jianceren},#{jianceshijian},#{caozuoren},#{caozuoshijian},
+#{daoqishijian},#{beizhu},#{createtime}
+        )
+    </insert>
+    <insert id="insertcheliangnianshen" parameterType="org.springblade.anbiao.cheliangguanli.vo.CheliangnianshenVO">
+        INSERT INTO anbiao_cheliangnianshen (
+        id,dept_id,cheliangid,zhengjianmingcheng,jianyanriqi,jianyanyouxiaoqi,
+shifouhege,beizhu,zhaopian,fujian,caozuoren,caozuorenid,caozuoshijian,createtime
+        )
+        VALUES
+        (
+       #{id},#{deptId},#{cheliangid},#{zhengjianmingcheng},#{jianyanriqi},#{jianyanyouxiaoqi},#{shifouhege},#{beizhu},#{zhaopian},
+#{fujian},#{caozuoren},#{caozuorenid},#{caozuoshijian},#{createtime}
+        )
+    </insert>
+    <insert id="insertZhengjianshenyan" parameterType="org.springblade.anbiao.jiashiyuan.vo.ZhengjianshenyanVO">
+        INSERT INTO anbiao_zhengjianshenyan (
+       id,dept_id,jiashiyuanid,jiashiyuanleixing,zhengjianmingcheng,shenyanyouxiaoqi,shenyanleixing,shenyanjigou,shifouhege,
+shenyanriqi,kaohedengji,fujian,beizhu,caozuoren,caozuoshijian,createtime
+        )
+        VALUES
+        (
+         #{id},#{deptId},#{jiashiyuanid},#{jiashiyuanleixing},#{zhengjianmingcheng},#{shenyanyouxiaoqi},#{shenyanleixing},#{shenyanjigou},
+#{shifouhege},#{shenyanriqi},#{kaohedengji},#{fujian},#{beizhu},#{caozuoren},#{caozuoshijian},#{createtime}
+        )
+    </insert>
+</mapper>

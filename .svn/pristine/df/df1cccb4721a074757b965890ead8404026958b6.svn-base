@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.anbiao.cheliangziping.mapper.ZipinjianchaneirongMubanMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="zipinjianchaneirongMubanResultMap" type="org.springblade.anbiao.cheliangziping.entity.ZipinjianchaneirongMuban">
+        <id column="id" property="id"/>
+        <result column="jianchaxiangmuid" property="jianchaxiangmuid"/>
+        <result column="jianchaleirong" property="jianchaleirong"/>
+        <result column="jianchafangshi" property="jianchafangshi"/>
+        <result column="jiachaneirongbianhao" property="jiachaneirongbianhao"/>
+
+    </resultMap>
+    <insert id="inertjianchajieguomuban" parameterType="org.springblade.anbiao.cheliangziping.entity.Zipinjiancha">
+
+         INSERT INTO anbiao_zipinjaincha (
+            id,
+	        dept_name,
+	        biaoti,
+	        yunyingleixing,
+	        hegelv,
+	        zijianzhouqi,
+	        is_wanjie,
+	        beizhu,
+	        dept_id,
+	        caozuoshijian,
+	        caozuoren,
+	        zijianshijian,
+	        baogaoshijian,
+	        zhouqi_count
+        )
+        VALUES
+    	(
+    	#{id},
+    	#{deptName},
+    	#{biaoti},
+    	#{yunyingleixing},
+    	#{hegelv},
+    	#{zijianzhouqi},
+    	#{isWanjie},
+    	#{beizhu},
+    	#{deptId},
+    	#{caozuoshijian},
+    	#{caozuoren},
+        #{zijianshijian},
+        #{baogaoshijian},
+        #{zhouqiCount}
+
+	    )
+
+
+
+
+    </insert>
+    <update id="updatewanjie">
+        update anbiao_zipinjaincha set is_wanjie=1,wanjieshijian=#{date} where  id=#{id}
+
+
+
+
+
+    </update>
+    <update id="updateChlilv">
+
+        UPDATE anbiao_zipinjaincha  SET hegelv=#{chulilv} where id=#{id}
+
+
+    </update>
+    <delete id="delete">
+    DELETE a,b,c
+    FROM
+	anbiao_zipinjaincha a
+    LEFT JOIN anbiao_zipinjiancha_jieguo b on a.id=b.zipinjiancha_id
+    LEFT JOIN anbiao_zipinjiancha_jieguo_wendang c ON b.id=c.zipinjiancha_jieguo_id
+    WHERE a.id=#{id}
+
+
+
+    </delete>
+
+
+    <select id="selecttable" resultType="org.springblade.anbiao.cheliangziping.vo.ZipinjianchaneirongMubanVO">
+
+        SELECT
+            a.*,b.id as neirongid,b.jianchaxiangmuid,b.jianchaleirong,b.jianchafangshi,b.jiachaneirongbianhao,0 as is_hege
+        FROM
+             anbiao_zipinjianchaxiang_muban a
+        LEFT JOIN anbiao_zipinjianchaneirong_muban b ON a.id = b.jianchaxiangmuid
+        WHERE
+            a.yunyingleixing = #{type}
+        ORDER BY
+	        a.jiachaxiangbianhao,b.jiachaneirongbianhao
+
+
+
+
+    </select>
+    <select id="selectzijianjieguomuban"
+            resultType="org.springblade.anbiao.cheliangziping.entity.Zipinjiancha">
+
+        select * from anbiao_zipinjaincha where dept_id=#{deptid}
+            <if test="zijianzhouqi!=null and zijianzhouqi!=''">
+                and zijianzhouqi like #{zijianzhouqi}
+
+            </if>
+         ORDER BY zhouqi_count desc limit 1
+
+    </select>
+    <select id="selectjieguotable"
+            resultType="org.springblade.anbiao.cheliangziping.vo.ZipinjianchaneirongMubanVO">
+                        SELECT
+                            a.*, b.id AS neirongid,
+                            b.jianchaxiangmuid,
+                            b.jianchaleirong,
+                            b.jianchafangshi,
+                            b.jiachaneirongbianhao,
+                            c.id AS jieguoid,
+                            c.zipinjianchaxiang_id AS jieguojiangchaxiangmuuid,
+                            c.is_hege,
+                            c.beizhu,
+                            c.zipinjiancha_id,
+                            cc.count
+                        FROM
+                            anbiao_zipinjianchaxiang_muban a
+                        LEFT JOIN anbiao_zipinjianchaneirong_muban b ON a.id = b.jianchaxiangmuid
+                        LEFT JOIN anbiao_zipinjiancha_jieguo c ON b.id = c.zipinjianchaxiang_id
+                        AND c.zipinjiancha_id = #{id}
+                        LEFT JOIN (
+                            SELECT
+                                *
+                            FROM
+                                (
+                                    SELECT
+                                        COUNT(1) AS count,
+                                        zipinjiancha_jieguo_id
+                                    FROM
+                                        anbiao_zipinjiancha_jieguo_wendang
+                                    GROUP BY
+                                        zipinjiancha_jieguo_id
+                                ) c
+                        ) cc ON c.id = cc.zipinjiancha_jieguo_id
+                        WHERE
+                            a.yunyingleixing = #{yunyingleixing}
+                        ORDER BY
+                            a.jiachaxiangbianhao,
+                            b.jiachaneirongbianhao
+
+
+
+    </select>
+    <select id="selectTotal" resultType="java.lang.Integer" parameterType="org.springblade.anbiao.cheliangziping.page.ZipinjianchajieguoPage">
+
+        select COUNT(1) from (
+        <include refid="tableSql" />
+        )d
+        where 1 = 1
+        <include refid="querySql" />
+
+    </select>
+    <select id="selectPageList"
+            resultType="org.springblade.anbiao.cheliangziping.entity.Zipinjiancha" parameterType="org.springblade.anbiao.cheliangziping.page.ZipinjianchajieguoPage">
+        <if test="size == 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+
+            limit ${total}
+        </if>
+        <if test="current != 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+
+            limit ${offsetNo},${size}
+        </if>
+
+
+    </select>
+    <select id="selectByid" resultType="org.springblade.anbiao.cheliangziping.entity.Zipinjiancha">
+
+     select * from   anbiao_zipinjaincha where id=#{id}
+
+    </select>
+    <select id="CountXianChangjiancha" resultType="java.lang.Integer">
+   select COUNT(1) from (
+    SELECT
+            a.*,b.id as neirongid,b.jianchaxiangmuid,b.jianchaleirong,b.jianchafangshi,b.jiachaneirongbianhao,0 as is_hege
+        FROM
+             anbiao_zipinjianchaxiang_muban a
+        LEFT JOIN anbiao_zipinjianchaneirong_muban b ON a.id = b.jianchaxiangmuid
+        WHERE
+            a.yunyingleixing =#{yunyingleixing} and b.jianchafangshi LIKE '现场%'
+        ORDER BY
+	        a.jiachaxiangbianhao,b.jiachaneirongbianhao
+      )a
+
+    </select>
+    <sql id="tableSql">
+        select * from anbiao_zipinjaincha
+
+
+    </sql>
+    <sql id="querySql">
+       <if test="deptId !=null and deptId !=''">
+           and  dept_id=#{deptId}
+
+       </if>
+        <if test="beginTime !=null and beginTime !=''">
+         and   zijianshijian &gt;=#{beginTime}
+
+        </if>
+        <if test="endTime !=null and endTime !=''">
+          and  zijianshijian &lt;=#{endTime}
+
+        </if>
+        <if test="zijianzhouqi!=null and zijianzhouqi!=''">
+            and zijianzhouqi=#{zijianzhouqi}
+
+
+        </if>
+         ORDER BY baogaoshijian desc
+
+    </sql>
+
+</mapper>

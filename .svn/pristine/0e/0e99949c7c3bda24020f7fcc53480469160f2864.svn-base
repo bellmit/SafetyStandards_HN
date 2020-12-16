@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.anbiao.qiyeshouye.mapper.ZQHTMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="ResultMap" type="org.springblade.anbiao.qiyeshouye.entity.ZQHT">
+    </resultMap>
+
+
+    <!-- 查询报警统计汇总列表 -->
+    <sql id="tableSql">
+        select
+            a.dept_id as deptId,
+		    a.dept_name as deptName,
+            b.id as zhutiid,
+            b.zhutimingcheng,
+            b.zhutizhengwen,
+            b.faqishijian,
+            b.fasongdanwei,
+            b.huifuyouxiaoqi,
+            case
+                when IFNULL(c.zhutiid,'') = '' and (UNIX_TIMESTAMP(now()) - UNIX_TIMESTAMP(faqishijian)) &lt;= time*60 then '未回复'
+                when IFNULL(c.zhutiid,'') = '' and (UNIX_TIMESTAMP(now()) - UNIX_TIMESTAMP(faqishijian)) &gt;= time*60 then '已过回复有效期'
+                else '已回复'
+            end as zhuangtai,
+            c.huifushijian,
+            c.zhengwen as huifuzhengwen,
+            d.name as huifuzhename
+        from (
+            select
+                dept_id,
+                dept_name
+            from
+                anbiao_organization
+            where 1=1
+                and jigouleixing in ('qiye','geti') and isdelete = 0
+            ) a
+        inner join(
+            select
+                a.id,zhutimingcheng,zhutizhengwen,faqishijian,#{deptId} as aa ,
+                a.fasongdanweiid,b.dept_name as fasongdanwei,
+                songdadanwei,songdadanweiid,huifuyouxiaoqi,
+                SUBSTRING_INDEX(huifuyouxiaoqi,'分钟',1) as time
+            from
+                anbiao_xinxijiaohuzhutibiao a,anbiao_organization b
+            where a.type = #{type}
+                and a.fasongdanweiid = b.dept_id
+                and b.isdelete = 0
+                and FIND_IN_SET(#{deptId},a.songdadanweiid)
+            )b on a.dept_id = b.aa
+        LEFT JOIN (
+            SELECT
+                zhutiid,
+                huifuzheid,
+                huifushijian,
+                zhengwen
+            FROM
+                anbiao_XinXiJiaoHuHuiFuBiao
+            ) c ON b.id = c.zhutiid
+        LEFT JOIN (
+            SELECT
+                id,
+                name
+            FROM
+                blade_user
+            ) d ON d.id = c.huifuzheid
+        where 1=1
+        ORDER BY faqishijian desc
+    </sql>
+
+    <sql id="orderSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by faqishijian desc
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order == 0">
+            asc
+        </if>
+    </sql>
+
+    <sql id="querySql">
+
+        <if test="zhutimingcheng != null and zhutimingcheng != ''">
+            and zhutimingcheng like '%${zhutimingcheng}%'
+        </if>
+
+        <if test="beginTime != null and beginTime != ''">
+            and left(faqishijian,10) &gt;= #{beginTime}
+        </if>
+
+        <if test="endTime != null and endTime != ''">
+            and left(faqishijian,10) &lt;= #{endTime}
+        </if>
+
+        <if test="zhutiid != null and zhutiid != ''">
+            and zhutiid = #{zhutiid}
+        </if>
+
+    </sql>
+
+    <select timeout="600" id="selectGetTJ" resultMap="ResultMap"
+            parameterType="org.springblade.anbiao.qiyeshouye.page.ZQHTPage">
+        <if test="size == 0">
+            select * from (
+            <include refid="tableSql"/>
+            )b
+            where 1=1
+            <include refid="querySql"/>
+            <include refid="orderSql"/>
+            limit ${total}
+        </if>
+        <if test="current != 0">
+            select * from (
+            <include refid="tableSql"/>
+            )b
+            where 1=1
+            <include refid="querySql"/>
+            <include refid="orderSql"/>
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <select timeout="90" id="selectGetTJTotal"
+            parameterType="org.springblade.anbiao.qiyeshouye.page.ZQHTPage"
+            resultType="int">
+        select COUNT(1) from (
+        <include refid="tableSql"/>
+        )d where 1 = 1
+        <include refid="querySql"/>
+    </select>
+
+
+</mapper>

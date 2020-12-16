@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.anbiao.cheliangguanli.mapper.XincheyanshouMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="xincheyanshouResultMap" type="org.springblade.anbiao.cheliangguanli.entity.Xincheyanshou">
+        <id column="id" property="id"/>
+        <result column="dept_id" property="deptId"/>
+        <result column="cheshudanwei" property="cheshudanwei"/>
+        <result column="cheliangleixing" property="cheliangleixing"/>
+        <result column="caozuoren" property="caozuoren"/>
+        <result column="caozuorenid" property="caozuorenid"/>
+        <result column="caozuoshijian" property="caozuoshijian"/>
+        <result column="songchedanwei" property="songchedanwei"/>
+        <result column="songcheren" property="songcheren"/>
+        <result column="yancheren" property="yancheren"/>
+        <result column="yancheshijian" property="yancheshijian"/>
+        <result column="gaijinyancheren" property="gaijinyancheren"/>
+        <result column="gaijinshijian" property="gaijinshijian"/>
+        <result column="fujianyancheren" property="fujianyancheren"/>
+        <result column="beizhu" property="beizhu"/>
+        <result column="buchongjilu" property="buchongjilu"/>
+        <result column="gaijinshixiang" property="gaijinshixiang"/>
+        <result column="fujianqingkuang" property="fujianqingkuang"/>
+        <result column="fujian" property="fujian"/>
+        <result column="isdelete" property="isdelete"/>
+    </resultMap>
+
+
+    <select id="selectXincheyanshouPage" resultMap="xincheyanshouResultMap">
+        select * from anbiao_xincheyanshou where is_deleted = 0
+    </select>
+
+    <update id="updateDel" parameterType="java.lang.String">
+        UPDATE anbiao_xincheyanshou SET isdelete = 1 where id = #{id}
+    </update>
+
+    <sql id="tableSql">
+        SELECT
+        a.*, b.dept_name as deptName
+        FROM
+        anbiao_xincheyanshou a
+        inner join  (
+        <include refid="org.springblade.anbiao.guanlijigouherenyuan.mapper.OrganizationsMapper.getByDeptId"/>
+        ) b
+        on a.dept_id = b.id and a.isdelete = 0 and  b.is_deleted = 0
+
+    </sql>
+
+    <sql id="querySql">
+        <if test="deptName !=null and deptName != ''">
+            AND deptName LIKE '%${deptName}%'
+        </if>
+    </sql>
+    <sql id="orderSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by caozuoshijian
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+    </sql>
+
+    <select id="selectPageList" parameterType="org.springblade.anbiao.cheliangguanli.page.XincheyanshouPage" resultType="org.springblade.anbiao.cheliangguanli.vo.XincheyanshouVO">
+        <if test="size == 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${total}
+        </if>
+        <if test="current != 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <select id="selectTotal" parameterType="org.springblade.anbiao.cheliangguanli.page.XincheyanshouPage" resultType="int">
+        select COUNT(1) from (
+        <include refid="tableSql" />
+        )d
+        where 1 = 1
+        <include refid="querySql" />
+    </select>
+
+    <select id="selectByIds" parameterType="java.lang.String" resultType="org.springblade.anbiao.cheliangguanli.vo.XincheyanshouVO">
+        SELECT
+        a.*, b.dept_name as deptName
+        FROM
+        anbiao_xincheyanshou a
+        INNER JOIN blade_dept b ON a.dept_id = b.id and a.isdelete = 0 and  b.is_deleted = 0
+
+        WHERE 1=1 and ifnull(a.isdelete ,0) = 0 and a.id=#{id}
+    </select>
+</mapper>

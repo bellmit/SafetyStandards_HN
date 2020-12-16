@@ -1,0 +1,33 @@
+package org.springblade.deadline.entity;
+
+import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
+
+/**
+ * @program: SpringBlade
+ * @description: Bloh
+ * @author: wj
+ * @create: 2019-04-19 10:47
+ **/
+@Data
+@TableName("deadline")
+public class Deadline implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * 主键
+	 */
+	private Integer id;
+	/**
+	 * 计算机唯一id
+	 */
+	private String mainboard;
+	/**
+	 * 最后时间
+	 */
+	private LocalDateTime deadline;
+}

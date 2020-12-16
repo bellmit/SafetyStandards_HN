@@ -1,0 +1,323 @@
+package org.springblade.anbiao.jiashiyuan.controller;
+
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONArray;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import lombok.AllArgsConstructor;
+import org.springblade.anbiao.configure.entity.Configure;
+import org.springblade.anbiao.configure.service.IConfigureService;
+import org.springblade.anbiao.jiashiyuan.entity.JiaShiYuan;
+import org.springblade.anbiao.jiashiyuan.page.JiaShiYuanPage;
+import org.springblade.anbiao.jiashiyuan.service.IJiaShiYuanService;
+import org.springblade.anbiao.jiashiyuan.vo.JiaShiYuanVO;
+import org.springblade.core.log.annotation.ApiLog;
+import org.springblade.core.secure.BladeUser;
+import org.springblade.core.tool.api.R;
+import org.springblade.upload.upload.feign.IFileUploadClient;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+/**
+ * Created by you on 2019/4/22.
+ */
+@RestController
+@RequestMapping("/anbiao/jiashiyuan")
+@AllArgsConstructor
+@Api(value = "驾驶员资料管理", tags = "驾驶员资料管理")
+public class JiaShiYuanController {
+
+	private IJiaShiYuanService iJiaShiYuanService;
+	private IConfigureService mapService;
+	private IFileUploadClient fileUploadClient;
+
+	/**
+	 * 新增
+	 */
+	@PostMapping("/insert")
+	@ApiLog("新增-驾驶员资料管理")
+	@ApiOperation(value = "新增-驾驶员资料管理", notes = "传入jiaShiYuan", position = 1)
+	public R insert(@RequestBody JiaShiYuan jiaShiYuan,BladeUser user) {
+		jiaShiYuan.setJiashiyuanleixing("驾驶员");
+		jiaShiYuan.setCaozuoren(user.getUserName());
+		jiaShiYuan.setCaozuorenid(user.getUserId());
+		jiaShiYuan.setCaozuoshijian(DateUtil.now());
+		jiaShiYuan.setCreatetime(DateUtil.now());
+
+		if("男".equals(jiaShiYuan.getXingbie())){
+			jiaShiYuan.setXingbie("1");
+		}else if("女".equals(jiaShiYuan.getXingbie())){
+			jiaShiYuan.setXingbie("2");
+		}
+		if("".equals(jiaShiYuan.getChushengshijian())){
+			jiaShiYuan.setChushengshijian(null);
+		}
+		if("".equals(jiaShiYuan.getShenfenzhengyouxiaoqi())){
+			jiaShiYuan.setShenfenzhengyouxiaoqi(null);
+		}
+		if("".equals(jiaShiYuan.getPingyongriqi())){
+			jiaShiYuan.setPingyongriqi(null);
+		}
+		if("".equals(jiaShiYuan.getJiashizhengchulingriqi())){
+			jiaShiYuan.setJiashizhengchulingriqi(null);
+		}
+		if("".equals(jiaShiYuan.getJiashizhengyouxiaoqi())){
+			jiaShiYuan.setJiashizhengyouxiaoqi(null);
+		}
+		if("".equals(jiaShiYuan.getTijianyouxiaoqi())){
+			jiaShiYuan.setTijianyouxiaoqi(null);
+		}
+		if("".equals(jiaShiYuan.getCongyezhengyouxiaoqi())){
+			jiaShiYuan.setCongyezhengyouxiaoqi(null);
+		}
+		if("".equals(jiaShiYuan.getCongyezhengchulingri())){
+			jiaShiYuan.setCongyezhengchulingri(null);
+		}
+		if("".equals(jiaShiYuan.getXiacichengxinkaoheshijian())){
+			jiaShiYuan.setXiacichengxinkaoheshijian(null);
+		}
+		if("".equals(jiaShiYuan.getXiacijixujiaoyushijian())){
+			jiaShiYuan.setXiacijixujiaoyushijian(null);
+		}
+		if("".equals(jiaShiYuan.getHuzhaoyouxiaoqi())){
+			jiaShiYuan.setHuzhaoyouxiaoqi(null);
+		}
+		if("".equals(jiaShiYuan.getZhunjiazhengyouxiaoqi())){
+			jiaShiYuan.setZhunjiazhengyouxiaoqi(null);
+		}
+		if("".equals(jiaShiYuan.getLizhishijian())){
+			jiaShiYuan.setLizhishijian(null);
+		}
+		if("".equals(jiaShiYuan.getChengxinkaoheshijian())){
+			jiaShiYuan.setChengxinkaoheshijian(null);
+		}
+		if("".equals(jiaShiYuan.getJixujiaoyushijian())){
+			jiaShiYuan.setJixujiaoyushijian(null);
+		}
+		if("".equals(jiaShiYuan.getTijianriqi())){
+			jiaShiYuan.setTijianriqi(null);
+		}
+		return R.status(iJiaShiYuanService.save(jiaShiYuan));
+	}
+
+	/**
+	 * 编辑
+	 */
+	@PostMapping("/update")
+	@ApiLog("编辑-驾驶员资料管理")
+	@ApiOperation(value = "编辑-驾驶员资料管理", notes = "编辑jiaShiYuan", position = 2)
+	public R update(@RequestBody JiaShiYuan jiaShiYuan, BladeUser user) {
+		System.out.println(jiaShiYuan.toString());
+
+		if("男".equals(jiaShiYuan.getXingbie())){
+			jiaShiYuan.setXingbie("1");
+		}else if("女".equals(jiaShiYuan.getXingbie())){
+			jiaShiYuan.setXingbie("2");
+		}
+		jiaShiYuan.setCaozuoren(user.getUserName());
+		jiaShiYuan.setCaozuorenid(user.getUserId());
+		jiaShiYuan.setCaozuoshijian(DateUtil.now());
+		if("".equals(jiaShiYuan.getCreatetime())){
+			jiaShiYuan.setCreatetime(DateUtil.now());
+		}
+		if("".equals(jiaShiYuan.getChushengshijian())){
+			jiaShiYuan.setChushengshijian(null);
+		}
+		if("".equals(jiaShiYuan.getShenfenzhengyouxiaoqi())){
+			jiaShiYuan.setShenfenzhengyouxiaoqi(null);
+		}
+		if("".equals(jiaShiYuan.getPingyongriqi())){
+			jiaShiYuan.setPingyongriqi(null);
+		}
+		if("".equals(jiaShiYuan.getJiashizhengchulingriqi())){
+			jiaShiYuan.setJiashizhengchulingriqi(null);
+		}
+		if("".equals(jiaShiYuan.getJiashizhengyouxiaoqi())){
+			jiaShiYuan.setJiashizhengyouxiaoqi(null);
+		}
+		if("".equals(jiaShiYuan.getTijianyouxiaoqi())){
+			jiaShiYuan.setTijianyouxiaoqi(null);
+		}
+		if("".equals(jiaShiYuan.getCongyezhengyouxiaoqi())){
+			jiaShiYuan.setCongyezhengyouxiaoqi(null);
+		}
+		if("".equals(jiaShiYuan.getCongyezhengchulingri())){
+			jiaShiYuan.setCongyezhengchulingri(null);
+		}
+		if("".equals(jiaShiYuan.getXiacichengxinkaoheshijian())){
+			jiaShiYuan.setXiacichengxinkaoheshijian(null);
+		}
+		if("".equals(jiaShiYuan.getXiacijixujiaoyushijian())){
+			jiaShiYuan.setXiacijixujiaoyushijian(null);
+		}
+		if("".equals(jiaShiYuan.getHuzhaoyouxiaoqi())){
+			jiaShiYuan.setHuzhaoyouxiaoqi(null);
+		}
+		if("".equals(jiaShiYuan.getZhunjiazhengyouxiaoqi())){
+			jiaShiYuan.setZhunjiazhengyouxiaoqi(null);
+		}
+		if("".equals(jiaShiYuan.getLizhishijian())){
+			jiaShiYuan.setLizhishijian(null);
+		}
+		if("".equals(jiaShiYuan.getChengxinkaoheshijian())){
+			jiaShiYuan.setChengxinkaoheshijian(null);
+		}
+		if("".equals(jiaShiYuan.getJixujiaoyushijian())){
+			jiaShiYuan.setJixujiaoyushijian(null);
+		}
+		if("".equals(jiaShiYuan.getTijianriqi())){
+			jiaShiYuan.setTijianriqi(null);
+		}
+		return R.status(iJiaShiYuanService.updateById(jiaShiYuan));
+	}
+
+	/**
+	 *  删除
+	 */
+	@PostMapping("/del")
+	@ApiLog("删除-驾驶员资料管理")
+	@ApiOperation(value = "删除-驾驶员资料管理", notes = "传入id", position = 3)
+	public R del(String id) {
+		return R.status(iJiaShiYuanService.updateDel(id));
+	}
+
+	/**
+	 *  查询详情
+	 */
+	@GetMapping("/detail")
+	@ApiLog("详情-驾驶员资料管理")
+	@ApiOperation(value = "详情-驾驶员资料管理", notes = "传入id", position = 4)
+	public R detail(String id) {
+		JiaShiYuan detal=iJiaShiYuanService.selectByIds(id);
+		//照片
+		if(StrUtil.isNotEmpty(detal.getZhaopian())){
+			detal.setZhaopian(fileUploadClient.getUrl(detal.getZhaopian()));
+		}
+		//身份证附件
+		if(StrUtil.isNotEmpty(detal.getShenfenzhengfujian())){
+			detal.setShenfenzhengfujian(fileUploadClient.getUrl(detal.getShenfenzhengfujian()));
+		}
+		//从业证附件
+		if(StrUtil.isNotEmpty(detal.getCongyezhengfujian())){
+			detal.setCongyezhengfujian(fileUploadClient.getUrl(detal.getCongyezhengfujian()));
+		}
+		//驾驶证附件
+		if(StrUtil.isNotEmpty(detal.getJiashizhengfujian())){
+			detal.setJiashizhengfujian(fileUploadClient.getUrl(detal.getJiashizhengfujian()));
+		}
+		//复印件
+		if(StrUtil.isNotEmpty(detal.getFuyinjian())){
+			detal.setFuyinjian(fileUploadClient.getUrl(detal.getFuyinjian()));
+		}
+		return R.data(detal);
+	}
+
+	/**
+	 * 分页
+	 */
+	@PostMapping("/list")
+	@ApiLog("分页-驾驶员资料管理")
+	@ApiOperation(value = "分页-驾驶员资料管理", notes = "传入JiaShiYuanPage", position = 5)
+	public R<JiaShiYuanPage<JiaShiYuanVO>> list(@RequestBody JiaShiYuanPage jiaShiYuanPage) {
+		jiaShiYuanPage.setJiashiyuanleixing("驾驶员");
+		JiaShiYuanPage<JiaShiYuanVO> pages = iJiaShiYuanService.selectPageList(jiaShiYuanPage);
+		List<JiaShiYuanVO>  list=pages.getRecords();
+		for (int i = 0; i <list.size() ; i++) {
+			//照片
+			if(StrUtil.isNotEmpty(list.get(i).getZhaopian())){
+				list.get(i).setZhaopian(fileUploadClient.getUrl(list.get(i).getZhaopian()));
+			}
+			//身份证附件
+			if(StrUtil.isNotEmpty(list.get(i).getShenfenzhengfujian())){
+				list.get(i).setShenfenzhengfujian(fileUploadClient.getUrl(list.get(i).getShenfenzhengfujian()));
+			}
+			//从业证附件
+			if(StrUtil.isNotEmpty(list.get(i).getCongyezhengfujian())){
+				list.get(i).setCongyezhengfujian(fileUploadClient.getUrl(list.get(i).getCongyezhengfujian()));
+			}
+			//驾驶证附件
+			if(StrUtil.isNotEmpty(list.get(i).getJiashizhengfujian())){
+				list.get(i).setJiashizhengfujian(fileUploadClient.getUrl(list.get(i).getJiashizhengfujian()));
+			}
+			//复印件
+			if(StrUtil.isNotEmpty(list.get(i).getFuyinjian())){
+				list.get(i).setFuyinjian(fileUploadClient.getUrl(list.get(i).getFuyinjian()));
+			}
+		}
+		return R.data(pages);
+	}
+
+	/********************************** 配置表 ***********************/
+
+	/**
+	 * 根据单位id获取配置模块数据
+	 */
+	@GetMapping("/listMap")
+	@ApiLog("获取配置-驾驶员资料管理")
+	@ApiOperation(value = "获取配置-驾驶员资料管理", notes = "传入deptId", position = 6)
+	public R<JSONArray> listMap(Integer deptId) {
+		List<Configure> list1=mapService.selectMapList("anbiao_jiashiyuan_map",deptId);
+		String str="";
+		for (int i = 0; i <list1.size() ; i++) {
+			//转换成json数据并put id
+			JSONObject jsonObject = JSONUtil.parseObj(list1.get(i).getBiaodancanshu());
+			jsonObject.put("id",list1.get(i).getId());
+			if(!str.equals("")){
+				str=str+","+jsonObject.toString();
+			}else{
+				str=jsonObject.toString();
+			}
+		}
+		str="["+str+"]";
+		JSONArray json= JSONUtil.parseArray(str);
+		return R.data(json);
+	}
+
+	/**
+	 * 配置表新增
+	 */
+	@PostMapping("/insertMap")
+	@ApiLog("配置表新增-驾驶员资料管理")
+	@ApiOperation(value = "配置表新增-驾驶员资料管理", notes = "传入biaodancanshu与deptId", position = 7)
+	public R insertMap(String biaodancanshu,String deptId) {
+		Configure configure=new Configure();
+		JSONObject jsonObject = JSONUtil.parseObj(biaodancanshu);
+		configure.setLabel(jsonObject.getStr("label"));
+		configure.setShujubiaoziduan(jsonObject.getStr("prop"));
+		configure.setDeptId(Integer.parseInt(deptId));
+		configure.setTableName("anbiao_jiashiyuan_map");
+		configure.setBiaodancanshu(biaodancanshu);
+		return R.status(mapService.insertMap(configure));
+	}
+	/**
+	 * 配置表编辑
+	 */
+	@PostMapping("/updateMap")
+	@ApiLog("配置表编辑-驾驶员资料管理")
+	@ApiOperation(value = "配置表编辑-驾驶员资料管理", notes = "传入biaodancanshu与id", position = 9)
+	public R updateMap(String biaodancanshu,String id) {
+		Configure configure=new Configure();
+		JSONObject jsonObject = JSONUtil.parseObj(biaodancanshu);
+		configure.setId(id);
+		configure.setLabel(jsonObject.getStr("label"));
+		configure.setShujubiaoziduan(jsonObject.getStr("prop"));
+		configure.setTableName("anbiao_jiashiyuan_map");
+		configure.setBiaodancanshu(biaodancanshu);
+		return R.status(mapService.updateMap(configure));
+	}
+
+	/**
+	 * 配置表删除
+	 */
+	@PostMapping("/delMap")
+	@ApiLog("配置表删除-驾驶员资料管理")
+	@ApiOperation(value = "配置表删除-驾驶员资料管理", notes = "传入id", position = 8)
+	public R delMap(@ApiParam(value = "主键id", required = true) @RequestParam String id) {
+		return R.status(mapService.delMap("anbiao_jiashiyuan_map",id));
+	}
+}

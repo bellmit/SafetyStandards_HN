@@ -1,0 +1,332 @@
+/**
+ * Copyright (C), 2015-2020, 重庆铭信长兴科技有限公司
+ * FileName: GpsVehicleController
+ * Author:   呵呵哒
+ * Date:     2020/7/3 9:42
+ * Description:
+ */
+package org.springblade.anbiao.zhengfu.controller;
+
+import com.alibaba.csp.sentinel.util.StringUtil;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
+import org.apache.commons.lang.StringUtils;
+import org.springblade.anbiao.zhengfu.entity.ZhengFuBaoJingTongJi;
+import org.springblade.anbiao.zhengfu.entity.ZhengFuBaoJingTongJiJieSuan;
+import org.springblade.anbiao.zhengfu.entity.ZhengFuBaoJingTongJiLv;
+import org.springblade.anbiao.zhengfu.page.ZhengFuBaoJingTongJiJieSuanPage;
+import org.springblade.anbiao.zhengfu.service.IZhengFuBaoJingTongJiService;
+import org.springblade.core.log.annotation.ApiLog;
+import org.springblade.core.tool.api.R;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+import java.util.List;
+
+/**
+ * @author 呵呵哒
+ * @创建人 hyp
+ * @创建时间 2020/7/7
+ * @描述
+ */
+@RestController
+@AllArgsConstructor
+@RequestMapping("/anbiao/zhengFuBaoJingTongJi")
+@Api(value = "政府-报警数据统计", tags = "政府-报警数据统计")
+public class ZhengFuBaoJingTongJiController {
+
+	private IZhengFuBaoJingTongJiService iZhengFuBaoJingTongJiService;
+
+	@GetMapping(value = "/getZFBJQiYeList")
+	@ApiLog("政府-企业报警占比")
+	@ApiOperation(value = "政府-企业报警占比", notes = "传入deptId或者xiaJiDeptId",position = 1)
+	public R getZFBJQiYeList(String deptId,String xiaJiDeptId) throws IOException {
+		R rs = new R();
+		if(StringUtils.isBlank(deptId) && StringUtils.isBlank(xiaJiDeptId)){
+			rs.setCode(500);
+			rs.setMsg("请传人参数deptId或者xiaJiDeptId");
+			return rs;
+		}
+
+		if(!StringUtils.isBlank(deptId)){
+			List<ZhengFuBaoJingTongJi> zhengFuBaoJingTongJis = iZhengFuBaoJingTongJiService.selectGetZFBaoJing(deptId);
+			if(zhengFuBaoJingTongJis != null){
+				rs.setCode(200);
+				rs.setData(zhengFuBaoJingTongJis);
+				rs.setMsg("获取成功");
+			}else{
+				rs.setCode(500);
+				rs.setMsg("获取失败");
+				return rs;
+			}
+		}
+
+		if(!StringUtils.isBlank(xiaJiDeptId)){
+			List<ZhengFuBaoJingTongJi> zhengFuBaoJingTongJis = iZhengFuBaoJingTongJiService.selectGetZFBaoJing_XiaJi(xiaJiDeptId);
+			if(zhengFuBaoJingTongJis != null){
+				rs.setCode(200);
+				rs.setData(zhengFuBaoJingTongJis);
+				rs.setMsg("获取成功");
+			}else{
+				rs.setCode(500);
+				rs.setMsg("获取失败");
+				return rs;
+			}
+		}
+		return rs;
+	}
+
+	@GetMapping(value = "/getZFBJYearList")
+	@ApiLog("政府报警统计-报警处理情况(年)")
+	@ApiOperation(value = "政府报警统计-报警处理情况(年)", notes = "传入deptId或者xiaJiDeptId",position = 2)
+	public R getZFBJYearList(String deptId,String xiaJiDeptId) throws IOException {
+		R rs = new R();
+		if(StringUtils.isBlank(deptId) && StringUtils.isBlank(xiaJiDeptId)){
+			rs.setCode(500);
+			rs.setMsg("请传人参数deptId或者xiaJiDeptId");
+			return rs;
+		}
+		if(!StringUtils.isBlank(deptId)) {
+			ZhengFuBaoJingTongJi zhengFuBaoJingTongJis = iZhengFuBaoJingTongJiService.selectGetZFBaoJingYear(deptId);
+			if (zhengFuBaoJingTongJis != null) {
+				rs.setCode(200);
+				rs.setData(zhengFuBaoJingTongJis);
+				rs.setMsg("获取成功");
+			} else {
+				rs.setCode(500);
+				rs.setMsg("获取失败");
+				return rs;
+			}
+		}
+		if(!StringUtils.isBlank(xiaJiDeptId)){
+			List<ZhengFuBaoJingTongJi> zhengFuBaoJingTongJis = iZhengFuBaoJingTongJiService.selectGetZFBaoJingYear_XiaJi(xiaJiDeptId);
+			if (zhengFuBaoJingTongJis != null) {
+				rs.setCode(200);
+				rs.setData(zhengFuBaoJingTongJis);
+				rs.setMsg("获取成功");
+			} else {
+				rs.setCode(500);
+				rs.setMsg("获取失败");
+				return rs;
+			}
+		}
+		return rs;
+	}
+
+	@GetMapping(value = "/getZFBJMonthList")
+	@ApiLog("政府报警统计-报警处理情况(月)")
+	@ApiOperation(value = "政府报警统计-报警处理情况(月)", notes = "传入deptId或者xiaJiDeptId",position = 3)
+	public R getZFBJMonthList(String deptId,String xiaJiDeptId) throws IOException {
+		R rs = new R();
+		if(StringUtils.isBlank(deptId) && StringUtils.isBlank(xiaJiDeptId)){
+			rs.setCode(500);
+			rs.setMsg("请传人参数deptId或者xiaJiDeptId");
+			return rs;
+		}
+		if(!StringUtils.isBlank(deptId)) {
+			ZhengFuBaoJingTongJi zhengFuBaoJingTongJis = iZhengFuBaoJingTongJiService.selectGetZFBaoJingMonth(deptId);
+			if (zhengFuBaoJingTongJis != null) {
+				rs.setCode(200);
+				rs.setData(zhengFuBaoJingTongJis);
+				rs.setMsg("获取成功");
+			} else {
+				rs.setCode(500);
+				rs.setMsg("获取失败");
+				return rs;
+			}
+		}
+		if(!StringUtils.isBlank(xiaJiDeptId)){
+			List<ZhengFuBaoJingTongJi> zhengFuBaoJingTongJis = iZhengFuBaoJingTongJiService.selectGetZFBaoJingMonth_XiaJi(xiaJiDeptId);
+			if (zhengFuBaoJingTongJis != null) {
+				rs.setCode(200);
+				rs.setData(zhengFuBaoJingTongJis);
+				rs.setMsg("获取成功");
+			} else {
+				rs.setCode(500);
+				rs.setMsg("获取失败");
+				return rs;
+			}
+		}
+		return rs;
+	}
+
+	@GetMapping(value = "/getZFBJQSList")
+	@ApiLog("政府报警统计-当年报警、处警趋势(年)")
+	@ApiOperation(value = "政府报警统计-当年报警、处警趋势(年)", notes = "传入deptId或者xiaJiDeptId",position = 4)
+	public R getZFBJQSList(String deptId,String xiaJiDeptId) throws IOException {
+		R rs = new R();
+		if(StringUtils.isBlank(deptId) && StringUtils.isBlank(xiaJiDeptId)){
+			rs.setCode(500);
+			rs.setMsg("请传人参数deptId或者xiaJiDeptId");
+			return rs;
+		}
+		if(!StringUtils.isBlank(deptId)) {
+			List<ZhengFuBaoJingTongJi> zhengFuBaoJingTongJis = iZhengFuBaoJingTongJiService.selectGetZFBaoJingQuShi(deptId);
+			if (zhengFuBaoJingTongJis != null) {
+				rs.setCode(200);
+				rs.setData(zhengFuBaoJingTongJis);
+				rs.setMsg("获取成功");
+			} else {
+				rs.setCode(500);
+				rs.setMsg("获取失败");
+				return rs;
+			}
+		}
+		if(!StringUtils.isBlank(xiaJiDeptId)){
+			List<ZhengFuBaoJingTongJi> zhengFuBaoJingTongJis = iZhengFuBaoJingTongJiService.selectGetZFBaoJingQuShi_XiaJi(xiaJiDeptId);
+			if (zhengFuBaoJingTongJis != null) {
+				rs.setCode(200);
+				rs.setData(zhengFuBaoJingTongJis);
+				rs.setMsg("获取成功");
+			} else {
+				rs.setCode(500);
+				rs.setMsg("获取失败");
+				return rs;
+			}
+		}
+		return rs;
+	}
+
+	@GetMapping(value = "/getZFQYBJPMList")
+	@ApiLog("政府报警统计-企业报警排名")
+	@ApiOperation(value = "政府报警统计-企业报警排名", notes = "传入deptId或者xiaJiDeptId",position = 4)
+	public R getZFQYBJPMList(String deptId,String xiaJiDeptId) throws IOException {
+		R rs = new R();
+		if(StringUtils.isBlank(deptId) && StringUtils.isBlank(xiaJiDeptId)){
+			rs.setCode(500);
+			rs.setMsg("请传人参数deptId或者xiaJiDeptId");
+			return rs;
+		}
+		if(!StringUtils.isBlank(deptId)) {
+			List<ZhengFuBaoJingTongJi> zhengFuBaoJingTongJis = iZhengFuBaoJingTongJiService.selectGetZFQYBaoJingPaiMing(deptId);
+			if (zhengFuBaoJingTongJis != null) {
+				rs.setCode(200);
+				rs.setData(zhengFuBaoJingTongJis);
+				rs.setMsg("获取成功");
+			} else {
+				rs.setCode(500);
+				rs.setMsg("获取失败");
+				return rs;
+			}
+		}
+		if(!StringUtils.isBlank(xiaJiDeptId)){
+			List<ZhengFuBaoJingTongJi> zhengFuBaoJingTongJis = iZhengFuBaoJingTongJiService.selectGetZFQYBaoJingPaiMing_XiaJi(xiaJiDeptId);
+			if (zhengFuBaoJingTongJis != null) {
+				rs.setCode(200);
+				rs.setData(zhengFuBaoJingTongJis);
+				rs.setMsg("获取成功");
+			} else {
+				rs.setCode(500);
+				rs.setMsg("获取失败");
+				return rs;
+			}
+		}
+		return rs;
+	}
+
+	@GetMapping(value = "/getZFDQBJPMList")
+	@ApiLog("政府报警统计-地区报警排名")
+	@ApiOperation(value = "政府报警统计-地区报警排名", notes = "传入deptId或者xiaJiDeptId",position = 4)
+	public R getZFDQBJPMList(String deptId,String xiaJiDeptId) throws IOException {
+		R rs = new R();
+		if(StringUtils.isBlank(deptId) && StringUtils.isBlank(xiaJiDeptId)){
+			rs.setCode(500);
+			rs.setMsg("请传人参数deptId或者xiaJiDeptId");
+			return rs;
+		}
+		if(!StringUtils.isBlank(deptId)) {
+			//selectGetZFDQBaoJingPaiMing
+			List<ZhengFuBaoJingTongJi> zhengFuBaoJingTongJis = iZhengFuBaoJingTongJiService.selectGetZFDQBaoJingPaiMing(deptId);
+			if (zhengFuBaoJingTongJis != null) {
+				rs.setCode(200);
+				rs.setData(zhengFuBaoJingTongJis);
+				rs.setMsg("获取成功");
+			} else {
+				rs.setCode(500);
+				rs.setMsg("获取失败");
+				return rs;
+			}
+		}
+		if(!StringUtils.isBlank(xiaJiDeptId)){
+			List<ZhengFuBaoJingTongJi> zhengFuBaoJingTongJis = iZhengFuBaoJingTongJiService.selectGetZFDQBaoJingPaiMing_XiaJi(xiaJiDeptId);
+			if (zhengFuBaoJingTongJis != null) {
+				rs.setCode(200);
+				rs.setData(zhengFuBaoJingTongJis);
+				rs.setMsg("获取成功");
+			} else {
+				rs.setCode(500);
+				rs.setMsg("获取失败");
+				return rs;
+			}
+		}
+		return rs;
+	}
+
+	@PostMapping(value = "/getZFBJTJJS")
+	@ApiLog("政府报警统计-报警统计结算")
+	@ApiOperation(value = "政府报警统计-报警统计结算", notes = "传入deptId或者xiaJiDeptId",position = 4)
+	public R<ZhengFuBaoJingTongJiJieSuanPage<ZhengFuBaoJingTongJiJieSuan>> getZFBJTJJS(@RequestBody ZhengFuBaoJingTongJiJieSuanPage zhengFuBaoJingTongJiJieSuanPage) {
+		//排序条件
+		////默认报警总数降序
+		if(zhengFuBaoJingTongJiJieSuanPage.getOrderColumns()==null){
+			zhengFuBaoJingTongJiJieSuanPage.setOrderColumn("chaoSuBaoJing");
+		}else{
+			zhengFuBaoJingTongJiJieSuanPage.setOrderColumn(zhengFuBaoJingTongJiJieSuanPage.getOrderColumns());
+		}
+		ZhengFuBaoJingTongJiJieSuanPage<ZhengFuBaoJingTongJiJieSuan> pages = iZhengFuBaoJingTongJiService.selectGetBJTJ(zhengFuBaoJingTongJiJieSuanPage);
+		return R.data(pages);
+	}
+
+	@PostMapping(value = "/getZFDQBJCLLVTJ")
+	@ApiLog("政府报警统计-地区报警处理率")
+	@ApiOperation(value = "政府报警统计-地区报警处理率", notes = "传入deptId或者xiaJiDeptId",position = 5)
+	public R<ZhengFuBaoJingTongJiJieSuanPage<ZhengFuBaoJingTongJiLv>> getZFDQBJCLLVTJ(@RequestBody ZhengFuBaoJingTongJiJieSuanPage zhengFuBaoJingTongJiJieSuanPage) {
+		ZhengFuBaoJingTongJiJieSuanPage<ZhengFuBaoJingTongJiLv> pages = iZhengFuBaoJingTongJiService.selectGetDqLvTJ(zhengFuBaoJingTongJiJieSuanPage);
+		return R.data(pages);
+	}
+
+	@PostMapping(value = "/getZFQYBJCLLVTJ")
+	@ApiLog("政府报警统计-企业报警处理率")
+	@ApiOperation(value = "政府报警统计-企业报警处理率", notes = "传入deptId或者xiaJiDeptId",position = 6)
+	public R<ZhengFuBaoJingTongJiJieSuanPage<ZhengFuBaoJingTongJiLv>> getZFQYBJCLLVTJ(@RequestBody ZhengFuBaoJingTongJiJieSuanPage zhengFuBaoJingTongJiJieSuanPage) {
+		ZhengFuBaoJingTongJiJieSuanPage<ZhengFuBaoJingTongJiLv> pages = iZhengFuBaoJingTongJiService.selectGetQYLvTJ(zhengFuBaoJingTongJiJieSuanPage);
+		return R.data(pages);
+	}
+
+	@PostMapping(value = "/getZFGPSBJMX")
+	@ApiLog("政府报警统计-GPS报警详情明细")
+	@ApiOperation(value = "政府报警统计-GPS报警详情明细", notes = "传入deptId或者xiaJiDeptId",position = 7)
+	public R<ZhengFuBaoJingTongJiJieSuanPage<ZhengFuBaoJingTongJiLv>> getZFGPSBJMX(@RequestBody ZhengFuBaoJingTongJiJieSuanPage zhengFuBaoJingTongJiJieSuanPage) {
+		ZhengFuBaoJingTongJiJieSuanPage<ZhengFuBaoJingTongJiLv> pages = iZhengFuBaoJingTongJiService.selectGetGPSMXTJ(zhengFuBaoJingTongJiJieSuanPage);
+		return R.data(pages);
+	}
+
+	@PostMapping(value = "/getZFDMSBJMX")
+	@ApiLog("政府报警统计-DMS报警详情明细")
+	@ApiOperation(value = "政府报警统计-DMS报警详情明细", notes = "传入deptId或者xiaJiDeptId",position = 8)
+	public R<ZhengFuBaoJingTongJiJieSuanPage<ZhengFuBaoJingTongJiLv>> getZFDMSBJMX(@RequestBody ZhengFuBaoJingTongJiJieSuanPage zhengFuBaoJingTongJiJieSuanPage) {
+		ZhengFuBaoJingTongJiJieSuanPage<ZhengFuBaoJingTongJiLv> pages = iZhengFuBaoJingTongJiService.selectGetDMSMXTJ(zhengFuBaoJingTongJiJieSuanPage);
+		return R.data(pages);
+	}
+
+	@PostMapping(value = "/getZFVehicleBJMX")
+	@ApiLog("政府报警统计-报警车辆详情明细")
+	@ApiOperation(value = "政府报警统计-报警车辆详情明细", notes = "传入deptId",position = 9)
+	public R<ZhengFuBaoJingTongJiJieSuanPage<ZhengFuBaoJingTongJiLv>> getZFVehicleBJMX(@RequestBody ZhengFuBaoJingTongJiJieSuanPage zhengFuBaoJingTongJiJieSuanPage) {
+		ZhengFuBaoJingTongJiJieSuanPage<ZhengFuBaoJingTongJiLv> pages = iZhengFuBaoJingTongJiService.selectGetVehicleMXTJ(zhengFuBaoJingTongJiJieSuanPage);
+		return R.data(pages);
+	}
+
+	@PostMapping(value = "/getZFALLBJMX")
+	@ApiLog("政府报警统计-所有报警详情明细")
+	@ApiOperation(value = "政府报警统计-所有报警详情明细", notes = "传入deptId",position = 10)
+	public R<ZhengFuBaoJingTongJiJieSuanPage<ZhengFuBaoJingTongJiLv>> getZFALLBJMX(@RequestBody ZhengFuBaoJingTongJiJieSuanPage zhengFuBaoJingTongJiJieSuanPage) {
+		ZhengFuBaoJingTongJiJieSuanPage<ZhengFuBaoJingTongJiLv> pages = iZhengFuBaoJingTongJiService.selectGetAllMXTJ(zhengFuBaoJingTongJiJieSuanPage);
+		return R.data(pages);
+	}
+
+}
+

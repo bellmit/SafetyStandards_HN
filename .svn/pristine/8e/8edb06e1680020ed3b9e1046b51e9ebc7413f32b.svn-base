@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.anbiao.cheliangguanli.mapper.ChelianganquanshebeiMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="chelianganquanshebeiResultMap" type="org.springblade.anbiao.cheliangguanli.entity.Chelianganquanshebei">
+        <id column="id" property="id"/>
+        <result column="dept_id" property="deptId"/>
+        <result column="cheliangid" property="cheliangid"/>
+        <result column="caozuoren" property="caozuoren"/>
+        <result column="caozuorenid" property="caozuorenid"/>
+        <result column="caozuoshijian" property="caozuoshijian"/>
+        <result column="guzhangjingshipai" property="guzhangjingshipai"/>
+        <result column="shiyongnianxian" property="shiyongnianxian"/>
+        <result column="shijijiankong3G" property="shijijiankong3G"/>
+        <result column="anzhuangGPS" property="anzhuangGPS"/>
+        <result column="jingdianshifangxian" property="jingdianshifangxian"/>
+        <result column="anquanchui" property="anquanchui"/>
+        <result column="miehuoqi" property="miehuoqi"/>
+        <result column="sanjiaomu" property="sanjiaomu"/>
+        <result column="fadongjimiehuo" property="fadongjimiehuo"/>
+        <result column="fanghualian" property="fanghualian"/>
+        <result column="jiaotongchui" property="jiaotongchui"/>
+        <result column="tiechan" property="tiechan"/>
+        <result column="fanghuozhao" property="fanghuozhao"/>
+        <result column="yingpanluxiangji" property="yingpanluxiangji"/>
+        <result column="shadai" property="shadai"/>
+        <result column="sanjiaopai" property="sanjiaopai"/>
+        <result column="biaoshideng" property="biaoshideng"/>
+        <result column="beizhu" property="beizhu"/>
+        <result column="fujian" property="fujian"/>
+        <result column="isdelete" property="isdelete"/>
+    </resultMap>
+
+
+    <select id="selectChelianganquanshebeiPage" resultMap="chelianganquanshebeiResultMap">
+        select * from anbiao_chelianganquanshebei where is_deleted = 0
+    </select>
+
+    <update id="updateDel" parameterType="java.lang.String">
+        UPDATE anbiao_chelianganquanshebei SET isdelete = 1 where id = #{id}
+    </update>
+
+    <sql id="tableSql">
+        SELECT
+        a.*, b.dept_name as deptName, c.cheliangpaizhao as cheliangpaizhao, c.chepaiyanse as chepaiyanse
+        FROM
+        anbiao_chelianganquanshebei a
+        inner join  (
+        <include refid="org.springblade.anbiao.guanlijigouherenyuan.mapper.OrganizationsMapper.getByDeptId"/>
+        ) b
+        on a.dept_id = b.id and a.isdelete = 0 and  b.is_deleted = 0
+        INNER JOIN anbiao_vehicle c on a.cheliangid = c.id
+
+    </sql>
+
+    <sql id="querySql">
+        <if test="deptName !=null and deptName != ''">
+            AND deptName LIKE '%${deptName}%'
+        </if>
+    </sql>
+    <sql id="orderSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by caozuoshijian
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+    </sql>
+
+    <select id="selectPageList" parameterType="org.springblade.anbiao.cheliangguanli.page.ChelianganquanshebeiPage" resultType="org.springblade.anbiao.cheliangguanli.vo.ChelianganquanshebeiVO">
+        <if test="size == 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${total}
+        </if>
+        <if test="current != 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <select id="selectTotal" parameterType="org.springblade.anbiao.cheliangguanli.page.ChelianganquanshebeiPage" resultType="int">
+        select COUNT(1) from (
+        <include refid="tableSql" />
+        )d
+        where 1 = 1
+        <include refid="querySql" />
+    </select>
+
+    <select id="selectByIds" parameterType="java.lang.String" resultType="org.springblade.anbiao.cheliangguanli.vo.ChelianganquanshebeiVO">
+        SELECT
+        a.*, b.dept_name as deptName, c.cheliangpaizhao as cheliangpaizhao, c.chepaiyanse as chepaiyanse
+        FROM
+        anbiao_chelianganquanshebei a
+        INNER JOIN blade_dept b ON a.dept_id = b.id and a.isdelete = 0 and  b.is_deleted = 0
+        INNER JOIN anbiao_vehicle c on a.cheliangid = c.id
+        WHERE 1=1 and ifnull(a.isdelete ,0) = 0 and a.id=#{id}
+    </select>
+</mapper>

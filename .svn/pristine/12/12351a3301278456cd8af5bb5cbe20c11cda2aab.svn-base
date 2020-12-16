@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.anbiao.jinritixing.mapper.YujingquanxianMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="yujingquanxianResultMap" type="org.springblade.anbiao.jinritixing.entity.Yujingquanxian">
+        <id column="id" property="id"/>
+        <result column="dept_id" property="deptId"/>
+        <result column="yujingxiangid" property="yujingxiangid"/>
+        <result column="caozuoren" property="caozuoren"/>
+        <result column="caozuorenid" property="caozuorenid"/>
+        <result column="caozuoshijian" property="caozuoshijian"/>
+    </resultMap>
+
+
+    <select id="selectYujingquanxianPage" resultMap="yujingquanxianResultMap">
+        select * from anbiao_yujingquanxian where is_deleted = 0
+    </select>
+
+    <sql id="tableSql">
+        SELECT id,id as yujingxiangid,yujingxiang,yujingxiang title from anbiao_yujingxiang
+    </sql>
+
+    <sql id="tableSqls">
+        SELECT DISTINCT a.yujingxiangid,b.yujingxiang,
+        b.yujingxiang title
+        from anbiao_yujingquanxian a
+        LEFT JOIN anbiao_yujingxiang b on a.yujingxiangid = b.id
+        where 1 = 1
+        <if test="deptId != null">
+            AND a.dept_id = #{deptId}
+        </if>
+        <if test="postId != null">
+            AND a.postid = #{postId}
+        </if>
+    </sql>
+
+    <select id="selectAllYuJing" resultType="org.springblade.anbiao.jinritixing.vo.YujingquanxianVO">
+
+            <include refid="tableSql" />
+
+    </select>
+
+    <select id="selectYuJingList" parameterType="org.springblade.anbiao.jinritixing.page.YujingquanxianPage" resultType="org.springblade.anbiao.jinritixing.vo.YujingquanxianVO">
+
+            <include refid="tableSqls" />
+
+    </select>
+
+    <delete id="delYuJing" parameterType="org.springblade.anbiao.jinritixing.page.YujingquanxianPage">
+        DELETE anbiao_yujingquanxian where 1 = 1 and dept_id = #{deptId} AND postid = #{postId}
+    </delete>
+
+    <select id="yujingjiesuan" parameterType="org.springblade.anbiao.jinritixing.page.YujingquanxianPage">
+
+        call yjyh(#{deptId},#{yujingxiangid})
+
+    </select>
+
+
+</mapper>

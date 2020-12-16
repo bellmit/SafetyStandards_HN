@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.alarm.mapper.AlarmvehdailyreportMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="alarmsummaryResultMap" type="org.springblade.alarm.entity.Alarmvehdailyreport">
+        <result column="company" property="company"/>
+        <result column="cheliangpaizhao" property="cheliangpaizhao"/>
+        <result column="chepaiyanse" property="chepaiyanse"/>
+        <result column="date" property="date"/>
+        <result column="baojingcishu" property="baojingcishu"/>
+        <result column="zhudongbaojingcishu" property="zhudongbaojingcishu"/>
+        <result column="chaosu" property="chaosu"/>
+        <result column="pilao" property="pilao"/>
+        <result column="yejian" property="yejian"/>
+        <result column="budingwei" property="budingwei"/>
+        <result column="pilaoshipin" property="pilaoshipin"/>
+        <result column="dadianhua" property="dadianhua"/>
+        <result column="chouyan" property="chouyan"/>
+        <result column="fenshen" property="fenshen"/>
+        <result column="yanzhongcishu" property="yanzhongcishu"/>
+        <result column="yanzhongchaosu" property="yanzhongchaosu"/>
+        <result column="yanzhongpilao" property="yanzhongpilao"/>
+        <result column="createtime" property="createtime"/>
+
+        <result column="chaosucl" property="chaosucl"/>
+        <result column="pilaocl" property="pilaocl"/>
+        <result column="yejiancl" property="yejiancl"/>
+        <result column="buzaixiancl" property="buzaixiancl"/>
+        <result column="budingweicl" property="budingweicl"/>
+        <result column="pilaoshipincl" property="pilaoshipincl"/>
+        <result column="dadianhuacl" property="dadianhuacl"/>
+        <result column="chouyancl" property="chouyancl"/>
+        <result column="fenshencl" property="fenshencl"/>
+
+
+    </resultMap>
+
+
+    <!--<select id="selectAlarmsummaryPage" resultMap="alarmsummaryResultMap">
+        select * from baobiao_alarmsummary where is_deleted = 0
+    </select>-->
+    <select id="findpageList" resultType="integer" parameterType="org.springblade.alarm.page.AlarmvehPage">
+        select  count(1) from
+        baobiao_alarmvehdailyreport
+        where
+                1=1
+        <include refid="querySql"/>
+
+    </select>
+
+    <select id="chaosu" resultType="org.springblade.alarm.entity.Alarmvehdailyreport" parameterType="org.springblade.alarm.page.AlarmvehPage">
+     <if test="size ==0">
+            select * from (
+         <include refid="tablesqlchaosu"/>
+         <include refid="querySql"/>
+         ) b
+         <!-- 默认排序规则 -->
+         <if test="orderColumn == null or orderColumn == ''">
+             order by chaosu desc
+         </if>
+         <include refid="orderSql"/>
+         LIMIT #{total}
+     </if>
+
+        <if test="current != 0">
+            select * from (
+            <include refid="tablesqlchaosu"/>
+            <include refid="querySql"/>
+            ) b
+            <!-- 默认排序规则 -->
+            <if test="orderColumn == null or orderColumn == ''">
+                order by chaosu desc
+            </if>
+            <include refid="orderSql"/>
+            LIMIT #{offsetNo},#{size}
+        </if>
+
+    </select>
+    <select id="pilao" resultType="org.springblade.alarm.entity.Alarmvehdailyreport" parameterType="org.springblade.alarm.page.AlarmvehPage">
+        <if test="size ==0" >
+            select  * from (
+            <include refid="tablesqlpilao"/>
+            <include refid="querySql"/>
+            ) b
+            <include refid="orderSql"/>
+            <!-- 默认排序规则 -->
+            <if test="orderColumn == null or orderColumn == ''">
+                order by pilao desc
+            </if>
+             LIMIT #{total}
+        </if>
+        <if test="current != 0">
+            select  * from (
+            <include refid="tablesqlpilao"/>
+            <include refid="querySql"/>
+            ) b
+            <!-- 默认排序规则 -->
+            <if test="orderColumn == null or orderColumn == ''">
+                order by pilao desc
+            </if>
+            <include refid="orderSql"/>
+             LIMIT #{offsetNo},#{size}
+        </if>
+
+
+
+
+    </select>
+    <select id="zhudonganquan"  resultType="org.springblade.alarm.entity.Alarmvehdailyreport" parameterType="org.springblade.alarm.page.AlarmvehPage">
+        <if test="size==0">
+            select * from (
+            <include refid="tablesqlzhudonganquan"/>
+
+            <include refid="querySql"/>
+            ) b
+            <!-- 默认排序规则 -->
+            <if test="orderColumn == null or orderColumn == ''">
+                order by zhudongbaojingcishu desc
+            </if>
+            <include refid="orderSql"/>
+
+            LIMIT #{total}
+
+        </if>
+        <if test="current != 0">
+            select * from (
+            <include refid="tablesqlzhudonganquan"/>
+
+            <include refid="querySql"/>
+            ) b
+            <!-- 默认排序规则 -->
+            <if test="orderColumn == null or orderColumn == ''">
+                order by zhudongbaojingcishu desc
+            </if>
+            <include refid="orderSql"/>
+             LIMIT #{offsetNo},#{size}
+
+        </if>
+
+    </select>
+    <sql id="querySql">
+            <if test="company!=null and company!=''">
+             and   company=#{company}
+
+            </if>
+            <if test="date!=null and date!=''">
+            and date=#{date}   and cheliangpaizhao not like '%挂'
+            </if>
+
+
+    </sql>
+    <sql id="tablesqlchaosu">
+            select
+            company,
+            cheliangpaizhao,
+            (IFNULL(yanzhongchaosu1,0)+IFNULL(yanzhongchaosu2,0)+IFNULL(yanzhongchaosu3,0) ) as chaosu,
+            date,
+            chaosucl,
+            CASE when (IFNULL(yanzhongchaosu1,0)+IFNULL(yanzhongchaosu2,0)+IFNULL(yanzhongchaosu3,0) )=0 then '100.00%'
+            ELSE
+            CONCAT(convert((IFNULL(yanzhongchaosu1cl,0)+IFNULL(yanzhongchaosu2cl,0)+IFNULL(yanzhongchaosu3cl,0)) /(IFNULL(yanzhongchaosu1,0)+IFNULL(yanzhongchaosu2,0)+IFNULL(yanzhongchaosu3,0))*100,decimal(10,2)),'%') end chulilv,
+            '由系统推送至企业BS和微信端告知安全员' as chulixinxing
+            from
+            baobiao_alarmvehdailyreport
+            where 1=1
+                and (IFNULL(yanzhongchaosu1,0)+IFNULL(yanzhongchaosu2,0)+IFNULL(yanzhongchaosu3,0) ) &gt; 0
+
+    </sql>
+    <sql id="tablesqlzhudonganquan">
+        select
+        company,
+        cheliangpaizhao,
+        zhudongbaojingcishu,
+        CASE when  zhudongbaojingcishu=0 then '100.00%'
+        else  CONCAT(convert((zhudongbaojingclcishu/zhudongbaojingcishu)* 100,decimal(10,2)),'%') end chulilv,
+        date,
+        dadianhua,
+        chouyan,
+        fenshen,
+        pilaoshipin,
+        '由系统推送至企业BS和微信端告知安全员' as chulixinxing
+         from
+              baobiao_alarmvehdailyreport
+         where 1=1
+            and zhudongbaojingcishu &gt; 0
+    </sql>
+    <sql id="tablesqlpilao">
+         select
+        company,
+        cheliangpaizhao,
+        IFNULL(pilao,0) as pilao,
+        case  when  IFNULL(pilao,0)=0 then '100.00%'
+        else  CONCAT(convert((IFNULL(pilaocl,0)/IFNULL(pilao,0)),decimal(10,2)),'%') end chulilv,
+        date,
+        pilaocl,
+        '由系统推送至企业BS和微信端告知安全员' as chulixinxing
+        from
+          baobiao_alarmvehdailyreport
+        where 1=1
+            and IFNULL(pilao,0) &gt; 0
+
+    </sql>
+    <sql id="orderSql">
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+    </sql>
+
+</mapper>

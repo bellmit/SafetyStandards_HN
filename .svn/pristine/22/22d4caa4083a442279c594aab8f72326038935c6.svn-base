@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.anbiao.richenganpai.mapper.RichenganpaiMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="richenganpaiResultMap" type="org.springblade.anbiao.richenganpai.entity.Richenganpai">
+        <id column="id" property="id"/>
+        <result column="dept_id" property="deptId"/>
+        <result column="renwuleixing" property="renwuleixing"/>
+        <result column="renwubiaoti" property="renwubiaoti"/>
+        <result column="anpairen" property="anpairen"/>
+        <result column="anpairen_id" property="anpairenId"/>
+        <result column="zerenren" property="zerenren"/>
+        <result column="zerenren_id" property="zerenrenId"/>
+        <result column="zhixingrens" property="zhixingrens"/>
+        <result column="zhixingren_ids" property="zhixingrenIds"/>
+        <result column="is_jinji" property="isJinji"/>
+        <result column="is_zhongyao" property="isZhongyao"/>
+        <result column="renwukaishishijian" property="renwukaishishijian"/>
+        <result column="renwujiezhishijian" property="renwujiezhishijian"/>
+        <result column="renwuneirong" property="renwuneirong"/>
+        <result column="ziwozongjie" property="ziwozongjie"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="caozuoren" property="caozuoren"/>
+        <result column="caozuorenid" property="caozuorenid"/>
+        <result column="caozuoshijian" property="caozuoshijian"/>
+        <result column="is_finish" property="isFinish"/>
+        <result column="renwudidian" property="renwudidian"/>
+    </resultMap>
+
+
+    <select id="selectRichenganpaiPage" resultMap="richenganpaiResultMap">
+        select * from anbiao_richenganpai where is_deleted = 0
+    </select>
+    <!--查询日程首页数据-->
+    <select id="selectRichengIndex" resultType="org.springblade.anbiao.richenganpai.vo.RichengIndexVo">
+        SELECT
+            a.key as num,
+            CONCAT(LEFT(#{date}, 8), a.key) AS date,
+            count(b.id) AS zongrenwushu,
+            sum(b.is_zhongyao) AS zhongyaorenwushu,
+            sum(b.is_jinji) AS jinjirenwushu
+        FROM
+            nums a
+        LEFT JOIN anbiao_richenganpai b
+        ON
+            unix_timestamp(CONCAT(LEFT(#{date}, 8), a.key)) BETWEEN unix_timestamp(b.renwukaishishijian) AND unix_timestamp(b.renwujiezhishijian)
+        AND b.dept_id = #{deptId}
+        AND ( b.zerenren_id = #{userId}  OR FIND_IN_SET(#{userId}, b.zhixingren_ids) )
+        WHERE
+            a.key &lt;= DAY (LAST_DAY(#{date}))
+        GROUP BY
+            a.key
+        ORDER BY
+            a.key
+    </select>
+    <!--获取日程代办事项-->
+    <select id="getByDate" resultType="org.springblade.anbiao.richenganpai.vo.RichenganpaiVO">
+        SELECT
+            id,
+            dept_id,
+            renwuleixing,
+            renwubiaoti,
+            anpairen,
+            anpairen_id,
+            zerenren,
+            zerenren_id,
+            zhixingrens,
+            zhixingren_ids,
+            is_jinji,
+            is_zhongyao,
+            renwukaishishijian,
+            renwujiezhishijian,
+            renwuneirong,
+            ziwozongjie,
+            is_deleted,
+            caozuoren,
+            caozuorenid,
+            caozuoshijian,
+            is_finish,
+            renwudidian,
+            CASE WHEN zerenren_id = #{userId} THEN 1 ELSE 0 END as isZerenren,
+            datediff(renwujiezhishijian,#{date}) as shenyutianshu
+        FROM
+            anbiao_richenganpai
+        WHERE is_deleted=0 and dept_id = #{deptId}
+        and (zerenren_id = #{userId} OR FIND_IN_SET(#{userId}, zhixingren_ids))
+        and unix_timestamp(#{date}) BETWEEN unix_timestamp(renwukaishishijian)
+        AND unix_timestamp(renwujiezhishijian)
+    </select>
+    <!--获取超期日程-->
+    <select id="getChaoqiByDate" resultType="org.springblade.anbiao.richenganpai.vo.RichenganpaiVO">
+        SELECT
+            id,
+            dept_id,
+            renwuleixing,
+            renwubiaoti,
+            anpairen,
+            anpairen_id,
+            zerenren,
+            zerenren_id,
+            zhixingrens,
+            zhixingren_ids,
+            is_jinji,
+            is_zhongyao,
+            renwukaishishijian,
+            renwujiezhishijian,
+            renwuneirong,
+            ziwozongjie,
+            is_deleted,
+            caozuoren,
+            caozuorenid,
+            caozuoshijian,
+            is_finish,
+            renwudidian,
+            CASE WHEN zerenren_id = #{userId} THEN 1 ELSE 2 END as isZerenren,
+            datediff(NOW(),renwujiezhishijian) as chaoqitianshu
+        FROM
+            anbiao_richenganpai
+        WHERE is_deleted=0 and dept_id = #{deptId}
+        and is_finish = 0
+        and (zerenren_id = #{userId} OR FIND_IN_SET(#{userId}, zhixingren_ids))
+        and unix_timestamp(NOW()) &gt; unix_timestamp(renwujiezhishijian)
+    </select>
+    <!--获取安排的日程-->
+    <select id="getAnpaiByUser" resultType="org.springblade.anbiao.richenganpai.vo.RichenganpaiVO">
+        SELECT
+            id,
+            dept_id,
+            renwuleixing,
+            renwubiaoti,
+            anpairen,
+            anpairen_id,
+            zerenren,
+            zerenren_id,
+            zhixingrens,
+            zhixingren_ids,
+            is_jinji,
+            is_zhongyao,
+            renwukaishishijian,
+            renwujiezhishijian,
+            renwuneirong,
+            ziwozongjie,
+            is_deleted,
+            caozuoren,
+            caozuorenid,
+            caozuoshijian,
+            is_finish,
+            renwudidian,
+            CASE WHEN zerenren_id = #{userId} THEN 1 ELSE 2 END as isZerenren,
+            datediff(NOW(),renwujiezhishijian) as chaoqitianshu
+        FROM
+            anbiao_richenganpai
+        WHERE is_deleted=0 and dept_id = #{deptId}
+        and is_finish = 0
+        and anpairen_id= #{userId}
+    </select>
+
+</mapper>

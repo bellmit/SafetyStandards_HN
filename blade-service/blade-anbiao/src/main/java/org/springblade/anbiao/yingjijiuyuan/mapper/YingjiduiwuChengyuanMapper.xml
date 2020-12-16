@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.anbiao.yingjijiuyuan.mapper.YingjiduiwuChengyuanMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="yingjiduiwuChengyuanResultMap" type="org.springblade.anbiao.yingjijiuyuan.entity.YingjiduiwuChengyuan">
+        <id column="id" property="id"/>
+        <result column="duiwuid" property="duiwuid"/>
+        <result column="bumen" property="bumen"/>
+        <result column="xingming" property="xingming"/>
+        <result column="zhiwu" property="zhiwu"/>
+        <result column="zhize" property="zhize"/>
+        <result column="dianhua" property="dianhua"/>
+        <result column="caozuoren" property="caozuoren"/>
+        <result column="caozuorenid" property="caozuorenid"/>
+        <result column="caozuoshijian" property="caozuoshijian"/>
+        <result column="is_deleted" property="isdel"/>
+    </resultMap>
+
+    <!-- 假删除 -->
+    <update id="deleteChengyuan" parameterType="java.lang.String" >
+         update anbiao_yingjiduiwu_chengyuan set
+            is_deleted = 1
+        WHERE id = #{id}
+    </update>
+
+    <!-- 根据应急队伍id 查询列表 -->
+    <select id="selectByDuiwuId" resultMap="yingjiduiwuChengyuanResultMap" parameterType="java.lang.String">
+        select  *  from  anbiao_yingjiduiwu_chengyuan
+        where yuanid=#{id} and ifnull(is_deleted,0)=0
+    </select>
+</mapper>

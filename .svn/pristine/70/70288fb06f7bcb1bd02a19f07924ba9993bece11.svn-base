@@ -1,0 +1,6 @@
+net.dreamlu.mica.feign.MicaFeignAutoConfiguration=\
+  org.springblade.doc.safetyproductionfile.feign.ISafetyProductionFileClient,\
+  org.springblade.doc.biaozhunhuamuban.feign.IBiaozhunhuamubanClient
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  org.springblade.doc.safetyproductionfile.feign.SafetyProductionFileClientFallback,\
+  org.springblade.doc.biaozhunhuamuban.feign.BiaozhunhuamubanClientFallback

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.anbiao.anquanmubiao.mapper.ZhongchangqijihuaMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="zhongchangqijihuaResultMap" type="org.springblade.anbiao.anquanmubiao.entity.Zhongchangqijihua">
+        <id column="id" property="id"/>
+        <result column="dept_id" property="deptId"/>
+        <result column="caozuoren" property="caozuoren"/>
+        <result column="caozuorenid" property="caozuorenid"/>
+        <result column="caozuoshijian" property="caozuoshijian"/>
+        <result column="biaoti" property="biaoti"/>
+        <result column="guihuaneirong" property="guihuaneirong"/>
+        <result column="fujian" property="fujian"/>
+        <result column="isdelete" property="isdelete"/>
+    </resultMap>
+
+
+    <select id="selectZhongchangqijihuaPage" resultMap="zhongchangqijihuaResultMap">
+        select * from anbiao_zhongchangqijihua where is_deleted = 0
+    </select>
+
+    <update id="updateDel" parameterType="java.lang.String">
+        UPDATE anbiao_zhongchangqijihua SET isdelete = 1 where id = #{id}
+    </update>
+
+    <insert id="insertNianDuJiHua" parameterType="org.springblade.anbiao.anquanmubiao.entity.Zhongchangqijihua" >
+        INSERT INTO anbiao_zhongchangqijihua
+         (id,dept_id,caozuoren,caozuorenid,caozuoshijian,biaoti,guihuaneirong,fujian,isdelete)
+        VALUES
+         (#{id},#{dept_id},#{caozuoren},#{caozuorenid},#{caozuoshijian},#{biaoti},#{guihuaneirong},#{fujian},#{isdelete})
+    </insert>
+
+    <sql id="tableSql">
+        SELECT
+        a.*,b.dept_name as deptName
+        FROM
+        anbiao_zhongchangqijihua a
+        inner join  (
+        <include refid="org.springblade.anbiao.guanlijigouherenyuan.mapper.OrganizationsMapper.getByDeptId"/>
+        ) b
+        on a.dept_id = b.id
+        WHERE 1=1 and ifnull(a.isdelete,0) = 0
+
+    </sql>
+
+    <sql id="querySql">
+        <if test="deptName !=null and deptName != ''">
+            AND deptName LIKE '%${deptName}%'
+        </if>
+    </sql>
+    <sql id="orderSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by caozuoshijian
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+    </sql>
+
+    <select id="selectPageList" parameterType="org.springblade.anbiao.anquanmubiao.page.ZhongchangqijihuaPage" resultType="org.springblade.anbiao.anquanmubiao.vo.ZhongchangqijihuaVO">
+        <if test="size == 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${total}
+        </if>
+        <if test="current != 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <select id="selectTotal" parameterType="org.springblade.anbiao.anquanmubiao.page.ZhongchangqijihuaPage" resultType="int">
+        select COUNT(1) from (
+        <include refid="tableSql" />
+        )d
+        where 1 = 1
+        <include refid="querySql" />
+    </select>
+
+    <select id="selectByIds" parameterType="java.lang.String" resultType="org.springblade.anbiao.anquanmubiao.vo.ZhongchangqijihuaVO">
+        SELECT
+        a.*,b.dept_name
+        FROM
+        anbiao_zhongchangqijihua a
+        inner join  blade_dept b
+        on a.dept_id = b.id
+        WHERE 1=1 and ifnull(a.isdelete ,0) = 0 and a.id=#{id}
+    </select>
+</mapper>

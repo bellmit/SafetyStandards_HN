@@ -1,0 +1,14 @@
+#服务器端口
+server:
+  port: 9110
+
+#数据源配置
+spring:
+  datasource:
+    url: ${blade.datasource.dev.url}
+    username: ${blade.datasource.dev.username}
+    password: ${blade.datasource.dev.password}
+#文件的物理路径前缀与url前缀
+fileserver:
+  path-prefix: ${fileserver.dev.path}
+  url-prefix: ${fileserver.dev.url}

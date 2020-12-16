@@ -1,0 +1,11 @@
+net.dreamlu.mica.feign.MicaFeignAutoConfiguration=\
+  org.springblade.anbiao.guanlijigouherenyuan.feign.IOrganizationsClient,\
+  org.springblade.anbiao.guanlijigouherenyuan.feign.IDepartmentpostClient,\
+  org.springblade.anbiao.guanlijigouherenyuan.feign.IPersonnelClient,\
+  org.springblade.anbiao.upload.feign.IFileUploadClient
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  org.springblade.anbiao.guanlijigouherenyuan.feign.IDepartmentpostClientBack,\
+  org.springblade.anbiao.upload.feign.IFileUploadClientBack,\
+  org.springblade.anbiao.baobiaowenjian.entity.ReportFileParse,\
+  org.springblade.anbiao.guanlijigouherenyuan.feign.IPersonnelClientBack,\
+  org.springblade.anbiao.guanlijigouherenyuan.feign.IOrganizationsClientBack

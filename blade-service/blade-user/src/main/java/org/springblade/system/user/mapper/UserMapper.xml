@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.system.user.mapper.UserMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="userResultMap" type="org.springblade.system.user.entity.User">
+        <result column="id" property="id"/>
+        <result column="tenant_code" property="tenantCode"/>
+        <result column="create_user" property="createUser"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_user" property="updateUser"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="status" property="status"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="account" property="account"/>
+        <result column="password" property="password"/>
+        <result column="name" property="name"/>
+        <result column="real_name" property="realName"/>
+        <result column="email" property="email"/>
+        <result column="phone" property="phone"/>
+        <result column="birthday" property="birthday"/>
+        <result column="sex" property="sex"/>
+        <result column="role_id" property="roleId"/>
+        <result column="dept_id" property="deptId"/>
+        <result column="postId" property="postId"/>
+        <result column="openid" property="openid"/>
+    </resultMap>
+
+
+
+    <!-- 通用查询结果列 -->
+    <sql id="baseColumnList">
+        select id,
+        create_user AS createUser,
+        create_time AS createTime,
+        update_user AS updateUser,
+        update_time AS updateTime,
+        status,
+        is_deleted AS isDeleted,
+        account, password, name, real_name, email, phone, birthday, sex, role_id, dept_id
+    </sql>
+
+    <select id="selectMaxId" resultType="java.lang.Integer">
+            SELECT max(id) id FROM blade_user;
+    </select>
+
+    <select id="selectByLoginName" resultType="java.lang.Integer">
+        select count(1) from blade_user where account=#{account};
+    </select>
+
+    <insert id="insertPer" parameterType="org.springblade.system.user.entity.User">
+    insert  into  blade_user(id,create_user,create_time,update_user,update_time,status,account,password,
+    name,real_name,email,phone,birthday,sex,dept_id,role_id)
+     values (#{id},#{createUser},#{createTime},#{updateUser},#{updateTime},#{status},#{account},#{password},
+     #{name},#{realName},#{email},#{phone},#{birthday},#{sex},#{deptId},#{roleId}
+     )
+    </insert>
+
+    <select id="selectByDeptId" resultType="org.springblade.system.user.entity.User">
+        SELECT
+            a.*
+        FROM
+            blade_user a
+        INNER JOIN anbiao_personnel b ON a.id=b.userid
+        WHERE
+            a.dept_id = #{deptId}
+    </select>
+
+    <update id="updatePer" parameterType="org.springblade.system.user.entity.User">
+        update  blade_user
+        set
+            update_user=#{updateUser},
+            update_time=#{updateTime},
+            account=#{account},
+            name=#{name},
+            real_name=#{realName},
+            email=#{email},
+            phone=#{phone},
+            birthday=#{birthday},
+            sex=#{sex}
+        where id=#{id}
+    </update>
+
+    <update id="deletePer" parameterType="org.springblade.system.user.entity.User">
+        update blade_user set is_deleted=1 where  id=#{param1}
+    </update>
+
+
+    <select id="selectUserPage" resultMap="userResultMap">
+        select * from blade_user where is_deleted = 0
+    </select>
+    <!--  根据page查询人员信息 -->
+    <sql id="tableSql">
+        select u.id,p.id as postId,gangwei.id as gangweiid,bumen.id as bumenid,jigou.id as jigouid,
+            u.name as name,
+            u.real_name as realName,
+            u.account,
+            CONCAT(jigou.dept_name,case when bumen.dept_name is null then '' else concat('/',bumen.dept_name)end,'/',gangwei.dept_name) as deptName,
+            gangwei.dept_name as postName,
+            u.phone,
+            u.is_deleted as zhuangtai,
+            u.create_time as createTimes,
+            u.update_time as updateTimes
+        from blade_user u
+            INNER JOIN blade_post p
+            ON u.id=p.user_id
+            INNER JOIN blade_dept gangwei
+            ON p.post_id=gangwei.id
+            LEFT JOIN blade_dept bumen
+            ON gangwei.parent_id = bumen.id and bumen.extend_type='部门'
+            INNER JOIN blade_dept jigou
+            ON (gangwei.parent_id=jigou.id or bumen.parent_id=jigou.id) and jigou.extend_type='机构'
+            INNER JOIN blade_dept shangji
+            ON locate(shangji.tree_code,jigou.tree_code)>0 and shangji.id=#{deptId}
+        where u.is_deleted=0
+    </sql>
+    <sql id="querySql">
+        <if test="deptName != null and deptName != ''">
+            and  locate(#{deptName},deptName)>0
+        </if>
+        <if test="realName != null and realName != ''">
+            and  locate(#{realName},realName)>0
+        </if>
+        <if test="account != null and account != ''">
+            and  locate(#{account},account)>0
+        </if>
+    </sql>
+    <sql id="orderSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by id
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+    </sql>
+
+    <select id="selectUserByPage"
+            parameterType="org.springblade.system.user.page.UserPage" resultType="org.springblade.system.user.entity.User">
+        <if test="size == 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${total}
+        </if>
+        <if test="current != 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <select id="selectUsersTotal"
+            parameterType="org.springblade.system.user.page.UserPage"
+            resultType="int">
+        select COUNT(1) from (
+        <include refid="tableSql" />
+        )d
+        where 1 = 1
+        <include refid="querySql" />
+    </select>
+
+    <select id="getUser" resultMap="userResultMap">
+       SELECT
+        a.*,
+        b.post_id postId
+     FROM
+          (select  * from blade_user where account = #{param1} and password = #{param2} and is_deleted=0)  a
+    LEFT JOIN blade_post b ON a.id = b.user_id
+        AND b.Isdefault=1
+        LIMIT 1
+    </select>
+
+    <select id="getUserById" resultMap="userResultMap">
+        SELECT
+            *
+        FROM
+            blade_user
+        WHERE
+            id = #{param1}
+    </select>
+
+    <select id="getRoleName" resultType="java.lang.String">
+        SELECT
+        role_name
+        FROM
+        blade_role
+        WHERE
+        id IN
+        <foreach collection="array" item="ids" index="index" open="(" close=")" separator=",">
+            #{ids}
+        </foreach>
+    </select>
+
+    <select id="getRoleAlias" resultType="java.lang.String">
+        SELECT
+            role_alias
+        FROM
+            blade_role
+        WHERE
+            id IN
+        <foreach collection="array" item="ids" index="index" open="(" close=")" separator=",">
+            #{ids}
+        </foreach>
+    </select>
+
+    <select id="getDeptName" resultType="java.lang.String">
+        SELECT
+            dept_name
+        FROM
+            blade_dept
+        WHERE
+            id IN
+        <foreach collection="array" item="ids" index="index" open="(" close=")" separator=",">
+            #{ids}
+        </foreach>
+    </select>
+
+    <select id="selectByPostId" resultMap="userResultMap" >
+    SELECT
+	    renyuan.*
+    FROM
+        blade_post gangwei
+    INNER JOIN blade_dept jigou ON jigou.id = gangwei.post_id
+    INNER JOIN blade_user renyuan ON gangwei.user_id = renyuan.id
+    and  renyuan.is_deleted = 0
+    AND gangwei.post_id=#{param1}
+    ORDER BY renyuan.id
+    </select>
+
+    <select id="selectByopenId" resultMap="userResultMap" >
+    SELECT
+	   openid,real_name,phone,sex,account
+    FROM
+        blade_user
+    WHERE openid=#{param1}
+    </select>
+
+    <select id="bindDriverOpenId" parameterType="org.springblade.system.user.entity.User">
+        update blade_user set openid=#{param2}
+        where account=#{param1}
+    </select>
+
+    <select id="getWeixinUser" resultMap="userResultMap">
+       SELECT
+        a.*,
+        b.post_id AS postId
+     FROM
+        blade_user a,
+        blade_post b
+    WHERE
+	a.id = b.user_id
+        and openid = #{param1}
+        AND b.Isdefault=1
+        LIMIT 1
+    </select>
+
+    <select id="getZFUser" resultMap="userResultMap">
+        SELECT
+            a.*,
+            case
+                when IFNULL(a.country,'') != '' then a.city
+                when IFNULL(a.city,'') != '' and IFNULL(a.country,'') = '' then left(a.province,2)
+                when IFNULL(a.province,'') != '' and IFNULL(a.city,'') = '' and IFNULL(a.country,'') = '' then 'China'
+            end as areaname,
+            case
+				when IFNULL(a.country,'') != '' and a.country LIKE CONCAT('%','县','%') then CONCAT('中国·',SUBSTRING_INDEX(a.country, '县', 1))
+				when IFNULL(a.country,'') != '' and a.country LIKE CONCAT('%','区','%') then CONCAT('中国·',SUBSTRING_INDEX(a.country, '区', 1))
+				when IFNULL(a.country,'') != '' and a.country LIKE CONCAT('%','市','%') then CONCAT('中国·',SUBSTRING_INDEX(a.country, '市', 1))
+				when IFNULL(a.city,'') != '' and IFNULL(a.country,'') = '' then CONCAT('中国·',SUBSTRING_INDEX(a.city, '市', 1))
+				when IFNULL(a.province,'') != '' and IFNULL(a.city,'') = '' and IFNULL(a.country,'') = '' then CONCAT('中国·',SUBSTRING_INDEX(a.province, '省', 1))
+		    end as mingcheng,
+            b.post_id postId
+        FROM
+            (
+                select
+                    a.id,a.dept_id,a.account,a.name,a.create_time,a.update_time,
+                    b.province,b.city,b.country
+                from
+                    blade_user a,anbiao_organization b
+                where a.dept_id = b.dept_id
+                and b.jigouleixing in('shengZF','shiZF','xianZF')
+                and b.isdelete = 0
+                and account = #{param1}
+                and password = #{param2}
+                and is_deleted=0
+            )  a
+        LEFT JOIN blade_post b ON a.id = b.user_id
+        AND b.Isdefault=1
+        LIMIT 1
+    </select>
+
+
+    <select id="getZFUserInfo" resultMap="userResultMap">
+        select a.id,a.account,b.id as dept_id,b.parent_id,b.dept_name,(
+            select b.dept_name from blade_dept b,blade_post c
+            where c.post_id = b.id
+            and c.Isdefault = 1
+            and c.user_id = #{userId}) as postName
+        from
+            blade_user a,blade_dept b,blade_post c
+        where a.dept_id = b.id
+            and b.EXTEND_TYPE= #{type}
+            and a.id = c.user_id
+            and c.Isdefault = 1
+            and a.id = #{userId}
+        LIMIT 1
+    </select>
+</mapper>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.anbiao.zhengfu.mapper.XinXiJiaoHuHuiFuMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="yuanxiudingResultMap" type="org.springblade.anbiao.zhengfu.entity.XinXiJiaoHuHuiFu">
+        <id column="id" property="id"/>
+    </resultMap>
+
+    <insert id="insertSelective" parameterType="org.springblade.anbiao.zhengfu.entity.XinXiJiaoHuHuiFu" >
+        insert into anbiao_xinxijiaohuhuifubiao
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+
+            <if test="zhutiid != null">
+                zhutiid,
+            </if>
+
+            <if test="huifuzheid != null">
+                huifuzheid,
+            </if>
+
+            <if test="zhengwen != null">
+                zhengwen,
+            </if>
+
+            <if test="huifushijian != null">
+                huifushijian,
+            </if>
+
+            <if test="suoshudanweiid != null">
+                suoshudanweiid
+            </if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+
+            <if test="zhutiid != null">
+                #{zhutiid},
+            </if>
+
+            <if test="huifuzheid != null">
+                #{huifuzheid},
+            </if>
+
+            <if test="zhengwen != null">
+                #{zhengwen},
+            </if>
+
+            <if test="huifushijian != null">
+                #{huifushijian},
+            </if>
+
+            <if test="suoshudanweiid != null">
+                #{suoshudanweiid}
+            </if>
+
+        </trim>
+    </insert>
+
+
+
+</mapper>

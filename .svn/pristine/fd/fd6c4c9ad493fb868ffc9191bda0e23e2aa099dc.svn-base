@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.app.yingjichuzhi.mapper.YingjichuzhiMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="yingjichuzhiVOResultMap" type="org.springblade.app.yingjichuzhi.vo.YingjichuzhiVO">
+        <id column="id" property="id"/>
+        <result column="dept_id" property="deptId"/>
+        <result column="title" property="title"/>
+        <result column="picture" property="picture"/>
+        <result column="caozuoren" property="caozuoren"/>
+        <result column="caozuoshijian" property="caozuoshijian"/>
+        <result column="caozuorenid" property="caozuorenid"/>
+        <result column="is_deleted" property="isdel"/>
+        <result column="createtime" property="createtime"/>
+    </resultMap>
+
+    <sql id="tableSql">
+        SELECT
+        a.id,a.dept_id,a.title,a.picture,a.caozuoren,a.caozuoshijian,a.caozuorenid
+        FROM
+        anbiao_yingjichuzhi a
+        inner join  blade_dept b
+        on a.dept_id = b.id
+        WHERE 1=1 and ifnull(a.is_deleted,0) = 0
+        <if test="deptId != null">
+            AND a.dept_id = ${deptId}
+        </if>
+
+    </sql>
+
+    <sql id="querySql">
+        <if test="title!='' and title!=null">
+            AND title LIKE '%${title}%'
+        </if>
+    </sql>
+
+    <sql id="orderSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by caozuoshijian
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+    </sql>
+
+    <!--自定义列表数据-->
+    <select id="selectYingjichuzhiPage" resultMap="yingjichuzhiVOResultMap"
+            parameterType="org.springblade.app.yingjichuzhi.page.YingjichuzhiPage"
+            resultType="org.springblade.app.yingjichuzhi.vo.YingjichuzhiVO">
+        <if test="size == 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${total}
+        </if>
+        <if test="current != 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <!--统计数据-->
+    <select id="selectYingjichuzhiTotal"
+            parameterType="org.springblade.app.yingjichuzhi.page.YingjichuzhiPage"
+            resultType="int">
+        select COUNT(1) from (
+        <include refid="tableSql" />
+        )d
+        where 1 = 1
+        <include refid="querySql" />
+    </select>
+
+
+
+
+</mapper>

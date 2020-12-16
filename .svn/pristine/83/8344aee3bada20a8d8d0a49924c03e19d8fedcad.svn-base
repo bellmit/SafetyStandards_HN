@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.anbiao.zhengfu.mapper.ZhengFuBaoGaoMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="ResultMap" type="org.springblade.anbiao.zhengfu.entity.ZhengFuBaoGao">
+        <id column="id" property="id"/>
+    </resultMap>
+
+    <!-- 查询列表 -->
+    <sql id="tableSql">
+        SELECT
+            a.id as muluid,
+            d.yunguanid as zhengfuid,
+            d.yunguanmingcheng as zhengfuname,
+            d.areaname,
+            a.name,
+            a.caozuoren,
+            a.caozuoshijian,
+            DATE_FORMAT(a.createtime,'%Y-%m-%d') as createtimeshow,
+            case
+                when a.property=1 then DATE_FORMAT(a.countdate,'%Y-%m-%d')
+                else CONCAT(DATE_FORMAT(a.countdate,'%Y/%m/%d'),' - ',DATE_FORMAT(a.countenddate,'%Y/%m/%d'))
+            end as countdate
+        FROM
+            baobiao_baobiaomulu AS a
+        inner join(
+            select * from anbiao_zhengfu_qiye
+            where 1=1
+            <if test=" province != '' and province !=null ">
+                and province = #{province}
+            </if>
+            <if test=" city != null and city != '' ">
+                and city = #{city}
+            </if>
+            <if test=" country != null and country != '' ">
+                and country = #{country}
+            </if>
+            )d on a.dept_id = d.yunguanid
+        where 1=1
+            and a.property = #{property}
+            and a.countDate &lt;= #{time}
+            and year(a.countDate) = year(#{time})
+            and ifnull(a.is_deleted,0) = 0
+        <if test=" yunguanId != null and yunguanId != '' ">
+            and d.yunguanid = #{yunguanId}
+        </if>
+    <if test=" province != null and province != '' ">
+        UNION
+            SELECT
+                a.id as muluid,
+                5447 as zhengfuid,
+                '河南省运管局' as zhengfuname,
+                '河南省' as areaname,
+                a.name,
+                a.caozuoren,
+                a.caozuoshijian,
+                DATE_FORMAT(a.createtime,'%Y-%m-%d') as createtimeshow,
+                case when a.property=1 then DATE_FORMAT(a.countdate,'%Y-%m-%d')
+                else CONCAT(DATE_FORMAT(a.countdate,'%Y/%m/%d'),' - ',DATE_FORMAT(a.countenddate,'%Y/%m/%d')) end as countdate
+            FROM
+                baobiao_baobiaomulu AS a
+            where 1=1
+                and a.property = #{property}
+                and a.countDate &lt;= #{time}
+                and year(a.countDate) = year(#{time})
+                and ifnull(a.is_deleted,0) = 0
+                and a.dept_id = #{deptId}
+            <if test=" yunguanId != null and yunguanId != '' ">
+                and a.dept_id = #{yunguanId}
+            </if>
+        </if>
+    </sql>
+
+    <sql id="orderSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by zhengfuid asc
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+    </sql>
+
+    <select timeout="600" id="selectALLPage" resultMap="ResultMap"
+            parameterType="org.springblade.anbiao.zhengfu.page.ZhengFuBaoGaoPage">
+        <if test="size == 0">
+            select * from (
+            <include refid="tableSql"/>
+            )b
+            where 1=1
+            <include refid="orderSql"/>
+            limit ${total}
+        </if>
+        <if test="current != 0">
+            select * from (
+            <include refid="tableSql"/>
+            )b
+            where 1=1
+            <include refid="orderSql"/>
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <select timeout="90" id="selectAllTotal"
+            parameterType="org.springblade.anbiao.zhengfu.page.ZhengFuBaoGaoPage"
+            resultType="int">
+        select COUNT(1) from (
+        <include refid="tableSql"/>
+        )d where 1 = 1
+    </select>
+
+</mapper>

@@ -1,0 +1,23 @@
+package org.springblade.doc.safetyproductionfile.feign;
+
+import org.springblade.doc.biaozhunhuamuban.entity.Biaozhunhuamuban;
+import org.springblade.doc.safetyproductionfile.entity.SafetyProductionFile;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+
+/**
+ * @program: SpringBlade
+ * @description: BlogClientFallback
+ * @author: wj
+ * @create: 2019-04-19 11:13
+ **/
+@Component
+public class SafetyProductionFileClientFallback implements ISafetyProductionFileClient {
+
+
+	@Override
+	public List<String> getImgList(Integer id) {
+		return null;
+	}
+}

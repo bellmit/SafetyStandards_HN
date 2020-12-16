@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.manage.waybill.mapper.StatisicsMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="carfareResultMap" type="org.springblade.manage.waybill.entity.Statistics">
+        <result column = "cheliangpaizhao" property="cheliangpaizhao"/>
+        <result column="shijian" property="shijian"/>
+        <result column="shouru" property="shouru"/>
+        <result column="zhichu" property="zhichu"/>
+        <result column="ranyou" property="ranyou"/>
+        <result column="jiaotong" property="jiaotong"/>
+        <result column="weixiu" property="weixiu"/>
+        <result column="baoxian" property="baoxian"/>
+        <result column="vehiclenianshen" property="vehiclenianshen"/>
+        <result column="drivenianshen" property="drivenianshen"/>
+        <result column="qita" property="qita"/>
+    </resultMap>
+
+    <sql id="tableSql">
+   SELECT
+        cheliangpaizhao,
+        shouru,
+        IFNULL(ranyou+jiaotong+qita+franyou+fjiaotong+fqita+weixiu+baoxian+vehiclenianshen+drivenianshen,0) zhichu,
+        ranyou,
+        jiaotong,
+        qita,
+        franyou,
+        fjiaotong,
+        fqita,
+        weixiu,
+        baoxian,
+        vehiclenianshen,
+        drivenianshen
+        FROM(
+            SELECT
+                    cheliangpaizhao,
+                    IFNULL(sum((a.inet_weight/1000)*a.danjia),0) shouru,
+                    IFNULL(ry.jine,0) ranyou,
+                    IFNULL(gl.jine,0) jiaotong,
+                    IFNULL(qt.jine,0) qita,
+                    IFNULL((SELECT sum(jine) FROM manage_operations WHERE type=1 AND vehicle_id=b.id
+                    AND create_time
+                    BETWEEN STR_TO_DATE(concat( #{beginTime},'00:00:00'),'%Y-%m-%d %H:%i:%s')
+            AND   STR_TO_DATE(concat(#{endTime},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+                    ),0) franyou,
+                    IFNULL((SELECT sum(jine) FROM manage_operations WHERE type=2 AND vehicle_id=b.id
+                    AND create_time
+                    BETWEEN STR_TO_DATE(concat( #{beginTime},'00:00:00'),'%Y-%m-%d %H:%i:%s')
+            AND   STR_TO_DATE(concat(#{endTime},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+                    ),0) fjiaotong,
+                    IFNULL((SELECT sum(jine) FROM manage_operations WHERE type=3 AND vehicle_id=b.id
+                    AND create_time
+                    BETWEEN STR_TO_DATE(concat( #{beginTime},'00:00:00'),'%Y-%m-%d %H:%i:%s')
+            AND   STR_TO_DATE(concat(#{endTime},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+                    ),0) weixiu,
+                    IFNULL((SELECT sum(jine) FROM manage_operations WHERE type=4 AND vehicle_id=b.id
+                    AND create_time
+                    BETWEEN STR_TO_DATE(concat( #{beginTime},'00:00:00'),'%Y-%m-%d %H:%i:%s')
+            AND   STR_TO_DATE(concat(#{endTime},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+                    ),0) baoxian,
+                    IFNULL((SELECT sum(jine) FROM manage_operations WHERE type=5 AND vehicle_id=b.id
+                    AND create_time
+                    BETWEEN STR_TO_DATE(concat( #{beginTime},'00:00:00'),'%Y-%m-%d %H:%i:%s')
+            AND   STR_TO_DATE(concat(#{endTime},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+                    ),0) vehiclenianshen,
+                    IFNULL((SELECT sum(jine) FROM manage_operations WHERE type=6 AND vehicle_id=b.id
+                    AND create_time
+                    BETWEEN STR_TO_DATE(concat( #{beginTime},'00:00:00'),'%Y-%m-%d %H:%i:%s')
+            AND   STR_TO_DATE(concat(#{endTime},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+                    ),0) drivenianshen,
+                    IFNULL((SELECT sum(jine) FROM manage_operations WHERE type=7 AND vehicle_id=b.id
+                    AND create_time
+                    BETWEEN STR_TO_DATE(concat( #{beginTime},'00:00:00'),'%Y-%m-%d %H:%i:%s')
+            AND   STR_TO_DATE(concat(#{endTime},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+                    ),0) fqita
+            FROM
+                    manage_waybill AS a
+                    INNER JOIN anbiao_vehicle b ON a.vehicle_id=b.id and a.dept_id=#{deptId} AND a.is_deleted=0
+                    LEFT JOIN (SELECT sum(jine) jine,waybill_id FROM manage_waybill_fujian WHERE leixing='燃油费'
+                    AND shijian
+                    BETWEEN STR_TO_DATE(concat( #{beginTime},'00:00:00'),'%Y-%m-%d %H:%i:%s')
+            AND   STR_TO_DATE(concat(#{endTime},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+                    GROUP BY leixing,waybill_id) ry ON a.id = ry.waybill_id
+                    LEFT JOIN (SELECT sum(jine) jine,waybill_id FROM manage_waybill_fujian WHERE leixing='过路费'
+                    AND shijian
+                    BETWEEN STR_TO_DATE(concat( #{beginTime},'00:00:00'),'%Y-%m-%d %H:%i:%s')
+            AND   STR_TO_DATE(concat(#{endTime},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+                    GROUP BY leixing,waybill_id) gl ON a.id = gl.waybill_id
+                    LEFT JOIN (SELECT sum(jine) jine,waybill_id FROM manage_waybill_fujian WHERE leixing='其他'
+                    AND shijian
+                    BETWEEN STR_TO_DATE(concat( #{beginTime},'00:00:00'),'%Y-%m-%d %H:%i:%s')
+            AND   STR_TO_DATE(concat(#{endTime},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+                    GROUP BY leixing,waybill_id) qt ON a.id = qt.waybill_id
+            WHERE out_time
+                        BETWEEN STR_TO_DATE(concat( #{beginTime},'00:00:00'),'%Y-%m-%d %H:%i:%s')
+            AND   STR_TO_DATE(concat(#{endTime},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+            GROUP BY cheliangpaizhao,ry.jine,gl.jine,qt.jine,vehicle_id)a
+    </sql>
+
+    <sql id="querySql">
+        <if test="cheliangpaizhao != null and cheliangpaizhao != ''">
+            AND cheliangpaizhao like '%${cheliangpaizhao}%'
+        </if>
+    </sql>
+
+    <sql id="orderSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by cheliangpaizhao desc
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+    </sql>
+
+    <select id="selectPageList" resultMap="carfareResultMap" parameterType="org.springblade.manage.waybill.page.StatisticsPage">
+        <if test="size==0">
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${total}
+        </if>
+        <if test="current != 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <select id="selectTotal"  parameterType="org.springblade.manage.waybill.page.StatisticsPage" resultType="int">
+        select COUNT(1) from (
+        <include refid="tableSql"/>
+        )d where 1 = 1
+    </select>
+
+</mapper>

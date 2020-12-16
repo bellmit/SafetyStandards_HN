@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.anbiao.zhengfu.mapper.OrganizationMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="ResultMap" type="org.springblade.anbiao.zhengfu.entity.Organization">
+        <id column="id" property="id"/>
+    </resultMap>
+
+
+    <select id="selectGetSheng" resultType="org.springblade.anbiao.zhengfu.entity.Organization">
+        select
+            a.id,parent_id,a.dept_name,tree_code,province,city,country
+        from blade_dept a,anbiao_organization b
+        where a.id = b.dept_id
+            and b.isdelete = 0
+            and jigouleixing = 'shengZF'
+        <if test="deptId == null or deptId == '' ">
+            and a.id = #{deptId}
+        </if>
+    </select>
+
+    <select id="selectGetShi" resultType="org.springblade.anbiao.zhengfu.entity.Organization">
+        select
+            a.id,a.parent_id,a.dept_name,tree_code,province,city,country
+        from blade_dept a,anbiao_organization b
+        where a.id = b.dept_id
+            and jigouleixing in('shiZF')
+            and b.isdelete = 0
+            and a.parent_id = #{Id}
+    </select>
+
+    <select id="selectGetXian" resultType="org.springblade.anbiao.zhengfu.entity.Organization">
+        select
+            a.id,a.parent_id,a.dept_name,tree_code,province,city,country
+        from blade_dept a,anbiao_organization b
+        where a.id = b.dept_id
+            and jigouleixing in('xianZF')
+            and b.isdelete = 0
+            and a.parent_id = #{Id}
+    </select>
+
+    <select id="selectGetRenyuan" resultType="org.springblade.anbiao.zhengfu.entity.Organization">
+        /*select
+            renyuanid as renYuanId,
+            account,
+            gangweiid as gangWeiId,
+            tree_code as treeCode,
+            parent_id as parentId
+        from(
+            select
+                a.id as renyuanid,a.account,b.post_id
+            from
+                blade_user a,blade_post b
+            where a.id = b.user_id
+                and b.Isdefault = 1
+                and a.is_deleted = 0
+            )a
+            inner join(
+                select
+                    id as gangweiid,tree_code,parent_id
+                from
+                    blade_dept
+                where tree_code like '000001005446%'
+                    and extend_type = '岗位'
+            )b on a.post_id = b.gangweiid
+        where 1=1*/
+        select
+            renyuanid as renYuanId,
+            account,
+            gangweiid as gangWeiId,
+            tree_code as treeCode,
+            parent_id as parentId
+        from(
+            select
+                a.id as renyuanid,a.account,a.dept_id
+            from
+                blade_user a
+            where 1=1
+                and a.is_deleted = 0
+            )a
+            inner join(
+                select
+                    id as gangweiid,tree_code,parent_id
+                from
+                    blade_dept
+                where tree_code like '000001005446%'
+                    and extend_type = '岗位'
+            )b on a.dept_id = b.parent_id
+        where 1=1
+            and a.renyuanid = #{Id}
+    </select>
+
+    <select id="selectGetGangWei" resultType="org.springblade.anbiao.zhengfu.entity.Organization">
+        select
+            a.id,parent_id,a.dept_name,tree_code,province,city,country
+        from
+            blade_dept a,anbiao_organization b
+        where a.id = b.dept_id
+        and jigouleixing in('xianZF','shiZF','shengZF')
+        and b.isdelete = 0
+        and a.id = #{Id}
+    </select>
+
+    <select id="selectGetZF" resultType="org.springblade.anbiao.zhengfu.entity.ZhengFuOrganization" parameterType="map">
+        select * from anbiao_zhengfu_qiye
+        where 1=1
+        <if test="province != null and province != '' ">
+            and province = #{province}
+        </if>
+        <if test="city != null and city != '' ">
+            and city = #{city}
+        </if>
+        <if test="country != null and country != '' ">
+            and country = #{country}
+        </if>
+        <if test="deptId != null and deptId != '' ">
+            and yunguanid = #{deptId}
+        </if>
+    </select>
+
+    <select id="selectGetZFJB" resultType="org.springblade.anbiao.zhengfu.entity.Organization">
+        select
+            province,city,country
+        from
+        blade_dept a,anbiao_organization b
+        where a.id = b.dept_id
+        and jigouleixing in('xianZF','shiZF','shengZF')
+        and b.isdelete = 0
+        <if test="deptId != null and deptId != '' ">
+            and a.id = #{deptId}
+        </if>
+    </select>
+
+</mapper>

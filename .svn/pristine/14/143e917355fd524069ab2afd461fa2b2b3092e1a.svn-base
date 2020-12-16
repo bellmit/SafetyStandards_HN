@@ -1,0 +1,4 @@
+net.dreamlu.mica.feign.MicaFeignAutoConfiguration=\
+  org.springblade.deadline.feign.IDeadlineClient
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  org.springblade.deadline.feign.IDeadlineClientFallback

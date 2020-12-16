@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.anbiao.guanlijigouherenyuan.mapper.OrganizationsMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="organizationResultMap" type="org.springblade.anbiao.guanlijigouherenyuan.entity.Organizations">
+        <id column="id" property="id"/>
+        <result column="dept_id" property="deptId"/>
+        <result column="dept_name" property="deptName"/>
+        <result column="jigoufuzeren" property="jigoufuzeren"/>
+        <result column="jigoubianma" property="jigoubianma"/>
+        <result column="jigouleixing" property="jigouleixing"/>
+        <result column="jigouzizhi" property="jigouzizhi"/>
+        <result column="farendaibiao" property="farendaibiao"/>
+        <result column="lianxidianhua" property="lianxidianhua"/>
+        <result column="zhuceziben" property="zhuceziben"/>
+        <result column="touzizonge" property="touzizonge"/>
+        <result column="cheliangguimo" property="cheliangguimo"/>
+        <result column="congyerenshuliang" property="congyerenshuliang"/>
+        <result column="chenglishijian" property="chenglishijian"/>
+        <result column="tingchechangmianji" property="tingchechangmianji"/>
+        <result column="tingchechangweizhi" property="tingchechangweizhi"/>
+        <result column="jiashiyuanshuliang" property="jiashiyuanshuliang"/>
+        <result column="yayunyuanshuliang" property="yayunyuanshuliang"/>
+        <result column="zhuangxieyuanshuliang" property="zhuangxieyuanshuliang"/>
+        <result column="xuhao" property="xuhao"/>
+        <result column="xingzhengqudaima" property="xingzhengqudaima"/>
+        <result column="jingyingxukezhengbianma" property="jingyingxukezhengbianma"/>
+        <result column="fujian" property="fujian"/>
+        <result column="anquanguanlitu" property="anquanguanlitu"/>
+        <result column="zuzhijigoutu" property="zuzhijigoutu"/>
+        <result column="jingyingfanwei" property="jingyingfanwei"/>
+        <result column="jingyingdizhi" property="jingyingdizhi"/>
+        <result column="xiangxidizhi" property="xiangxidizhi"/>
+        <result column="jigoumiaoshu" property="jigoumiaoshu"/>
+        <result column="login_photo" property="loginPhoto"/>
+        <result column="home_photo" property="homePhoto"/>
+        <result column="profile_photo" property="profilePhoto"/>
+        <result column="logo_photo" property="logoPhoto"/>
+        <result column="logo_rizhi" property="logoRizhi"/>
+
+
+
+        <result column="login_photo_app" property="loginPhotoApp"/>
+        <result column="home_photo_app" property="homePhotoApp"/>
+        <result column="profile_photo_app" property="profilePhotoApp"/>
+        <result column="is_deleted" property="isdelete"/>
+        <result column="caozuoren" property="caozuoren"/>
+        <result column="caozuorenid" property="caozuorenid"/>
+        <result column="caozuoshijian" property="caozuoshijian"/>
+        <result column="yunyingleixing" property="yunyingleixing"/>
+        <result column="province" property="province"/>
+        <result column="city" property="city"/>
+        <result column="country" property="country"/>
+    </resultMap>
+
+
+    <select id="selectAll" resultMap="organizationResultMap">
+        select * from anbiao_organization where isdelete = 0
+    </select>
+
+
+    <delete id="delByDeptId" parameterType="java.lang.String">
+        update anbiao_organization SET isdelete = 1 where dept_id = #{deptId}
+    </delete>
+
+    <select id="selectByDeptId" resultMap="organizationResultMap" >
+        select  * from  anbiao_organization where  dept_id=#{deptId}
+    </select>
+
+    <update id="updateDel" parameterType="java.lang.String">
+        UPDATE anbiao_organization SET isdelete = 1 where id = #{id}
+    </update>
+    <sql id="getByDeptId">
+        SELECT DISTINCT
+            xiaji.id,
+            xiaji.parent_id,
+            xiaji.dept_name,
+            xiaji.is_deleted
+        FROM
+            blade_dept shangji,
+            blade_dept xiaji
+            WHERE xiaji.tree_code LIKE CONCAT(shangji.tree_code,'%')
+            AND xiaji.is_deleted = 0 AND xiaji.extend_type='机构'
+            <if test="deptId != null">
+                and shangji.id=#{deptId}
+            </if>
+
+    </sql>
+
+
+    <sql id="tableSql">
+        SELECT
+        a.*, b.dept_name as deptName
+        FROM
+        anbiao_organization a
+        INNER JOIN
+        (
+        <include refid="org.springblade.anbiao.guanlijigouherenyuan.mapper.OrganizationsMapper.getByDeptId"/>
+        )
+        b ON a.dept_id = b.id and a.isdelete = 0 and  b.is_deleted = 0
+    </sql>
+
+    <sql id="querySql">
+        <if test="deptName !=null and deptName != ''">
+            AND deptName LIKE '%${deptName}%'
+        </if>
+    </sql>
+    <sql id="orderSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by caozuoshijian
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+    </sql>
+
+    <select id="selectPageList" parameterType="org.springblade.anbiao.guanlijigouherenyuan.page.OrganizationsPage" resultType="org.springblade.anbiao.guanlijigouherenyuan.vo.OrganizationsVO">
+        <if test="size == 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${total}
+        </if>
+        <if test="current != 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <select id="selectTotal" parameterType="org.springblade.anbiao.guanlijigouherenyuan.page.OrganizationsPage" resultType="int">
+        select COUNT(1) from (
+        <include refid="tableSql" />
+        )d
+        where 1 = 1
+        <include refid="querySql" />
+    </select>
+
+    <select id="selectByIds" parameterType="java.lang.String" resultType="org.springblade.anbiao.guanlijigouherenyuan.vo.OrganizationsVO">
+        SELECT
+        a.*,b.dept_name
+        FROM
+        anbiao_organization a
+        inner join  blade_dept b
+        on a.dept_id = b.id
+        WHERE 1=1 and ifnull(a.isdelete ,0) = 0 and a.id=#{id}
+    </select>
+</mapper>

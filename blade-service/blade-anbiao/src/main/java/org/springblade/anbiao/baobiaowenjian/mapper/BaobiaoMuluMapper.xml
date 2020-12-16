@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.anbiao.baobiaowenjian.mapper.BaobiaoMuluMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="muluResultMap" type="org.springblade.anbiao.baobiaowenjian.entity.BaobiaoMulu">
+        <id column="id" property="id"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="dept_id" property="deptId"/>
+        <result column="name" property="name"/>
+        <result column="type" property="type"/>
+        <result column="path" property="path"/>
+        <result column="sort" property="sort"/>
+        <result column="caozuorenid" property="caozuorenid"/>
+        <result column="caozuoren" property="caozuoren"/>
+        <result column="caozuoshijian" property="caozuoshijian"/>
+        <result column="countdate" property="countdate"/>
+        <result column="processRate" property="processRate"/>
+        <result column="createtime" property="createtime"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="cumulative_visits" property="cumulativeVisits"/>
+        <result column="last_preview_time" property="lastPreviewTime"/>
+    </resultMap>
+
+    <resultMap id="baseResultMap" type="org.springblade.anbiao.baobiaowenjian.vo.BaobiaoMuluVO">
+        <id column="id" property="id"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="dept_id" property="deptId"/>
+        <result column="name" property="name"/>
+        <result column="type" property="type"/>
+        <result column="path" property="path"/>
+        <result column="sort" property="sort"/>
+        <result column="caozuorenid" property="caozuorenid"/>
+        <result column="caozuoren" property="caozuoren"/>
+        <result column="caozuoshijian" property="caozuoshijian"/>
+        <result column="countdate" property="countdate"/>
+        <result column="processRate" property="processRate"/>
+        <result column="createtime" property="createtime"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="cumulative_visits" property="cumulativeVisits"/>
+        <result column="last_preview_time" property="lastPreviewTime"/>
+    </resultMap>
+
+    <sql id="tableSql">
+        SELECT
+        a.id,
+        a.dept_id as deptId,
+        d.dept_name as deptName,
+        a.name,
+        a.type,
+        a.path,
+        a.property,
+        a.caozuorenid,
+        a.caozuoren,
+        a.caozuoshijian,
+        a.processRate,
+        a.createtime,
+        DATE_FORMAT(a.createtime,'%Y-%m-%d') as createtimeshow,
+        case when a.property=1 then DATE_FORMAT(a.countdate,'%Y-%m-%d')
+        else CONCAT(DATE_FORMAT(a.countdate,'%Y/%m/%d'),' - ',DATE_FORMAT(a.countenddate,'%Y/%m/%d')) end as countdate,
+        c.baojingcishu,
+        c.chaosu,
+        c.pilao,
+        c.yejian,
+        (c.budingwei+c.wushuju) as yichang,
+        c.chouyan,
+        c.dadianhua,
+        c.pilaoshipin,
+        c.fenshen,
+        a.cumulative_visits,
+        a.last_preview_time,
+        a.is_deleted as isDeleted
+        FROM
+        baobiao_baobiaomulu AS a
+        inner join blade_dept AS d
+        on a.dept_id = d.id
+        <if test="deptId != null">
+            and a.dept_id = #{deptId}
+        </if>
+        <if test=" property != null">
+            and a.property = #{property}
+            <if test="property == 1">
+                and a.countDate &gt;= DATE_SUB(#{countDate},INTERVAL 15 DAY)
+                and a.countDate &lt;= #{countDate}
+            </if>
+            <if test="property != 1">
+                and a.countDate &lt;= #{countDate} and year(a.countDate)=year(#{countDate})
+            </if>
+        </if>
+        LEFT JOIN baobiao_alarmdailyreport c
+        on d.dept_name = c.company
+        and a.countdate = c.date
+        WHERE ifnull(a.is_deleted,0)=0
+            /*and ifnull(a.fileType,0)=0*/
+    </sql>
+
+    <select id="selectBaogaoPage" parameterType="org.springblade.anbiao.baobiaowenjian.page.BaobiaoWenjianPage"
+            resultMap="baseResultMap">
+        <if test="size == 0">
+            select * from (
+            <include refid="tableSql"/>
+            order  by  ${orderColumn} desc
+            )b
+            limit ${total}
+        </if>
+        <if test="current != 0">
+            select * from (
+            <include refid="tableSql"/>
+            order  by  ${orderColumn} desc
+            )b
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+    <!--文件总数-->
+    <select id="selectBaogaoTotal" parameterType="org.springblade.anbiao.baobiaowenjian.page.BaobiaoWenjianPage"
+            resultType="int">
+        select COUNT(1) from (
+        <include refid="tableSql"/>
+        )d
+    </select>
+
+
+</mapper>

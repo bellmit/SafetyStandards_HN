@@ -1,0 +1,5 @@
+org\springblade\desk\entity\Notice.class
+org\springblade\desk\vo\NoticeVO.class
+META-INF\spring-devtools.properties
+org\springblade\desk\feign\INoticeClient.class
+META-INF\spring.factories

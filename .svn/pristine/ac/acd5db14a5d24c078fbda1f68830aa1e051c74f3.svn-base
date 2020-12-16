@@ -1,0 +1,38 @@
+#服务器端口
+
+server:
+  port: 9106
+
+#数据源配置
+spring:
+  datasource:
+    url: ${blade.datasource.dev.url}
+    username: ${blade.datasource.dev.username}
+    password: ${blade.datasource.dev.password}
+    driver-class-name: com.mysql.jdbc.Driver    #指定数据库驱动
+    type: com.alibaba.druid.pool.DruidDataSource  #指定类型连接池
+    #数据源其他配置
+    initialSize: 5  #初始化连接数
+    minIdle: 5      #最小空闲连接数
+    maxActive: 20   #最大连接数
+    maxWait: 60000  #最大等待值
+    timeBetweenEvictionRunsMillis: 60000  #// 连接回收器的运行周期时间，时间到了清理池中空闲的连接，testWhileIdle根据这个判断
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: SELECT 1 FROM DUAL  #//用来检测连接是否有效的sql，要求是一个查询语句
+    testWhileIdle: true   #//建议配置为true，不影响性能，并且保证安全性。 申请连接的时候检测，如果空闲时间大于
+    testOnBorrow: false     #//申请连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能。设置为false
+    testOnReturn: false  # //归还连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能,设置为flase
+    poolPreparedStatements: true  # //是否缓存preparedStatement，也就是PSCache
+    #配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
+    filters: stat,wall
+    maxPoolPreparedStatementPerConnectionSize: 20  # // 池中能够缓冲的preparedStatements语句数量
+    useGlobalDataSourceStat: true
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
+
+  data:
+    mongodb:
+      host: 202.100.168.30   #同127.0.0.1
+      port: 27017
+      database: alarm    #指定操作的数据库
+
+

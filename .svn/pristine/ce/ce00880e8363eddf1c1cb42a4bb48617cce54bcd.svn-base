@@ -1,0 +1,33 @@
+package org.springblade.anbiao.jiashiyuan.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.springblade.anbiao.jiashiyuan.entity.JiaShiYuan;
+import org.springblade.anbiao.jiashiyuan.page.JiaShiYuanPage;
+import org.springblade.anbiao.jiashiyuan.vo.JiaShiYuanVO;
+
+import java.util.List;
+
+/**
+ * Created by you on 2019/4/23.
+ */
+public interface JiaShiYuanMapper extends BaseMapper<JiaShiYuan> {
+
+	boolean insertJSY(JiaShiYuan jiaShiYuan);
+
+	boolean updateDel(String id);
+
+	/**
+	 * 自定义分页
+	 * @param
+	 * @return
+	 */
+	List<JiaShiYuanVO> selectPageList(JiaShiYuanPage jiaShiYuanPage);
+	/**
+	 * 统计
+	 * @param
+	 * @return
+	 */
+	int selectTotal(JiaShiYuanPage jiaShiYuanPage);
+
+	JiaShiYuanVO selectByIds(String id);
+}

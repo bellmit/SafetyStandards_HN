@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.alarm.mapper.BaojingtongjiMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="baojingtongjiResultMap" type="org.springblade.alarm.entity.BaojingTJ">
+        <result column="chaosucisu" property="chaosucisu"/>
+        <result column="plateNumber" property="plateNumber"/>
+        <result column="OperatType" property="OperatType"/>
+        <result column="color" property="color"/>
+        <result column="AlarmType" property="AlarmType"/>
+        <result column="keeptime" property="keeptime"/>
+        <result column="maxspeed" property="maxspeed"/>
+        <result column="id" property="id"/>
+        <result column="xiansuzhi" property="xiansuzhi"/>
+        <result column="weizhi" property="weizhi"/>
+        <result column="chaosubi" property="chaosubi"/>
+
+    </resultMap>
+
+
+    <select id="selectBaojingtongjiPage" resultMap="baojingtongjiResultMap">
+        select * from baojingtongji where is_deleted = 0
+    </select>
+    <select id="selectAlarmTotal" parameterType="org.springblade.alarm.page.BaojingTJPage"  resultType="integer">
+        select count(1) from (
+        <include refid="ChaosutableSql"/>
+      ) ab
+    </select>
+    <select id="selectPilaoTotal" parameterType="org.springblade.alarm.page.BaojingTJPage"  resultType="integer">
+        select count(1) from (
+        <include refid="PilaotableSql"/>
+        ) ab
+    </select>
+    <select id="pilaoTongjiPage" parameterType="org.springblade.alarm.page.BaojingTJPage" resultType="org.springblade.alarm.entity.PiLaoBaojingTJ">
+        <if test="size ==0">
+            select  * from (
+            <include refid="PilaotableSql"/>
+            )b
+            <include refid="PilaoorderSql"/>
+            LIMIT #{total}
+        </if>
+        <if test="current != 0">
+            select  * from (
+            <include refid="PilaotableSql"/>
+            )b
+            <include refid="PilaoorderSql"/>
+            LIMIT #{offsetNo},#{size}
+        </if>
+
+    </select>
+    <select id="TongjiPage" parameterType="org.springblade.alarm.page.BaojingTJPage"  resultType="org.springblade.alarm.entity.BaojingTJ">
+        <if test="size ==0">
+            select  * from (
+            <include refid="ChaosutableSql"/>
+            )b
+            <include refid="ChaosuorderSql"/>
+            LIMIT #{total}
+        </if>
+        <if test="current != 0">
+            select  * from (
+            <include refid="ChaosutableSql"/>
+            )b
+            <include refid="ChaosuorderSql"/>
+            LIMIT #{offsetNo},#{size}
+        </if>
+
+
+    </select>
+    <select id="alarmCount" resultType="java.util.Map">
+        SELECT
+	    count(1) as baojingCount,
+	        AlarmType
+         FROM
+	        baobiao_alarmsummary_cutofftime
+         WHERE
+
+             CutoffTime BETWEEN STR_TO_DATE(
+	       concat(
+ 		    #{date},'00:00:00'),'%Y-%m-%d %H:%i:%s') AND   STR_TO_DATE(concat(#{date},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+ 		    AND company = #{company}
+		GROUP BY
+			AlarmType
+
+
+
+    </select>
+    <select id="zhudongCount" resultType="java.util.Map">
+    SELECT
+	    count(1) as baojingCount,
+	    AlarmType
+    FROM
+	    baobiao_driverbehavior
+    WHERE
+
+         GpsTime BETWEEN STR_TO_DATE(
+	        concat(
+ 		    #{date},'00:00:00'),'%Y-%m-%d %H:%i:%s') AND   STR_TO_DATE(concat(#{date},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+ 		AND company = #{company}
+ 		and StateEx='核定报警'
+		GROUP BY
+			AlarmType
+
+
+    </select>
+    <sql id="buzaixiansql">
+        SELECT
+	         plate as plateNumber,
+	        '24小时不在线' AS alarmType,
+	        operatType,
+	        color,
+	        company,
+	        lastTime,
+	        offlineTime,
+	        createDate
+        FROM
+	        baobiao_offlinedetail
+	    where 1=1
+
+
+
+    </sql>
+    <sql id="budingweisql">
+        SELECT
+        plate as plateNumber,
+        '24小时不定位' AS alarmType,
+        operatType,
+        color,
+        company,
+        systime,
+        lastTime,
+        lastlocateTime,
+        offlineTime,
+        createDate
+        FROM
+        baobiao_notlocatedetail
+        WHERE
+                1=1
+
+    </sql>
+    <sql id="budingweiquerySql">
+        and company=#{deptName}
+        and  (offlineTimes>=86400 or  offlineTimes is null)
+        and createDate &gt;= #{beginTime}
+        and  createDate &lt;= #{endTime}
+        ORDER BY offlineTimes desc
+
+    </sql>
+    <select id="budingwei" resultType="org.springblade.alarm.entity.BudingweiTongji">
+        <if test="size ==0">
+            select  * from (
+            <include refid="budingweisql"/>
+            <include refid="budingweiquerySql"/>
+
+            )b
+            LIMIT #{total}
+        </if>
+        <if test="current != 0">
+            select  * from (
+            <include refid="budingweisql"/>
+            <include refid="budingweiquerySql"/>
+
+            )b
+            LIMIT #{offsetNo},#{size}
+        </if>
+
+
+
+
+
+
+
+
+
+    </select>
+    <select id="budingweicount" resultType="org.springblade.alarm.entity.BudingweiCount">
+
+        select COUNT(1) as number,a.plateNumber from(SELECT
+        plate as plateNumber,
+        '24小时不定位' AS alarmType,
+        operatType,
+        color,
+        company,
+        systime,
+        lastTime,
+        lastlocateTime,
+        offlineTime,
+        createDate
+        FROM
+        baobiao_notlocatedetail
+        WHERE
+         company=#{deptName}
+        and  (offlineTimes>=86400 or  offlineTimes is null)
+        and createDate &gt;= #{beginTime}
+        and  createDate &lt;= #{endTime}
+        ORDER BY offlineTimes desc
+
+        ) a GROUP BY a.plateNumber
+
+
+
+
+
+
+
+    </select>
+    <select id="selectbudinweiTotal" resultType="java.lang.Integer">
+        select count(1) from (
+        <include refid="budingweisql"/>
+        <include refid="budingweiquerySql"/>
+
+        ) ab
+
+
+
+
+
+    </select>
+    <select id="selectbuzaixianTotal" resultType="java.lang.Integer">
+        select count(1) from (
+        <include refid="buzaixiansql"/>
+        <include refid="budingweiquerySql"/>
+
+        ) ab
+
+
+
+
+    </select>
+    <select id="buzaixian" resultType="org.springblade.alarm.entity.BudingweiTongji">
+        <if test="size ==0">
+            select  * from (
+            <include refid="buzaixiansql"/>
+            <include refid="budingweiquerySql"/>
+
+            )b
+            LIMIT #{total}
+        </if>
+        <if test="current != 0">
+            select  * from (
+            <include refid="buzaixiansql"/>
+            <include refid="budingweiquerySql"/>
+
+            )b
+            LIMIT #{offsetNo},#{size}
+        </if>
+
+
+
+
+    </select>
+    <select id="buzaixiancount" resultType="org.springblade.alarm.entity.BudingweiCount">
+        select COUNT(1) as number,a.plateNumber  from (
+        <include refid="buzaixiansql"/>
+        <include refid="budingweiquerySql"/>
+
+        ) a
+        GROUP BY a.plateNumber
+
+
+
+
+
+    </select>
+    <sql id="ChaosutableSql">
+        SELECT
+			a.*,b.plateNumber, b.color, b.company, b.OperatType, b.BeginTime,
+			b.EndTime,b.KeepTime,b.limited AS xiansuzhi, CONCAT(b.ChaoSuBi, '%') AS chaosubi,b.Road_Name AS weizhi,
+			CONCAT(	(floor(b.KeepTime / 86400) % 24),'天',(floor(b.KeepTime / 3600) % 24),'时',(floor(b.KeepTime / 60) % 60),'分',(b.KeepTime % 60),'秒') AS keeptimeOne,
+			CONCAT(#{beginTime},'至',#{endTime}) as createDate
+        FROM
+			(
+				SELECT
+					COUNT(1) AS chaosucisu,
+					a.VehId,
+					a.AlarmType,
+					MAX(a.MaxSpeed) as maxspeed,
+					CONCAT(	(floor(SUM(KeepTime) / 86400) % 24),'天',	(	floor(SUM(KeepTime) / 3600) % 24),'时',(floor(SUM(KeepTime) / 60) % 60),	'分',(SUM(KeepTime) % 60),'秒') AS keeptimeShow,
+					(
+						SELECT AlarmReportID
+						FROM baobiao_alarmsummary_cutofftime b
+						WHERE maxSpeed = MAX(a.maxSpeed)
+						AND b.vehid = a.vehid
+						AND b.AlarmType = a.AlarmType
+						AND company = #{deptName}
+						AND AlarmType = '超速报警'
+						AND CutoffTime BETWEEN STR_TO_DATE(concat(#{beginTime}, '00:00:00'), '%Y-%m-%d %H:%i:%s' )
+						AND STR_TO_DATE(concat(#{endTime}, '23:59:59'), '%Y-%m-%d %H:%i:%s')
+						ORDER BY KeepTime DESC,Limited asc
+						LIMIT 1
+					) id
+				FROM baobiao_alarmsummary_cutofftime a
+				WHERE 1 = 1
+					AND company = #{deptName}
+						AND AlarmType = '超速报警'
+						AND CutoffTime BETWEEN STR_TO_DATE(concat(#{beginTime}, '00:00:00'), '%Y-%m-%d %H:%i:%s' )
+						AND STR_TO_DATE(concat(#{endTime}, '23:59:59'), '%Y-%m-%d %H:%i:%s')
+				GROUP BY a.VehId, a.AlarmType
+			) a
+		INNER JOIN baobiao_alarmsummary_cutofftime b ON a.id = b.AlarmReportID
+    </sql>
+    <sql id="PilaotableSql">
+        SELECT
+			a.*,b.plateNumber, b.color, b.company, b.OperatType,b.BeginTime,
+			b.EndTime,b.CutoffTime, b.KeepTime,b.Road_Name AS weizhi,
+			CONCAT(#{beginTime},'至',#{endTime}) as createDate,
+			CONCAT( (floor(b.KeepTime / 86400) % 24), '天', (floor(b.KeepTime / 3600) % 24), '时', (floor(b.KeepTime / 60) % 60), '分', (b.KeepTime % 60), '秒' ) AS keeptimeOne
+		FROM
+			(
+				SELECT
+					COUNT(1) AS pilaocisu, a.VehId, a.AlarmType,
+					CONCAT( (floor(SUM(KeepTime) / 86400) % 24), '天',( floor(SUM(KeepTime) / 3600) % 24 ), '时', (floor(SUM(KeepTime) / 60) % 60), '分', (SUM(KeepTime) % 60), '秒' ) AS keeptimeShow,
+					(
+						SELECT AlarmReportID
+						FROM baobiao_alarmsummary_cutofftime b
+						WHERE  b.VehId = a.VehId
+						AND b.AlarmType = a.AlarmType
+						AND company = #{deptName}
+						AND AlarmType = '疲劳驾驶报警'
+						AND CutoffTime BETWEEN STR_TO_DATE(concat(#{beginTime}, '00:00:00'), '%Y-%m-%d %H:%i:%s' )
+						AND STR_TO_DATE(concat(#{endTime}, '23:59:59'), '%Y-%m-%d %H:%i:%s')
+						ORDER BY KeepTime DESC
+						LIMIT 1
+					) id
+				FROM
+					baobiao_alarmsummary_cutofftime a
+				WHERE 1 = 1
+				AND company = #{deptName}
+                AND AlarmType = '疲劳驾驶报警'
+                AND CutoffTime BETWEEN STR_TO_DATE(concat(#{beginTime}, '00:00:00'), '%Y-%m-%d %H:%i:%s' )
+                AND STR_TO_DATE(concat(#{endTime}, '23:59:59'), '%Y-%m-%d %H:%i:%s')
+				GROUP BY a.VehId,a.AlarmType
+			) a
+		INNER JOIN baobiao_alarmsummary_cutofftime b ON a.id = b.AlarmReportID
+
+    </sql>
+    <sql id="ChaosuorderSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by chaosucisu desc
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+    </sql>
+    <sql id="PilaoorderSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by pilaocisu desc
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+    </sql>
+
+</mapper>

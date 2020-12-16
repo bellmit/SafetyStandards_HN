@@ -1,0 +1,41 @@
+package org.springblade.anbiao.falvfagui.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import feign.Param;
+import org.springblade.anbiao.falvfagui.entity.FaGui;
+import org.springblade.anbiao.falvfagui.page.FaGuiPage;
+import org.springblade.anbiao.falvfagui.vo.FaGuiVo;
+
+import java.util.List;
+
+/**
+* @Description:
+* @Param: 
+* @return: 
+* @Author: wj
+* @Date: 2019-04-24
+*/ 
+public interface FaGuiMapper  extends BaseMapper<FaGui> {
+
+	/**
+	 * 自定义分页
+	 * @param faGuiPage
+	 * @return
+	 */
+	List<FaGuiVo> selectFaGuiPage(FaGuiPage faGuiPage);
+	/**
+	 * 统计
+	 * @param faGuiPage
+	 * @return
+	 */
+	int selectFaGuiTotal(FaGuiPage faGuiPage);
+
+	/**
+	 * 自定义删除
+	 * @param id
+	 * @return
+	 */
+	boolean deleteFagui(String id);
+
+}

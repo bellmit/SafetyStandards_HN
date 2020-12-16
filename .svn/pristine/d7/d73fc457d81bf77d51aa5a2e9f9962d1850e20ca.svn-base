@@ -1,0 +1,4 @@
+org\springblade\upload\upload\entity\FileUpload.class
+org\springblade\upload\upload\feign\IFileUploadClient.class
+org\springblade\upload\upload\entity\FileObj.class
+org\springblade\upload\upload\feign\IFileUploadClientBack.class

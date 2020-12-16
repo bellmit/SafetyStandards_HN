@@ -1,0 +1,21 @@
+#服务器端口
+
+server:
+  port: 9107
+spring:
+  datasource:
+    gps3:
+      driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+      url: ${blade.datasource.gps3.url}
+      username: ${blade.datasource.gps3.username}
+      password: ${blade.datasource.gps3.password}
+    gps2:
+      driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+      url: ${blade.datasource.gps2.url}
+      username: ${blade.datasource.gps2.username}
+      password: ${blade.datasource.gps2.password}
+gpsserver:
+  pointurlPrefix: ${gpsserver.dev.pointurl}
+  imgurlPrefix: ${gpsserver.dev.imgurl}
+  spreadurlPrefix: ${gpsserver.dev.spreadurl}
+#  spreadurlPrefix: http://47.108.29.76:40002/  http://36.133.42.216:40002/

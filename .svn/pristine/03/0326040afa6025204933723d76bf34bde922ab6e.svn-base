@@ -1,0 +1,46 @@
+package org.springblade.common.tool;
+
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
+
+import java.net.URL;
+
+/**
+ * @author Lh
+ * @description: TODO
+ * @projectName SafetyStandards
+ * @date 2019/11/1215:02
+ */
+public class LatLotForLocation {
+
+	public static String getProvince(String lat, String log) {
+		String add = getAdd(lat, log);
+		JSONObject jsonObject = JSONUtil.parseObj(add);
+
+		JSONObject result = (JSONObject)jsonObject.get("result");
+		String address = result.get("formatted_address").toString();
+		return address;
+	}
+
+	public static String getAdd(String lat, String log) {
+		// log lat
+		// 参数解释: 纬度,经度 type 001 (100代表道路，010代表POI，001代表门址，111可以同时显示前三项)
+		String urlString = "http://api.map.baidu.com/reverse_geocoding/v3/?ak=5yGQ6pxQ5jl3EdF2SnVCdc4RD75c47ME&output=json&coordtype=wgs84ll&location="+lat+","+log;
+		String res = "";
+		try {
+			URL url = new URL(urlString);
+			java.net.HttpURLConnection conn = (java.net.HttpURLConnection) url.openConnection();
+			conn.setDoOutput(true);
+			conn.setRequestMethod("POST");
+			java.io.BufferedReader in = new java.io.BufferedReader(new java.io.InputStreamReader(conn.getInputStream(), "UTF-8"));
+			String line;
+			while ((line = in.readLine()) != null) {
+				res += line + "\n";
+			}
+			in.close();
+		} catch (Exception e) {
+			System.out.println("error in wapaction,and e is " + e.getMessage());
+		}
+		return res;
+	}
+}

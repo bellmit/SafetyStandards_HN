@@ -1,0 +1,24 @@
+#服务器端口
+server:
+  port: 9103
+
+#数据源配置
+spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  datasource:
+    url: ${blade.datasource.dev.url}
+    username: ${blade.datasource.dev.username}
+    password: ${blade.datasource.dev.password}
+#    url: jdbc:mysql://36.133.42.142:3366/blade?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&tinyInt1isBit=false&allowMultiQueries=true&serverTimezone=GMT%2B8
+#    username: root
+#    password: mxcx123
+
+#文件的物理路径前缀与url前缀
+fileserver:
+  path-prefix: ${fileserver.dev.path}
+  url-prefix: ${fileserver.dev.url}
+#  path-prefix: D:\BS\static\
+#  url-prefix: http://60.171.241.126:8204/

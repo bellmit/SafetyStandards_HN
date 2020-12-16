@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.anbiao.jinritixing.mapper.YujingquanxianMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="yujingquanxianResultMap" type="org.springblade.anbiao.jinritixing.entity.Yujingquanxian">
+        <id column="id" property="id"/>
+        <result column="dept_id" property="deptId"/>
+        <result column="yujingxiangid" property="yujingxiangid"/>
+        <result column="caozuoren" property="caozuoren"/>
+        <result column="caozuorenid" property="caozuorenid"/>
+        <result column="caozuoshijian" property="caozuoshijian"/>
+    </resultMap>
+
+    <resultMap id="YujingquanxianVOResultMap" type="org.springblade.anbiao.jinritixing.vo.YujingquanxianVO">
+    </resultMap>
+
+
+    <select id="selectYujingquanxianPage" resultMap="yujingquanxianResultMap">
+        select * from anbiao_yujingquanxian where is_deleted = 0
+    </select>
+
+    <sql id="tableSqls">
+        SELECT DISTINCT a.yujingxiangid,b.yujingxiang,
+        b.yujingxiang title
+        from anbiao_yujingquanxian a
+        LEFT JOIN anbiao_yujingxiang b on a.yujingxiangid = b.id
+        where 1 = 1
+        <if test="deptId != null">
+            AND a.dept_id = #{deptId}
+        </if>
+        <if test="postId != null">
+            AND a.postid = #{postId}
+        </if>
+    </sql>
+
+    <sql id="tableSql">
+        SELECT a.id as yujingxiangid,a.yujingxiang,a.yujingfenlei,a.shuoming,a.updatetime from anbiao_yujingxiang a
+        inner join  (
+            <include refid="org.springblade.anbiao.guanlijigouherenyuan.mapper.OrganizationsMapper.getByDeptId"/>
+        ) b on a.dept_id = b.id
+        where a.is_deleted = 0
+    </sql>
+
+    <sql id="orderSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by updatetime desc
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order == 0">
+            asc
+        </if>
+    </sql>
+
+    <sql id="querySql">
+
+        <if test="yujingxiang != null and yujingxiang != ''">
+            and yujingxiang like '%${yujingxiang}%'
+        </if>
+
+        <if test="yujingfenlei != null and yujingfenlei != ''">
+            and yujingfenlei like '%${yujingfenlei}%'
+        </if>
+
+    </sql>
+
+    <select timeout="600" id="selectAllYuJing" resultMap="YujingquanxianVOResultMap"
+            parameterType="org.springblade.anbiao.jinritixing.page.YujingquanxianPage">
+        <if test="size == 0">
+            select * from (
+            <include refid="tableSql"/>
+            )b
+            where 1=1
+            <include refid="querySql"/>
+            <include refid="orderSql"/>
+            limit ${total}
+        </if>
+        <if test="current != 0">
+            select * from (
+            <include refid="tableSql"/>
+            )b
+            where 1=1
+            <include refid="querySql"/>
+            <include refid="orderSql"/>
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <select timeout="90" id="selectAllYuJingTotal"
+            parameterType="org.springblade.anbiao.jinritixing.page.YujingquanxianPage"
+            resultType="int">
+        select COUNT(1) from (
+        <include refid="tableSql"/>
+        )d where 1 = 1
+        <include refid="querySql"/>
+    </select>
+
+
+
+    <select id="selectYuJingList" parameterType="org.springblade.anbiao.jinritixing.page.YujingquanxianPage" resultType="org.springblade.anbiao.jinritixing.vo.YujingquanxianVO">
+
+            <include refid="tableSqls" />
+
+    </select>
+
+    <delete id="delYuJing" parameterType="org.springblade.anbiao.jinritixing.page.YujingquanxianPage">
+        DELETE anbiao_yujingquanxian where 1 = 1 and dept_id = #{deptId} AND postid = #{postId}
+    </delete>
+
+    <select id="yujingjiesuan" parameterType="org.springblade.anbiao.jinritixing.page.YujingquanxianPage">
+
+        call yjyh(#{deptId},#{yujingxiangid})
+
+    </select>
+</mapper>

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.anbiao.zhengfu.mapper.AppVersionInfoMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="ResultMap" type="org.springblade.anbiao.zhengfu.entity.AppVersionInfo">
+        <id column="id" property="id"/>
+    </resultMap>
+
+    <insert id="insertSelective" parameterType="org.springblade.anbiao.zhengfu.entity.AppVersionInfo" >
+        insert into anbiao_app_updat_version
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+
+            <if test="type != null">
+                type,
+            </if>
+
+            <if test="version != null">
+                version,
+            </if>
+
+            <if test="createtime != null">
+                createtime,
+            </if>
+
+            <if test="createuserid != null">
+                createuserid,
+            </if>
+
+            <if test="createuser != null">
+                createuser,
+            </if>
+
+            <if test="androidurl != null">
+                androidurl,
+            </if>
+
+            <if test="iosurl != null">
+                iosurl,
+            </if>
+
+            <if test="remark != null">
+                remark,
+            </if>
+
+            <if test="modletype != null">
+                modletype,
+            </if>
+
+            <if test="isdeleted != null">
+                isdeleted
+            </if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="type != null">
+                #{type},
+            </if>
+
+            <if test="version != null">
+                #{version},
+            </if>
+
+            <if test="createtime != null">
+                #{createtime},
+            </if>
+
+            <if test="createuserid != null">
+                #{createuserid},
+            </if>
+
+            <if test="createuser != null">
+                #{createuser},
+            </if>
+
+            <if test="androidurl != null">
+                #{androidurl},
+            </if>
+
+            <if test="iosurl != null">
+                #{iosurl},
+            </if>
+
+            <if test="remark != null">
+                #{remark},
+            </if>
+
+            <if test="modletype != null">
+                #{modletype},
+            </if>
+
+            <if test="isdeleted != null">
+                #{isdeleted}
+            </if>
+
+        </trim>
+    </insert>
+
+    <!-- 查询列表 -->
+    <sql id="tableSql">
+        select
+            id,
+            case when type = 0 then '企业APP' else '司机APP' end as type,
+            version,createtime,createuserid,createuser,androidurl,iosurl,
+            remark,
+            case when isdeleted = 0 then '启用' else '禁用' end as isdeleted
+        from
+            anbiao_app_updat_version
+        where 1=1
+    </sql>
+
+    <sql id="orderSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by createtime desc
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+    </sql>
+
+    <select timeout="600" id="selectALLPage" resultMap="ResultMap"
+            parameterType="org.springblade.anbiao.zhengfu.page.AppVersionInfoPage">
+        <if test="size == 0">
+            select * from (
+            <include refid="tableSql"/>
+            )b
+            where 1=1
+            <include refid="orderSql"/>
+            limit ${total}
+        </if>
+        <if test="current != 0">
+            select * from (
+            <include refid="tableSql"/>
+            )b
+            where 1=1
+            <include refid="orderSql"/>
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <select timeout="90" id="selectAllTotal"
+            parameterType="org.springblade.anbiao.zhengfu.page.AppVersionInfoPage"
+            resultType="int">
+        select COUNT(1) from (
+        <include refid="tableSql"/>
+        )d where 1 = 1
+    </select>
+
+    <update id="updateByPrimaryKey" parameterType="org.springblade.anbiao.zhengfu.entity.AppVersionInfo" >
+        update anbiao_app_updat_version
+        set isdeleted = #{isdeleted},updateuser = #{updateuser},updatetime = #{updatetime}
+        where id = #{id}
+  </update>
+
+</mapper>

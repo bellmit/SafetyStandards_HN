@@ -1,0 +1,1 @@
+restart.include.blade-deadline-api=/blade-deadline-api[\\w-]+\.jar

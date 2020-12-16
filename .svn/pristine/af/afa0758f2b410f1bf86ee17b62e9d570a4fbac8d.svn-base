@@ -1,0 +1,343 @@
+/**
+ * Copyright (c) 2018-2028, Chill Zhuang 庄骞 (smallchill@163.com).
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.springblade.auth.controller;
+
+import cn.hutool.core.util.StrUtil;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import lombok.AllArgsConstructor;
+import net.dreamlu.mica.captcha.servlet.MicaCaptchaServlet;
+import net.dreamlu.mica.core.utils.Base64Util;
+import org.springblade.anbiao.guanlijigouherenyuan.entity.Organizations;
+import org.springblade.anbiao.guanlijigouherenyuan.feign.IOrganizationsClient;
+import org.springblade.common.configurationBean.FileServer;
+import org.springblade.core.log.annotation.ApiLog;
+import org.springblade.core.secure.BladeUser;
+import org.springblade.core.secure.utils.SecureUtil;
+import org.springblade.core.tool.api.R;
+import org.springblade.core.tool.utils.DigestUtil;
+import org.springblade.core.tool.utils.Func;
+import org.springblade.system.entity.Dept;
+import org.springblade.system.feign.ISysClient;
+import org.springblade.system.user.entity.User;
+import org.springblade.system.user.entity.UserInfo;
+import org.springblade.system.user.feign.IUserClient;
+import org.springblade.upload.upload.feign.IFileUploadClient;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * 认证模块
+ *
+ * @author Chill
+ */
+@RestController
+@AllArgsConstructor
+@Api(value = "用户授权认证", tags = "授权接口")
+public class AuthController {
+
+	private IUserClient client;
+
+	private ISysClient sysClient;
+
+	private FileServer fileServer;
+
+	private IOrganizationsClient orrganizationsClient;
+
+	private IFileUploadClient fileUploadClient;
+
+	private MicaCaptchaServlet micaCaptcha;
+
+
+	@PostMapping("token")
+	@ApiLog("pc登录")
+	@ApiOperation(value = "获取认证token", notes = "传入账号:account,密码:password")
+	public R<AuthInfoConfig> token(@ApiParam(value = "账号", required = true) @RequestParam String account,
+								   @ApiParam(value = "密码", required = true) @RequestParam String password,
+								   @ApiParam(value = "验证码", required = false) @RequestParam String clientVerifyCode,
+								   @ApiParam(value = "是否需要验证码登录", required = false) @RequestParam String type,
+								   HttpServletResponse response) {
+		//获取配置文件对验证码的界定条件 为true时代表需要进行验证码判断
+		if("true".equals(fileServer.getFalg())){
+			//type为1代表从企业端跳转到运维端
+			if("1".equals(type)){
+				if (Func.hasEmpty(account, password)) {
+					return R.fail("请输入账号，密码！");
+				}
+			}else{
+				//运维端 企业端正常登陆
+				if (Func.hasEmpty(account, password,clientVerifyCode)) {
+					return R.fail("请输入账号，密码，验证码！");
+				}
+				boolean validated = micaCaptcha.validate(response, clientVerifyCode);
+				if(clientVerifyCode!=null||clientVerifyCode!=""){
+					if(validated==false){
+						return R.fail("验证码不正确");
+					}
+				}
+			}
+		}else{
+			//开发状态下不需要进行验证码输入
+			if (Func.hasEmpty(account, password)) {
+				return R.fail("请输入账号，密码！");
+			}
+		}
+		User user = client.login(account, DigestUtil.encrypt(password));
+
+		//验证用户
+		if(user==null){
+			return R.fail("用户名或密码不正确");
+		}
+		if(StrUtil.hasBlank(user.getPostId())){
+			return R.fail("账号异常，请联系管理人员");
+		}
+		//设置jwt参数
+		Map<String, String> param = new HashMap<>(16);
+		param.put(SecureUtil.USER_ID, Func.toStr(user.getId()));
+		param.put(SecureUtil.ROLE_ID, user.getRoleId());
+		param.put(SecureUtil.TENANT_CODE, user.getTenantCode());
+		param.put(SecureUtil.ACCOUNT, user.getAccount());
+		param.put(SecureUtil.USER_NAME, user.getRealName());
+		param.put(SecureUtil.ROLE_NAME, user.getPostId());
+
+		//拼装accessToken
+		String accessToken = SecureUtil.createJWT(param, "audience", "issuser", true);
+
+		//返回accessToken
+		AuthInfoConfig info=new AuthInfoConfig();
+
+		info.setAccount(user.getAccount());
+		info.setPassWord(password);
+		info.setUserName(user.getRealName());
+		info.setAuthority("administrator");
+		info.setAccessToken(accessToken);
+		info.setTokenType(SecureUtil.BEARER);
+		info.setPostId(user.getPostId());
+		Dept dept=sysClient.selectByJGBM("机构",user.getPostId());
+		info.setDeptId(dept.getId().toString());
+		info.setDeptName(dept.getDeptName());
+		info.setUserId(user.getId().toString());
+		info.setPostName(sysClient.getDept(Integer.parseInt(user.getPostId())).getDeptName());
+		//根据单位id获取企业基本信息
+		Organizations organization=orrganizationsClient.selectByDeptId(dept.getId().toString());
+		if(organization!=null){
+			//首页
+			if(StrUtil.isNotEmpty(organization.getHomePhoto())){
+				info.setHomePhoto(fileUploadClient.getUrlUrl(organization.getHomePhoto()));
+			}
+			//简介页
+			if(StrUtil.isNotEmpty(organization.getProfilePhoto())){
+				info.setProfilePhoto(fileUploadClient.getUrlUrl(organization.getProfilePhoto()));
+			}
+			//logo
+			if(StrUtil.isNotEmpty(organization.getLogoPhoto())){
+				info.setLogoPhoto(fileUploadClient.getUrlUrl(organization.getLogoPhoto()));
+			}
+		}
+		info.setUrlPrefix(fileServer.getUrlPrefix());
+		//		//设置token过期时间
+		info.setExpiresIn(SecureUtil.getExpire());
+		return R.data(info);
+
+	}
+
+	@PostMapping("apptoken")
+	@ApiLog("app登录")
+	@ApiOperation(value = "app获取认证token", notes = "传入账号:account,密码:password")
+	public R<AuthInfoConfig> Apptoken(@ApiParam(value = "账号", required = true) @RequestParam String account,
+								   @ApiParam(value = "密码", required = true) @RequestParam String password
+	) {
+		if (Func.hasEmpty(account, password)) {
+			return R.fail("接口调用不合法");
+		}
+		User user = client.login(account, DigestUtil.encrypt(password));
+
+		//验证用户
+		if(user==null){
+			return R.fail("用户名或密码不正确");
+		}
+
+		//设置jwt参数
+		Map<String, String> param = new HashMap<>(16);
+		param.put(SecureUtil.USER_ID, Func.toStr(user.getId()));
+		param.put(SecureUtil.ROLE_ID, user.getRoleId());
+		param.put(SecureUtil.TENANT_CODE, user.getTenantCode());
+		param.put(SecureUtil.ACCOUNT, user.getAccount());
+		param.put(SecureUtil.USER_NAME, user.getRealName());
+		param.put(SecureUtil.ROLE_NAME, user.getPostId());
+
+		//拼装accessToken
+		String accessToken = SecureUtil.createJWT(param, "audience", "issuser", true);
+
+		//返回accessToken
+		AuthInfoConfig info=new AuthInfoConfig();
+
+		info.setAccount(user.getAccount());
+		info.setPassWord(password);
+		info.setUserName(user.getRealName());
+		info.setAuthority("administrator");
+		info.setAccessToken(accessToken);
+		info.setTokenType(SecureUtil.BEARER);
+		info.setPostId(user.getPostId());
+		Dept dept=sysClient.selectByJGBM("机构",user.getPostId());
+		info.setDeptId(dept.getId().toString());
+		info.setDeptName(dept.getDeptName());
+		info.setPostName(sysClient.getDept(Integer.parseInt(user.getPostId())).getDeptName());
+		//根据单位id获取企业基本信息
+		Organizations organization=orrganizationsClient.selectByDeptId(dept.getId().toString());
+		if(organization!=null){
+			//首页
+			if(StrUtil.isNotEmpty(organization.getHomePhoto())){
+				info.setHomePhotoApp(fileUploadClient.getUrlUrl(organization.getHomePhotoApp()));
+			}
+			//简介页
+			if(StrUtil.isNotEmpty(organization.getProfilePhoto())){
+				info.setProfilePhotoApp(fileUploadClient.getUrlUrl(organization.getProfilePhotoApp()));
+			}
+			//logo
+			if(StrUtil.isNotEmpty(organization.getLogoPhoto())){
+				info.setLogoPhoto(fileUploadClient.getUrlUrl(organization.getLogoPhoto()));
+			}
+			//loginapp
+			if(StrUtil.isNotEmpty(organization.getLoginPhotoApp())){
+				info.setLoginPhotoApp(fileUploadClient.getUrlUrl(organization.getLoginPhotoApp()));
+			}
+		}
+		//设置token过期时间
+		info.setExpiresIn(SecureUtil.getExpire());
+		return R.data(info);
+
+	}
+	/***
+	* @Description: 退出登录
+	* @Param: [user]
+	* @return: org.springblade.core.tool.api.R
+	* @Author: wj
+	* @Date: 2019-05-07
+	*/
+	@GetMapping("logout")
+	@ApiOperation(value = "退出登录")
+	public R logout(BladeUser user) {
+		user.setRoleName("");
+		user.setAccount("");
+		user.setRoleId("");
+		user.setTenantCode("");
+		user.setUserId(0);
+		user.setUserName("");
+		return R.success("退出成功");
+	}
+
+	/**
+	 * 通过openid登录
+	 * @param openid
+	 * @return
+	 */
+	@PostMapping("loginwithopenid")
+	@ApiLog("weixin登录")
+	@ApiOperation(value = "通过openid登录", notes = "传入openid")
+	public R<AuthInfoConfig> loginwithopenid(@ApiParam(value = "账号", required = true) @RequestParam String openid){
+		if (Func.hasEmpty(openid)) {
+			return R.fail("请先绑定账号");
+		}
+		R<UserInfo> weixin = client.getWeixinUser(openid);
+		//验证用户
+		if (Func.isEmpty(weixin.getData().getUser().getAccount())) {
+			return R.fail("请先绑定账号");
+		}
+		R<UserInfo> res = client.userInfo(weixin.getData().getUser().getAccount(), weixin.getData().getUser().getPassword());
+		User user = res.getData().getUser();
+
+		//设置jwt参数
+		Map<String, String> param = new HashMap<>(16);
+		param.put(SecureUtil.USER_ID, Func.toStr(user.getId()));
+		param.put(SecureUtil.ROLE_ID, user.getRoleId());
+		param.put(SecureUtil.TENANT_CODE, user.getTenantCode());
+		param.put(SecureUtil.ACCOUNT, user.getAccount());
+		param.put(SecureUtil.USER_NAME, user.getRealName());
+		param.put(SecureUtil.ROLE_NAME, user.getPostId());
+
+		//拼装accessToken
+		String accessToken = SecureUtil.createJWT(param, "audience", "issuser", true);
+
+		//返回accessToken
+		AuthInfoConfig info=new AuthInfoConfig();
+
+		info.setAccount(user.getAccount());
+		info.setUserName(user.getRealName());
+		info.setAuthority("administrator");
+		info.setAccessToken(accessToken);
+		info.setTokenType(SecureUtil.BEARER);
+		info.setPostId(user.getPostId());
+		Dept dept=sysClient.selectByJGBM("机构",user.getPostId());
+		info.setDeptId(dept.getId().toString());
+		info.setDeptName(dept.getDeptName());
+		info.setPostName(sysClient.getDept(Integer.parseInt(user.getPostId())).getDeptName());
+		//根据单位id获取企业基本信息
+		Organizations organization=orrganizationsClient.selectByDeptId(dept.getId().toString());
+		if(organization!=null){
+			//首页
+			if(StrUtil.isNotEmpty(organization.getHomePhoto())){
+				info.setHomePhotoApp(fileUploadClient.getUrlUrl(organization.getHomePhotoApp()));
+			}
+			//简介页
+			if(StrUtil.isNotEmpty(organization.getProfilePhoto())){
+				info.setProfilePhotoApp(fileUploadClient.getUrlUrl(organization.getProfilePhotoApp()));
+			}
+			//logo
+			if(StrUtil.isNotEmpty(organization.getLogoPhoto())){
+				info.setLogoPhoto(fileUploadClient.getUrlUrl(organization.getLogoPhoto()));
+			}
+			//loginapp
+			if(StrUtil.isNotEmpty(organization.getLoginPhotoApp())){
+				info.setLoginPhotoApp(fileUploadClient.getUrlUrl(organization.getLoginPhotoApp()));
+			}
+		}
+		//设置token过期时间
+		info.setExpiresIn(SecureUtil.getExpire());
+		return R.data(info);
+	}
+	/**
+	 * 图形验证码
+	 */
+	@GetMapping(value = "getcode")
+	@ApiOperation(value = "获取验证码", notes = "获取验证码", position = 1)
+	@ResponseBody
+	public R<String> getcode(HttpServletResponse response,String deptId) {
+		//设置cookie和redi缓存，默认是 mica
+		micaCaptcha.setCookieName("blade-Captcha");
+		micaCaptcha.setCacheName("blade-Captcha");
+		byte[] imgBytes =micaCaptcha.generateByteArray(response);
+		String base64 = "data:image/jpeg;base64," +
+			Base64Util.encodeToString(imgBytes);
+		return R.data(base64);
+	}
+
+
+//	/**
+//	 * 校验图形验证码
+//	 */
+//	@PostMapping(value = "/captcha.jpg")
+//	@ResponseBody
+//	public R captcha(HttpServletResponse response, String captcha) {
+//		boolean validated = micaCaptcha.validate(response, captcha);
+//		return R.data(validated);
+//	}
+
+}

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.upload.upload.mapper.FileUploadMapper">
+
+
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="fileResultMap" type="org.springblade.upload.upload.entity.FileUpload">
+
+    </resultMap>
+
+    <insert id="insertAttachfile" parameterType="org.springblade.upload.upload.entity.FileUpload" >
+    insert into blade_attachfiles (ID, ATTACHCODE, USERID,
+      USER_NAME, FILE_NAME, FILE_SAVE_NAME,
+      QUOTE_TIMES, UPLOAD_TIME, FILE_SIZE,
+      FILE_TYPE, FLODER, COMPRESSED,PATH
+      )
+    values (#{id,jdbcType=VARCHAR}, #{attachcode,jdbcType=VARCHAR}, #{userid,jdbcType=NUMERIC},
+      #{userName,jdbcType=VARCHAR}, #{fileName,jdbcType=VARCHAR}, #{fileSaveName,jdbcType=VARCHAR},
+      #{quoteTimes,jdbcType=NUMERIC}, #{uploadTime,jdbcType=TIMESTAMP}, #{fileSize,jdbcType=NUMERIC},
+      #{fileType,jdbcType=NUMERIC}, #{floder,jdbcType=VARCHAR}, #{compressed,jdbcType=NUMERIC},#{path,jdbcType=VARCHAR}
+      )
+  </insert>
+    <select id="selectByFileName" resultMap="fileResultMap" parameterType="java.lang.String" >
+    select ID, ATTACHCODE, USERID, USER_NAME, FILE_NAME, FILE_SAVE_NAME, QUOTE_TIMES,
+    UPLOAD_TIME, FILE_SIZE, FILE_TYPE, FLODER, COMPRESSED,upload_time uploadTime, path
+    from blade_attachfiles
+    where FILE_SAVE_NAME = #{filename,jdbcType=VARCHAR} LIMIT 1
+  </select>
+
+    <delete id="delByFileName"  parameterType="org.springblade.upload.upload.entity.FileUpload">
+    delete
+        from blade_attachfiles
+        where FILE_SAVE_NAME = #{filename,jdbcType=VARCHAR}
+  </delete>
+
+
+    <select id="selectAll" resultMap="fileResultMap" parameterType="java.lang.String" >
+    SELECT
+	ID,FILE_NAME fileName,FILE_SAVE_NAME fileSaveName,ATTACHCODE,
+	 substring_index(FILE_SAVE_NAME, '.', 1) wenjianid,
+    substring_index(FILE_NAME, '.', -1) wenjianleixing,
+    upload_time uploadTime,USER_NAME,
+	FLODER floder, path
+   FROM
+	blade_attachfiles
+   WHERE
+     ATTACHCODE = #{attachcode}
+  </select>
+
+    <!-- 附件删除 -->
+    <delete id="deleteFujian" parameterType="java.lang.String" >
+     DELETE blade_attachfiles WHERE id=#{id}
+  </delete>
+
+    <update id="updateCorrelation"  parameterType="org.springblade.upload.upload.entity.FileUpload" >
+        update  blade_attachfiles set correlation=#{correlation} where  id=#{id}
+    </update>
+
+
+    <select id="selectByNotSaveName" resultMap="fileResultMap" parameterType="java.lang.String" >
+    SELECT
+	ID,FILE_NAME fileName,FILE_SAVE_NAME fileSaveName,ATTACHCODE,
+	 substring_index(FILE_SAVE_NAME, '.', 1) wenjianid,
+    substring_index(FILE_NAME, '.', -1) wenjianleixing,
+    upload_time uploadTime,USER_NAME,
+	FLODER floder, path
+   FROM
+	blade_attachfiles
+   WHERE
+     ATTACHCODE = #{attachcode}
+    and FILE_SAVE_NAME NOT IN
+    <foreach item="item" index="index" collection="list"
+             open="(" separator="," close=")">
+        #{item}
+    </foreach>
+  </select>
+</mapper>

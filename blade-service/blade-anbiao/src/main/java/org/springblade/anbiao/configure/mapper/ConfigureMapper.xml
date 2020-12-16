@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.anbiao.configure.mapper.ConfigureMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="MapResultMap" type="org.springblade.anbiao.configure.entity.Configure">
+        <id column="id" property="id"/>
+        <result column="dept_id" property="deptId"/>
+        <result column="shujubiaoziduan" property="shujubiaoziduan"/>
+        <result column="shijiziduan" property="shijiziduan"/>
+        <result column="label" property="label"/>
+        <result column="biaodancanshu" property="biaodancanshu"/>
+        <result column="is_deleted" property="isdeleted"/>
+    </resultMap>
+
+    <delete id="delMap" parameterType="java.lang.String">
+        update ${tableName} set  is_deleted=1 where  id=#{id}
+    </delete>
+
+    <delete id="delMapByDeptId" parameterType="java.lang.String">
+        update ${tableName} set  is_deleted=1 where  dept_id=#{deptId}
+    </delete>
+
+    <delete id="delMapByDeptIdDel" parameterType="java.lang.String">
+        delete from ${tableName}  where  dept_id=#{deptId} and shujubiaoziduan=#{shujubiaoziduan}
+    </delete>
+
+
+    <insert id="insertMap" parameterType="org.springblade.anbiao.configure.entity.Configure">
+        insert   into  ${tableName} (id,dept_id,shujubiaoziduan,shijiziduan,label,biaodancanshu)
+        values (#{id},#{deptId},#{shujubiaoziduan},#{shijiziduan},#{label},#{biaodancanshu})
+    </insert>
+
+    <update id="updateMap" parameterType="org.springblade.anbiao.configure.entity.Configure">
+        update  ${tableName}  set
+            shujubiaoziduan=#{shujubiaoziduan},
+            shijiziduan=#{shijiziduan},
+            label=#{label},
+            biaodancanshu=#{biaodancanshu}
+        where id=#{id}
+    </update>
+
+    <select id="selectMapList" resultMap="MapResultMap">
+        select * from ${tableName} where is_deleted = 0 and  dept_id=#{deptId}
+    </select>
+
+    <select id="selectByIds" resultMap="MapResultMap">
+        select * from ${tableName} where is_deleted = 0 and  id=#{id}
+    </select>
+
+    <select id="selectByName"  resultMap="MapResultMap">
+        SELECT tableName FROM anbiao_muban_map GROUP BY tableName
+    </select>
+
+</mapper>

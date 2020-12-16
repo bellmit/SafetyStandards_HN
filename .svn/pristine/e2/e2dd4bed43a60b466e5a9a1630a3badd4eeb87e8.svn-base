@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.alarm.mapper.VehdailyreportMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="vehdailyreportResultMap" type="org.springblade.alarm.entity.Vehdailyreport">
+        <result column="cid" property="cid"/>
+        <result column="company" property="company"/>
+        <result column="vehid" property="vehid"/>
+        <result column="plate" property="plate"/>
+        <result column="color" property="color"/>
+        <result column="date" property="date"/>
+        <result column="stopFlag" property="stopFlag"/>
+        <result column="trackCount" property="trackCount"/>
+        <result column="locateCount" property="locateCount"/>
+        <result column="offsetCount" property="offsetCount"/>
+        <result column="lostSeconds" property="lostSeconds"/>
+        <result column="mileageCount" property="mileageCount"/>
+        <result column="invalidMileageCount" property="invalidMileageCount"/>
+        <result column="oilUsedAmount" property="oilUsedAmount"/>
+        <result column="runSeconds" property="runSeconds"/>
+        <result column="stopSeconds" property="stopSeconds"/>
+        <result column="stopOilUsedAmount" property="stopOilUsedAmount"/>
+        <result column="mileageCountOfPulse" property="mileageCountOfPulse"/>
+        <result column="mileageMaxOfPulse" property="mileageMaxOfPulse"/>
+        <result column="x" property="x"/>
+        <result column="y" property="y"/>
+        <result column="x2" property="x2"/>
+        <result column="y2" property="y2"/>
+        <result column="alarmCount" property="alarmCount"/>
+        <result column="speedAlarmCount" property="speedAlarmCount"/>
+        <result column="speedAlarmNightCount" property="speedAlarmNightCount"/>
+        <result column="tiredAlarmCount" property="tiredAlarmCount"/>
+        <result column="tiredAlarmNightCount" property="tiredAlarmNightCount"/>
+        <result column="nightAlarmCount" property="nightAlarmCount"/>
+        <result column="outAlarmCount" property="outAlarmCount"/>
+        <result column="otherAlarmCount" property="otherAlarmCount"/>
+        <result column="sendMessageCount" property="sendMessageCount"/>
+        <result column="trackQueryCount" property="trackQueryCount"/>
+        <result column="photoCount" property="photoCount"/>
+        <result column="photoQueryCount" property="photoQueryCount"/>
+        <result column="createTime" property="createTime"/>
+    </resultMap>
+
+
+    <select id="selectVehdailyreportPage" resultMap="vehdailyreportResultMap">
+      /*  select * from baobiao_vehdailyreport where is_deleted = 0*/
+        select  *  from   baobiao_vehdailyreport  where  date &gt; '2019-06-01'
+    </select>
+    <select id="findpageList" parameterType="org.springblade.alarm.page.VehdailyreportPage" resultType="integer">
+        select count(1)
+         from
+            baobiao_vehdailyreport
+                where 1=1
+                <include refid="querySql"/>
+
+    </select>
+
+    <select id="selectall"  parameterType="org.springblade.alarm.page.VehdailyreportPage" resultType="org.springblade.alarm.entity.Vehdailyreport">
+        <if test="size ==0">
+            select  * from (
+            <include refid="tablesql"/>
+            <include refid="querySql"/>
+            )b
+            <include refid="orderSql"/>
+            LIMIT #{total}
+        </if>
+        <if test="current != 0">
+            select  * from (
+            <include refid="tablesql"/>
+            <include refid="querySql"/>
+            )b
+            <include refid="orderSql"/>
+            LIMIT #{offsetNo},#{size}
+        </if>
+
+
+
+
+
+    </select>
+    <sql id="querySql">
+        <if test="company !=null and company!=''">
+            and   company=#{company}
+
+        </if>
+        <if test="date!=null and date!=''">
+            and date=#{date}
+
+        </if>
+
+
+
+    </sql>
+    <sql id="tablesql">
+     SELECT
+	plate,
+	date,
+	mileageCount,
+	color,
+    CONCAT((floor(runSeconds / 3600) % 24),'时',(floor(runSeconds / 60) % 60),'分',(runSeconds % 60),'秒') AS xingshishijian,
+    CONCAT((floor(stopSeconds / 3600) % 24),'时',(floor(stopSeconds / 60) % 60),'分',(stopSeconds % 60),'秒') AS stopshijian,
+	x,
+	y,
+	x2,
+	y2,
+	loc1 as kaishiweizhi,
+	loc2 as jieshuweizhi,
+			ROUND( ROUND(mileageCount)/(ROUND(runSeconds / 3600,2))) as pingjunsudu
+    FROM
+	baobiao_vehdailyreport
+
+	where 1=1
+
+    </sql>
+    <sql id="orderSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by mileageCount desc
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+    </sql>
+</mapper>

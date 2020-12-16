@@ -1,0 +1,15 @@
+E:\MXCX\HeBei\SafetyStandards\blade-service-api\blade-gps-api\src\main\java\org\springblade\gps\entity\VehilePTData.java
+E:\MXCX\HeBei\SafetyStandards\blade-service-api\blade-gps-api\src\main\java\org\springblade\gps\page\VehiclePTPage.java
+E:\MXCX\HeBei\SafetyStandards\blade-service-api\blade-gps-api\src\main\java\org\springblade\gps\entity\GpsPlateVehid.java
+E:\MXCX\HeBei\SafetyStandards\blade-service-api\blade-gps-api\src\main\java\org\springblade\gps\page\VehicleStopSumPage.java
+E:\MXCX\HeBei\SafetyStandards\blade-service-api\blade-gps-api\src\main\java\org\springblade\gps\feign\GpsPointDataClientFallback.java
+E:\MXCX\HeBei\SafetyStandards\blade-service-api\blade-gps-api\src\main\java\org\springblade\gps\entity\VehicleStop.java
+E:\MXCX\HeBei\SafetyStandards\blade-service-api\blade-gps-api\src\main\java\org\springblade\gps\entity\VehicleForPlate.java
+E:\MXCX\HeBei\SafetyStandards\blade-service-api\blade-gps-api\src\main\java\org\springblade\gps\entity\VehiclePT.java
+E:\MXCX\HeBei\SafetyStandards\blade-service-api\blade-gps-api\src\main\java\org\springblade\gps\feign\IGpsPointDataClient.java
+E:\MXCX\HeBei\SafetyStandards\blade-service-api\blade-gps-api\src\main\java\org\springblade\gps\entity\GpsVehicle.java
+E:\MXCX\HeBei\SafetyStandards\blade-service-api\blade-gps-api\src\main\java\org\springblade\gps\entity\VehiclePTCompany.java
+E:\MXCX\HeBei\SafetyStandards\blade-service-api\blade-gps-api\src\main\java\org\springblade\gps\page\VehicleStopPage.java
+E:\MXCX\HeBei\SafetyStandards\blade-service-api\blade-gps-api\src\main\java\org\springblade\gps\entity\VehicleDetailPage.java
+E:\MXCX\HeBei\SafetyStandards\blade-service-api\blade-gps-api\src\main\java\org\springblade\gps\entity\VehicleStopData.java
+E:\MXCX\HeBei\SafetyStandards\blade-service-api\blade-gps-api\src\main\java\org\springblade\gps\entity\VehicleNode.java

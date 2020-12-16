@@ -1,0 +1,1 @@
+restart.include.blade-desk-api=/blade-desk-api[\\w-]+\.jar

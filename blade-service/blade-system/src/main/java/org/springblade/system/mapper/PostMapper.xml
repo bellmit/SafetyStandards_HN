@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.system.mapper.PostMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="postMenuResultMap" type="org.springblade.system.entity.Post">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="post_id" property="postId"/>
+        <result column="Isdefault" property="isdefault"/>
+    </resultMap>
+
+    <select id="selectByUserId" resultType="org.springblade.system.entity.Post">
+        select * from blade_post where  user_id=#{param1}
+    </select>
+
+    <select id="selectByUserIdAndIsdefault" resultType="org.springblade.system.entity.Post">
+        select * from blade_post where  user_id=#{userId} and Isdefault=1
+    </select>
+    <!--根据deptId获取下级所有岗位id-->
+    <select id="getPostIdsByDeptId" resultType="java.lang.Integer">
+        SELECT DISTINCT
+            xiaji.id
+        FROM
+            blade_dept shangji,
+            blade_dept xiaji
+        WHERE xiaji.tree_code LIKE CONCAT(shangji.tree_code,'%')
+        AND xiaji.is_deleted = 0 AND xiaji.extend_type='岗位'
+        and shangji.id=#{deptId}
+    </select>
+
+    <delete id="deleteByUserId" parameterType="org.springblade.system.entity.Post">
+        delete  blade_post where  user_id=#{param1}
+    </delete>
+    
+    <insert id="insertPost" parameterType="org.springblade.system.entity.Post">
+        insert  into  blade_post (user_id,post_id,Isdefault)
+        values (#{userId},#{postId},#{isdefault})
+    </insert>
+
+    <update id="updateIsdefault"  parameterType="org.springblade.system.entity.Post">
+        update blade_post set Isdefault=0 where user_id=#{userId};
+        update blade_post set Isdefault=1 where user_id=#{userId} and post_id=#{postId}
+    </update>
+
+</mapper>

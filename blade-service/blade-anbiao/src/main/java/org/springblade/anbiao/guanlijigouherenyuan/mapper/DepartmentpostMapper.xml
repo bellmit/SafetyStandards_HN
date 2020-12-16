@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.anbiao.guanlijigouherenyuan.mapper.DepartmentpostMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="departmentpostResultMap" type="org.springblade.anbiao.guanlijigouherenyuan.entity.Departmentpost">
+        <id column="id" property="id"/>
+        <result column="dept_id" property="deptId"/>
+        <result column="caozuoren" property="caozuoren"/>
+        <result column="caozuorenid" property="caozuorenid"/>
+        <result column="caozuoshijian" property="caozuoshijian"/>
+        <result column="mingcheng" property="mingcheng"/>
+        <result column="leixing" property="leixing"/>
+        <result column="fuzeren" property="fuzeren"/>
+        <result column="gangweizhize" property="gangweizhize"/>
+        <result column="anquanzhize" property="anquanzhize"/>
+        <result column="type" property="type"/>
+        <result column="is_deleted" property="isDeleted"/>
+    </resultMap>
+
+
+    <sql id="tableSql">
+        SELECT
+        a.*, b.dept_name deptName
+        FROM
+        anbiao_departmentpost a
+        inner join  (
+        <include refid="org.springblade.anbiao.guanlijigouherenyuan.mapper.OrganizationsMapper.getByDeptId"/>
+        ) b
+        on a.dept_id = b.id and a.is_deleted = 0 and  b.is_deleted = 0
+
+    </sql>
+
+    <sql id="querySql">
+        <!--<if test="banbujiguan !=null and banbujiguan != ''">-->
+        <!--AND banbujiguan  LIKE '%${banbujiguan}%'-->
+        <!--</if>-->
+    </sql>
+    <sql id="orderSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by caozuoshijian desc
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+    </sql>
+
+    <select id="selectPageQuery" resultMap="departmentpostResultMap"
+            parameterType="org.springblade.anbiao.guanlijigouherenyuan.page.DepartmentpostPage" resultType="org.springblade.anbiao.guanlijigouherenyuan.vo.DepartmentpostVO">
+        <if test="size == 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${total}
+        </if>
+        <if test="current != 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <select id="selectTotal"
+            parameterType="org.springblade.anbiao.guanlijigouherenyuan.page.DepartmentpostPage"
+            resultType="int">
+        select COUNT(1) from (
+        <include refid="tableSql" />
+        )d
+        where 1 = 1
+        <include refid="querySql" />
+    </select>
+
+    <select id="selectByPostId" resultMap="departmentpostResultMap">
+        select  * from  anbiao_departmentpost where dept_id=#{deptId}
+    </select>
+    <update id="updateByPostId" parameterType="org.springblade.anbiao.guanlijigouherenyuan.entity.Departmentpost">
+        update  anbiao_departmentpost
+            set  caozuoren=#{caozuoren},
+                 caozuorenid=#{caozuorenid},
+                 caozuoshijian#{caozuoshijian},
+                 mingcheng=#{mingcheng},
+                 leixing=#{leixing},
+                 fuzeren=#{fuzeren},
+                 gangweizhize=#{gangweizhize},
+                 anquanzhize=#{anquanzhize}
+            where dept_id=#{deptId}
+    </update>
+
+    <!-- 假删除 -->
+    <update id="deletepost" parameterType="java.lang.String" >
+         update anbiao_departmentpost set
+            is_deleted = 1
+        WHERE id = #{id}
+  </update>
+
+</mapper>

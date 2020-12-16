@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.anbiao.guanlijigouherenyuan.mapper.HuiyirenyuanMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="huiyirenyuanResultMap" type="org.springblade.anbiao.guanlijigouherenyuan.entity.Huiyirenyuan">
+        <id column="id" property="id"/>
+        <result column="huiyiid" property="huiyiid"/>
+        <result column="renyuanmingcheng" property="renyuanmingcheng"/>
+        <result column="bumen" property="bumen"/>
+        <result column="zhiwu" property="zhiwu"/>
+        <result column="shifoucanjiahuiyi" property="shifoucanjiahuiyi"/>
+        <result column="is_deleted" property="isDeleted"/>
+    </resultMap>
+
+    <sql id="tableSql">
+        SELECT
+        a.*
+        FROM
+        anbiao_huiyirenyuan a
+        <if test="huiyiid != null">
+            AND a.huiyiid = ${huiyiid}
+        </if>
+    </sql>
+
+    <sql id="querySql">
+        <!--<if test="banbujiguan !=null and banbujiguan != ''">-->
+        <!--AND banbujiguan  LIKE '%${banbujiguan}%'-->
+        <!--</if>-->
+    </sql>
+    <sql id="orderSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by caozuoshijian desc
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+    </sql>
+
+    <select id="selectPageQuery" resultMap="huiyirenyuanResultMap"
+            parameterType="org.springblade.anbiao.guanlijigouherenyuan.page.HuiyirenyuanPage" resultType="org.springblade.anbiao.guanlijigouherenyuan.vo.HuiyirenyuanVO">
+        <if test="size == 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${total}
+        </if>
+        <if test="current != 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <select id="selectTotal"
+            parameterType="org.springblade.anbiao.guanlijigouherenyuan.page.HuiyirenyuanPage"
+            resultType="int">
+        select COUNT(1) from (
+        <include refid="tableSql" />
+        )d
+        where 1 = 1
+        <include refid="querySql" />
+    </select>
+
+    <!-- 假删除 -->
+    <update id="deleteHuiYi" parameterType="java.lang.String" >
+         update anbiao_huiyirenyuan set
+            is_deleted = 1
+        WHERE id = #{id}
+  </update>
+
+</mapper>

@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.manage.settlement.mapper.SettlementMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="settlementResultMap" type="org.springblade.manage.settlement.entity.Settlement">
+        <result column="id" property="id"/>
+        <result column="dept_id" property="deptId"/>
+        <result column="waybill_id" property="waybillId"/>
+        <result column="zhuanghuoshijian" property="zhuanghuoshijian"/>
+        <result column="xiehuoshijian" property="xiehuoshijian"/>
+        <result column="vehicle_id" property="vehicleId"/>
+        <result column="zhuanghuodi" property="zhuanghuodi"/>
+        <result column="xiehuodi" property="xiehuodi"/>
+        <result column="huowumingcheng" property="huowumingcheng"/>
+        <result column="zhuanghuoliang" property="zhuanghuoliang"/>
+        <result column="rukuxuhao" property="rukuxuhao"/>
+        <result column="chukuxuhao" property="chukuxuhao"/>
+        <result column="xiehuoliang" property="xiehuoliang"/>
+        <result column="bangcha" property="bangcha"/>
+        <result column="jiesuanliang" property="jiesuanliang"/>
+        <result column="danjia" property="danjia"/>
+        <result column="jine" property="jine"/>
+        <result column="zhesundunwei" property="zhesundunwei"/>
+        <result column="zhesunjine" property="zhesunjine"/>
+        <result column="zhesundanjia" property="zhesundanjia"/>
+        <result column="caozuoshijian" property="caozuoshijian"/>
+        <result column="caozuoren" property="caozuoren"/>
+        <result column="createtime" property="createtime"/>
+        <result column="createuser" property="createuser"/>
+        <result column="is_delete" property="isDelete"/>
+    </resultMap>
+
+
+    <select id="selectSettlementPage" resultMap="settlementResultMap">
+        select * from manage_settlement where is_deleted = 0
+    </select>
+
+    <delete id="delBywaybillId" parameterType="java.lang.String">
+        delete manage_settlement where waybill_id=#{waybillId}
+    </delete>
+
+    <sql id="tableSql">
+        SELECT
+        a.*,
+        c.cheliangpaizhao chepaihao,
+        b.dept_name as deptName
+        FROM
+        manage_settlement a
+        inner join  (
+        <include refid="org.springblade.manage.contract.mapper.ContractMapper.getByDeptId"/>
+        ) b
+        on a.dept_id = b.id
+        INNER JOIN anbiao_vehicle c ON a.vehicle_id=c.id
+        INNER JOIN manage_waybill d on a.waybill_id=d.id
+        <if test="outTimeStart != null and outTimeStart != ''">
+            AND zhuanghuoshijian >= CONCAT( '${outTimeStart}', ' 00:00:00')
+            AND zhuanghuoshijian &lt;= CONCAT( '${outTimeEnd}', ' 23:59:59')
+        </if>
+        and ifnull(a.is_delete,0) = 0
+    </sql>
+
+    <sql id="querySql">
+
+    </sql>
+    <sql id="orderSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by caozuoshijian
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+    </sql>
+
+    <select id="selectPageList" resultMap="settlementResultMap"
+            parameterType="org.springblade.manage.settlement.page.SettlementPage" resultType="org.springblade.manage.settlement.vo.SettlementVO">
+        <if test="size == 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${total}
+        </if>
+        <if test="current != 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <select id="selectTotal"
+            parameterType="org.springblade.manage.settlement.page.SettlementPage"
+            resultType="int">
+        select COUNT(1) from (
+        <include refid="tableSql" />
+        )d
+        where 1 = 1
+        <include refid="querySql" />
+    </select>
+
+    <sql id="selectLirun" >
+        SELECT
+            b.cheliangpaizhao chepaihao,
+            <if test="type !=null and type != ''">
+                a.danjia,
+                DATE_FORMAT(d.out_time,'%Y-%m-%d %T') outTime,
+                DATE_FORMAT(d.into_time,'%Y-%m-%d %T') intTime,
+            </if>
+            sum(a.jine) jine,
+            sum(d.inet_weight) zhuanghuoliang,
+            IFNULL(sum(ry.jine),0) ranyoufei,
+            IFNULL(sum(gl.jine),0) guolufei,
+            IFNULL(sum(qt.jine),0) qitafei,
+            <choose>
+                <when test="shuilv !=0 ">
+                    (sum(a.jine)-IFNULL(sum(ry.jine),0)-IFNULL(sum(gl.jine),0)-IFNULL(sum(qt.jine),0))* #{shuilv} lirun
+                </when>
+                <otherwise>
+                    sum(a.jine)-IFNULL(sum(ry.jine),0)-IFNULL(sum(gl.jine),0)-IFNULL(sum(qt.jine),0) lirun
+                </otherwise>
+            </choose>
+        FROM
+            manage_settlement a
+        inner join  (
+        <include refid="org.springblade.manage.contract.mapper.ContractMapper.getByDeptId"/>
+        ) c
+        on a.dept_id = c.id
+        and ifnull(a.is_delete,0) = 0
+        INNER JOIN anbiao_vehicle b ON a.vehicle_id=b.id
+        INNER JOIN manage_waybill d on a.waybill_id=d.id
+        <if test="cheliangpaizhao !=null and cheliangpaizhao != ''">
+            AND b.cheliangpaizhao like '%${cheliangpaizhao}%'
+        </if>
+        <if test="outTimeStart != null and outTimeStart != ''">
+            AND out_time >= CONCAT( '${outTimeStart}', ' 00:00:00')
+            AND out_time &lt;= CONCAT( '${outTimeEnd}', ' 23:59:59')
+        </if>
+        LEFT JOIN (SELECT sum(jine) jine,waybill_id FROM manage_waybill_fujian WHERE leixing='燃油费' GROUP BY leixing,waybill_id) ry ON a.waybill_id = ry.waybill_id
+        LEFT JOIN (SELECT sum(jine) jine,waybill_id FROM manage_waybill_fujian WHERE leixing='过路费' GROUP BY leixing,waybill_id) gl ON a.waybill_id = gl.waybill_id
+        LEFT JOIN (SELECT sum(jine) jine,waybill_id FROM manage_waybill_fujian WHERE leixing='其他' GROUP BY leixing,waybill_id) qt ON a.waybill_id = qt.waybill_id
+        GROUP BY
+        b.cheliangpaizhao
+        <if test="type !=null and type != ''">
+            ,a.danjia,
+            d.out_time,
+            d.into_time
+        </if>
+    </sql>
+
+    <select id="selectLirunList" resultMap="settlementResultMap"
+            parameterType="org.springblade.manage.settlement.page.SettlementPage" resultType="org.springblade.manage.settlement.vo.SettlementVO">
+        <if test="size == 0" >
+            select * from (
+            <include refid="selectLirun" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+          <!--  <include refid="orderSql" /> -->
+            limit ${total}
+        </if>
+        <if test="current != 0" >
+            select * from (
+            <include refid="selectLirun" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <!--  <include refid="orderSql" /> -->
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <select id="selectLirunTotal"
+            parameterType="org.springblade.manage.settlement.page.SettlementPage"
+            resultType="int">
+        select COUNT(1) from (
+        <include refid="selectLirun" />
+        )d
+        where 1 = 1
+        <include refid="querySql" />
+    </select>
+
+
+
+    <sql id="selectZhiChu" >
+        SELECT
+        b.cheliangpaizhao chepaihao,
+        <if test="type !=null and type != ''">
+            DATE_FORMAT(d.out_time,'%Y-%m-%d %T') outTime,
+            DATE_FORMAT(d.into_time,'%Y-%m-%d %T') intTime,
+        </if>
+        sum(d.onet_weight) onetWeight,
+        sum(d.inet_weight) inetWeight,
+        IFNULL(sum(ry.jine),0) ranyoufei,
+        IFNULL(sum(gl.jine),0) guolufei,
+        IFNULL(sum(qt.jine),0) qitafei,
+        IFNULL(sum(ry.jine),0)+IFNULL(sum(gl.jine),0)+IFNULL(sum(qt.jine),0) zhichu
+        FROM
+        manage_settlement a
+        inner join  (
+        <include refid="org.springblade.manage.contract.mapper.ContractMapper.getByDeptId"/>
+        ) c
+        on a.dept_id = c.id
+        and ifnull(a.is_delete,0) = 0
+        INNER JOIN anbiao_vehicle b ON a.vehicle_id=b.id
+        INNER JOIN manage_waybill d on a.waybill_id=d.id
+        <if test="cheliangpaizhao !=null and cheliangpaizhao != ''">
+            AND b.cheliangpaizhao like '%${cheliangpaizhao}%'
+        </if>
+        <if test="outTimeStart != null and outTimeStart != ''">
+            AND out_time >= CONCAT( '${outTimeStart}', ' 00:00:00')
+            AND out_time &lt;= CONCAT( '${outTimeEnd}', ' 23:59:59')
+        </if>
+        LEFT JOIN (SELECT sum(jine) jine,waybill_id FROM manage_waybill_fujian WHERE leixing='燃油费' GROUP BY leixing,waybill_id) ry ON a.waybill_id = ry.waybill_id
+        LEFT JOIN (SELECT sum(jine) jine,waybill_id FROM manage_waybill_fujian WHERE leixing='过路费' GROUP BY leixing,waybill_id) gl ON a.waybill_id = gl.waybill_id
+        LEFT JOIN (SELECT sum(jine) jine,waybill_id FROM manage_waybill_fujian WHERE leixing='其他' GROUP BY leixing,waybill_id) qt ON a.waybill_id = qt.waybill_id
+        GROUP BY
+        b.cheliangpaizhao
+        <if test="type !=null and type != ''">
+            ,d.out_time,
+            d.into_time
+        </if>
+    </sql>
+
+    <select id="selectZhiChuList" resultMap="settlementResultMap"
+            parameterType="org.springblade.manage.settlement.page.SettlementPage" resultType="org.springblade.manage.settlement.vo.SettlementVO">
+        <if test="size == 0" >
+            select * from (
+            <include refid="selectZhiChu" />
+            )b
+            where 1=1
+            <include refid="selectZhiChu" />
+            <!--  <include refid="orderSql" /> -->
+            limit ${total}
+        </if>
+        <if test="current != 0" >
+            select * from (
+            <include refid="selectZhiChu" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <!--  <include refid="orderSql" /> -->
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <select id="selectZhiChuTotal"
+            parameterType="org.springblade.manage.settlement.page.SettlementPage"
+            resultType="int">
+        select COUNT(1) from (
+        <include refid="selectZhiChu" />
+        )d
+        where 1 = 1
+        <include refid="querySql" />
+    </select>
+
+
+</mapper>

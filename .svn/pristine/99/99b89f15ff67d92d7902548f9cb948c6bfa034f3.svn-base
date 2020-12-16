@@ -1,0 +1,8 @@
+org\springblade\system\feign\IDictClientFallback.class
+META-INF\spring-devtools.properties
+org\springblade\system\feign\IDictClient.class
+org\springblade\system\page\DictPage.class
+org\springblade\system\vo\DictVO.class
+org\springblade\system\entity\Dict.class
+org\springblade\system\dto\DictDTO.class
+META-INF\spring.factories

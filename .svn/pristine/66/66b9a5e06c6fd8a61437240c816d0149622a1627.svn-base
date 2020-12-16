@@ -1,0 +1,669 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.alarm.mapper.AlarmsummaryCutofftimeMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="cutofftimeResultMap" type="org.springblade.alarm.entity.AlarmsummaryCutofftime">
+        <id column="AlarmReportID" property="alarmReportID"/>
+        <result column="VehId" property="vehId"/>
+        <result column="BeginTime" property="beginTime"/>
+        <result column="EndTime" property="endTime"/>
+        <result column="MaxSpeed" property="maxSpeed"/>
+        <result column="AlarmType" property="alarmType"/>
+        <result column="Longitude" property="longitude"/>
+        <result column="Latitude" property="latitude"/>
+        <result column="Velocity" property="velocity"/>
+        <result column="Angle" property="angle"/>
+        <result column="Local" property="local"/>
+        <result column="Elevation" property="elevation"/>
+        <result column="Limited" property="limited"/>
+        <result column="Passed" property="passed"/>
+        <result column="Time" property="time"/>
+        <result column="KeepTime" property="keepTime"/>
+        <result column="Road_Name" property="roadName"/>
+        <result column="Road_Level" property="roadLevel"/>
+        <result column="Road_Limited" property="roadLimited"/>
+        <result column="DisposeAlarmName" property="disposeAlarmName"/>
+        <result column="DisposeAlarmTime" property="disposeAlarmTime"/>
+        <result column="alarmcl" property="alarmcl"/>
+        <result column="alarmclmsg" property="alarmclmsg"/>
+        <result column="alarmhdremark" property="alarmhdremark"/>
+        <result column="PushState" property="pushState"/>
+        <result column="verifyName" property="verifyName"/>
+        <result column="verifyTime" property="verifyTime"/>
+        <result column="AnalyzeMode" property="analyzeMode"/>
+        <result column="SysPassed" property="sysPassed"/>
+        <result column="status" property="status"/>
+        <result column="SynTime" property="synTime"/>
+        <result column="plateNumber" property="plateNumber"/>
+        <result column="color" property="color"/>
+        <result column="company" property="company"/>
+
+        <result column="OperatType" property="operatType"/>
+        <result column="EndSpeed" property="endSpeed"/>
+        <result column="Distance" property="distance"/>
+        <result column="Road_Limited2" property="roadLimited2"/>
+        <result column="IsSupplements" property="isSupplements"/>
+        <result column="CutoffTime" property="cutoffTime"/>
+        <result column="verifyTime2" property="verifyTime2"/>
+        <result column="AlarmID" property="alarmID"/>
+        <result column="endLongitude" property="endLongitude"/>
+        <result column="endLatitude" property="endLatitude"/>
+        <result column="endRoadName" property="endRoadName"/>
+        <result column="isRegionV" property="isRegionV"/>
+        <result column="AnalyzeID" property="analyzeID"/>
+        <result column="atNocturnal" property="atNocturnal"/>
+        <result column="BaoJingType" property="baoJingType"/>
+        <result column="ChaoSuBi" property="chaoSuBi"/>
+    </resultMap>
+
+    <resultMap id="baseResultMap" type="org.springblade.alarm.vo.AlarmsummaryCutofftimeVO">
+    </resultMap>
+
+    <resultMap id="tongjiResultMap" type="java.util.Map">
+    </resultMap>
+
+    <sql id="tableSql">
+        select t.*,
+        case when days = 0 and hours = 0 and minutes = 0 then CONCAT(seconds , '秒')
+        when days = 0 and hours = 0 then CONCAT(minutes , '分' , seconds , '秒')
+        when days = 0 then CONCAT(hours ,'时' , minutes , '分' , seconds , '秒')
+        ELSE CONCAT(days, '天', hours ,'时' , minutes , '分' , seconds , '秒')
+        end as keeptimeShow
+        from (
+        SELECT
+        (floor(KeepTime / 86400)) as days,
+        (floor(KeepTime / 3600) % 24) as hours,
+        (floor(KeepTime / 60) % 60) as minutes,
+        (KeepTime % 60) as seconds,
+        a.AlarmReportID,
+        a.VehId,
+        a.BeginTime,
+        a.EndTime,
+        a.MaxSpeed,
+        a.AlarmType,
+        a.Longitude,
+        a.Latitude,
+        a.Velocity,
+        a.Angle,
+        a.`Local`,
+        a.Elevation,
+        a.Limited,
+        a.Passed,
+        a.Time,
+        a.KeepTime,
+        a.Road_Name,
+        a.Road_Level,
+        a.Road_Limited,
+        a.DisposeAlarmName,
+        a.DisposeAlarmTime,
+        a.alarmcl,
+        a.alarmclmsg,
+        a.alarmhdremark,
+        a.PushState,
+        a.verifyName,
+        a.verifyTime,
+        a.AnalyzeMode,
+        a.SysPassed,
+        ifnull( a.`status`,0) as status,
+        a.SynTime,
+        a.plateNumber,
+        a.plateNumber as plate,
+        a.color,
+        a.company,
+        a.OperatType,
+        a.EndSpeed,
+        ROUND(ifnull(a.Distance,0)/1000,3) as Distance,
+        a.Road_Limited2,
+        a.IsSupplements,
+        a.CutoffTime,
+        a.verifyTime2,
+        a.AlarmID,
+        a.endLongitude,
+        a.endLatitude,
+        a.endRoadName,
+        a.isRegionV,
+        case when ifnull(isRegionV,0) = 1 then '(区域已验证)' else '' end isRegionVShow,
+        a.AnalyzeID,
+        a.atNocturnal,
+        case when a.atNocturnal=1 then '夜间' else '' end atNocturnalShow,
+        a.BaoJingType,
+        a.ChaoSuBi,
+        CONCAT(a.ChaoSuBi,'%') as ChaoSuBiShow,
+        b.chulizhuangtai,
+        b.chulixingshi,
+        b.chulimiaoshu,
+        b.chulirenid,
+        b.chuliren,
+        b.chulishijian,
+        b.fujian,
+        b.beizhu,
+        b.remark,
+        b.shensushenhebiaoshi,
+        b.shensushenheren,
+        b.shensushenheshijian,
+        b.shensushenheyijian,
+        IFNULL(convert((a.Distance/1000)/(a.KeepTime/3600),decimal(10,2)),0) as pingjunsudu
+        FROM
+        baobiao_alarmsummary_cutofftime AS a
+        <if test="deptId != 1 ">
+        INNER JOIN ( SELECT DISTINCT
+            xiaji.id,
+            xiaji.parent_id,
+            xiaji.dept_name,
+            xiaji.is_deleted
+            FROM
+            blade_dept shangji,
+            blade_dept xiaji
+            WHERE xiaji.tree_code LIKE CONCAT(shangji.tree_code,'%')
+            AND xiaji.is_deleted = 0 AND xiaji.extend_type='机构'
+            and shangji.id=#{deptId}
+        ) dept on a.company=dept.dept_name
+        </if>
+        left JOIN baobiao_alarmhandleresult AS b ON a.AlarmReportID = b.baojingid  and ifnull(b.is_deleted,0) = 0
+        where 1=1
+        <!-- 根据推送时间查询报警数据 -->
+        <if test=" beginTime != null and beginTime != '' ">
+            and cutoffTime &gt;= CONCAT( '${beginTime}', ' 00:00:00')
+            and cutoffTime &lt;= CONCAT( '${endTime}', ' 23:59:59')
+        </if>
+            and passed = 100
+            and AnalyzeMode = 1
+        <if test=" (alarmType != null and alarmType != '') and alarmType == '异常车辆报警' ">
+            and AlarmType in ('无数据报警','不定位报警')
+        </if>
+        <if test=" (alarmType != null and alarmType != '') and alarmType != '异常车辆报警' ">
+            and AlarmType = #{alarmType}
+        </if>
+
+        <choose>
+            <when test=" jigouName != null and jigouName != '' ">
+                and a.company like CONCAT(#{jigouName},'%')
+            </when>
+            <otherwise>
+                and a.company = #{deptName}
+            </otherwise>
+        </choose>
+        <if test="chaosubi != null  ">
+            AND ChaoSuBi &gt;= ${chaosubi}
+        </if>
+        <if test="chaosubiMax != null and '0'.toString() != chaosubiMax ">
+            AND ChaoSuBi &lt;= ${chaosubiMax}
+        </if>
+        <!-- 是否查询严重违规报警 -->
+        <if test=" '1'.toString() == yanzhongweiguibaojing  ">
+            and status = 1
+        </if>
+        ) as t where 1=1
+    </sql>
+    <sql id="querySql">
+        <if test="shifouchuli != null and shifouchuli != '' ">
+            <if test="shifouchuli=='已处理'.toString()">
+                and chulizhuangtai = '1' and remark=1
+            </if>
+            <if test="shifouchuli=='未处理'.toString()">
+                and chulizhuangtai is null
+            </if>
+
+        </if>
+        <if test="shifoushenshu != null and shifoushenshu != '' ">
+            <if test="shifoushenshu=='未申诉'.toString()">
+                and chulizhuangtai is null
+            </if>
+            <if test="shifoushenshu=='申诉审核中'.toString()">
+                and chulizhuangtai = '1' and remark=0 and shensushenhebiaoshi= 0
+            </if>
+            <if test="shifoushenshu=='申诉通过'.toString()">
+                and chulizhuangtai = '1' and remark=0 and shensushenhebiaoshi= 1
+            </if>
+            <if test="shifoushenshu=='申诉驳回'.toString()">
+                and chulizhuangtai = '1' and remark=0 and shensushenhebiaoshi= 2
+            </if>
+
+        </if>
+        <if test="cheliangpaizhao != null and cheliangpaizhao != '' ">
+            and plateNumber like concat('%', #{cheliangpaizhao} ,'%')
+        </if>
+
+        <if test="roadName !=null and roadName!=''">
+            and Road_Name like  CONCAT('%',#{roadName},'%')
+        </if>
+        <if test="passed != null and passed != 0">
+            and passed = #{passed}
+              </if>
+        <if test="status !=0 and status!=null">
+            and  status=#{status}
+
+        </if>
+        <if test="status ==0">
+            and  status=#{status} or status is null
+
+        </if>
+        <!--添加车辆类型赛选-->
+        <if test="operattype != null and operattype != '' ">
+        <if test="operattype!='全部'.toString()">
+
+                and operattype like concat('%', #{operattype} ,'%')
+            </if>
+
+        </if>
+
+
+    </sql>
+    <sql id="orderSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by platenumber desc
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+    </sql>
+
+    <select timeout="600" id="selectAlarmPage" resultMap="baseResultMap"
+            parameterType="org.springblade.alarm.page.AlarmPage">
+        <if test="size == 0">
+            select * from (
+            <include refid="tableSql"/>
+            )b
+            where 1=1
+            <include refid="querySql"/>
+            <include refid="orderSql"/>
+            limit ${total}
+        </if>
+        <if test="current != 0">
+            select * from (
+            <include refid="tableSql"/>
+            )b
+            where 1=1
+            <include refid="querySql"/>
+            <include refid="orderSql"/>
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <select timeout="90" id="selectAlarmTotal"
+            parameterType="org.springblade.alarm.page.AlarmPage"
+            resultType="int">
+        select COUNT(1) from (
+        <include refid="tableSql"/>
+        )d where 1 = 1
+        <include refid="querySql"/>
+    </select>
+
+    <select id="selectBaojingtongji" parameterType="org.springblade.alarm.page.AlarmPage"
+            resultType="org.springblade.alarm.entity.AlarmBaojingTongji">
+        select max(a.company) company,
+        COUNT(DISTINCT a.plateNumber,a.color) as vehCount,
+        COUNT(a.alarmreportid) as alarmCount,
+        COUNT(CASE WHEN b.chulizhuangtai is not null THEN 1 END) as handledCount
+        from baobiao_alarmsummary_cutofftime as a
+        <if test="deptId != 1 ">
+        INNER JOIN ( SELECT DISTINCT
+            xiaji.id,
+            xiaji.parent_id,
+            xiaji.dept_name,
+            xiaji.is_deleted
+            FROM
+            blade_dept shangji,
+            blade_dept xiaji
+            WHERE xiaji.tree_code LIKE CONCAT(shangji.tree_code,'%')
+            AND xiaji.is_deleted = 0 AND xiaji.extend_type='机构'
+            and shangji.id=#{deptId}
+        ) dept on a.company=dept.dept_name
+        </if>
+        left join baobiao_alarmhandleresult as b
+        on a.alarmreportid = b.baojingid and ifnull(b.is_deleted,0) = 0 and b.chulizhuangtai &gt; 0
+        where 1=1
+        <!-- 根据推送时间查询报警数据 -->
+        <if test=" beginTime != null and beginTime != '' ">
+            and a.cutoffTime &gt;= CONCAT( '${beginTime}', ' 00:00:00')
+            and a.cutoffTime &lt;= CONCAT( '${endTime}', ' 23:59:59')
+        </if>
+            and a.passed = 100
+        <if test=" (alarmType != null and alarmType != '') and alarmType == '超速报警' ">
+            and AnalyzeMode = 1
+        </if>
+        <if test=" (alarmType != null and alarmType != '') and alarmType == '异常车辆报警' ">
+            and a.AlarmType in ('无数据报警','不定位报警')
+        </if>
+        <if test=" (alarmType != null and alarmType != '') and alarmType != '异常车辆报警' ">
+            and a.AlarmType = #{alarmType}
+        </if>
+        <choose>
+            <when test=" jigouName != null and jigouName != '' ">
+                and a.company like CONCAT(#{jigouName},'%')
+            </when>
+            <otherwise>
+                and a.company = #{deptName}
+            </otherwise>
+        </choose>
+        <!--<if test=" jigouName != null and jigouName != '' ">-->
+            <!--and a.company like CONCAT('%',#{jigouName},'%')-->
+        <!--</if>-->
+        <!-- 是否查询严重违规报警 -->
+        <if test=" '1'.toString() == yanzhongweiguibaojing  ">
+            and a.status = 1
+        </if>
+--         group by a.company
+<!--        select d.company,-->
+<!--        COUNT(DISTINCT d.plate,d.color) as vehCount,-->
+<!--        COUNT(d.alarmreportid) as alarmCount,-->
+<!--        COUNT(CASE WHEN d.chulizhuangtai='已处理' THEN 1 END) as handledCount-->
+<!--         from (-->
+<!--        <include refid="tableSql"/>-->
+<!--        )d where 1 = 1-->
+<!--        <include refid="querySql"/>-->
+<!--        group by d.company-->
+    </select>
+
+    <select id="selectShishiBaojingTongji" parameterType="org.springblade.alarm.page.ShishiBaojingTongjiPage"
+            resultMap="tongjiResultMap">
+        select
+        COUNT(case when alarmType='超速报警' then 1 else null end) as chaosu,
+        COUNT(case when alarmType='疲劳驾驶报警' then 1 else null end) as pilao,
+        COUNT(case when alarmType='夜间行驶报警' then 1 else null end) as yejian,
+        COUNT(case when alarmType='停驶违规报警' then 1 else null end) as tingshi,
+        COUNT(case when alarmType='无数据报警' or alarmType='不定位报警' then 1 else null end) as yichang
+        from baobiao_alarmsummary_cutofftime a
+        INNER JOIN ( SELECT DISTINCT
+            xiaji.id,
+            xiaji.parent_id,
+            xiaji.dept_name,
+            xiaji.is_deleted
+            FROM
+            blade_dept shangji,
+            blade_dept xiaji
+            WHERE xiaji.tree_code LIKE CONCAT(shangji.tree_code,'%')
+            AND xiaji.is_deleted = 0 AND xiaji.extend_type='机构'
+        and shangji.id=#{deptId}
+        ) dept on a.company=dept.dept_name
+        where 1 = 1
+        <if test=" beginTime != null and beginTime != '' ">
+            and a.cutoffTime &gt;= CONCAT( '${beginTime}', ' 00:00:00')
+        </if>
+        <if test=" endTime != null and endTime != '' ">
+            and a.cutoffTime &lt;= CONCAT( '${endTime}', ' 23:59:59')
+        </if>
+        and a.AnalyzeMode = 1
+        and a.passed = 100
+        <!--<if test=" jigouName != null and jigouName != '' ">-->
+            <!--and a.company like CONCAT('%',#{jigouName},'%')-->
+        <!--</if>-->
+    </select>
+    <!-- 查询报警详情 -->
+    <select  id="selectAlarmDetail" resultMap="baseResultMap"
+            parameterType="String">
+        select t.*,
+        case when days = 0 and hours = 0 and minutes = 0 then CONCAT(seconds , '秒')
+        when days = 0 and hours = 0 then CONCAT(minutes , '分' , seconds , '秒')
+        when days = 0 then CONCAT(hours ,'时' , minutes , '分' , seconds , '秒')
+        ELSE CONCAT(days, '天', hours ,'时' , minutes , '分' , seconds , '秒')
+        end as keeptimeShow
+        from (
+        SELECT
+        (floor(KeepTime / 86400)) as days,
+        (floor(KeepTime / 3600) % 24) as hours,
+        (floor(KeepTime / 60) % 60) as minutes,
+        (KeepTime % 60) as seconds,
+        a.AlarmReportID,
+        a.VehId,
+        a.BeginTime,
+        a.EndTime,
+        a.MaxSpeed,
+        a.AlarmType,
+        a.Longitude,
+        a.Latitude,
+        a.Velocity,
+        a.Angle,
+        a.`Local`,
+        a.Elevation,
+        a.Limited,
+        a.Passed,
+        a.Time,
+        a.KeepTime,
+        a.Road_Name,
+        a.Road_Level,
+        a.Road_Limited,
+        a.DisposeAlarmName,
+        a.DisposeAlarmTime,
+        a.alarmcl,
+        a.alarmclmsg,
+        a.alarmhdremark,
+        a.PushState,
+        a.verifyName,
+        a.verifyTime,
+        a.AnalyzeMode,
+        a.SysPassed,
+        a.`status`,
+        a.SynTime,
+        a.plateNumber,
+        a.plateNumber as plate,
+        a.color,
+        a.company,
+        a.OperatType,
+        a.EndSpeed,
+        ifnull(a.Distance,0) as Distance,
+        a.Road_Limited2,
+        a.IsSupplements,
+        a.CutoffTime,
+        a.verifyTime2,
+        a.AlarmID,
+        a.endLongitude,
+        a.endLatitude,
+        a.endRoadName,
+        a.isRegionV,
+        case when ifnull(isRegionV,0) = 1 then '(区域已验证)' else '' end isRegionVShow,
+        a.AnalyzeID,
+        a.atNocturnal,
+        case when a.atNocturnal=1 then '夜间' else '' end atNocturnalShow,
+        a.BaoJingType,
+        CONCAT(a.ChaoSuBi,'%') as ChaoSuBi,
+        case when ifnull(b.chulizhuangtai,0) = 1 then '已处理'
+        when ifnull(b.chulizhuangtai,0) = 2 THEN '超时处理'
+        when ifnull(b.chulizhuangtai,0) = 3 THEN '已处理未通过'
+        else '未处理' end as chulizhuangtai,
+        case when ifnull(c.shensuzhuangtai,0) = 1 then '已申诉'
+        when ifnull(c.shensuzhuangtai,0) = 2 THEN '超时申诉'
+        when ifnull(c.shensuzhuangtai,0) = 3 THEN '已申诉未通过'
+        else '未申诉' end as shensuzhuangtai,
+        b.chulixingshi,
+        b.chulimiaoshu,
+        b.chulirenid,
+        b.chuliren,
+        b.chulishijian,
+        case when b.fujian is null  then c.fujian else b.fujian end as fujian,
+        b.beizhu
+
+        FROM
+        baobiao_alarmsummary_cutofftime AS a
+        left JOIN baobiao_alarmhandleresult AS b ON a.AlarmReportID = b.baojingid
+        and ifnull(b.is_deleted,0) = 0 AND remark = 1
+        LEFT join (SELECT chulizhuangtai as shensuzhuangtai,baojingid as baojingids,fujian from baobiao_alarmhandleresult where ifnull(is_deleted,0) = 0 and remark = 0
+        ) AS c ON a.AlarmReportID = c.baojingids
+        where a.AlarmReportID = #{id}
+        ) as t where 1=1
+        limit 1
+    </select>
+    <select id="alarmDay" resultType="org.springblade.alarm.vo.AlarmsummaryCutofftimeVO">
+        select
+            t.BeginTime,
+            t.EndTime,
+            t.AlarmType,
+            t.plate,
+            t.color,
+            t.vehid as vehId
+        from (
+            SELECT
+                a.BeginTime,
+                a.EndTime,
+                a.AlarmType,
+                a.Longitude,
+                a.Latitude,
+                a.Velocity,
+                a.Angle,
+                a.Limited,
+                a.KeepTime,
+                a.Road_Name,
+                a.plateNumber as plate,
+                a.color,
+                a.company,
+                a.OperatType,
+                a.vehid
+            FROM
+                baobiao_alarmsummary_cutofftime AS a
+                left JOIN baobiao_alarmhandleresult AS b ON a.AlarmReportID = b.baojingid
+                and ifnull(b.is_deleted,0) = 0
+            where 1=1
+                and left(CutoffTime,10) = left(NOW(),10)
+                and company = #{company}
+                and AlarmType =#{AlarmType}
+                and Passed = 100
+                and AnalyzeMode = 1
+            ) as t where 1=1
+        ORDER BY t.BeginTime DESC
+    </select>
+
+    <!--查询gps是否报警，替换实时报警统计接口（太慢）-->
+    <select id="selectShifouBaojing" resultType="java.lang.String">
+        select
+        DISTINCT AlarmType
+        from
+        baobiao_alarmsummary_cutofftime a
+        <if test="deptId != 1 ">
+            INNER JOIN (
+            SELECT DISTINCT
+            xiaji.id,
+            xiaji.parent_id,
+            xiaji.dept_name,
+            xiaji.is_deleted
+            FROM
+            blade_dept shangji,
+            blade_dept xiaji
+            WHERE
+            xiaji.tree_code LIKE CONCAT(shangji.tree_code,'%')
+            AND
+            xiaji.is_deleted = 0 AND xiaji.extend_type='机构'
+            and
+            shangji.id=#{deptId}
+            ) dept on a.company=dept.dept_name
+        </if>
+        where 1 = 1
+        <if test=" beginTime != null and beginTime != '' ">
+            and a.cutoffTime &gt;= CONCAT( '${beginTime}', ' 00:00:00')
+        </if>
+        <if test=" endTime != null and endTime != '' ">
+            and a.cutoffTime &lt;= CONCAT( '${endTime}', ' 23:59:59')
+        </if>
+            and passed = 100
+            and AnalyzeMode = 1
+        <choose>
+            <when test=" jigouName != null and jigouName != '' ">
+                and a.company like CONCAT(#{jigouName},'%')
+            </when>
+            <otherwise>
+                and a.company = #{deptName}
+            </otherwise>
+        </choose>
+    </select>
+
+    <!--根据机构id查询下级所有机构-->
+    <select id="getCompany" resultType="java.lang.String">
+       SELECT DISTINCT
+            xiaji.dept_name
+            FROM
+            blade_dept shangji,
+            blade_dept xiaji
+            WHERE
+            xiaji.tree_code LIKE CONCAT(shangji.tree_code,'%')
+            AND
+            xiaji.is_deleted = 0 AND xiaji.extend_type='机构'
+            and
+            shangji.id=#{deptId}
+    </select>
+    <!--根据时间段获取报警信息车辆报警-->
+    <select id="timeAlarm" parameterType="org.springblade.alarm.page.AlarmTimePage" resultType="org.springblade.alarm.entity.AlarmsummaryCutofftime">
+            SELECT
+	                AlarmReportID,
+	                VehId,
+	                BeginTime,
+	                EndTime,
+	                MaxSpeed,
+	                AlarmType,
+	                Longitude,
+	                Latitude,
+	                Velocity,
+	                Angle,
+	                Local,
+	                Elevation,
+	                Limited,
+	                Passed,
+	                Time,
+	                KeepTime,
+	                Road_Name,
+	                Road_Level,
+	                Road_Limited,
+	                DisposeAlarmName,
+	                DisposeAlarmTime,
+	                alarmcl,
+	                alarmclmsg,
+	                alarmhdremark,
+	                PushState,
+	                verifyName,
+	                verifyTime,
+	                AnalyzeMode,
+	                SysPassed,
+	                status,
+	                SynTime,
+	                plateNumber,
+	                color,
+	                company,
+	                OperatType,
+	                EndSpeed,
+	                Distance,
+	                Road_Limited2,
+	                IsSupplements,
+	                CutoffTime,
+	                verifyTime2,
+	                AlarmID,
+	                endLongitude,
+	                endLatitude,
+	                endRoadName,
+	                isRegionV,
+	                AnalyzeID,
+	                atNocturnal,
+	                BaoJingType,
+	                ChaoSuBi
+            FROM
+	            baobiao_alarmsummary_cutofftime
+            WHERE
+	            CutoffTime
+	            BETWEEN STR_TO_DATE(
+		            concat(#{beginTime}), '%Y-%m-%d %H:%i:%s'  )
+                AND STR_TO_DATE(concat(#{endTime}), '%Y-%m-%d %H:%i:%s' )
+                and passed = 100
+                and AnalyzeMode = 1
+                AND company = #{company}
+                AND  plateNumber=#{plateNumber}
+				ANd  color=#{color}
+                ORDER BY BeginTime
+    </select>
+
+    <!--获取企业下车辆类型-->
+    <select id="findoperattype" resultType="java.lang.String">
+            			SELECT
+				        shiyongxingzhi
+                         FROM
+                         anbiao_vehicle
+                         WHERE
+ 	                        dept_id = #{deptId}
+                         AND is_deleted = 0
+                         AND cheliangpaizhao NOT LIKE '%挂'
+				         GROUP BY shiyongxingzhi
+    </select>
+
+
+</mapper>

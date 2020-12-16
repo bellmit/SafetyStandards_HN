@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.alarm.mapper.AlarmhandleresultMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="alarmhandleresultResultMap" type="org.springblade.alarm.vo.AlarmhandleresultVO">
+        <id column="id" property="id"/>
+        <result column="baojingid" property="baojingid"/>
+        <result column="baojingleixing" property="baojingleixing"/>
+        <result column="remark" property="remark"/>
+        <result column="chulizhuangtai" property="chulizhuangtai"/>
+        <result column="chulixingshi" property="chulixingshi"/>
+        <result column="chulimiaoshu" property="chulimiaoshu"/>
+        <result column="chulirenid" property="chulirenid"/>
+        <result column="chuliren" property="chuliren"/>
+        <result column="chulishijian" property="chulishijian"/>
+        <result column="fujian" property="fujian"/>
+        <result column="beizhu" property="beizhu"/>
+        <result column="qiyemingcheng" property="qiyemingcheng"/>
+        <result column="qiyeid" property="qiyeid"/>
+        <result column="cheliangpaizhao" property="cheliangpaizhao"/>
+        <result column="chepaiyanse" property="chepaiyanse"/>
+        <result column="hedingzhuangtai" property="hedingzhuangtai"/>
+        <result column="hedingrenyuan" property="hedingrenyuan"/>
+        <result column="hedingrenyuanid" property="hedingrenyuanid"/>
+        <result column="hedingshijian" property="hedingshijian"/>
+        <result column="shensushenheren" property="shensushenheren"/>
+        <result column="shensushenheshijian" property="shensushenheshijian"/>
+        <result column="shensushenhebiaoshi" property="shensushenhebiaoshi"/>
+        <result column="shensusudu" property="shensusudu"/>
+        <result column="is_deleted" property="isDeleted"/>
+    </resultMap>
+    <resultMap id="idlist" type="java.lang.String">
+        <result column="id" javaType="java.lang.String"/>
+    </resultMap>
+    <update id="updateRibao">
+        UPDATE baobiao_baobiaomulu
+        SET processRate = #{chulilv,jdbcType=CHAR}
+        WHERE id = #{id}
+    </update>
+
+    <select id="selectIdList" parameterType="org.springblade.alarm.entity.Alarmhandleresult" resultMap="idlist">
+        select id from baobiao_alarmhandleresult
+        where 1=1 and ifnull(is_deleted,0)=0
+        and baojingleixing = #{baojingleixing}
+        <if test=" remark == true">
+            and remark = 1
+        </if>
+        <if test=" remark == false">
+            and remark = 0
+        </if>
+        and baojingid in
+        <foreach item="item" index="index" collection="idss" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+
+    </select>
+
+    <select id="removeByAlmIds" parameterType="org.springblade.alarm.entity.Alarmhandleresult"
+            resultType="java.lang.Boolean">
+        update baobiao_alarmhandleresult
+        set is_deleted = 1
+        where ifnull(is_deleted,0)=0 and  baojingid in
+        <foreach item="item" index="index" collection="idss" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+    <select id="selectChuliDetail" parameterType="int" resultMap="alarmhandleresultResultMap">
+    select 	id,
+	baojingid,
+	baojingleixing,
+	remark,
+	chulizhuangtai,
+	chulixingshi,
+	chulimiaoshu,
+	chulirenid,
+	chuliren,
+	chulishijian,
+	fujian,
+	beizhu,
+	qiyemingcheng,
+	qiyeid,
+	cheliangpaizhao,
+	chepaiyanse,
+	hedingrenyuan,
+	hedingrenyuanid,
+	hedingshijian,
+	shensushenheren,
+	shensushenheshijian,
+	shensushenhebiaoshi,
+	shensusudu,
+	is_deleted  from baobiao_alarmhandleresult where baojingid=#{baojingid} and IFNULL(is_deleted,'')!=1
+	AND remark = 1
+	order by chulishijian desc
+	limit 1
+    </select>
+    <select id="selectBybaojin" resultType="org.springblade.alarm.entity.Alarmhandleresult">
+        SELECT
+	        *
+        FROM
+	            baobiao_alarmhandleresult
+        WHERE
+	            baojingid = #{id}
+        AND is_deleted = 0
+
+
+    </select>
+    <!--根据ids和单位id查询报警数量-->
+    <select id="selectAlarmCountByIdsAndDetpId" resultType="java.lang.Integer">
+      SELECT count(*) from (
+        SELECT id from baobiao_driverbehavior where company=#{deptName}
+        UNION ALL
+        SELECT AlarmReportID as id from baobiao_alarmsummary_cutofftime where company=#{deptName}
+      ) a where a.id in
+        <foreach collection="idss" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+    <select id="gpsweichuli" resultType="org.springblade.alarm.entity.AlarmWeichuliType">
+        SELECT COUNT(1) as number,AlarmType from (
+        select a.*,b.baojingid from(SELECT
+        *
+        FROM
+        baobiao_alarmsummary_cutofftime
+        WHERE 1=1
+            and CutoffTime BETWEEN STR_TO_DATE(
+	                concat(
+		            #{date},'00:00:00'),'%Y-%m-%d %H:%i:%s') AND   STR_TO_DATE(concat(#{date},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+            and passed = 100
+            and AnalyzeMode = 1
+            and company = #{company}
+
+        ) a LEFT JOIN baobiao_alarmhandleresult b on a.AlarmReportID=b.baojingid
+
+          WHERE b.baojingid is null
+
+        ) ab  GROUP BY AlarmType
+    </select>
+    <select id="zhudonganquanweichuli" resultType="org.springblade.alarm.entity.AlarmWeichuliType">
+
+        SELECT COUNT(1) as number,AlarmType from (
+        select a.*,b.baojingid from(SELECT
+        *
+        FROM
+        baobiao_driverbehavior
+        WHERE
+         company = #{company}
+                 and   GpsTime BETWEEN STR_TO_DATE(
+	                concat(
+		            #{date},'00:00:00'),'%Y-%m-%d %H:%i:%s') AND   STR_TO_DATE(concat(#{date},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+
+        ) a LEFT JOIN baobiao_alarmhandleresult b on a.id=b.baojingid
+
+        WHERE b.baojingid is null and a.stateEx='核定报警'
+
+        ) ab  GROUP BY AlarmType
+    </select>
+    <select id="selectOneribao" resultType="java.lang.Integer">
+        SELECT
+	         id
+            FROM
+	            baobiao_baobiaomulu
+            WHERE
+            	dept_id = #{deptId}
+            AND countdate =#{date}
+            LIMIT 1
+    </select>
+    <select id="alarmCount" resultType="org.springblade.alarm.entity.AlarmBaojingTongji">
+        select
+        COUNT(a.alarmreportid) as alarmCount,
+        COUNT(CASE WHEN b.chulizhuangtai is not null THEN 1 END) as handledCount
+        from baobiao_alarmsummary_cutofftime as a
+
+        left join baobiao_alarmhandleresult as b
+        on a.alarmreportid = b.baojingid and ifnull(b.is_deleted,0) = 0
+        where 1=1
+        and a.passed = 100
+        and a.AnalyzeMode = 1
+        and a.cutoffTime &gt;= CONCAT( #{date}, ' 00:00:00')
+        and a.cutoffTime &lt;= CONCAT( #{date}, ' 23:59:59')
+        and a.company=#{company}
+    </select>
+    <select id="zhudongCount" resultType="org.springblade.alarm.entity.AlarmBaojingTongji">
+        select
+        COUNT(a.id) as alarmCount,
+        COUNT(CASE WHEN b.chulizhuangtai is not null THEN 1 END) as handledCount
+        from baobiao_driverbehavior as a
+        left join baobiao_alarmhandleresult as b
+        on a.id = b.baojingid and ifnull(b.is_deleted,0) = 0
+        where 1=1
+
+        and GpsTime &gt;= CONCAT( #{date}, ' 00:00:00')
+
+        and GpsTime &lt;= CONCAT( #{date}, ' 23:59:59')
+        AND company=#{company}
+        and stateEx ='核定报警'
+    </select>
+
+</mapper>

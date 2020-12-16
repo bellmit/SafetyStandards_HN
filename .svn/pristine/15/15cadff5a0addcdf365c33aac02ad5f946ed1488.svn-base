@@ -1,0 +1,77 @@
+package org.springblade.anbiao.cheliangguanli.service;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import org.apache.ibatis.annotations.Param;
+import org.springblade.anbiao.cheliangguanli.entity.Vehicle;
+import org.springblade.anbiao.cheliangguanli.entity.VehicleCP;
+import org.springblade.anbiao.cheliangguanli.entity.VehicleToGps;
+import org.springblade.anbiao.cheliangguanli.page.VehiclePage;
+import org.springblade.anbiao.cheliangguanli.vo.VehicleVO;
+
+import java.util.List;
+import java.util.Map;
+
+/**
+ * 车辆自定义 接口
+ * @author :elvis.he
+ * */
+public interface IVehicleService extends IService<Vehicle> {
+
+    /**
+     * 自定义 分页
+     * @param vehiclePage
+     * @return
+     */
+    VehiclePage<VehicleVO> selectVehiclePage(VehiclePage vehiclePage);
+    /**
+     * 根据id获取数据
+     * *@param id
+     * @return
+     */
+    VehicleVO  selectByKey(String id);
+    /**
+    * @Description: 根据车辆牌照和车牌颜色获取数据
+    * @Param: [cheliangpaizhao, chepaiyanse]
+    * @return: org.springblade.anbiao.cheliangguanli.vo.VehicleVO
+    * @Author: wj
+    * @Date: 2019-06-20
+    */
+	VehicleVO selectByCPYS(String cheliangpaizhao,String chepaiyanse);
+
+    /**
+     * 自定义 假删除
+     * @param  id
+     * @author :elvis.he
+     * */
+    boolean deleleVehicle(String id);
+
+	/**
+	 * 车牌搜索
+	 * @param deptId
+	 * @param cheliangpaizhao
+	 * @return
+	 */
+	List<VehicleCP> selectCL(String deptId, String cheliangpaizhao);
+	/**
+	 * 车辆运行状况 统计企业车辆总数 停运车辆
+	 */
+	/**
+	 * 车辆统计 车牌
+	 */
+	int  vehicleDayCount(Integer deptId);
+	/**
+	 * 闲置车辆统计 车牌
+	 */
+	int xianzhiVecleCount(Integer deptId);
+	/**
+	 * 根据车牌 车牌颜色查询详情
+	 */
+	Vehicle  vehileOne( String cheliangpaizhao,String chepaiyanse,Integer deptId);
+
+	/**
+	 * 车辆资料增量接口
+	 * @param caozuoshijian
+	 * @return
+	 */
+	List<VehicleVO> selectVehicleAll(String caozuoshijian);
+}

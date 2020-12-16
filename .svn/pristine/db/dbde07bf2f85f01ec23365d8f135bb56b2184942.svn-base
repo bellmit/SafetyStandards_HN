@@ -1,0 +1,456 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.anbiao.cheliangguanli.mapper.VehicleMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="vehicleVOResultMap" type="org.springblade.anbiao.cheliangguanli.vo.VehicleVO">
+        <id column="id" property="id"/>
+        <result column="dept_id" property="deptId"/>
+        <result column="deptName" property="deptName"/>
+        <result column="cheliangpaizhao" property="cheliangpaizhao"/>
+        <result column="chepaiyanse" property="chepaiyanse"/>
+        <result column="shiyongxingzhi" property="shiyongxingzhi"/>
+        <result column="jiashiyuanid" property="jiashiyuanid"/>
+        <result column="changpai" property="changpai"/>
+        <result column="xinghao" property="xinghao"/>
+        <result column="chejiahao" property="chejiahao"/>
+        <result column="luntaiguige" property="luntaiguige"/>
+        <result column="cheshenyanse" property="cheshenyanse"/>
+        <result column="hedingzaike" property="hedingzaike"/>
+        <result column="yingyunnianxian" property="yingyunnianxian"/>
+        <result column="dengjizhengshubianhao" property="dengjizhengshubianhao"/>
+        <result column="chelianglaiyuan" property="chelianglaiyuan"/>
+        <result column="zhucedengjishijian" property="zhucedengjishijian"/>
+        <result column="ruhushijian" property="ruhushijian"/>
+        <result column="guohushijian" property="guohushijian"/>
+        <result column="tuishishijian" property="tuishishijian"/>
+        <result column="qiangzhibaofeishijian" property="qiangzhibaofeishijian"/>
+        <result column="jieboyunshuzhenghao" property="jieboyunshuzhenghao"/>
+        <result column="yuancheliangpaizhao" property="yuancheliangpaizhao"/>
+        <result column="cheliangzhuangtai" property="cheliangzhuangtai"/>
+        <result column="cheliangtingfangdiqu" property="cheliangtingfangdiqu"/>
+        <result column="danganhao" property="danganhao"/>
+        <result column="beiyongcheliang" property="beiyongcheliang"/>
+        <result column="yunyingshang" property="yunyingshang"/>
+        <result column="suoshuchedui" property="suoshuchedui"/>
+        <result column="xingshifujian" property="xingshifujian"/>
+        <result column="fujian" property="fujian"/>
+        <result column="fadongjixinghao" property="fadongjixinghao"/>
+        <result column="fadongjihao" property="fadongjihao"/>
+        <result column="fadongjipailianggonglv" property="fadongjipailianggonglv"/>
+        <result column="ranliaoleibie" property="ranliaoleibie"/>
+        <result column="ranyouxiaohao" property="ranyouxiaohao"/>
+        <result column="paifangbiaozhun" property="paifangbiaozhun"/>
+        <result column="zhuanxiangfangshi" property="zhuanxiangfangshi"/>
+        <result column="chemenshezhi" property="chemenshezhi"/>
+        <result column="zhouju" property="zhouju"/>
+        <result column="chechang" property="chechang"/>
+        <result column="chekuan" property="chekuan"/>
+        <result column="chegao" property="chegao"/>
+        <result column="luntaishu" property="luntaishu"/>
+        <result column="chezhoushu" property="chezhoushu"/>
+        <result column="gangbantanhuangpianshu" property="gangbantanhuangpianshu"/>
+        <result column="dipanxinghao" property="dipanxinghao"/>
+        <result column="donglileixing" property="donglileixing"/>
+        <result column="zongzhiliang" property="zongzhiliang"/>
+        <result column="zhengbeizhiliang" property="zhengbeizhiliang"/>
+        <result column="luntaizonglei" property="luntaizonglei"/>
+        <result column="xuanguaxingshi" property="xuanguaxingshi"/>
+        <result column="xingchezhidongfangshi" property="xingchezhidongfangshi"/>
+        <result column="zhidongqiqianlun" property="zhidongqiqianlun"/>
+        <result column="zhidongqihoulun" property="zhidongqihoulun"/>
+        <result column="abs" property="abs"/>
+        <result column="kongtiaoxitong" property="kongtiaoxitong"/>
+        <result column="huanshuqi" property="huanshuqi"/>
+        <result column="biansuxiangxingshi" property="biansuxiangxingshi"/>
+        <result column="zhizhaochangshang" property="zhizhaochangshang"/>
+        <result column="gouzhishuizhenghao" property="gouzhishuizhenghao"/>
+        <result column="chuchangriqi" property="chuchangriqi"/>
+        <result column="leijilicheng" property="leijilicheng"/>
+        <result column="zhongduanfuwuqi" property="zhongduanfuwuqi"/>
+        <result column="cheliangdengji" property="cheliangdengji"/>
+        <result column="weishengjian" property="weishengjian"/>
+        <result column="fadongjipailiang" property="fadongjipailiang"/>
+        <result column="cheliangwaikuochicun" property="cheliangwaikuochicun"/>
+        <result column="ranliaoxiaohaofujian" property="ranliaoxiaohaofujian"/>
+        <result column="beizhu" property="beizhu"/>
+        <result column="gpsanzhuangshijian" property="gpsanzhuangshijian"/>
+        <result column="zhinenghuaxitong" property="zhinenghuaxitong"/>
+        <result column="gps" property="gps"/>
+        <result column="xingshijiluyi" property="xingshijiluyi"/>
+        <result column="zongduanid" property="zongduanid"/>
+        <result column="zongduanxinghao" property="zongduanxinghao"/>
+        <result column="cheliangzhaopian" property="cheliangzhaopian"/>
+        <result column="is_deleted" property="isdel"/>
+        <result column="yunshujiezhi" property="yunshujiezhi"/>
+    </resultMap>
+    <resultMap id="CPResultMap" type="org.springblade.anbiao.cheliangguanli.entity.VehicleCP">
+        <id column="id" property="id"/>
+        <result column="cheliangpaizhao" property="cheliangpaizhao"/>
+    </resultMap>
+    <resultMap id="GPSVehicleResultMap" type="org.springblade.anbiao.cheliangguanli.entity.VehicleToGps">
+        <id column="id" property="id"/>
+    </resultMap>
+
+    <select id="selectByKey" resultMap="vehicleVOResultMap" parameterType="java.lang.String">
+        select  a.*, b.dept_name as deptName from  anbiao_vehicle a
+            inner join blade_dept b
+                on a.dept_id = b.id
+            where a.id=#{id}
+    </select>
+
+    <select id="selectByCPYS" resultMap="vehicleVOResultMap" parameterType="java.lang.String">
+        select * from anbiao_vehicle where  cheliangpaizhao=#{cheliangpaizhao} and chepaiyanse=#{chepaiyanse} and ifnull(is_deleted,0) = 0 LIMIT 1;
+    </select>
+
+    <select id="selectCPYS" resultMap="vehicleVOResultMap" parameterType="java.lang.String">
+        select cheliangpaizhao from anbiao_vehicle
+        where cheliangpaizhao=#{cheliangpaizhao}
+        and chepaiyanse=#{chepaiyanse}
+        and ifnull(is_deleted,0) = 0 LIMIT 1;
+    </select>
+
+    <!-- 车辆 假删除 -->
+    <update id="deleteVehicle" parameterType="java.lang.String" >
+         update anbiao_vehicle set
+            is_deleted = 1
+        WHERE id = #{id}
+  </update>
+
+    <sql id="tableSql">
+	 SELECT
+        a.id,
+        a.dept_id,
+        cheliangpaizhao,
+        chepaiyanse,
+        ifnull(shiyongxingzhi,'') as shiyongxingzhi,
+        ifnull(changpai,'') as changpai,
+        ifnull(xinghao,'') as xinghao,
+        ifnull(chejiahao,'') as chejiahao,
+        ifnull(yunyingshang,'') as yunyingshang,
+        ifnull(yunyingshangmingcheng,'') as yunyingshangmingcheng,
+        ifnull(zongduanid,'') as zongduanid,
+        b.dept_name as deptName,
+        ifnull(cheshenyanse,'') as cheshenyanse,
+        ifnull(cheliangzhaopian,'') as cheliangzhaopian,
+        ifnull(hedingzaike,'') as hedingzaike,
+        ifnull(dengjizhengshubianhao,'') as dengjizhengshubianhao,
+        ifnull(qiangzhibaofeishijian,'') as qiangzhibaofeishijian,
+        ifnull(jieboyunshuzhenghao,'') as jieboyunshuzhenghao,
+        ifnull(yuancheliangpaizhao,'') as yuancheliangpaizhao,
+        ifnull(cheliangzhuangtai,'') as cheliangzhuangtai,
+        ifnull(danganhao,'') as danganhao,
+        ifnull(suoshuchedui,'') as suoshuchedui,
+        ifnull(xingshifujian,'') as xingshifujian,
+        ifnull(zongzhiliang,'') as zongzhiliang,
+        ifnull(beizhu,'') as beizhu,
+        ifnull(gpsanzhuangshijian,'') as gpsanzhuangshijian,
+        ifnull(zongduanxinghao,'') as zongduanxinghao,
+        ifnull(yunshujiezhi,'') as yunshujiezhi
+    FROM
+        anbiao_vehicle a
+        inner join  (
+        <include refid="org.springblade.anbiao.guanlijigouherenyuan.mapper.OrganizationsMapper.getByDeptId"/>
+        ) b
+        on a.dept_id = b.id
+    WHERE 1=1 and ifnull(a.is_deleted,0) = 0
+        <if test="ids !=null and ids != ''and ids == '1'.toString()">
+            and a.id in (
+            SELECT biaoid from anbiao_jinritixing_jiesuan where IFNULL(isdelete,0)=0 and dept_id = #{deptId} and tongjiriqi = #{tongjiriqi}
+            and tixingleixing = #{tixingleixing} and tixingxiangqingid = #{tixingxiangqingid} )
+        </if>
+  </sql>
+
+    <sql id="querySql">
+        <if test="cheliangpaizhao !=null and cheliangpaizhao != ''">
+            AND cheliangpaizhao like CONCAT('%',#{cheliangpaizhao},'%')
+        </if>
+        <if test="deptName !=null and deptName != ''">
+            AND deptName like CONCAT('%',#{deptName},'%')
+        </if>
+
+        <if test='cheliangleixing !=null and cheliangleixing != ""and cheliangleixing == "1" '>
+            AND cheliangpaizhao LIKE '%挂%'
+        </if>
+        <if test="cheliangleixing !=null and cheliangleixing != ''and cheliangleixing == '2'.toString()">
+            AND cheliangpaizhao NOT LIKE '%挂%'
+        </if>
+    </sql>
+    <sql id="orderSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by cheliangpaizhao
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+    </sql>
+
+    <select id="selectVehiclePage" resultMap="vehicleVOResultMap"
+            parameterType="org.springblade.anbiao.cheliangguanli.page.VehiclePage" resultType="org.springblade.anbiao.cheliangguanli.vo.VehicleVO">
+        <if test="size == 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${total}
+        </if>
+        <if test="current != 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <select id="selectVehicleTotal"
+            parameterType="org.springblade.anbiao.cheliangguanli.page.VehiclePage"
+            resultType="int">
+        select COUNT(1) from (
+        <include refid="tableSql" />
+        )d
+        where 1 = 1
+        <include refid="querySql" />
+    </select>
+
+    <select id="selectCL" resultMap="CPResultMap" parameterType="java.lang.String">
+        SELECT
+        a.id,
+        cheliangpaizhao
+        FROM
+        anbiao_vehicle a
+        inner join  (
+        <include refid="org.springblade.anbiao.guanlijigouherenyuan.mapper.OrganizationsMapper.getByDeptId"/>
+        ) b
+        on a.dept_id = b.id
+        WHERE 1=1 and ifnull(a.is_deleted,0) = 0
+        <if test="cheliangpaizhao !=null and cheliangpaizhao != ''">
+            AND cheliangpaizhao  LIKE '%${cheliangpaizhao}%'
+        </if>
+    </select>
+    <select id="vehicleDayCount" resultType="int">
+            SELECT count(1)
+            FROM
+	            anbiao_vehicle
+        WHERE
+	        dept_id = #{deptId}
+        AND is_deleted = 0
+        AND cheliangpaizhao NOT LIKE '%挂'
+
+
+    </select>
+    <select id="xianzhiVehcleCount" resultType="int">
+            SELECT
+	        count(1)
+	        FROM
+		        anbiao_vehicle
+	        WHERE
+		            dept_id = #{deptId}
+	        AND is_deleted = 0
+	        AND cheliangpaizhao NOT LIKE '%挂'
+	        AND cheliangzhuangtai = 1
+    </select>
+    <select id="vehileOne" resultType="org.springblade.anbiao.cheliangguanli.entity.Vehicle">
+        SELECT
+	            *
+        FROM
+	        anbiao_vehicle
+        WHERE
+	        cheliangpaizhao = #{cheliangpaizhao}
+        AND chepaiyanse = #{chepaiyanse}
+        AND is_deleted=0
+        AND  dept_id=#{deptId}
+    </select>
+
+    <select id="selectVehicleAll" resultMap="GPSVehicleResultMap" parameterType="java.lang.String" >
+        select
+        <if test="caozuoshijian !=null and caozuoshijian != ''">
+            CASE
+            WHEN cheliangzhuangtai=0 and ifnull(a.is_deleted,0) = 0 THEN '在用'
+            WHEN cheliangzhuangtai=1 and ifnull(a.is_deleted,0) = 0 THEN '停用'
+            WHEN cheliangzhuangtai=2 and ifnull(a.is_deleted,0) = 0 THEN '报废'
+            WHEN ifnull(a.is_deleted,1) = 1 THEN '删除'
+            END cheliangzhuangtai,
+        </if>
+        a.dept_id as deptId,b.dept_name as deptName,a.simnum,a.zongduanxinghao,a.caozuoshijian,a.createtime,a.id,
+        a.cheliangpaizhao,a.chepaiyanse,a.shiyongxingzhi,a.zongduanid
+        from anbiao_vehicle a
+        inner join blade_dept b on a.dept_id = b.id
+        where 1=1
+        <if test="caozuoshijian !=null and caozuoshijian != '' ">
+            and (a.createtime &gt;= #{caozuoshijian} or a.caozuoshijian &gt;= #{caozuoshijian})
+        </if>
+
+        <if test=" caozuoshijian ==null or caozuoshijian == '' ">
+            and ifnull(a.cheliangzhuangtai,0) = 0
+            and ifnull(a.is_deleted,0) = 0
+        </if>
+    </select>
+
+
+    <select id="selectByYYS" resultMap="GPSVehicleResultMap" parameterType="java.lang.String" >
+        select DISTINCT id,yunyingshang from anbiao_vehicle
+        where id = #{id}
+    </select>
+
+    <!-- 车辆异动 -->
+    <update id="updateDeptId" parameterType="map" >
+         update anbiao_vehicle set dept_id = #{deptId}
+         WHERE id = #{id}
+  </update>
+
+    <select id="selectVehicleColor" parameterType="string"
+            resultType="org.springblade.anbiao.cheliangguanli.vo.VehicleVO">
+        select dict_key as chepaiyanse from blade_dict
+        where code ='colour'
+        and dict_key = #{color}
+        and is_deleted = 0
+        and dict_key != -1
+    </select>
+
+    <insert id="insertSelective" parameterType="org.springblade.anbiao.cheliangguanli.vo.VehicleVO" >
+        insert into anbiao_vehicle
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+
+            <if test="deptId != null">
+                dept_id,
+            </if>
+
+            <if test="cheliangpaizhao != null">
+                cheliangpaizhao,
+            </if>
+
+            <if test="chepaiyanse != null">
+                chepaiyanse,
+            </if>
+
+            <if test="shiyongxingzhi != null">
+                shiyongxingzhi,
+            </if>
+
+            <if test="changpai != null">
+                changpai,
+            </if>
+
+            <if test="chejiahao != null">
+                chejiahao,
+            </if>
+
+            <if test="yunyingshang != null">
+                yunyingshang,
+            </if>
+
+            <if test="yunyingshangmingcheng != null">
+                yunyingshangmingcheng,
+            </if>
+
+            <if test="zongduanid != null">
+                zongduanid,
+            </if>
+
+            <if test="xinghao != null">
+                xinghao,
+            </if>
+
+            <if test="createtime != null">
+                createtime,
+            </if>
+
+            <if test="caozuoren != null">
+                caozuoren,
+            </if>
+
+            <if test="cheliangzhuangtai != null">
+                cheliangzhuangtai,
+            </if>
+
+            <if test="caozuorenid != null">
+                caozuorenid
+            </if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+
+            <if test="deptId != null">
+                #{deptId},
+            </if>
+
+            <if test="cheliangpaizhao != null">
+                #{cheliangpaizhao},
+            </if>
+
+            <if test="chepaiyanse != null">
+                #{chepaiyanse},
+            </if>
+
+            <if test="shiyongxingzhi != null">
+                #{shiyongxingzhi},
+            </if>
+
+            <if test="changpai != null">
+                #{changpai},
+            </if>
+
+            <if test="chejiahao != null">
+                #{chejiahao},
+            </if>
+
+            <if test="yunyingshang != null">
+                #{yunyingshang},
+            </if>
+
+            <if test="yunyingshangmingcheng != null">
+                #{yunyingshangmingcheng},
+            </if>
+
+            <if test="zongduanid != null">
+                #{zongduanid},
+            </if>
+
+            <if test="xinghao != null">
+                #{xinghao},
+            </if>
+
+            <if test="createtime != null">
+                #{createtime},
+            </if>
+
+            <if test="caozuoren != null">
+                #{caozuoren},
+            </if>
+
+            <if test="cheliangzhuangtai != null">
+                #{cheliangzhuangtai},
+            </if>
+
+            <if test="caozuorenid != null">
+                #{caozuorenid}
+            </if>
+
+        </trim>
+    </insert>
+
+    <select id="selectByZongDuan" resultMap="vehicleVOResultMap" parameterType="java.lang.String" >
+        select zongduanid from anbiao_vehicle
+        where is_deleted = 0
+            and zongduanid = #{id}
+        group by
+            zongduanid
+        LIMIT 1
+    </select>
+
+</mapper>

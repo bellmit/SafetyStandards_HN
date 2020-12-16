@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.anbiao.jinritixing.mapper.JinritixingMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="jinritixingResultMap" type="org.springblade.anbiao.jinritixing.entity.Jinritixing">
+
+    </resultMap>
+
+
+    <select id="selectJinritixingPage" resultMap="jinritixingResultMap">
+        select * from anbiao_jinritixing_jiesuan where is_deleted = 0
+    </select>
+
+    <update id="updateDel" parameterType="java.lang.String">
+        UPDATE anbiao_jinritixing_jiesuan SET isdelete = 1 where id = #{id}
+    </update>
+
+    <sql id="tableSql">
+        SELECT a.yujingxiang as tixingxiangqing,IFNULL(b.counts,0) as counts,b.tongjiriqi,b.deptId,b.tixingleixing,a.shuoming as shuoming,
+        a.url,a.id as tixingxiangqingid FROM anbiao_yujingxiang a LEFT JOIN
+        (
+        SELECT
+        count(a.tixingxiangqingid) AS counts,
+        a.tongjiriqi,
+        a.dept_id AS deptId,
+        a.tixingleixing,
+        a.tixingxiangqingid
+        FROM
+        anbiao_jinritixing_jiesuan a
+        inner join  blade_dept b
+        on a.dept_id = b.id
+        WHERE 1=1 and ifnull(a.isdelete,0) = 0
+        <if test="tongjiriqi !=null and tongjiriqi != ''">
+            AND tongjiriqi = #{tongjiriqi}
+        </if>
+        <if test="tixingleixing !=null and tixingleixing != ''">
+            AND tixingleixing = #{tixingleixing}
+        </if>
+        <if test="deptId != null">
+            AND a.dept_id = #{deptId}
+        </if>
+        <if test="postid != null">
+            and a.tixingxiangqingid in(
+            SELECT a.yujingxiangid FROM anbiao_yujingquanxian a WHERE a.postid = #{postid}
+            )
+        </if>
+        GROUP BY deptId,
+        tongjiriqi,
+        a.tixingleixing,
+        a.tixingxiangqingid
+        ) b on a.id = b.tixingxiangqingid
+    </sql>
+
+    <sql id="querySql">
+        <!--<if test="jiashiyuanxingming !=null and jiashiyuanxingming != ''">-->
+            <!--AND jiashiyuanxingming  LIKE '%${jiashiyuanxingming}%'-->
+        <!--</if>-->
+        <!--<if test="deptName !=null and deptName != ''">-->
+            <!--AND dept_name LIKE '%${deptName}%'-->
+        <!--</if>-->
+
+    </sql>
+    <sql id="orderSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by counts desc
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+    </sql>
+
+    <select id="selectPageList" parameterType="org.springblade.anbiao.jinritixing.page.JinritixingPage" resultType="org.springblade.anbiao.jinritixing.vo.JinritixingVO">
+        <if test="size == 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${total}
+        </if>
+        <if test="current != 0" >
+            <include refid="tableSql" />
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${offsetNo},${size}
+
+        </if>
+    </select>
+
+    <select id="selectTotal" parameterType="org.springblade.anbiao.jinritixing.page.JinritixingPage" resultType="int">
+        select COUNT(1) from (
+        <include refid="tableSql" />
+        )d
+        where 1 = 1
+        <include refid="querySql" />
+    </select>
+
+    <select id="selectNum" parameterType="org.springblade.anbiao.jinritixing.page.JinritixingPage" resultType="int">
+
+        SELECT
+        count(1)
+        FROM
+        anbiao_jinritixing_jiesuan a
+        inner join  blade_dept b
+        on a.dept_id = b.id
+        WHERE 1=1 and ifnull(a.isdelete,0) = 0
+        <if test="tongjiriqi !=null and tongjiriqi != ''">
+            AND tongjiriqi = #{tongjiriqi}
+        </if>
+        <if test="tixingleixing !=null and tixingleixing != ''">
+            AND tixingleixing = #{tixingleixing}
+        </if>
+        <if test="deptId != null">
+            AND a.dept_id = #{deptId}
+        </if>
+        <if test="postid != null">
+            and a.tixingxiangqingid in(
+            SELECT a.yujingxiangid FROM anbiao_yujingquanxian a WHERE a.postid = #{postid}
+            )
+        </if>
+
+    </select>
+
+    <select id="selectByIds" parameterType="java.lang.String" resultType="org.springblade.anbiao.jinritixing.vo.JinritixingVO">
+        SELECT
+        a.*,b.dept_name deptName, c.jiashiyuanxingming as jiashiyuanxingming, d.cheliangpaizhao as cheliangpaizhao
+        FROM
+        anbiao_jinritixing_jiesuan a
+        inner join  blade_dept b
+        on a.dept_id = b.id
+        LEFT join anbiao_jiashiyuan c on a.jiashiyuanid = c.id
+        LEFT join anbiao_vehicle d on a.cheliangid = d.id
+        WHERE 1=1 and ifnull(a.isdelete ,0) = 0 and a.id=#{id}
+    </select>
+
+    <select id="selectLists" parameterType="org.springblade.anbiao.jinritixing.page.JinritixingPage" resultType="org.springblade.anbiao.jinritixing.vo.JinritixingVO">
+        <if test="size == 0" >
+            select * from (
+            <include refid="tableSqls" />
+            )b
+            where 1=1
+            <include refid="querySqls" />
+            limit ${total}
+        </if>
+        <if test="current != 0" >
+            select * from (
+            <include refid="tableSqls" />
+            )b
+            where 1=1
+            <include refid="querySqls" />
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <select id="selectListTotal" parameterType="org.springblade.anbiao.jinritixing.page.JinritixingPage" resultType="int">
+        select COUNT(1) from (
+        <include refid="tableSqls" />
+        )d
+        where 1 = 1
+        <include refid="querySqls" />
+    </select>
+
+    <sql id="tableSqls">
+        SELECT a.tixingleixing,a.tixingxiangqing,d.dept_name as deptName,b.cheliangpaizhao,b.chepaiyanse,c.jiashiyuanxingming from anbiao_jinritixing_jiesuan a
+LEFT JOIN anbiao_vehicle b on a.cheliangid = b.id and ifnull(b.is_deleted,0) = 0
+LEFT JOIN anbiao_jiashiyuan c on a.jiashiyuanid = c.id and ifnull(c.isdelete,0) = 0
+LEFT JOIN blade_dept d on a.dept_id = d.id  where ifnull(a.isdelete,0) = 0
+        <if test="deptId !=null and deptId != ''">
+            AND a.dept_id  = #{deptId}
+        </if>
+        <if test="tongjiriqi !=null and tongjiriqi != ''">
+            AND a.tongjiriqi = #{tongjiriqi}
+        </if>
+
+    </sql>
+
+    <sql id="querySqls">
+        <if test="tixingleixing !=null and tixingleixing != ''">
+        AND tixingleixing  = #{tixingleixing}
+        </if>
+        <if test="tixingxiangqing !=null and tixingxiangqing != ''">
+        AND tixingxiangqing = #{tixingxiangqing}
+        </if>
+
+    </sql>
+</mapper>

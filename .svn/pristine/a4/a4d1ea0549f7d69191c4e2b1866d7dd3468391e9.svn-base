@@ -1,0 +1,2 @@
+net.dreamlu.mica.feign.MicaFeignAutoConfiguration=\
+  org.springblade.desk.feign.INoticeClient

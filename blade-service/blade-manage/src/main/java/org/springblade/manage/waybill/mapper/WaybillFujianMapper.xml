@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.manage.waybill.mapper.WaybillFujianMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="waybillFujianResultMap" type="org.springblade.manage.waybill.entity.WaybillFujian">
+        <id column="id" property="id"/>
+        <result column="waybill_id" property="waybillId"/>
+        <result column="leixing" property="leixing"/>
+        <result column="jine" property="jine"/>
+        <result column="shijian" property="shijian"/>
+        <result column="fujian" property="fujian"/>
+    </resultMap>
+
+    <select id="selectbyWayId" parameterType="String" resultMap="waybillFujianResultMap">
+        select * from manage_waybill_fujian where  waybill_id=#{waybillId};
+    </select>
+
+    <delete id="del" parameterType="java.lang.Integer">
+        delete manage_waybill_fujian where id=#{id}
+    </delete>
+    <select id="selectbyWayIdandLeixing" parameterType="String" resultMap="waybillFujianResultMap">
+        select sum(jine) jine from manage_waybill_fujian where  waybill_id=#{waybillId} and leixing=#{leixing} GROUP BY leixing;
+    </select>
+
+    <delete id="delBywaybillId" parameterType="java.lang.String">
+        delete manage_waybill_fujian where waybill_id=#{waybillId}
+    </delete>
+    
+    <insert id="insertWay" parameterType="org.springblade.manage.waybill.entity.WaybillFujian">
+        insert  into  manage_waybill_fujian(
+            waybill_id,leixing,jine,shijian,fujian
+        )  values ( #{waybillId}, #{leixing}, #{jine}, #{shijian}, #{fujian})
+    </insert>
+
+
+
+
+
+
+</mapper>

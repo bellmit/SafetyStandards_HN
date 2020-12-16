@@ -1,0 +1,17 @@
+META-INF\spring-devtools.properties
+org\springblade\gps\entity\GpsVehicle.class
+org\springblade\gps\feign\GpsPointDataClientFallback.class
+org\springblade\gps\entity\VehilePTData.class
+org\springblade\gps\entity\GpsPlateVehid.class
+org\springblade\gps\entity\VehiclePT.class
+org\springblade\gps\page\VehiclePTPage.class
+org\springblade\gps\entity\VehicleDetailPage.class
+META-INF\spring.factories
+org\springblade\gps\page\VehicleStopPage.class
+org\springblade\gps\page\VehicleStopSumPage.class
+org\springblade\gps\entity\VehicleStopData.class
+org\springblade\gps\entity\VehicleNode.class
+org\springblade\gps\entity\VehicleForPlate.class
+org\springblade\gps\entity\VehiclePTCompany.class
+org\springblade\gps\feign\IGpsPointDataClient.class
+org\springblade\gps\entity\VehicleStop.class

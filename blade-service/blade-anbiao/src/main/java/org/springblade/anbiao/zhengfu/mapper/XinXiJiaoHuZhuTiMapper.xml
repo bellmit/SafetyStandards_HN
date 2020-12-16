@@ -1,0 +1,521 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.anbiao.zhengfu.mapper.XinXiJiaoHuZhuTiMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="ResultMap" type="org.springblade.anbiao.zhengfu.entity.XinXiJiaoHuZhuTi">
+        <id column="id" property="id"/>
+    </resultMap>
+
+    <insert id="insertTongZhiGongGao" parameterType="org.springblade.anbiao.zhengfu.entity.XinXiJiaoHuZhuTi">
+        INSERT INTO anbiao_xinxijiaohuzhutibiao
+         (id,zhutimingcheng,zhutizhengwen,faqishijian,zhuangtai,fujian,
+             fasongdanweiid,songdadanweiid,songdadanwei,type,huifuyouxiaoqi,wenjianleixing,zhenggaishijian,
+             kongzhifenshu,caozuoren,caozuoshijian)
+        VALUES
+         (#{id},#{zhutimingcheng},#{zhutizhengwen},#{faqishijian},#{zhuangtai},#{fujian},
+             #{fasongdanweiid},#{songdadanweiid},#{songdadanwei},#{type},#{huifuyouxiaoqi},#{wenjianleixing},#{zhenggaishijian},
+             #{kongzhifenshu},#{caozuoren},#{caozuoshijian})
+    </insert>
+
+    <insert id="insertSelective" parameterType="org.springblade.anbiao.zhengfu.entity.XinXiJiaoHuZhuTi" >
+        insert into anbiao_xinxijiaohuzhutibiao
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+
+            <if test="zhutimingcheng != null">
+                zhutimingcheng,
+            </if>
+
+            <if test="zhutizhengwen != null">
+                zhutizhengwen,
+            </if>
+
+            <if test="faqishijian != null">
+                faqishijian,
+            </if>
+
+            <if test="zhuangtai != null">
+                zhuangtai,
+            </if>
+
+            <if test="fujian != null">
+                fujian,
+            </if>
+
+            <if test="fujianname != null">
+                fujianname,
+            </if>
+
+            <if test="fasongdanweiid != null">
+                fasongdanweiid,
+            </if>
+
+            <if test="songdadanweiid != null">
+                songdadanweiid,
+            </if>
+
+            <if test="songdadanwei != null">
+                songdadanwei,
+            </if>
+
+            <if test="type != null">
+                type,
+            </if>
+
+            <if test="huifuyouxiaoqi != null">
+                huifuyouxiaoqi,
+            </if>
+
+            <if test="wenjianleixing != null">
+                wenjianleixing,
+            </if>
+
+            <if test="zhenggaishijian != null">
+                zhenggaishijian,
+            </if>
+
+            <if test="kongzhifenshu != null">
+                kongzhifenshu,
+            </if>
+
+            <if test="caozuoren != null">
+                caozuoren,
+            </if>
+
+            <if test="caozuoshijian != null">
+                caozuoshijian
+            </if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+
+            <if test="zhutimingcheng != null">
+                #{zhutimingcheng},
+            </if>
+
+            <if test="zhutizhengwen != null">
+                #{zhutizhengwen},
+            </if>
+
+            <if test="faqishijian != null">
+                #{faqishijian},
+            </if>
+
+            <if test="zhuangtai != null">
+                #{zhuangtai},
+            </if>
+
+            <if test="fujian != null">
+                #{fujian},
+            </if>
+
+            <if test="fujianname != null">
+                #{fujianname},
+            </if>
+
+            <if test="fasongdanweiid != null">
+                #{fasongdanweiid},
+            </if>
+
+            <if test="songdadanweiid != null">
+                #{songdadanweiid},
+            </if>
+
+            <if test="songdadanwei != null">
+                #{songdadanwei},
+            </if>
+
+            <if test="type != null">
+                #{type},
+            </if>
+
+            <if test="huifuyouxiaoqi != null">
+                #{huifuyouxiaoqi},
+            </if>
+
+            <if test="wenjianleixing != null">
+                #{wenjianleixing},
+            </if>
+
+            <if test="zhenggaishijian != null">
+                #{zhenggaishijian},
+            </if>
+
+            <if test="kongzhifenshu != null">
+                #{kongzhifenshu},
+            </if>
+
+            <if test="caozuoren != null">
+                #{caozuoren},
+            </if>
+
+            <if test="caozuoshijian != null">
+                #{caozuoshijian}
+            </if>
+
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="org.springblade.anbiao.zhengfu.entity.XinXiJiaoHuZhuTi" >
+        update anbiao_xinxijiaohuzhutibiao
+        <set>
+            <if test="zhutimingcheng != null">
+                zhutimingcheng = #{zhutimingcheng},
+            </if>
+
+            <if test="zhutizhengwen != null">
+                zhutizhengwen = #{zhutizhengwen},
+            </if>
+
+            <if test="faqishijian != null">
+                faqishijian = #{faqishijian},
+            </if>
+
+            <if test="zhuangtai != null">
+                zhuangtai = #{zhuangtai},
+            </if>
+
+            <if test="fujian != null">
+                fujian = #{fujian},
+            </if>
+
+            <if test="fujianname != null">
+                fujianname = #{fujianname},
+            </if>
+
+            <if test="fasongdanweiid != null">
+                fasongdanweiid = #{fasongdanweiid},
+            </if>
+
+            <if test="songdadanweiid != null">
+                songdadanweiid = #{songdadanweiid},
+            </if>
+
+            <if test="songdadanwei != null">
+                songdadanwei = #{songdadanwei},
+            </if>
+
+            <if test="type != null">
+                type = #{type},
+            </if>
+
+            <if test="huifuyouxiaoqi != null">
+                huifuyouxiaoqi = #{huifuyouxiaoqi},
+            </if>
+
+            <if test="wenjianleixing != null">
+                wenjianleixing = #{wenjianleixing},
+            </if>
+
+            <if test="zhenggaishijian != null">
+                zhenggaishijian = #{zhenggaishijian},
+            </if>
+
+            <if test="kongzhifenshu != null">
+                kongzhifenshu = #{kongzhifenshu},
+            </if>
+
+            <if test="caozuoren != null">
+                caozuoren = #{caozuoren},
+            </if>
+
+            <if test="caozuoshijian != null">
+                caozuoshijian = #{caozuoshijian}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="org.springblade.anbiao.zhengfu.entity.XinXiJiaoHuZhuTi" >
+        update anbiao_xinxijiaohuzhutibiao
+        set zhuangtai = #{zhuangtai},caozuoren = #{caozuoren},caozuoshijian = #{caozuoshijian}
+        where id = #{id}
+  </update>
+
+    <!-- 查询列表 -->
+    <sql id="tableSql">
+        select
+            a.id,
+            zf.dept_name fasongdanwei,
+            a.zhutimingcheng,
+            a.zhutizhengwen,
+            a.type,
+            a.faqishijian,
+            a.zhuangtai,
+            a.fujian,
+            a.fujianname,
+            a.fasongdanweiid,
+            a.songdadanweiid,
+            a.songdadanwei,
+            a.huifuyouxiaoqi,
+            ifnull(b.shuliang,0) as xiafaqiyeshu,
+            ifnull(c.shuliang,0) as huifuqiyeshu,
+            ifnull(b.shuliang, 0)- ifnull(c.shuliang, 0) as weihuifuqiyeshu
+        from
+            anbiao_xinxijiaohuzhutibiao a
+        LEFT JOIN(
+            select
+                a.id,
+                a.dept_name
+            from
+                blade_dept a
+            inner join(
+                select
+                    c.id,
+                    c.dept_name,
+                    c.parent_id
+                    from
+                        blade_user a,
+                        blade_post b,
+                        blade_dept c
+                    where a.id = b.user_id
+                        and b.post_id = c.id
+                        and a.id = #{userId}
+                )b on a.id = b.parent_id
+            ) zf on a.fasongdanweiid = zf.id
+        LEFT JOIN (
+                SELECT
+                    b.id,
+                    b.fasongdanweiid,
+                    COUNT(a.id) shuliang
+                FROM
+                    blade_dept a,
+                    anbiao_xinxijiaohuzhutibiao b
+                where b.songdadanweiid LIKE concat('%', a.id ,'%')
+                GROUP BY
+                    b.id,b.fasongdanweiid
+            )b on a.fasongdanweiid = b.fasongdanweiid and a.id=b.id
+        LEFT JOIN (
+            SELECT
+                zhutiid,suoshudanweiid,
+                COUNT(DISTINCT suoshudanweiid) shuliang
+            FROM
+                anbiao_XinXiJiaoHuHuiFuBiao
+            GROUP BY
+                zhutiid,suoshudanweiid
+        ) c ON a.id = c.zhutiid and a.songdadanweiid LIKE concat('%', c.suoshudanweiid ,'%')
+        where 1=1
+            and a.zhuangtai != 9
+        <if test="type != null and type != '' ">
+            and a.type = #{type}
+        </if>
+    </sql>
+
+    <sql id="querySql">
+
+        <if test="zhutimingcheng != null and zhutimingcheng != '' ">
+            and zhutimingcheng like concat('%', #{zhutimingcheng} ,'%')
+        </if>
+
+        <if test="fasongdanweiid != null and fasongdanweiid != '' ">
+            and fasongdanweiid LIKE concat('%', #{fasongdanweiid} ,'%')
+        </if>
+
+        <if test="songdadanweiid != null and songdadanweiid != '' ">
+            and songdadanweiid LIKE concat('%', #{songdadanweiid} ,'%')
+        </if>
+
+    </sql>
+
+    <sql id="orderSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by faqishijian desc
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+    </sql>
+
+    <select timeout="600" id="selectALLPage" resultMap="ResultMap"
+            parameterType="org.springblade.anbiao.zhengfu.page.XinXiJiaoHuZhuTiPage">
+        <if test="size == 0">
+            select * from (
+            <include refid="tableSql"/>
+            )b
+            where 1=1
+            <include refid="querySql"/>
+            <include refid="orderSql"/>
+            limit ${total}
+        </if>
+        <if test="current != 0">
+            select * from (
+            <include refid="tableSql"/>
+            )b
+            where 1=1
+            <include refid="querySql"/>
+            <include refid="orderSql"/>
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <select timeout="90" id="selectAllTotal"
+            parameterType="org.springblade.anbiao.zhengfu.page.XinXiJiaoHuZhuTiPage"
+            resultType="int">
+        select COUNT(1) from (
+        <include refid="tableSql"/>
+        )d where 1 = 1
+        <include refid="querySql"/>
+    </select>
+
+    <select id="selectById" resultType="org.springblade.anbiao.zhengfu.entity.XinXiJiaoHuZhuTi">
+        SELECT
+            *
+        FROM
+	        anbiao_xinxijiaohuzhutibiao
+        WHERE
+	        id = #{id}
+    </select>
+
+    <select id="selectGetLeiXing" resultType="org.springblade.anbiao.zhengfu.entity.Organization">
+        select
+            jigouleixing
+        from
+            anbiao_organization
+        where dept_id = #{deptId}
+            and isdelete = 0
+    </select>
+
+    <select id="selectGetQiYe" resultType="org.springblade.anbiao.zhengfu.entity.XinXiJiaoHuZhuTiVo" parameterType="map">
+        select
+            dept_id as deptId,
+            dept_name as deptName
+        from
+            anbiao_organization
+        where 1=1
+            and jigouleixing in ('qiye','geti')
+            and isdelete = 0
+        <if test="deptId != null and deptId != '' and leixing =='shengZF' ">
+            and province = #{deptId}
+        </if>
+
+        <if test="deptId != null and deptId != '' and leixing =='shiZF' ">
+            and city = #{deptId}
+        </if>
+
+        <if test="deptId != null and deptId != '' and leixing =='xianZF' ">
+            and country = #{deptId}
+        </if>
+        GROUP BY
+            dept_id,dept_name
+
+    </select>
+
+    <select id="selectGetQYByOne" resultType="org.springblade.anbiao.zhengfu.entity.XinXiJiaoHuZhuTi">
+        select
+            a.dept_id,
+            a.dept_name,
+            b.*
+        from (
+            select
+                dept_id,
+                dept_name
+            from
+                anbiao_organization
+            where 1=1
+                and jigouleixing in ('qiye','geti') and isdelete = 0
+            ) a
+        inner join(
+            select
+                a.id,zhutimingcheng,zhutizhengwen,faqishijian,#{deptId} as aa ,
+                a.fasongdanweiid,b.dept_name as fasongdanwei,
+                songdadanwei,songdadanweiid,huifuyouxiaoqi,
+                SUBSTRING_INDEX(huifuyouxiaoqi,'分钟',1) as time
+            from
+                anbiao_xinxijiaohuzhutibiao a,anbiao_organization b
+            where a.type = 2
+                and a.fasongdanweiid = b.dept_id
+                and b.isdelete = 0
+                and FIND_IN_SET(#{deptId},a.songdadanweiid)
+            )b on a.dept_id = b.aa
+        where 1=1
+            and date_format(faqishijian,'%Y-%m') = date_format(now(),'%Y-%m')
+            and (UNIX_TIMESTAMP(now()) - UNIX_TIMESTAMP(faqishijian)) &lt;= time*60
+            and b.id not in (
+                select zhutiid from anbiao_xinxijiaohuhuifubiao
+            )
+        ORDER BY faqishijian desc
+        LIMIT 1
+    </select>
+
+    <!-- 查询列表 -->
+    <sql id="huifutableSql">
+        SELECT
+            b.id as deptId,
+            b.dept_name as deptName,
+            a.huifushijian,
+            a.zhengwen as huifuzhengwen,
+            c.id as userId,
+            c.name as userName
+        FROM
+            anbiao_XinXiJiaoHuHuiFuBiao a
+            LEFT JOIN (
+                select
+                    a.id,
+                    a.dept_name
+                from
+                    blade_dept a
+                )b on a.suoshudanweiid = b.id
+            LEFT JOIN(
+                select
+                    a.id,
+                    a.account,
+                    a.`name`
+                from
+                    blade_user a
+                )c on a.huifuzheid = c.id
+            where 1=1
+            and a.zhutiid = #{zhutiId}
+    </sql>
+
+    <sql id="huifuorderSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by huifushijian desc
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+    </sql>
+
+    <select timeout="600" id="selectHFALLPage" resultMap="ResultMap"
+            parameterType="org.springblade.anbiao.zhengfu.page.XinXiJiaoHuZhuTiPage">
+        <if test="size == 0">
+            select * from (
+            <include refid="huifutableSql"/>
+            )b
+            where 1=1
+            <include refid="huifuorderSql"/>
+            limit ${total}
+        </if>
+        <if test="current != 0">
+            select * from (
+            <include refid="huifutableSql"/>
+            )b
+            where 1=1
+            <include refid="huifuorderSql"/>
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <select timeout="90" id="selectHFAllTotal"
+            parameterType="org.springblade.anbiao.zhengfu.page.XinXiJiaoHuZhuTiPage"
+            resultType="int">
+        select COUNT(1) from (
+        <include refid="huifutableSql"/>
+        )d where 1 = 1
+    </select>
+
+</mapper>

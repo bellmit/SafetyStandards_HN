@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.anbiao.falvfagui.mapper.FaGuiMapper">
+
+
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="ResultMap" type="org.springblade.anbiao.falvfagui.entity.FaGui">
+
+    </resultMap>
+    <resultMap id="VoResultMap" type="org.springblade.anbiao.falvfagui.vo.FaGuiVo">
+
+    </resultMap>
+
+
+    <sql id="tableSql">
+    SELECT
+        a.id,
+        a.dept_id,
+        a.caozuoren,
+        a.caozuoshijian,
+        a.falvfaguimingcheng,
+        a.banbujiguan,
+        a.banbushijian,
+        a.falvfaguifenlei,
+        a.zhaiyao,
+        a.shuoming,
+        a.shiyongbumen,
+        a.fujian,
+        b.dept_name
+    FROM
+        anbiao_fagui a
+        inner join  (
+        <include refid="org.springblade.anbiao.guanlijigouherenyuan.mapper.OrganizationsMapper.getByDeptId"/>
+        ) b
+        on a.dept_id = b.id and a.is_deleted=0 and b.is_deleted=0
+
+  </sql>
+
+    <sql id="querySql">
+        <if test="banbujiguan !=null and banbujiguan != ''">
+            AND banbujiguan  LIKE '%${banbujiguan}%'
+        </if>
+    </sql>
+    <sql id="orderSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by caozuoshijian desc
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+    </sql>
+
+    <select id="selectFaGuiPage" resultMap="VoResultMap"
+            parameterType="org.springblade.anbiao.falvfagui.page.FaGuiPage" resultType="org.springblade.anbiao.falvfagui.vo.FaGuiVo">
+        <if test="size == 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${total}
+        </if>
+        <if test="current != 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <select id="selectFaGuiTotal"
+            parameterType="org.springblade.anbiao.falvfagui.page.FaGuiPage"
+            resultType="int">
+        select COUNT(1) from (
+        <include refid="tableSql" />
+        )d
+        where 1 = 1
+        <include refid="querySql" />
+    </select>
+
+    <!-- 假删除 -->
+    <update id="deleteFagui" parameterType="java.lang.String" >
+         update anbiao_fagui set
+            is_deleted = 1
+        WHERE id = #{id}
+  </update>
+
+</mapper>

@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.anbiao.guanlijigouherenyuan.mapper.PersonnelMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="personnelResultMap" type="org.springblade.anbiao.guanlijigouherenyuan.entity.Personnel">
+        <id column="id" property="id"/>
+        <result column="userid" property="userid"/>
+        <result column="dept_id" property="deptId"/>
+        <result column="post_id" property="postId"/>
+        <result column="caozuoren" property="caozuoren"/>
+        <result column="caozuorenid" property="caozuorenid"/>
+        <result column="caozuoshijian" property="caozuoshijian"/>
+        <result column="xingming" property="xingming"/>
+        <result column="shenfenzheng" property="shenfenzheng"/>
+        <result column="shoujihao" property="shoujihao"/>
+        <result column="chushengriqi" property="chushengriqi"/>
+        <result column="qitalianxifangshi" property="qitalianxifangshi"/>
+        <result column="youxiang" property="youxiang"/>
+        <result column="jiatingdizhi" property="jiatingdizhi"/>
+        <result column="gonghao" property="gonghao"/>
+        <result column="ruzhiriqi" property="ruzhiriqi"/>
+        <result column="gongzuojingli" property="gongzuojingli"/>
+        <result column="beizhu" property="beizhu"/>
+        <result column="fujian" property="fujian"/>
+        <result column="is_deleted" property="isDeleted"/>
+    </resultMap>
+
+
+    <resultMap id="AnBiaoLoginResultMap" type="org.springblade.anbiao.guanlijigouherenyuan.entity.AnBiaoLogin">
+        <id column="id" property="id"/>
+    </resultMap>
+
+    <select id="selectPersonnelPage" resultMap="personnelResultMap">
+        select * from anbiao_personnel where is_deleted = 0
+    </select>
+
+    <select id="selectByUserId" resultMap="personnelResultMap" parameterType="java.lang.String">
+        select * from anbiao_personnel where userid=#{userId} and is_deleted = 0
+    </select>
+    <select id="selectByUserIdAdnByDeptId" resultMap="personnelResultMap" parameterType="java.lang.String">
+        select * from anbiao_personnel where userid=#{userId} and dept_id=#{deptId} and is_deleted = 0
+    </select>
+
+    <update id="updateDel" parameterType="java.lang.String">
+        UPDATE anbiao_personnel SET is_deleted = 1 where id = #{id}
+    </update>
+
+    <select id="selectJG" resultMap="personnelResultMap" parameterType="java.lang.String">
+        SELECT post_id,userid FROM anbiao_personnel WHERE dept_id=1
+    </select>
+    <select id="selectpostId" resultMap="personnelResultMap" parameterType="java.lang.String">
+        SELECT * FROM anbiao_personnel WHERE post_id=#{postId} and  userid=#{userId} and is_deleted = 0
+    </select>
+
+    <delete id="updateDelByUserId" parameterType="java.lang.String">
+        delete from anbiao_personnel  where userid = #{userId}
+    </delete>
+
+    <sql id="tableSql">
+        SELECT DISTINCT
+            a.*,
+            renyuan.account,
+            renyuan.`password`,
+            renyuan.`name`,
+            renyuan.real_name,
+            renyuan.email,
+            renyuan.phone,
+            renyuan.birthday,
+            renyuan.sex
+        FROM
+            anbiao_personnel a
+            INNER JOIN blade_post b ON a.userid=b.user_id
+            INNER JOIN blade_user renyuan ON a.userid=renyuan.id
+            AND a.is_deleted=0
+            AND renyuan.is_deleted=0
+    <if test="postId !=null and postId != ''">
+        AND b.post_id = #{postId}
+        AND a.dept_id=#{deptId}
+    </if>
+    </sql>
+
+    <sql id="querySql">
+        <if test="userId !=null and userId != ''">
+            AND userid = #{userId}
+        </if>
+        <if test="xingming !=null and xingming != ''">
+            AND xingming LIKE '%${xingming}%'
+        </if>
+    </sql>
+    <sql id="orderSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by caozuoshijian
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+    </sql>
+
+    <select id="selectPageList" parameterType="org.springblade.anbiao.guanlijigouherenyuan.page.PersonnelPage" resultType="org.springblade.anbiao.guanlijigouherenyuan.vo.PersonnelVO">
+        <if test="size == 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${total}
+        </if>
+        <if test="current != 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <select id="selectTotal" parameterType="org.springblade.anbiao.guanlijigouherenyuan.page.PersonnelPage" resultType="int">
+        select COUNT(1) from (
+        <include refid="tableSql" />
+        )d
+        where 1 = 1
+        <include refid="querySql" />
+    </select>
+
+    <select id="selectByPost" resultType="java.lang.Integer">
+         select  count(1)  from  blade_post where  user_id=#{userId}
+    </select>
+
+    <insert id="insertAnBiaoLogin" parameterType="org.springblade.anbiao.guanlijigouherenyuan.entity.AnBiaoLogin" >
+        insert into anbiao_login
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+
+            <if test="name != null">
+                name,
+            </if>
+
+            <if test="password != null">
+                password,
+            </if>
+
+            <if test="project_one != null">
+                project_one,
+            </if>
+
+            <if test="project_two != null">
+                project_two,
+            </if>
+
+            <if test="project_three != null">
+                project_three,
+            </if>
+
+            <if test="createtime != null">
+                createtime
+            </if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+
+            <if test="name != null">
+                #{name},
+            </if>
+
+            <if test="password != null">
+                #{password},
+            </if>
+
+            <if test="project_one != null">
+                #{project_one},
+            </if>
+
+            <if test="project_two != null">
+                #{project_two},
+            </if>
+
+            <if test="project_three != null">
+                #{project_three},
+            </if>
+
+            <if test="createtime != null">
+                #{createtime}
+            </if>
+
+        </trim>
+    </insert>
+
+    <update id="updateAnBiaoLogin" parameterType="org.springblade.anbiao.guanlijigouherenyuan.entity.AnBiaoLogin" >
+        update anbiao_login
+        <set>
+
+            <if test="password != null">
+                password = #{password},
+            </if>
+
+            <if test="project_one != null">
+                project_one = #{project_one},
+            </if>
+
+            <if test="project_two != null">
+                project_two = #{project_two},
+            </if>
+
+            <if test="project_three != null">
+                project_three = #{project_three},
+            </if>
+
+            <if test="createtime != null">
+                createtime = #{createtime}
+            </if>
+        </set>
+        where name = #{name}
+    </update>
+
+    <select id="selectAnBiaoLogin" resultType="org.springblade.anbiao.guanlijigouherenyuan.entity.AnBiaoLogin" >
+        select
+            id,name,password,project_one as projectOne,project_two as projectTwo,project_three as projectThree
+        from
+            anbiao_login
+        where 1=1
+        <if test="name !=null and name != ''">
+            and name = #{name}
+        </if>
+        <if test="password !=null and password != ''">
+            AND password=#{password}
+        </if>
+        limit 1
+    </select>
+
+
+</mapper>

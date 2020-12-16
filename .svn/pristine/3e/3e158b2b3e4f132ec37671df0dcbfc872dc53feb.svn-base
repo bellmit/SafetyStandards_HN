@@ -1,0 +1,601 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.doc.biaozhunhuamuban.mapper.BiaozhunhuamubanMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="biaozhunhuamubanResultMap" type="org.springblade.doc.biaozhunhuamuban.entity.Biaozhunhuamuban">
+        <id column="id" property="id"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="dept_id" property="deptId"/>
+        <result column="name" property="name"/>
+        <result column="type" property="type"/>
+        <result column="path" property="path"/>
+        <result column="sort" property="sort"/>
+        <result column="tier" property="tier"/>
+        <result column="file_property" property="fileProperty"/>
+        <result column="caozuorenid" property="caozuorenid"/>
+        <result column="caozuoren" property="caozuoren"/>
+        <result column="caozuoshijian" property="caozuoshijian"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="file_property" property="fileProperty"/>
+        <result column="anbiao_property" property="anbiaoProperty"/>
+        <result column="file_suoshuren_id" property="fileSuoshurenId"/>
+        <result column="is_edit" property="isEdit"/>
+        <result column="muban_path" property="mubanPath"/>
+        <result column="cumulative_visits" property="cumulativeVisits"/>
+        <result column="last_preview_time" property="lastPreviewTime"/>
+    </resultMap>
+
+    <resultMap id="BiaoZhunHuaResultMap" type="org.springblade.doc.biaozhunhuamuban.entity.BiaoZhunHua">
+    </resultMap>
+
+
+    <resultMap id="biaozhunhuamubanResultVoMap" type="org.springblade.doc.biaozhunhuamuban.vo.BiaozhunhuamubanVO">
+        <id column="id" property="id"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="dept_id" property="deptId"/>
+        <result column="title" property="title"/>
+        <result column="name" property="name"/>
+        <result column="type" property="type"/>
+        <result column="path" property="path"/>
+        <result column="sort" property="sort"/>
+        <result column="tier" property="tier"/>
+        <result column="caozuorenid" property="caozuorenid"/>
+        <result column="caozuoren" property="caozuoren"/>
+        <result column="caozuoshijian" property="caozuoshijian"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="file_property" property="fileProperty"/>
+        <result column="anbiao_property" property="anbiaoProperty"/>
+        <result column="document_number" property="documentNumber"/>
+        <result column="file_suoshuren_id" property="fileSuoshurenId"/>
+        <result column="is_edit" property="isEdit"/>
+        <result column="muban_path" property="mubanPath"/>
+        <result column="cumulative_visits" property="cumulativeVisits"/>
+        <result column="last_preview_time" property="lastPreviewTime"/>
+    </resultMap>
+
+    <!--插入标准化文件与安全生产文档绑定关系-->
+    <insert id="insertBind">
+        insert into anbiao_biaozhunhuamuban_safetyproductionfile(biaozhunhuamuban_id,safetyproductionfile_id) values
+        <foreach collection="safetyIds" item="item" index="index" separator=",">
+            (#{id},#{item})
+        </foreach>
+    </insert>
+    <!--修改文件性质-->
+    <update id="updateFilePropertyById">
+        update anbiao_biaozhunhuamuban set file_property = #{fileProperty}
+        where id = #{id}
+    </update>
+    <!--修改文件所属人-->
+    <update id="updatefileSuoshurenById">
+        update anbiao_biaozhunhuamuban set file_suoshuren_id = #{fileSuoshurenId}
+        where id = #{id}
+    </update>
+    <!--根据id修改文档编号-->
+    <update id="updateDocumentNumberById">
+        update anbiao_biaozhunhuamuban set document_number = #{documentNumber},is_edit=1 where id=#{id}
+    </update>
+    <!--根据模板文件id实现两文件排序号对调,实现文件排序上下移动-->
+    <update id="swapFileSort">
+          UPDATE anbiao_biaozhunhuamuban a
+      JOIN anbiao_biaozhunhuamuban b  on a.parent_id=b.parent_id
+      SET a.sort = b.sort, b.sort = a.sort
+      where a.id = #{originId} AND b.id = #{targetId}
+    </update>
+    <!--更改模板文件排序号-->
+    <update id="updateSortById">
+        update  anbiao_biaozhunhuamuban set sort = #{sort} where id=#{id}
+    </update>
+    <!--文件重命名-->
+    <update id="updateNameById">
+        update anbiao_biaozhunhuamuban set directory_name = #{name} where id=#{id}
+    </update>
+    <!--更新记录-->
+    <update id="updatePreviewRecordById">
+         UPDATE anbiao_biaozhunhuamuban
+         SET cumulative_visits = IFNULL(cumulative_visits, 0) + 1,
+         last_preview_time = DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')
+         WHERE
+            id = #{id}
+    </update>
+    <!--取消绑定-->
+    <delete id="deleteBind">
+        update anbiao_biaozhunhuamuban_safetyproductionfile set is_deleted=1 where id=#{id}
+    </delete>
+
+    <select id="JurgrantTree" resultMap="biaozhunhuamubanResultVoMap">
+        SELECT
+            id,
+            parent_id,name as title
+        FROM
+            anbiao_biaozhunhuamuban
+        WHERE
+            is_deleted = 0
+        AND dept_id=#{deptId}
+    </select>
+
+    <select id="JurpostTreeKeys" resultMap="biaozhunhuamubanResultVoMap">
+        SELECT
+            b.id
+        FROM
+            blade_post_menu a
+        INNER JOIN(
+        SELECT
+            id
+        FROM
+            anbiao_biaozhunhuamuban
+        WHERE
+            id NOT IN (
+                SELECT DISTINCT
+                    shangji.id
+                FROM
+                    anbiao_biaozhunhuamuban shangji,
+                    anbiao_biaozhunhuamuban xiaji
+                WHERE
+                    xiaji.parent_id = shangji.id
+            ) AND is_deleted = 0
+            )b ON a.menu_id=b.id
+        and
+            post_id  =#{postId}
+        AND a.type = 2
+    </select>
+
+
+    <select id="tree" resultMap="biaozhunhuamubanResultVoMap">
+        SELECT
+            anbiao.id,
+            anbiao.parent_id,
+            anbiao.dept_id,
+        CASE when anbiao.type='文件' and directory_name is not null then directory_name when anbiao.type='文件夹' and  (anbiao.NAME regexp '[^0-9.]')=1 THEN replaceFirst_regex('[\x00-\xff]|\\-|\\.','', anbiao.NAME) else   anbiao.NAME end as  name,
+            anbiao.type,
+        CASE WHEN anbiao.is_edit=1 THEN anbiao.path ELSE anbiao.muban_path end as path,
+            anbiao.sort,
+            anbiao.tier,
+            anbiao.caozuorenid,
+            anbiao.caozuoren,
+            anbiao.caozuoshijian,
+            anbiao.file_property,
+            CASE WHEN ISNULL(anbiao.document_number) then 	b.levelNumber else  anbiao.document_number end as document_number,
+            count(t.tier) as fileNum,
+            b.levelNumber,
+            anbiao.file_suoshuren_id,
+            anbiao.cumulative_visits,
+            anbiao.last_preview_time
+        FROM
+            anbiao_biaozhunhuamuban anbiao
+--             查询文件数
+        LEFT JOIN (
+            SELECT DISTINCT tier FROM anbiao_biaozhunhuamuban
+            WHERE type = '文件' and is_deleted=0 and dept_id = #{deptId}
+        ) t ON t.tier LIKE concat(anbiao.tier, '-%')
+--             查询文件层级编号
+        LEFT JOIN (
+            SELECT
+                a.id,
+                REPLACE(group_concat(b.sort order by b.tier),',','.') as levelNumber
+            FROM
+                anbiao_biaozhunhuamuban a
+            LEFT JOIN (SELECT sort,tier from anbiao_biaozhunhuamuban where dept_id = #{deptId}  ORDER BY sort) b on a.tier like CONCAT(b.tier,'-%') or a.tier = b.tier
+            WHERE dept_id=#{deptId}
+            GROUP BY a.id
+        ) b on anbiao.id = b.id
+
+        WHERE anbiao.dept_id = #{deptId}
+        AND anbiao.is_deleted=0
+        <if test="parentId != null">
+            and  anbiao.parent_id = #{parentId}
+        </if>
+        <if test="parentId == null">
+            AND anbiao.parent_id = 0
+        </if>
+        GROUP BY
+            id,
+            anbiao.parent_id,
+            anbiao.dept_id,
+            anbiao. NAME,
+            anbiao.type,
+            anbiao.path,
+            anbiao.sort,
+            anbiao.caozuorenid,
+            anbiao.caozuoren,
+            anbiao.caozuoshijian,
+            anbiao.file_property
+        ORDER BY anbiao.sort
+    </select>
+    <!--查询标准化目录最大id-->
+    <select id="selectMaxId" resultType="java.lang.Integer">
+        SELECT MAX(id) from anbiao_biaozhunhuamuban
+    </select>
+
+
+    <!--根据parentId查询直属下级节点-->
+    <select id="getByParentId" resultType="org.springblade.doc.biaozhunhuamuban.entity.Biaozhunhuamuban">
+        SELECT
+            id,
+            parent_id,
+            dept_id,
+            NAME,
+            type,
+            path,
+            sort,
+            tier,
+            caozuorenid,
+            caozuoren,
+            caozuoshijian,
+            file_property,
+            file_suoshuren_id
+        FROM
+            anbiao_biaozhunhuamuban
+        WHERE
+            parent_id = #{parentId} and is_deleted = 0
+    </select>
+    <!--查询下级节点最大sort值-->
+    <select id="selectMaxSorByParentId" resultType="java.lang.Integer">
+        SELECT
+           IFNULL(max(sort),0)
+        FROM
+            anbiao_biaozhunhuamuban
+        WHERE
+            is_deleted = 0 and parent_id = #{id}
+    </select>
+
+    <!--根据文件性质查询目录-->
+    <select id="filePropertyTree" resultType="org.springblade.doc.biaozhunhuamuban.vo.BiaozhunhuamubanVO">
+        SELECT
+            anbiao.id,
+            anbiao.parent_id,
+            anbiao.dept_id,
+            CASE when anbiao.type='文件' and directory_name is not null then directory_name when anbiao.type='文件夹' and  (anbiao.NAME regexp '[^0-9.]')=1 THEN replaceFirst_regex('[\x00-\xff]|\\-|\\.','', anbiao.NAME) else   anbiao.NAME end as  name,
+            anbiao.type,
+            CASE WHEN anbiao.is_edit=1 THEN anbiao.path ELSE anbiao.muban_path end as path,
+            anbiao.sort,
+            anbiao.tier,
+            anbiao.caozuorenid,
+            anbiao.caozuoren,
+            anbiao.caozuoshijian,
+            anbiao.file_property,
+            CASE WHEN ISNULL(anbiao.document_number) then 	b.levelNumber else  anbiao.document_number end as document_number,
+            count(t.tier) as fileNum,
+            b.levelNumber,
+            anbiao.file_suoshuren_id,
+            anbiao.cumulative_visits,
+            anbiao.last_preview_time
+        FROM(
+            SELECT DISTINCT
+                anbiao.id,
+                anbiao.parent_id,
+                anbiao.dept_id,
+                anbiao. NAME,
+                anbiao.type,
+                anbiao.path,
+                anbiao.sort,
+                anbiao.tier,
+                anbiao.caozuorenid,
+                anbiao.caozuoren,
+                anbiao.caozuoshijian,
+                anbiao.document_number,
+                anbiao.file_property,
+                anbiao.directory_name,
+                anbiao.file_suoshuren_id,
+                anbiao.is_edit,
+                anbiao.muban_path,
+                anbiao.cumulative_visits,
+                anbiao.last_preview_time
+            FROM anbiao_biaozhunhuamuban anbiao
+            INNER JOIN (SELECT tier from anbiao_biaozhunhuamuban where file_property=#{fileProperty} and is_deleted=0 and dept_id = #{deptId}) wenjian
+            on wenjian.tier like CONCAT(anbiao.tier,'-%') or anbiao.tier like CONCAT(wenjian.tier,'-%') or anbiao.file_property=#{fileProperty}
+            WHERE anbiao.is_deleted=0 and dept_id = #{deptId}
+            )anbiao
+        LEFT JOIN (
+            SELECT DISTINCT a.tier FROM anbiao_biaozhunhuamuban a
+            INNER JOIN (SELECT tier from anbiao_biaozhunhuamuban where file_property = #{fileProperty} and is_deleted=0 and dept_id = #{deptId}) b
+            on a.tier like CONCAT(b.tier,'-%') or b.tier like CONCAT(a.tier,'-%')  or b.tier=a.tier
+            WHERE a.type = '文件' and is_deleted=0 and dept_id = #{deptId}
+        ) t ON t.tier LIKE concat(anbiao.tier, '-%')
+
+         LEFT JOIN (
+            SELECT
+                a.id,
+                REPLACE(group_concat(b.sort order by b.tier),',','.') as levelNumber
+            FROM
+                anbiao_biaozhunhuamuban a
+            LEFT JOIN (SELECT sort,tier from anbiao_biaozhunhuamuban where dept_id = #{deptId}  ORDER BY sort) b on a.tier like CONCAT(b.tier,'-%') or a.tier = b.tier
+            where a.dept_id = #{deptId}
+            GROUP BY a.id
+        ) b on anbiao.id = b.id
+        GROUP BY
+            id,
+            anbiao.parent_id,
+            anbiao.dept_id,
+            anbiao. NAME,
+            anbiao.type,
+            anbiao.path,
+            anbiao.sort,
+            anbiao.caozuorenid,
+            anbiao.caozuoren,
+            anbiao.caozuoshijian,
+            anbiao.file_property
+        ORDER BY anbiao.sort
+    </select>
+
+
+    <!--根据文件性质查询文件列表数据-->
+    <select id="fileList" resultType="org.springblade.doc.biaozhunhuamuban.vo.BiaozhunhuamubanVO"
+            parameterType="org.springblade.doc.biaozhunhuamuban.page.BiaozhunhuamubanPage">
+        <if test="size == 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${total}
+        </if>
+        <if test="current != 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+    <select id="selectTotal" resultType="int"
+            parameterType="org.springblade.doc.biaozhunhuamuban.page.BiaozhunhuamubanPage">
+        select COUNT(1) from (
+        <include refid="tableSql" />
+        )d
+        where 1 = 1
+        <include refid="querySql" />
+    </select>
+    <!--获取模板树-->
+    <select id="getMubanTree" resultType="org.springblade.doc.biaozhunhuamuban.vo.BiaozhunhuamubanVO">
+        SELECT
+            id,
+            parent_id,
+            dept_id,
+            NAME,
+            type,
+            path,
+            sort,
+            tier,
+            file_property,
+            document_number,
+            directory_name,
+            muban_path,
+            yunyingleixing
+        FROM
+            anbiao_biaozhunhuamuban
+        WHERE
+            is_muban = 1
+        AND is_deleted = 0
+        AND parent_id !=0
+        AND yunyingleixing=#{yunyingleixing}
+        <if test="isOnlyDir !=null and isOnlyDir == '1'.toString()">
+            AND type='文件夹'
+        </if>
+    </select>
+    <!--获取机构下标准化文件的数量-->
+    <select id="getCountByDetpId" resultType="java.lang.Integer">
+        SELECT count(*) FROM anbiao_biaozhunhuamuban where is_deleted=0 and dept_id=#{dept_id}
+    </select>
+
+    <sql id="tableSql">
+        SELECT
+            id,
+            parent_id,
+            dept_id,
+            CASE when directory_name is not null then directory_name  else   a.NAME end as  name,
+            type,
+            path,
+            sort,
+            a.tier,
+            caozuorenid,
+            caozuoren,
+            caozuoshijian
+        FROM
+            anbiao_biaozhunhuamuban a
+        INNER JOIN(
+            SELECT tier from anbiao_biaozhunhuamuban where file_property=#{fileProperty} and is_deleted=0
+        ) b
+        on a.tier like CONCAT(b.tier,'-%') or b.tier like CONCAT(a.tier,'-%') or a.tier=b.tier
+        WHERE
+        type = '文件'
+        AND dept_id = #{deptId}
+        and is_deleted=0
+        and IFNULL(caozuoshijian,'') != ''
+    </sql>
+
+    <sql id="querySql">
+
+    </sql>
+    <sql id="orderSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by caozuoshijian
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+    </sql>
+
+
+    <sql id="BiaoZhunHuatableSql">
+        select
+            DISTINCT
+            a.*
+        from(
+        <!--/*安全标准化文件-一键生成，已生成的企业 1危货，2普货，3客运*/-->
+            select
+                DISTINCT
+                b.dept_id as deptId,
+                b.dept_name as deptName,
+                case when b.jigouleixing = 'qiye' then '企业'
+                    when b.jigouleixing = 'geti' then '个体'
+                    else '其他'
+                end as jigouleixing,
+                '安全标准化文件' leixing,
+                case
+                    when a.yunyingleixing = 1 then '危货'
+                    when a.yunyingleixing = 2 then '普货'
+                    when a.yunyingleixing = 3 then '客运'
+                end as yunyingleixing,
+                '已生成' as status,
+                a.caozuoren,
+                a.caozuoshijian
+            from
+                anbiao_biaozhunhuamuban a
+                inner join
+                (
+                    select * from anbiao_organization
+                    where jigouleixing in('qiye','geti') and isdelete = 0
+                )b on a.dept_id = b.dept_id
+            where a.is_deleted = 0
+                and b.dept_id is not null
+            UNION
+           <!-- /*安全管理标准文档-一键生成，已生成的企业*/ -->
+            select
+                DISTINCT
+                b.dept_id as deptId,
+                b.dept_name as deptName,
+                case when b.jigouleixing = 'qiye' then '企业'
+                    when b.jigouleixing = 'geti' then '个体'
+                    else '其他'
+                end as jigouleixing,
+                '安全管理标准文档' leixing,
+                '' as yunyingleixing,
+                '已生成' as status,
+                a.caozuoren,
+                a.caozuoshijian
+            from
+                anbiao_SafetyProductionFile a
+                left join
+                (
+                    select * from anbiao_organization
+                    where jigouleixing in('qiye','geti') and isdelete = 0
+                )b on a.dept_id = b.dept_id
+            where a.is_deleted = 0
+                and b.dept_id is not null
+            )a
+            inner join(
+                select b.id from blade_dept a,blade_dept b
+                where b.tree_code like CONCAT(a.tree_code,'%')
+                    and a.id = #{deptId}
+                    and b.extend_type = '机构'
+            )b on a.deptId = b.id
+        where 1=1
+            and IFNULL(a.caozuoshijian,'') != ''
+        <if test="leixing != null and leixing != '' ">
+            and a.leixing = #{leixing}
+        </if>
+
+        <if test="deptName != null and deptName != '' ">
+            and a.deptName LIKE concat('%', #{deptName} ,'%')
+        </if>
+
+    </sql>
+
+    <sql id="BiaoZhunHuaquerySql">
+
+    </sql>
+    <sql id="BiaoZhunHuaorderSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by caozuoshijian
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+    </sql>
+    <!--根据文件性质查询文件列表数据-->
+    <select id="selectGetBiaoZhunHuaList" resultType="org.springblade.doc.biaozhunhuamuban.entity.BiaoZhunHua"
+            parameterType="org.springblade.doc.biaozhunhuamuban.page.BiaozhunhuamubanPage">
+        <if test="size == 0" >
+            select * from (
+            <include refid="BiaoZhunHuatableSql" />
+            )b
+            where 1=1
+            <include refid="BiaoZhunHuaquerySql" />
+            <include refid="BiaoZhunHuaorderSql" />
+            limit ${total}
+        </if>
+        <if test="current != 0" >
+            select * from (
+            <include refid="BiaoZhunHuatableSql" />
+            )b
+            where 1=1
+            <include refid="BiaoZhunHuaquerySql" />
+            <include refid="BiaoZhunHuaorderSql" />
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <select id="selectGetBiaoZhunHuaListTotal" resultType="int"
+            parameterType="org.springblade.doc.biaozhunhuamuban.page.BiaozhunhuamubanPage">
+        select COUNT(1) from (
+        <include refid="BiaoZhunHuatableSql" />
+        )d
+        where 1 = 1
+        <include refid="BiaoZhunHuaquerySql" />
+    </select>
+
+    <!--安全管理标准文档-一键生成，未生成的企业-->
+    <select id="selectGetQYWD" resultType="org.springblade.doc.biaozhunhuamuban.entity.BiaoZhunHua">
+        select
+            a.dept_id as deptId,
+            a.dept_name as deptName
+        from
+            anbiao_organization a
+            inner join(
+                select b.id from blade_dept a,blade_dept b
+                where b.tree_code like CONCAT(a.tree_code,'%')
+                    and a.id = #{deptId}
+                    and b.extend_type = '机构'
+            )b on a.dept_id = b.id
+        where jigouleixing in('qiye','geti')
+            and a.isdelete = 0
+            and dept_id not in(
+                select dept_id from anbiao_SafetyProductionFile
+                where is_deleted = 0
+                group by
+                    dept_id
+            )
+        group by
+            a.dept_id,
+            a.dept_name
+    </select>
+
+    <!--安全标准化文件-一键生成，未生成的企业-->
+    <select id="selectGetQYWJ" resultType="org.springblade.doc.biaozhunhuamuban.entity.BiaoZhunHua">
+        select
+            a.dept_id as deptId,
+            a.dept_name as deptName
+        from
+            anbiao_organization a
+            inner join(
+                select b.id from blade_dept a,blade_dept b
+                where b.tree_code like CONCAT(a.tree_code,'%')
+                    and a.id = #{deptId}
+                    and b.extend_type = '机构'
+            )b on a.dept_id = b.id
+        where jigouleixing in('qiye','geti')
+            and a.isdelete = 0
+            and dept_id not in(
+                select dept_id from anbiao_biaozhunhuamuban
+                where is_deleted = 0
+                group by
+                    dept_id
+            )
+        group by
+            a.dept_id,
+            a.dept_name
+    </select>
+
+</mapper>

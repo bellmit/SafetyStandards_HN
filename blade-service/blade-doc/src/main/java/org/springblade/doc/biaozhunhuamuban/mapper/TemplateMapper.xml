@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.doc.biaozhunhuamuban.mapper.TemplateMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="templateResultMap" type="org.springblade.doc.biaozhunhuamuban.entity.Template">
+        <id column="id" property="id"/>
+        <result column="dept_id" property="deptId"/>
+        <result column="caozuoren" property="caozuoren"/>
+        <result column="caozuorenid" property="caozuorenid"/>
+        <result column="caozuoshijian" property="caozuoshijian"/>
+        <result column="template_name" property="templateName"/>
+        <result column="template_path" property="templatePath"/>
+        <result column="is_public" property="isPublic"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="dept_name" property="deptName"/>
+        <result column="createtime" property="createtime"/>
+    </resultMap>
+
+
+    <select id="selectTemplatePage" resultMap="templateResultMap">
+        select * from anbiao_template where is_deleted = 0
+    </select>
+
+</mapper>

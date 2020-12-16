@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.anbiao.jinritixing.mapper.YuJingXiangMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="yujingxiangResultMap" type="org.springblade.anbiao.jinritixing.entity.Yujingxiang">
+    </resultMap>
+
+    <sql id="tableYJListSql">
+        select * from anbiao_yujingxiang
+    </sql>
+
+    <sql id="orderYJListSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by bianhao desc
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order == 0">
+            asc
+        </if>
+    </sql>
+
+    <sql id="queryYJListSql">
+
+        <if test="yujingfenlei != null and yujingfenlei != ''">
+            and yujingfenlei = #{yujingfenlei}
+        </if>
+
+    </sql>
+
+    <select timeout="600" id="selectGetYJListTJ" resultMap="yujingxiangResultMap"
+            parameterType="org.springblade.anbiao.qiyeshouye.page.YuJingXiangPage">
+        <if test="size == 0">
+            select * from (
+            <include refid="tableYJListSql"/>
+            )b
+            where 1=1
+            <include refid="queryYJListSql"/>
+            <include refid="orderYJListSql"/>
+            limit ${total}
+        </if>
+        <if test="current != 0">
+            select * from (
+            <include refid="tableYJListSql"/>
+            )b
+            where 1=1
+            <include refid="queryYJListSql"/>
+            <include refid="orderYJListSql"/>
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <select timeout="90" id="selectGetYJListTJTotal"
+            parameterType="org.springblade.anbiao.qiyeshouye.page.YuJingXiangPage"
+            resultType="int">
+        select COUNT(1) from (
+        <include refid="tableYJListSql"/>
+        )d where 1 = 1
+        <include refid="queryYJListSql"/>
+    </select>
+
+    <insert id="insertSelective" parameterType="org.springblade.anbiao.jinritixing.entity.Yujingxiang" >
+        insert into anbiao_yujingxiang
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+
+            <if test="yujingxiang != null">
+                yujingxiang,
+            </if>
+
+            <if test="url != null">
+                url,
+            </if>
+
+            <if test="yujingfenlei != null">
+                yujingfenlei,
+            </if>
+
+            <if test="bianhao != null">
+                bianhao,
+            </if>
+
+            <if test="shuoming != null">
+                shuoming
+            </if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="yujingxiang != null">
+                #{yujingxiang},
+            </if>
+
+            <if test="url != null">
+                #{url},
+            </if>
+
+            <if test="yujingfenlei != null">
+                #{yujingfenlei},
+            </if>
+
+            <if test="bianhao != null">
+                #{bianhao},
+            </if>
+
+            <if test="shuoming != null">
+                #{shuoming}
+            </if>
+
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="org.springblade.anbiao.jinritixing.entity.Yujingxiang" >
+        update anbiao_yujingxiang
+        <set>
+            <if test="yujingxiang != null">
+                yujingxiang = #{yujingxiang},
+            </if>
+
+            <if test="url != null">
+                url = #{url},
+            </if>
+
+            <if test="yujingfenlei != null">
+                yujingfenlei = #{yujingfenlei},
+            </if>
+
+            <if test="bianhao != null">
+                bianhao = #{bianhao},
+            </if>
+
+            <if test="shuoming != null">
+                shuoming = #{shuoming}
+            </if>
+
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="selectGetQYByOne" resultType="org.springblade.anbiao.jinritixing.entity.Yujingxiang">
+        select * from anbiao_yujingxiang where id = #{id}
+    </select>
+
+</mapper>

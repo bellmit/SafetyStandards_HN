@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.alarm.mapper.AlarmdangerousMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="alarmdangerousResultMap" type="org.springblade.alarm.entity.Alarmdangerous">
+        <result column="AlarmReportID" property="AlarmReportID"/>
+        <result column="VehId" property="VehId"/>
+        <result column="BeginTime" property="BeginTime"/>
+        <result column="EndTime" property="EndTime"/>
+        <result column="MaxSpeed" property="MaxSpeed"/>
+        <result column="AlarmType" property="AlarmType"/>
+        <result column="Longitude" property="Longitude"/>
+        <result column="Latitude" property="Latitude"/>
+        <result column="Velocity" property="Velocity"/>
+        <result column="Angle" property="Angle"/>
+        <result column="Limited" property="Limited"/>
+        <result column="Passed" property="Passed"/>
+        <result column="Time" property="Time"/>
+        <result column="KeepTime" property="KeepTime"/>
+        <result column="Road_Name" property="roadName"/>
+        <result column="Road_Level" property="roadLevel"/>
+        <result column="Road_Limited" property="roadLimited"/>
+        <result column="Local" property="Local"/>
+        <result column="Elevation" property="Elevation"/>
+        <result column="DisposeAlarmName" property="DisposeAlarmName"/>
+        <result column="DisposeAlarmTime" property="DisposeAlarmTime"/>
+        <result column="alarmcl" property="alarmcl"/>
+        <result column="alarmclmsg" property="alarmclmsg"/>
+        <result column="alarmhdremark" property="alarmhdremark"/>
+        <result column="PushState" property="PushState"/>
+        <result column="verifyName" property="verifyName"/>
+        <result column="verifyTime" property="verifyTime"/>
+        <result column="AnalyzeMode" property="AnalyzeMode"/>
+        <result column="SysPassed" property="SysPassed"/>
+        <result column="status" property="status"/>
+        <result column="SynTime" property="SynTime"/>
+        <result column="plateNumber" property="plateNumber"/>
+        <result column="color" property="color"/>
+        <result column="company" property="company"/>
+        <result column="OperatType" property="OperatType"/>
+        <result column="EndSpeed" property="EndSpeed"/>
+        <result column="Distance" property="Distance"/>
+        <result column="Road_Limited2" property="roadLimited2"/>
+        <result column="IsSupplements" property="IsSupplements"/>
+        <result column="CutoffTime" property="CutoffTime"/>
+        <result column="verifyTime2" property="verifyTime2"/>
+        <result column="AlarmID" property="AlarmID"/>
+        <result column="endLongitude" property="endLongitude"/>
+        <result column="endLatitude" property="endLatitude"/>
+        <result column="endRoadName" property="endRoadName"/>
+        <result column="isRegionV" property="isRegionV"/>
+        <result column="AnalyzeID" property="AnalyzeID"/>
+        <result column="atNocturnal" property="atNocturnal"/>
+        <result column="BaoJingType" property="BaoJingType"/>
+        <result column="ChaoSuBi" property="ChaoSuBi"/>
+    </resultMap>
+    <!--查询时间端gps严重违规报警-->
+    <select id="GpsCount" resultType="org.springblade.alarm.entity.AlarmWeichuliType">
+        SELECT
+        COUNT(1) as number,
+        alarmType
+        FROM
+        vw_alarmdangerous
+        WHERE
+        CutoffTime
+        BETWEEN STR_TO_DATE(concat( #{beginTime},'00:00:00'),'%Y-%m-%d %H:%i:%s')
+	    AND   STR_TO_DATE(concat(#{endTime},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+		AND company = #{company}
+        GROUP BY
+        alarmType
+
+
+    </select>
+    <!--查询时间端主动防御严重违规报警-->
+    <select id="zhudongCount" resultType="org.springblade.alarm.entity.AlarmWeichuliType">
+        SELECT
+        COUNT(1) as number,
+        alarmType
+        FROM
+        baobiao_driverbehavior
+        WHERE
+        GpsTime
+        BETWEEN STR_TO_DATE(concat( #{beginTime},'00:00:00'),'%Y-%m-%d %H:%i:%s')
+	    AND   STR_TO_DATE(concat(#{endTime},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+		AND company = #{company}
+		AND StateEx='核定报警'
+        GROUP BY
+        alarmType
+
+
+
+
+    </select>
+    <!--查询时间端gps严重违规报警 车牌 报警统计 total-->
+    <select id="Gpsdangeroustotal" resultType="java.lang.Integer">
+        select count(1) from (
+        <include refid="Gpsdangeroustable"/>
+        ) a
+
+    </select>
+    <sql id="Gpsdangeroustable">
+        SELECT
+        COUNT(1) number,
+        plateNumber,
+        color
+        FROM
+        vw_alarmdangerous
+        WHERE
+        CutoffTime
+        BETWEEN STR_TO_DATE(concat( #{beginTime},'00:00:00'),'%Y-%m-%d %H:%i:%s')
+        AND   STR_TO_DATE(concat(#{endTime},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+        AND company = #{company}
+        <choose>
+            <when test="alarmType=='异常车辆报警'">
+                AND (AlarmType='无数据报警' or AlarmType='不定位报警' )
+            </when>
+            <otherwise>
+                AND AlarmType=#{alarmType}
+            </otherwise>
+        </choose>
+
+        GROUP BY
+        plateNumber,color
+        ORDER BY number DESC
+
+    </sql>
+    <!--查询时间端gps严重违规报警 车牌 报警统计-->
+    <select id="Gpsdangerous" resultType="org.springblade.alarm.entity.AlarmdangerousCount">
+
+
+        <if test="size == 0">
+            select * from (
+            <include refid="Gpsdangeroustable"/>
+            )b
+
+            limit ${total}
+        </if>
+        <if test="current != 0">
+            select * from (
+            <include refid="Gpsdangeroustable"/>
+            )b
+
+            limit ${offsetNo},${size}
+        </if>
+
+    </select>
+    <select id="zhudongdangeroustotal" resultType="java.lang.Integer">
+            select count(1) from (
+        <include refid="zhudongdangeroustable"/>
+
+            )a
+
+    </select>
+    <sql id="zhudongdangeroustable">
+         SELECT
+        COUNT(1) number,
+        plate as plateNumber,
+        color
+        FROM
+        baobiao_driverbehavior
+        WHERE
+        GpsTime
+        BETWEEN STR_TO_DATE(concat( #{beginTime},'00:00:00'),'%Y-%m-%d %H:%i:%s')
+	    AND   STR_TO_DATE(concat(#{endTime},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+		AND company = #{company}
+		AND StateEx='核定报警'
+		AND AlarmType=#{alarmType}
+        group by plate,color
+        ORDER BY number desc
+
+    </sql>
+    <!--查询时间端主动严重违规报警 车牌 报警统计-->
+    <select id="zhudongdangerous" resultType="org.springblade.alarm.entity.AlarmdangerousCount">
+
+        <if test="size == 0">
+            select * from (
+            <include refid="zhudongdangeroustable"/>
+            )b
+
+            limit ${total}
+        </if>
+        <if test="current != 0">
+            select * from (
+            <include refid="zhudongdangeroustable"/>
+            )b
+
+            limit ${offsetNo},${size}
+        </if>
+
+
+    </select>
+    <!--根据车辆牌照 分页 严重报警-->
+    <select id="selectGpspage" resultType="org.springblade.alarm.entity.Alarmdangerous">
+        <if test="size == 0">
+            select * from (
+            <include refid="gpsTable"/>
+            )b
+            where 1=1
+            <include refid="GpsQuery"/>
+            <include refid="orderSql"/>
+            limit ${total}
+        </if>
+        <if test="current != 0">
+            select * from (
+            <include refid="gpsTable"/>
+            )b
+            where 1=1
+            <include refid="GpsQuery"/>
+            <include refid="orderSql"/>
+            limit ${offsetNo},${size}
+        </if>
+
+    </select>
+    <!--根据车辆牌照 分页 严重报警 统计条数-->
+    <select id="selectGpspagetotal" resultType="java.lang.Integer">
+
+        select COUNT(1) from (
+        <include refid="gpsTable"/>
+        )d where 1 = 1
+        <include refid="GpsQuery"/>
+
+    </select>
+     <!--主动防御严重报警 分页-->
+    <select id="selectZhudongpage" resultType="org.springblade.alarm.vo.DriverbehaviorVO">
+        <if test="size == 0">
+            select * from (
+            <include refid="driverTable"/>
+            )b
+            where 1=1
+            <include refid="driverQuery"/>
+            <include refid="driverorderSql"/>
+            limit ${total}
+        </if>
+        <if test="current != 0">
+            select * from (
+            <include refid="driverTable"/>
+            )b
+            where 1=1
+            <include refid="driverQuery"/>
+            <include refid="driverorderSql"/>
+            limit ${offsetNo},${size}
+        </if>
+
+
+
+    </select>
+    <!--主动防御严重报警 条数-->
+    <select id="selectZhudongpagetotal" resultType="java.lang.Integer">
+        select COUNT(1) from (
+        <include refid="driverTable"/>
+        )d where 1 = 1
+        <include refid="driverQuery"/>
+    </select>
+
+    <sql id="gpsTable">
+       SELECT
+            AlarmReportID,
+	        VehId,
+	        BeginTime,
+	        EndTime,
+	        MaxSpeed,
+	        AlarmType,
+	        Longitude,
+	        Latitude,
+	        Velocity,
+	        Angle,
+	        Limited,
+	        Passed,
+	        Time,
+	        KeepTime,
+	        Road_Name,
+	        Road_Level,
+	        Road_Limited,
+	        Local,
+	        Elevation,
+	        DisposeAlarmName,
+	        DisposeAlarmTime,
+	        alarmcl,
+	        alarmclmsg,
+	        alarmhdremark,
+	        PushState,
+	        verifyName,
+	        verifyTime,
+	        AnalyzeMode,
+	        SysPassed,
+	        status,
+	        SynTime,
+	        plateNumber,
+	        plateNumber as plate,
+	        color,
+	        company,
+	        OperatType,
+	        EndSpeed,
+	        Distance,
+	        Road_Limited2,
+	        IsSupplements,
+	        CutoffTime,
+	        verifyTime2,
+	        AlarmID,
+	        endLongitude,
+	        endLatitude,
+	        endRoadName,
+	        isRegionV,
+	        AnalyzeID,
+	        atNocturnal,
+	        BaoJingType,
+	        ChaoSuBi
+        FROM
+        vw_alarmdangerous
+
+    </sql>
+    <sql id="GpsQuery">
+        AND CutoffTime
+        BETWEEN STR_TO_DATE(concat( #{beginTime},'00:00:00'),'%Y-%m-%d %H:%i:%s')
+        AND   STR_TO_DATE(concat(#{endTime},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+        AND company = #{company}
+        <choose>
+            <when test="alarmType=='异常车辆报警'">
+                AND (AlarmType='无数据报警' or AlarmType='不定位报警' )
+            </when>
+            <otherwise>
+                AND AlarmType=#{alarmType}
+            </otherwise>
+        </choose>
+
+        AND plateNumber=#{plateNumber}
+        AND  color=#{color}
+
+
+    </sql>
+    <sql id="orderSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by BeginTime desc
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+    </sql>
+
+
+    <sql id="driverTable">
+        SELECT
+        id,
+	    AlarmNumber,
+	    AlarmID,
+	    cid,
+	    company,
+	    VehID,
+	    plate,
+	    plate as platenumber,
+	    color,
+	    FlagState,
+	    AlarmType,
+	    Alarmlevel,
+	    Velocity,
+	    High,
+	    Lon,
+	    Lat,
+	    GpsTime,
+	    VehStatus,
+	    A_Time,
+	    AlarmIDNumber,
+	    OwnNo,
+	    IsPicture,
+	    IsVideo,
+	    RoadName,
+	    StateEx,
+	    insertTime,
+	    OperatType
+        FROM
+        baobiao_driverbehavior
+
+
+    </sql>
+    <sql id="driverQuery">
+        AND GpsTime
+        BETWEEN STR_TO_DATE(concat( #{beginTime},'00:00:00'),'%Y-%m-%d %H:%i:%s')
+        AND   STR_TO_DATE(concat(#{endTime},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+        AND company = #{company}
+        AND AlarmType=#{alarmType}
+        AND plate=#{plateNumber}
+        AND  color=#{color}
+        and StateEx='核定报警'
+
+    </sql>
+    <sql id="driverorderSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by GpsTime desc
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+    </sql>
+
+</mapper>

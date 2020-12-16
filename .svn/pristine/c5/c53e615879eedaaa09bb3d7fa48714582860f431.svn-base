@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.anbiao.jinritixing.mapper.BaojingtongjiMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="baojingtongjiResultMap" type="org.springblade.anbiao.jinritixing.entity.Baojingtongji">
+
+        <result column="tongjiriqi" property="tongjiriqi"/>
+        <result column="company" property="company"/>
+        <result column="counts" property="counts"/>
+        <result column="chaosu" property="chaosu"/>
+        <result column="pilao" property="pilao"/>
+        <result column="yejian" property="yejian"/>
+        <result column="yichang" property="yichang"/>
+        <result column="wushuju" property="wushuju"/>
+        <result column="budingwei" property="budingwei"/>
+        <result column="qita" property="qita"/>
+    </resultMap>
+
+    <select id="selectdays" parameterType="org.springblade.anbiao.jinritixing.page.BaojingtongjiPage" resultType="org.springblade.anbiao.jinritixing.vo.BaojingtongjiVO">
+        SELECT a.ri,IFNULL(b.counts,0) as counts from
+        (
+          select  DATE_FORMAT(day,'%d') as ri,0 as counts from
+            (
+               select CONCAT(substring(#{tongjiriqi},1,8),lpad(n.key,2,'0') ) day  from nums n where n.key &lt;32
+            ) d where d.day &lt;= last_day(DATE_FORMAT(#{tongjiriqi},'%Y-%m-%d'))
+        )a
+        LEFT JOIN
+        (
+          SELECT a.baojingcishu as counts,SUBSTRING(a.date,9,2) as ri from baobiao_alarmdailyreport a where a.company = #{company}
+           and substring(a.date,1,7) = substring(#{tongjiriqi},1,7)
+        ) b on a.ri=b.ri
+        ORDER BY a.ri
+    </select>
+
+    <select id="selectyues" parameterType="org.springblade.anbiao.jinritixing.page.BaojingtongjiPage" resultType="org.springblade.anbiao.jinritixing.vo.BaojingtongjiVO">
+        SELECT a.yue,IFNULL(b.counts,0)as counts from
+         (
+           select lpad(n.key,2,'0') yue,0 as counts  from nums n where n.key &lt; 13
+         ) a LEFT JOIN
+             (
+                SELECT sum(a.baojingcishu) as counts,MONTH(a.date) as yue from baobiao_alarmdailyreport a where 1=1
+                 <if test="company !=null and company != ''">
+                    and a.company = #{company}
+                </if>
+                <if test="tongjiriqi !=null and tongjiriqi != ''">
+                    and substring(a.date,1,4)=substring(#{tongjiriqi},1,4)
+                </if>
+                 GROUP BY MONTH(a.date)
+             )b on a.yue =b.yue
+        ORDER BY a.yue
+    </select>
+
+</mapper>

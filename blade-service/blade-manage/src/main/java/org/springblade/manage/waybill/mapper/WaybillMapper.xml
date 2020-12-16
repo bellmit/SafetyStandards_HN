@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.manage.waybill.mapper.WaybillMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="waybillResultMap" type="org.springblade.manage.waybill.vo.WaybillVO">
+        <id column="id" property="id"/>
+        <result column="out_num" property="outNum"/>
+        <result column="out_time" property="outTime"/>
+        <result column="vehicle_id" property="vehicleId"/>
+        <result column="dept_id" property="deptId"/>
+        <result column="goods" property="goods"/>
+        <result column="guige" property="guige"/>
+        <result column="ogross_weight" property="ogrossWeight"/>
+        <result column="otare" property="otare"/>
+        <result column="onet_weight" property="onetWeight"/>
+        <result column="forwarde_unit" property="forwardeUnit"/>
+        <result column="receive_unit" property="receiveUnit"/>
+        <result column="transport_unit" property="transportUnit"/>
+        <result column="ogross_weight_time" property="ogrossWeightTime"/>
+        <result column="otare_time" property="otareTime"/>
+        <result column="osibangyuan" property="osibangyuan"/>
+        <result column="sale_dept" property="saleDept"/>
+        <result column="product_dept" property="productDept"/>
+        <result column="workshop" property="workshop"/>
+        <result column="take_goods" property="takeGoods"/>
+        <result column="into_num" property="intoNum"/>
+        <result column="into_time" property="intoTime"/>
+        <result column="igross_weight" property="igrossWeight"/>
+        <result column="itare" property="itare"/>
+        <result column="inet_weight" property="inetWeight"/>
+        <result column="igross_weight_time" property="igrossWeightTime"/>
+        <result column="itare_time" property="itareTime"/>
+        <result column="igross_weight_man" property="igrossWeightMan"/>
+        <result column="itare_man" property="itareMan"/>
+        <result column="jiesuanshu" property="jiesuanshu"/>
+        <result column="driver" property="driver"/>
+        <result column="rukulicheng" property="rukulicheng"/>
+        <result column="chukulicheng" property="chukulicheng"/>
+        <result column="huichelicheng" property="huichelicheng"/>
+        <result column="ranyoufei" property="ranyoufei"/>
+        <result column="guolufei" property="guolufei"/>
+        <result column="qitafei" property="qitafei"/>
+        <result column="ofujian" property="ofujian"/>
+        <result column="ifujian" property="ifujian"/>
+        <result column="tfujian" property="tfujian"/>
+        <result column="status" property="status"/>
+        <result column="create_user" property="createUser"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_user" property="updateUser"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column = "cheliangpaizhao" property="cheliangpaizhao"/>
+        <result column="examine" property="examine"/>
+    </resultMap>
+
+    <sql id="tableSql">
+        SELECT
+        a.id,
+        a.out_num,
+        DATE_FORMAT(a.out_time,'%Y-%m-%d %T') out_time,
+        a.vehicle_id,
+        b.cheliangpaizhao,
+        a.dept_id,
+        a.goods,
+        a.guige,
+        a.ogross_weight,
+        a.otare,
+        a.onet_weight,
+        a.forwarde_unit,
+        a.receive_unit,
+        a.transport_unit,
+        DATE_FORMAT(a.ogross_weight_time,'%Y-%m-%d %T') ogross_weight_time,
+        DATE_FORMAT(a.otare_time,'%Y-%m-%d %T') otare_time,
+        a.osibangyuan,
+        a.sale_dept,
+        a.product_dept,
+        a.workshop,
+        a.take_goods,
+        a.into_num,
+        DATE_FORMAT(a.into_time,'%Y-%m-%d %T') into_time,
+        a.igross_weight,
+        a.itare,
+        a.inet_weight,
+        DATE_FORMAT(a.igross_weight_time,'%Y-%m-%d %T') igross_weight_time,
+        DATE_FORMAT(a.itare_time,'%Y-%m-%d %T') itare_time,
+        a.igross_weight_man,
+        a.itare_man,
+        a.jiesuanshu,
+        a.driver,
+        a.rukulicheng,
+        a.chukulicheng,
+        a.huichelicheng,
+        ry.jine ranyoufei,
+        gl.jine guolufei,
+        qt.jine qitafei,
+        a.ofujian,
+        a.ifujian,
+        a.tfujian,
+        CASE
+        WHEN ifnull( a.status, 0 ) = 0 THEN
+        '已审核' ELSE '已审核'
+        END AS examine,
+        a.status,
+        a.create_user,
+        a.create_time,
+        a.update_user,
+        a.update_time
+        FROM
+        manage_waybill AS a
+        LEFT JOIN anbiao_vehicle AS b ON a.vehicle_id = b.id
+        LEFT JOIN (SELECT sum(jine) jine,waybill_id FROM manage_waybill_fujian WHERE leixing='燃油费' GROUP BY leixing,waybill_id) ry ON a.id = ry.waybill_id
+        LEFT JOIN (SELECT sum(jine) jine,waybill_id FROM manage_waybill_fujian WHERE leixing='过路费' GROUP BY leixing,waybill_id) gl ON a.id = gl.waybill_id
+        LEFT JOIN (SELECT sum(jine) jine,waybill_id FROM manage_waybill_fujian WHERE leixing='其他' GROUP BY leixing,waybill_id) qt ON a.id = qt.waybill_id
+        WHERE 1=1
+        <if test="deptId != null">
+            AND a.dept_id = #{deptId}
+        </if>
+	        AND a.is_deleted = 0
+    </sql>
+
+    <sql id="querySql">
+        <if test="outNum !=null and outNum != ''">
+            AND out_num like '%${outNum}%'
+        </if>
+        <if test="intoNum !=null and intoNum != ''">
+            AND into_num like '%${intoNum}%'
+        </if>
+        <if test="cheliangpaizhao != null and cheliangpaizhao != ''">
+            AND cheliangpaizhao like '%${cheliangpaizhao}%'
+        </if>
+        <if test="status != null and status != '' ">
+            AND status=#{status}
+        </if>
+        <if test="outTimeStart != null and outTimeStart != ''">
+           AND out_time >= CONCAT( '${outTimeStart}', ' 00:00:00')
+           AND out_time &lt;= CONCAT( '${outTimeEnd}', ' 23:59:59')
+        </if>
+        <if test="beginTime != null and beginTime != ''">
+            AND into_time >= CONCAT( '${beginTime}', ' 00:00:00')
+            AND into_time &lt;= CONCAT( '${endTime}', ' 23:59:59')
+        </if>
+    </sql>
+
+    <sql id="orderSql">
+        order by into_time desc,out_time desc
+    </sql>
+
+    <select id="selectWaybillPageList" resultMap="waybillResultMap" parameterType="org.springblade.manage.waybill.page.WaybillPage">
+     <if test="size==0">
+        select * from (
+        <include refid="tableSql" />
+        )b
+        where 1=1
+        <include refid="querySql" />
+        <include refid="orderSql" />
+        limit ${total}
+    </if>
+    <if test="current != 0" >
+        select * from (
+        <include refid="tableSql" />
+        )b
+        where 1=1
+        <include refid="querySql" />
+        <include refid="orderSql" />
+        limit ${offsetNo},${size}
+    </if>
+    </select>
+
+    <select id="selectWaybillTotal"  parameterType="org.springblade.manage.waybill.page.WaybillPage"
+            resultType="int">
+        select COUNT(1) from (
+        <include refid="tableSql"/>
+        )d where 1 = 1
+    </select>
+
+    <select id="selectDetail" resultMap="waybillResultMap">
+         SELECT
+        a.id,
+        a.out_num,
+        DATE_FORMAT(a.out_time,'%Y-%m-%d %T') out_time,
+        a.vehicle_id,
+        b.cheliangpaizhao,
+        a.dept_id,
+        a.goods,
+        a.danjia,
+        a.guige,
+        a.ogross_weight,
+        a.otare,
+        a.onet_weight,
+        a.forwarde_unit,
+        a.receive_unit,
+        a.transport_unit,
+        DATE_FORMAT(a.ogross_weight_time,'%Y-%m-%d %T') ogross_weight_time,
+        DATE_FORMAT(a.otare_time,'%Y-%m-%d %T') otare_time,
+        a.osibangyuan,
+        a.sale_dept,
+        a.product_dept,
+        a.workshop,
+        a.take_goods,
+        a.into_num,
+        DATE_FORMAT(a.into_time,'%Y-%m-%d %T') into_time,
+        a.igross_weight,
+        a.itare,
+        a.inet_weight,
+        DATE_FORMAT(a.igross_weight_time,'%Y-%m-%d %T') igross_weight_time,
+        DATE_FORMAT(a.itare_time,'%Y-%m-%d %T') itare_time,
+        a.igross_weight_man,
+        a.itare_man,
+        a.jiesuanshu,
+        a.driver,
+        a.rukulicheng,
+        a.chukulicheng,
+        a.huichelicheng,
+        a.ofujian,
+        a.ifujian,
+        a.tfujian,
+        CASE
+        WHEN ifnull( a.status, 0 ) = 0 THEN
+        '未审核' ELSE '已审核'
+        END AS examine,
+        a.status,
+        a.create_user,
+        a.create_time,
+        a.update_user,
+        a.update_time,
+        a.is_deleted
+        FROM
+        manage_waybill AS a
+        LEFT JOIN anbiao_vehicle AS b ON a.vehicle_id = b.id
+        WHERE 1=1
+        AND a.id=#{id}
+        AND a.is_deleted = 0
+    </select>
+
+    <insert id="insertWay" parameterType="org.springblade.manage.waybill.entity.Waybill" >
+        insert into manage_waybill (
+        id,
+        out_num,
+        out_time,
+        vehicle_id,
+        dept_id,
+        goods,
+        guige,
+        ogross_weight,
+        otare,
+        onet_weight,
+        forwarde_unit,
+        receive_unit,
+        transport_unit,
+        ogross_weight_time,
+        otare_time,
+        osibangyuan,
+        sale_dept,
+        product_dept,
+        workshop,
+        take_goods,
+        into_num,
+        into_time,
+        igross_weight,
+        itare,
+        inet_weight,
+        igross_weight_time,
+        itare_time,
+        igross_weight_man,
+        itare_man,
+        jiesuanshu,
+        driver,
+        rukulicheng,
+        chukulicheng,
+        huichelicheng,
+        ranyoufei,
+        guolufei,
+        qitafei,
+        ofujian,
+        ifujian,
+        tfujian,
+        status,
+        create_user,
+        create_time,
+        update_user,
+        update_time,
+        is_deleted
+        ) values (
+        #{id},
+        #{outNum},
+        #{outTime},
+        #{vehicleId},
+        #{deptId},
+        #{goods},
+        #{guige},
+        #{ogrossWeight},
+        #{otare},
+        #{onetWeight},
+        #{forwardeUnit},
+        #{receiveUnit},
+        #{transportUnit},
+        #{ogrossWeightTime},
+        #{otareTime},
+        #{osibangyuan},
+        #{saleDept},
+        #{productDept},
+        #{workshop},
+        #{takeGoods},
+        #{intoNum},
+        #{intoTime},
+        #{igrossWeight},
+        #{itare},
+        #{inetWeight},
+        #{igrossWeightTime},
+        #{itareTime},
+        #{igrossWeightMan},
+        #{itareMan},
+        #{jiesuanshu},
+        #{driver},
+        #{rukulicheng},
+        #{chukulicheng},
+        #{huichelicheng},
+        #{ranyoufei},
+        #{guolufei},
+        #{qitafei},
+        #{ofujian},
+        #{ifujian},
+        #{tfujian},
+        #{status},
+        #{createUser},
+        #{createTime},
+        #{updateUser},
+        #{updateTime},
+        #{isDeleted}
+        )
+    </insert>
+
+
+</mapper>

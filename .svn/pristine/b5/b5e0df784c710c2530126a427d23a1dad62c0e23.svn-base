@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.anbiao.yingjijiuyuan.mapper.YingjiyanlianMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="yingjiyanlianVOResultMap" type="org.springblade.anbiao.yingjijiuyuan.vo.YingjiyanlianVO">
+        <id column="id" property="id"/>
+        <result column="dept_id" property="deptId"/>
+        <result column="caozuoren" property="caozuoren"/>
+        <result column="caozuorenid" property="caozuorenid"/>
+        <result column="caozuoshijian" property="caozuoshijian"/>
+        <result column="jihuaid" property="jihuaid"/>
+        <result column="jihua" property="jihua"/>
+        <result column="zuzhibumen" property="zuzhibumen"/>
+        <result column="canjiabumen" property="canjiabumen"/>
+        <result column="canjiarenyuan" property="canjiarenyuan"/>
+        <result column="yanlianguocheng" property="yanlianguocheng"/>
+        <result column="xiaoguopinggu" property="xiaoguopinggu"/>
+        <result column="wenticuoshi" property="wenticuoshi"/>
+        <result column="yanlianzhaopian" property="yanlianzhaopian"/>
+        <result column="fujian" property="fujian"/>
+        <result column="is_deleted" property="isdel"/>
+    </resultMap>
+
+    <select id="selectByKey" resultMap="yingjiyanlianVOResultMap" parameterType="java.lang.String">
+        select  a.*,b.dept_name as deptName
+        from  anbiao_yingjiyanlian a
+            inner join blade_dept b  on a.dept_id = b.id
+         where a.id=#{id}
+    </select>
+
+    <!-- 假删除 -->
+    <update id="deleteYingjiyanlian" parameterType="java.lang.String" >
+         update anbiao_yingjiyanlian set
+            is_deleted = 1
+        WHERE id = #{id}
+  </update>
+
+    <sql id="tableSql">
+        SELECT
+        a.*,
+        b.dept_name as deptName
+        FROM
+        anbiao_yingjiyanlian a
+        inner join  (
+        <include refid="org.springblade.anbiao.guanlijigouherenyuan.mapper.OrganizationsMapper.getByDeptId"/>
+        ) b
+        on a.dept_id = b.id
+        WHERE 1=1 and ifnull(a.is_deleted,0) = 0
+
+    </sql>
+
+    <sql id="querySql">
+        <if test="jihua !=null and jihua != ''">
+            AND jihua  LIKE '%${jihua}%'
+        </if>
+        <if test="deptName !=null and deptName != ''">
+            AND deptName LIKE '%${deptName}%'
+        </if>
+    </sql>
+    <sql id="orderSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by caozuoshijian
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+    </sql>
+
+    <select id="selectYingjiyanlianPage" resultMap="yingjiyanlianVOResultMap"
+            parameterType="org.springblade.anbiao.yingjijiuyuan.page.YingjiyanlianPage" resultType="org.springblade.anbiao.yingjijiuyuan.vo.YingjiyanlianVO">
+        <if test="size == 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${total}
+        </if>
+        <if test="current != 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <select id="selectYingjiyanlianTotal"
+            parameterType="org.springblade.anbiao.yingjijiuyuan.page.YingjiyanlianPage"
+            resultType="int">
+        select COUNT(1) from (
+        <include refid="tableSql" />
+        )d
+        where 1 = 1
+        <include refid="querySql" />
+    </select>
+
+</mapper>

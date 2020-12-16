@@ -1,0 +1,60 @@
+/**
+ * Copyright (c) 2018-2028, Chill Zhuang 庄骞 (smallchill@163.com).
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.springblade.anbiao.jiaoyupeixun.mapper;
+
+import org.springblade.anbiao.jiaoyupeixun.entity.Jiaoyupeixun;
+import org.springblade.anbiao.jiaoyupeixun.page.JiaoyupeixunPage;
+import org.springblade.anbiao.jiaoyupeixun.vo.JiaoyupeixunVO;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import java.util.List;
+
+/**
+ *  Mapper 接口
+ *
+ * @author Blade
+ * @since 2019-04-25
+ */
+public interface JiaoyupeixunMapper extends BaseMapper<Jiaoyupeixun> {
+
+	/**
+	 * 自定义分页
+	 *
+	 * @param page
+	 * @param jiaoyupeixun
+	 * @return
+	 */
+	List<JiaoyupeixunVO> selectJiaoyupeixunPage(IPage page, JiaoyupeixunVO jiaoyupeixun);
+
+	boolean updateDel(String id);
+
+	boolean insertJiaoYuPeiXun(Jiaoyupeixun jiaoyupeixun);
+
+	/**
+	 * 自定义分页
+	 * @param
+	 * @return
+	 */
+	List<JiaoyupeixunVO> selectPageList(JiaoyupeixunPage jiaoyupeixunPage);
+	/**
+	 * 统计
+	 * @param
+	 * @return
+	 */
+	int selectTotal(JiaoyupeixunPage jiaoyupeixunPage);
+
+	JiaoyupeixunVO selectByIds(String id);
+}

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.doc.qiyewenjian.mapper.QiyewenjianMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="qiyewenjianResultMap" type="org.springblade.doc.qiyewenjian.entity.Qiyewenjian">
+        <id column="id" property="id"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="dept_id" property="deptId"/>
+        <result column="name" property="name"/>
+        <result column="path" property="path"/>
+        <result column="sort" property="sort"/>
+        <result column="tier" property="tier"/>
+        <result column="caozuorenid" property="caozuorenid"/>
+        <result column="caozuoren" property="caozuoren"/>
+        <result column="caozuoshijian" property="caozuoshijian"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="createtime" property="createtime"/>
+        <result column="document_number" property="documentNumber"/>
+        <result column="cumulative_visits" property="cumulativeVisits"/>
+        <result column="last_preview_time" property="lastPreviewTime"/>
+    </resultMap>
+    <!--修改文件编号-->
+    <update id="updateDocumentNumberById">
+        update anbiao_qiyewenjian set document_number = #{documentNumber} where id=#{id}
+    </update>
+    <!--修改文件排序号-->
+    <update id="updateSortById">
+         update  anbiao_qiyewenjian set sort = #{sort} where id=#{id}
+    </update>
+    <!--修改记录-->
+    <update id="updatePreviewRecordById">
+         UPDATE anbiao_qiyewenjian
+        SET cumulative_visits = IFNULL(cumulative_visits, 0) + 1,
+         last_preview_time = DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')
+        WHERE
+            id = #{id}
+    </update>
+
+
+    <select id="selectQiyewenjianPage" resultMap="qiyewenjianResultMap">
+        select * from anbiao_qiyewenjian where is_deleted = 0
+    </select>
+    <!--查询企业文件最大id-->
+    <select id="selectMaxId" resultType="java.lang.Integer">
+        select max(id) from  anbiao_qiyewenjian
+    </select>
+    <!--查询同级文件最大排序号-->
+    <select id="selectMaxSorByParentId" resultType="java.lang.Integer">
+        select IFNULL(max(sort),0) from anbiao_qiyewenjian where parent_id=#{id} and is_deleted = 0
+    </select>
+
+    <!--目录树-->
+    <select id="tree" resultType="org.springblade.doc.qiyewenjian.vo.QiyewenjianVO">
+        SELECT
+            id,
+            parent_id,
+            dept_id,
+            NAME,
+            path,
+            sort,
+            a.tier,
+            caozuorenid,
+            caozuoren,
+            caozuoshijian,
+            is_deleted,
+            createtime,
+            type,
+            document_number,
+            count(t.tier) as fileNum
+        FROM
+            anbiao_qiyewenjian a
+
+        LEFT JOIN (
+            SELECT tier FROM anbiao_qiyewenjian
+            WHERE type = '文件' and is_deleted=0
+        ) t ON t.tier LIKE concat(a.tier, '-%')
+
+        WHERE
+            is_deleted = 0
+        AND parent_id = #{parentId}
+        AND dept_id = #{deptId}
+        GROUP BY
+            id,
+            parent_id,
+            dept_id,
+            NAME,
+            path,
+            sort,
+            a.tier,
+            caozuorenid,
+            caozuoren,
+            caozuoshijian,
+            is_deleted,
+            createtime,
+            type,
+            document_number
+        ORDER BY sort
+    </select>
+
+    <select id="getByParentId" resultType="org.springblade.doc.qiyewenjian.entity.Qiyewenjian">
+         SELECT
+            id,
+            parent_id,
+            dept_id,
+            NAME,
+            path,
+            sort,
+            tier,
+            caozuorenid,
+            caozuoren,
+            caozuoshijian,
+            is_deleted,
+            createtime,
+            type,
+            document_number
+        FROM
+            anbiao_qiyewenjian
+        WHERE
+            is_deleted = 0
+        AND parent_id = #{parentId}
+    </select>
+
+</mapper>

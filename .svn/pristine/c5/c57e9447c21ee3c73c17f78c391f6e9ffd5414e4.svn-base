@@ -1,0 +1,5 @@
+org\springblade\deadline\entity\Deadline.class
+META-INF\spring-devtools.properties
+org\springblade\deadline\feign\IDeadlineClientFallback.class
+META-INF\spring.factories
+org\springblade\deadline\feign\IDeadlineClient.class

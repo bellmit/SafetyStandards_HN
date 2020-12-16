@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.anbiao.shigu.mapper.ShigubaogaoMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="shigubaogaoVOResultMap" type="org.springblade.anbiao.shigu.vo.ShigubaogaoVO">
+        <id column="id" property="id"/>
+        <result column="dept_id" property="deptId"/>
+        <result column="deptName" property="deptName"/>
+        <result column="caozuoren" property="caozuoren"/>
+        <result column="caozuorenid" property="caozuorenid"/>
+        <result column="caozuoshijian" property="caozuoshijian"/>
+        <result column="chepaihao" property="chepaihao"/>
+        <result column="chexing" property="chexing"/>
+        <result column="hezaishu" property="hezaishu"/>
+        <result column="shizaishu" property="shizaishu"/>
+        <result column="weihuapinming" property="weihuapinming"/>
+        <result column="jiashiyuan" property="jiashiyuan"/>
+        <result column="congyezigeleibie" property="congyezigeleibie"/>
+        <result column="congyezigezhenghao" property="congyezigezhenghao"/>
+        <result column="shigufenlei" property="shigufenlei"/>
+        <result column="shiguxingtai" property="shiguxingtai"/>
+        <result column="shigufashengshijian" property="shigufashengshijian"/>
+        <result column="shigufashengdidian" property="shigufashengdidian"/>
+        <result column="tianqiqingkuang" property="tianqiqingkuang"/>
+        <result column="gonglujishudengji" property="gonglujishudengji"/>
+        <result column="xianxingzhuangkuang" property="xianxingzhuangkuang"/>
+        <result column="lumianzhuangkuang" property="lumianzhuangkuang"/>
+        <result column="shiguzhijieyuanyin" property="shiguzhijieyuanyin"/>
+        <result column="yunxingxianlu" property="yunxingxianlu"/>
+        <result column="xianluleibie" property="xianluleibie"/>
+        <result column="shifazhan" property="shifazhan"/>
+        <result column="chezhandengji" property="chezhandengji"/>
+        <result column="siwang" property="siwang"/>
+        <result column="shizong" property="shizong"/>
+        <result column="shoushang" property="shoushang"/>
+        <result column="waijisiwang" property="waijisiwang"/>
+        <result column="waijishizong" property="waijishizong"/>
+        <result column="waijishoushang" property="waijishoushang"/>
+        <result column="caichansunshi" property="caichansunshi"/>
+        <result column="shigugaikuang" property="shigugaikuang"/>
+        <result column="zerenfenxi" property="zerenfenxi"/>
+        <result column="shiguzhaopian" property="shiguzhaopian"/>
+        <result column="fujian" property="fujian"/>
+        <result column="is_deleted" property="isdel"/>
+    </resultMap>
+
+    <select id="selectByKey" resultMap="shigubaogaoVOResultMap" parameterType="java.lang.String">
+        select  a.*,b.dept_name as deptName
+        from  anbiao_shigubaogao a
+            inner join blade_dept b  on a.dept_id = b.id
+         where a.id=#{id}
+    </select>
+
+    <!-- 假删除 -->
+    <update id="deleteShigubaogao" parameterType="java.lang.String" >
+         update anbiao_shigubaogao set
+            is_deleted = 1
+        WHERE id = #{id}
+  </update>
+
+    <sql id="tableSql">
+        SELECT
+        a.*,
+        b.dept_name as deptName
+        FROM
+        anbiao_shigubaogao a
+        inner join  blade_dept b
+        on a.dept_id = b.id
+        WHERE 1=1 and ifnull(a.is_deleted,0) = 0
+        <if test="deptId != null">
+            AND a.dept_id = ${deptId}
+        </if>
+    </sql>
+
+    <sql id="querySql">
+        <if test="deptName !=null and deptName != ''">
+            AND deptName LIKE '%${deptName}%'
+        </if>
+    </sql>
+    <sql id="orderSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by caozuoshijian
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+    </sql>
+
+    <select id="selectShigubaogaoPage" resultMap="shigubaogaoVOResultMap"
+            parameterType="org.springblade.anbiao.shigu.page.ShigubaogaoPage" resultType="org.springblade.anbiao.shigu.vo.ShigubaogaoVO">
+        <if test="size == 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${total}
+        </if>
+        <if test="current != 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <select id="selectShigubaogaoTotal"
+            parameterType="org.springblade.anbiao.shigu.page.ShigubaogaoPage"
+            resultType="int">
+        select COUNT(1) from (
+        <include refid="tableSql" />
+        )d
+        where 1 = 1
+        <include refid="querySql" />
+    </select>
+</mapper>

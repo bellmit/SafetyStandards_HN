@@ -1,0 +1,47 @@
+{
+  "hints": [],
+  "groups": [
+    {
+      "sourceType": "org.springblade.common.configurationBean.FileServer",
+      "name": "fileserver",
+      "type": "org.springblade.common.configurationBean.FileServer"
+    },
+    {
+      "sourceType": "org.springblade.common.configurationBean.GPSServer",
+      "name": "gpsserver",
+      "type": "org.springblade.common.configurationBean.GPSServer"
+    }
+  ],
+  "properties": [
+    {
+      "sourceType": "org.springblade.common.configurationBean.FileServer",
+      "name": "fileserver.falg",
+      "description": "界定是否需要验证码",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "org.springblade.common.configurationBean.FileServer",
+      "name": "fileserver.path-prefix",
+      "description": "物理路径通用前缀",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "org.springblade.common.configurationBean.FileServer",
+      "name": "fileserver.url-prefix",
+      "description": "url通用前缀",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "org.springblade.common.configurationBean.GPSServer",
+      "name": "gpsserver.imgurl-prefix",
+      "description": "视频图片接口地址",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "org.springblade.common.configurationBean.GPSServer",
+      "name": "gpsserver.pointurl-prefix",
+      "description": "点位接口地址",
+      "type": "java.lang.String"
+    }
+  ]
+}

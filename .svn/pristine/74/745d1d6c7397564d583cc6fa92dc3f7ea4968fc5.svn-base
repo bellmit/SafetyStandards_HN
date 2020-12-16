@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.app.yingjichuzhi.mapper.YingjichuzhileiMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="yingjichuzhileiVOResultMap" type="org.springblade.app.yingjichuzhi.vo.YingjichuzhileiVO">
+        <id column="id" property="id"/>
+        <result column="yingjichuzhiid" property="yingjichuzhiid"/>
+        <result column="title" property="title"/>
+        <result column="path" property="path"/>
+        <result column="pdfpath" property="pdfpath"/>
+        <result column="tupianpath" property="tupianpath"/>
+        <result column="name" property="name"/>
+        <result column="caozuoren" property="caozuoren"/>
+        <result column="caozuorenid" property="caozuorenid"/>
+        <result column="caozuoshijian" property="caozuoshijian"/>
+        <result column="is_deleted" property="isdel"/>
+        <result column="createtime" property="createtime"/>
+    </resultMap>
+
+
+    <select id="selectYingjichuzhileiPage" resultMap="yingjichuzhileiVOResultMap">
+        select * from anbiao_yingjichuzhilei where is_deleted = 0
+    </select>
+
+    <sql id="tableSql">
+        SELECT
+        a.id,a.yingjichuzhiid,a.path,a.pdfpath,a.tupianpath,a.title,
+        a.caozuoren,a.caozuoshijian,a.caozuorenid,a.is_deleted
+        FROM
+        anbiao_yingjichuzhilei a
+        WHERE 1=1 and ifnull(a.is_deleted,0) = 0
+        <if test="yingjichuzhiid != null">
+            AND a.yingjichuzhiid=${yingjichuzhiid}
+        </if>
+    </sql>
+
+    <sql id="querySql">
+        <if test="title!='' and title!=null">
+            AND title LIKE '%${title}%'
+        </if>
+    </sql>
+
+    <sql id="orderSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by caozuoshijian desc
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+    </sql>
+
+    <!--自定义列表数据-->
+    <select id="selectPageList" resultMap="yingjichuzhileiVOResultMap"
+            parameterType="org.springblade.app.yingjichuzhi.page.YingjichuzhileiPage"
+            resultType="org.springblade.app.yingjichuzhi.vo.YingjichuzhileiVO">
+        <if test="size == 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="orderSql" />
+            limit ${total}
+        </if>
+        <if test="current != 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="orderSql" />
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <!--统计数据-->
+    <select id="selectTotal"
+            parameterType="org.springblade.app.yingjichuzhi.page.YingjichuzhileiPage"
+            resultType="int">
+        select COUNT(1) from (
+        <include refid="tableSql" />
+        )d
+        where 1 = 1
+        <include refid="querySql" />
+    </select>
+
+    <select id="selectByKey" resultType="org.springblade.app.yingjichuzhi.vo.YingjichuzhileiVO" parameterType="java.lang.String">
+        select path,pdfpath,tupianpath,caozuoshijian,createtime,title,name from anbiao_yingjichuzhilei
+        where 1=1 and ifnull(is_deleted ,0) = 0 and id=#{id}
+    </select>
+
+
+</mapper>

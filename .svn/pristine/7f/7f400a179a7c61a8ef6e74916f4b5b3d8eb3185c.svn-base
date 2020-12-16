@@ -1,0 +1,51 @@
+#服务器端口
+
+server:
+  port: 9107
+
+#数据源配置
+#spring:
+#  datasource:
+#    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+#    url: jdbc:sqlserver://202.100.168.30:22433;databaseName=gpsdb_XJL
+#    username: cqmxsafe
+#    password: Mxcqmx!2#yw@987
+#    url: jdbc:mysql://202.100.168.30:3306/safesystem?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&tinyInt1isBit=false&serverTimezone=GMT%2B8
+#    username: safesystem_user
+#    password: DB6314EA3A0F45A1958F
+#    url: jdbc:mysql://218.70.83.254:23307/alarmsummary?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&tinyInt1isBit=false&serverTimezone=GMT%2B8
+#    username: root
+#    password: 123456
+
+
+
+
+
+spring:
+  datasource:
+    #gps3.0数据源
+    gps3:
+      driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+      url: ${blade.datasource.gps3.url}
+      username: ${blade.datasource.gps3.username}
+      password: ${blade.datasource.gps3.password}
+#      url: jdbc:sqlserver://202.100.168.30:22433;databaseName=gpsdb_XJL
+#      username: cqmxsafe
+#      password: Mxcqmx!2#yw@987
+      #gps2.0数据源
+    gps2:
+      driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+      url: ${blade.datasource.gps2.url}
+      username: ${blade.datasource.gps2.username}
+      password: ${blade.datasource.gps2.password}
+#      url: jdbc:sqlserver://202.100.168.30:22431;databaseName=GPSDB
+#      username: cqmxsafe
+#      password: Mxcqyw@789
+gpsserver:
+  pointurlPrefix: ${gpsserver.dev.pointurl}
+  imgurlPrefix: ${gpsserver.dev.imgurl}
+  spreadurlPrefix: ${gpsserver.dev.spreadurl}
+#  pointurlPrefix: http://36.133.42.216:40003/
+#  imgurl-prefix: http://36.133.42.160:7096/
+#  spreadurlPrefix: http://36.133.42.216:40002/
+

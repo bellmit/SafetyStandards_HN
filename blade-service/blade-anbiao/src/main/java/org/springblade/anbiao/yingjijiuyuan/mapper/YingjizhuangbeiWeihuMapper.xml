@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.anbiao.yingjijiuyuan.mapper.YingjizhuangbeiWeihuMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="yingjizhuangbeiWeihuResultMap" type="org.springblade.anbiao.yingjijiuyuan.entity.YingjizhuangbeiWeihu">
+        <id column="id" property="id"/>
+        <result column="yingjizhuangbeiid" property="yingjizhuangbeiid"/>
+        <result column="jianchariqi" property="jianchariqi"/>
+        <result column="jianchajieguo" property="jianchajieguo"/>
+        <result column="jiancharen" property="jiancharen"/>
+        <result column="jianchaxiangmu" property="jianchaxiangmu"/>
+        <result column="shifougenghuanlingjian" property="shifougenghuanlingjian"/>
+        <result column="querenren" property="querenren"/>
+        <result column="isdelete" property="isdelete"/>
+    </resultMap>
+
+
+    <select id="selectYingjizhuangbeiWeihuPage" resultMap="yingjizhuangbeiWeihuResultMap">
+        select * from anbiao_yingjizhuangbei_weihu where is_deleted = 0
+    </select>
+
+    <update id="updateDel" parameterType="java.lang.String">
+        UPDATE anbiao_yingjizhuangbei_weihu SET isdelete = 1 where id = #{id}
+    </update>
+
+    <sql id="tableSql">
+        SELECT
+        a.*
+        FROM
+        anbiao_yingjizhuangbei_weihu a
+        WHERE 1=1 and ifnull(a.isdelete,0) = 0
+    </sql>
+
+    <sql id="querySql">
+        <if test="yingjizhuangbeiid !=null and yingjizhuangbeiid != ''">
+            AND yingjizhuangbeiid = #{yingjizhuangbeiid}
+        </if>
+    </sql>
+    <sql id="orderSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by jianchariqi
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+    </sql>
+
+    <select id="selectPageList" parameterType="org.springblade.anbiao.yingjijiuyuan.page.YingjizhuangbeiWeihuPage" resultType="org.springblade.anbiao.yingjijiuyuan.vo.YingjizhuangbeiWeihuVO">
+        <if test="size == 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${total}
+        </if>
+        <if test="current != 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <select id="selectTotal" parameterType="org.springblade.anbiao.yingjijiuyuan.page.YingjizhuangbeiWeihuPage" resultType="int">
+        select COUNT(1) from (
+        <include refid="tableSql" />
+        )d
+        where 1 = 1
+        <include refid="querySql" />
+    </select>
+</mapper>

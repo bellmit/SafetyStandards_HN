@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.anbiao.ranyoubutie.mapper.FueltotalreportMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="fueltotalreportResultMap" type="org.springblade.anbiao.ranyoubutie.vo.FueltotalreportVO">
+        <id column="FId" property="id"/>
+        <result column="VehId" property="vehId"/>
+        <result column="company" property="company"/>
+        <result column="plate" property="chepaihao"/>
+        <result column="color" property="color"/>
+        <result column="scheme" property="scheme"/>
+        <result column="starttime" property="starttime"/>
+        <result column="StartAreaId" property="startAreaId"/>
+        <result column="SAreaName" property="sereaName"/>
+        <result column="endtime" property="endtime"/>
+        <result column="EndAreaId" property="endAreaId"/>
+        <result column="EAreaName" property="eareaName"/>
+        <result column="KeepTime" property="keepTime"/>
+        <result column="SeatNumber" property="seatNumber"/>
+        <result column="RegionLevel" property="regionLevel"/>
+    </resultMap>
+
+
+    <select id="selectFueltotalreportPage" resultMap="fueltotalreportResultMap">
+        select * from baobiao_fueltotalreport where is_deleted = 0
+    </select>
+
+    <sql id="tableSql">
+        SELECT
+        ifnull(FId,'') AS id,
+        ifnull(company,'') AS company,
+        ifnull(plate,'') AS chepaihao,
+        ifnull(scheme,'') AS scheme,
+        starttime,
+        ifnull(SAreaName,'') AS sareaName,
+        endtime,
+        ifnull(EAreaName,'') AS eareaName,
+        ifnull(CONCAT(floor(KeepTime / 86400),'天', floor(KeepTime % 86400 / 3600)
+        ,'时',floor(KeepTime % 3600 / 60), '分' ,floor(KeepTime % 60), '秒'),'') AS keepTime
+        FROM
+        (
+        SELECT
+        b.*
+        FROM
+        baobiao_gpsfuelveh a,
+        baobiao_fueltotalreport b
+        WHERE
+        a.vehid = b.VehId
+        AND b.endtime IS NOT NULL
+        <if test="beginTime != null and beginTime != ''">
+            and b.starttime &gt;= CONCAT( '${beginTime}', ' 00:00:00')
+        </if>
+        <if test="endTime != null and endTime != ''">
+            and b.starttime &lt;= CONCAT( '${endTime}', ' 23:59:59')
+        </if>
+        ) a
+    </sql>
+
+    <sql id="querySql">
+        <if test="deptName !=null and deptName != ''">
+            AND company LIKE CONCAT('%',#{deptName},'%')
+        </if>
+        <if test="chepaihao !=null and chepaihao != ''">
+            AND chepaihao LIKE CONCAT('%',#{chepaihao},'%')
+        </if>
+    </sql>
+
+    <sql id="orderSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by chepaihao
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+    </sql>
+
+    <select id="selectAllList" parameterType="org.springblade.anbiao.ranyoubutie.page.FueltotalreportPage" resultType="org.springblade.anbiao.ranyoubutie.vo.FueltotalreportVO">
+        <if test="size == 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${total}
+        </if>
+        <if test="current != 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <select id="selectTotal" parameterType="org.springblade.anbiao.ranyoubutie.page.FueltotalreportPage" resultType="int">
+        select COUNT(1) from (
+        <include refid="tableSql" />
+        )d
+        where 1 = 1
+        <include refid="querySql" />
+    </select>
+
+</mapper>

@@ -1,0 +1,7 @@
+org\springblade\system\user\feign\IUserClientBack.class
+org\springblade\system\user\entity\UserInfo.class
+org\springblade\system\user\vo\UserVO.class
+org\springblade\system\user\feign\IUserFiegn.class
+org\springblade\system\user\entity\User.class
+org\springblade\system\user\feign\IUserClient.class
+org\springblade\system\user\feign\IUserFiegnBack.class

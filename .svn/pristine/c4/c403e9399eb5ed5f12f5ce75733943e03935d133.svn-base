@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.system.user.mapper.UserMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="userResultMap" type="org.springblade.system.user.entity.User">
+        <result column="id" property="id"/>
+        <result column="tenant_code" property="tenantCode"/>
+        <result column="create_user" property="createUser"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_user" property="updateUser"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="status" property="status"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="account" property="account"/>
+        <result column="password" property="password"/>
+        <result column="name" property="name"/>
+        <result column="real_name" property="realName"/>
+        <result column="email" property="email"/>
+        <result column="phone" property="phone"/>
+        <result column="birthday" property="birthday"/>
+        <result column="sex" property="sex"/>
+        <result column="role_id" property="roleId"/>
+        <result column="dept_id" property="deptId"/>
+        <result column="postId" property="postId"/>
+        <result column="openid" property="openid"/>
+    </resultMap>
+
+
+
+    <!-- 通用查询结果列 -->
+    <sql id="baseColumnList">
+        select id,
+        create_user AS createUser,
+        create_time AS createTime,
+        update_user AS updateUser,
+        update_time AS updateTime,
+        status,
+        is_deleted AS isDeleted,
+        account, password, name, real_name, email, phone, birthday, sex, role_id, dept_id
+    </sql>
+
+    <select id="selectMaxId" resultType="java.lang.Integer">
+            SELECT max(id) id FROM blade_user;
+    </select>
+
+    <select id="selectByLoginName" resultType="java.lang.Integer">
+        select count(1) from blade_user where account=#{account};
+    </select>
+
+    <insert id="insertPer" parameterType="org.springblade.system.user.entity.User">
+    insert  into  blade_user(id,create_user,create_time,update_user,update_time,status,account,password,
+    name,real_name,email,phone,birthday,sex,dept_id,role_id)
+     values (#{id},#{createUser},#{createTime},#{updateUser},#{updateTime},#{status},#{account},#{password},
+     #{name},#{realName},#{email},#{phone},#{birthday},#{sex},#{deptId},#{roleId}
+     )
+    </insert>
+
+    <select id="selectByDeptId" resultType="org.springblade.system.user.entity.User">
+        SELECT
+            a.*
+        FROM
+            blade_user a
+        INNER JOIN anbiao_personnel b ON a.id=b.userid
+        WHERE
+            a.dept_id = #{deptId}
+    </select>
+
+    <update id="updatePer" parameterType="org.springblade.system.user.entity.User">
+        update  blade_user
+        set
+            update_user=#{updateUser},
+            update_time=#{updateTime},
+            account=#{account},
+            name=#{name},
+            real_name=#{realName},
+            email=#{email},
+            phone=#{phone},
+            birthday=#{birthday},
+            sex=#{sex}
+        where id=#{id}
+    </update>
+
+    <update id="deletePer" parameterType="org.springblade.system.user.entity.User">
+        update blade_user set is_deleted=1 where  id=#{param1}
+    </update>
+
+
+    <select id="selectUserPage" resultMap="userResultMap">
+        select * from blade_user where is_deleted = 0
+    </select>
+
+    <select id="getUser" resultMap="userResultMap">
+       SELECT
+        a.*,
+        b.post_id postId
+     FROM
+          (select  * from blade_user where account = #{param1} and password = #{param2} and is_deleted=0)  a
+    LEFT JOIN blade_post b ON a.id = b.user_id
+        AND b.Isdefault=1
+        LIMIT 1
+    </select>
+
+    <select id="getUserById" resultMap="userResultMap">
+        SELECT
+            *
+        FROM
+            blade_user
+        WHERE
+            id = #{param1}
+    </select>
+
+    <select id="getRoleName" resultType="java.lang.String">
+        SELECT
+        role_name
+        FROM
+        blade_role
+        WHERE
+        id IN
+        <foreach collection="array" item="ids" index="index" open="(" close=")" separator=",">
+            #{ids}
+        </foreach>
+    </select>
+
+    <select id="getRoleAlias" resultType="java.lang.String">
+        SELECT
+            role_alias
+        FROM
+            blade_role
+        WHERE
+            id IN
+        <foreach collection="array" item="ids" index="index" open="(" close=")" separator=",">
+            #{ids}
+        </foreach>
+    </select>
+
+    <select id="getDeptName" resultType="java.lang.String">
+        SELECT
+            dept_name
+        FROM
+            blade_dept
+        WHERE
+            id IN
+        <foreach collection="array" item="ids" index="index" open="(" close=")" separator=",">
+            #{ids}
+        </foreach>
+    </select>
+
+    <select id="selectByPostId" resultMap="userResultMap" >
+    SELECT
+	    renyuan.*
+    FROM
+        blade_post gangwei
+    INNER JOIN blade_dept jigou ON jigou.id = gangwei.post_id
+    INNER JOIN blade_user renyuan ON gangwei.user_id = renyuan.id
+    and  renyuan.is_deleted = 0
+    AND gangwei.post_id=#{param1}
+    ORDER BY renyuan.id
+    </select>
+
+    <select id="selectByopenId" resultMap="userResultMap" >
+    SELECT
+	   openid,real_name,phone,sex,account
+    FROM
+        blade_user
+    WHERE openid=#{param1}
+    </select>
+
+    <select id="bindDriverOpenId" parameterType="org.springblade.system.user.entity.User">
+        update blade_user set openid=#{param2}
+        where account=#{param1}
+    </select>
+
+    <select id="getWeixinUser" resultMap="userResultMap">
+       SELECT
+        a.*,
+        b.post_id AS postId
+     FROM
+        blade_user a,
+        blade_post b
+    WHERE
+	a.id = b.user_id
+        and openid = #{param1}
+        AND b.Isdefault=1
+        LIMIT 1
+    </select>
+
+    <select id="getZFUser" resultMap="userResultMap">
+        SELECT
+            a.*,
+            b.post_id postId
+        FROM
+            (
+                select a.id,a.dept_id,a.account,a.name,a.create_time,a.update_time from blade_user a,anbiao_organization b
+                where a.dept_id = b.dept_id
+                and b.jigouleixing in('shengZF','shiZF','xianZF')
+                and account = #{param1}
+                and password = #{param2}
+                and is_deleted=0
+            )  a
+        LEFT JOIN blade_post b ON a.id = b.user_id
+        AND b.Isdefault=1
+        LIMIT 1
+    </select>
+
+
+    <select id="getZFUserInfo" resultMap="userResultMap">
+        select a.id,a.account,b.id as dept_id,b.parent_id,b.dept_name,(
+            select b.dept_name from blade_dept b,blade_post c
+            where c.post_id = b.id
+            and c.Isdefault = 1
+            and c.user_id = #{userId})	post_name
+        from
+            blade_user a,blade_dept b,blade_post c
+        where a.dept_id = b.id
+            and b.EXTEND_TYPE= #{type}
+            and a.id = c.user_id
+            and c.Isdefault = 1
+            and a.id = #{userId}
+        LIMIT 1
+    </select>
+</mapper>

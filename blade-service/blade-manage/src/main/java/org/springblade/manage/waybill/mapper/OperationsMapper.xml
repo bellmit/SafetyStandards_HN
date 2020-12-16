@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.manage.waybill.mapper.OperationsMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="operationsResultMap" type="org.springblade.manage.waybill.vo.OperationsVO">
+        <id column="id" property="id"/>
+        <result column="dept_id" property="deptId"/>
+        <result column="vehicle_id" property="vehicleId"/>
+        <result column="jianyanriqi" property="jianyanriqi"/>
+        <result column="shifouhege" property="shifouhege"/>
+        <result column="jine" property="jine"/>
+        <result column="beizhu" property="beizhu"/>
+        <result column="shijian" property="shijian"/>
+        <result column="weihudanwei" property="weihudanwei"/>
+        <result column="weihuleibie" property="weihuleibie"/>
+        <result column="jinchangriqi" property="jinchangriqi"/>
+        <result column="jinchanglicheng" property="jinchanglicheng"/>
+        <result column="chuchangriqi" property="chuchangriqi"/>
+        <result column="xiaciweihushijian" property="xiaciweihushijian"/>
+        <result column="weihuhetongbianhao" property="weihuhetongbianhao"/>
+        <result column="weihuneirong" property="weihuneirong"/>
+        <result column="xingming" property="xingming"/>
+        <result column="zhengjianmingcheng" property="zhengjianmingcheng"/>
+        <result column="shenyanleixing" property="shenyanleixing"/>
+        <result column="shenyanjigou" property="shenyanjigou"/>
+        <result column="shenyanriqi" property="shenyanriqi"/>
+        <result column="youxiaoqi" property="youxiaoqi"/>
+        <result column="refueling_time" property="refuelingTime"/>
+        <result column="fuel_type" property="fuelType"/>
+        <result column="oilcard_number" property="oilcardNumber"/>
+        <result column="fuel_volume" property="fuelVolume"/>
+        <result column="unit_price" property="unitPrice"/>
+        <result column="meter_mileage" property="meterMileage"/>
+        <result column="oil_consumption" property="oilConsumption"/>
+        <result column="is_bill" property="isBill"/>
+        <result column="jiluren" property="jiluren"/>
+        <result column="beibaoxianren" property="beibaoxianren"/>
+        <result column="dengjiren" property="dengjiren"/>
+        <result column="dengjishijian" property="dengjishijian"/>
+        <result column="type" property="type"/>
+        <result column="create_user" property="createUser"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_user" property="updateUser"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="is_deleted" property="isDeleted"/>
+    </resultMap>
+
+
+    <sql id="tableSql">
+        SELECT DISTINCT
+        b.cheliangpaizhao,
+        b.id vehicle_id,
+        a.id,
+        DATE_FORMAT(
+        a.jianyanriqi,
+        '%Y-%m-%d %T'
+        ) jianyanriqi,
+        DATE_FORMAT(a.youxiaoqi, '%Y-%m-%d %T') youxiaoqi,
+        DATE_FORMAT(
+        a.xiaciweihushijian,
+        '%Y-%m-%d %T'
+        ) xiaciweihushijian,
+        DATE_FORMAT(
+        a.jinchangriqi,
+        '%Y-%m-%d %T'
+        ) jinchangriqi,
+        DATE_FORMAT(
+        a.chuchangriqi,
+        '%Y-%m-%d %T'
+        ) chuchangriqi,
+        DATE_FORMAT(
+        a.shenyanriqi,
+        '%Y-%m-%d %T'
+        ) shenyanriqi,
+        DATE_FORMAT(
+        a.refueling_time,
+        '%Y-%m-%d %T'
+        ) refueling_time,
+        DATE_FORMAT(
+        a.dengjishijian,
+        '%Y-%m-%d %T'
+        ) dengjishijian,
+        a.zhengjianmingcheng,
+        CASE
+        WHEN ifnull(a. STATUS, 0) = 0 THEN
+        '已审核'
+        ELSE
+        '已审核'
+        END AS examine,
+        a.shifouhege,
+        a.beizhu,
+        IFNULL(jine, 0) jine,
+        xingming,
+        shenyanleixing,
+        IFNULL(a.fuel_type, 0) fuel_type,
+        a.oilcard_number,
+        IFNULL(a.fuel_volume, 0) fuel_volume,
+        IFNULL(a.unit_price, 0) unit_price,
+        IFNULL(a.meter_mileage, 0) meter_mileage,
+        IFNULL(a.oil_consumption, 0) oil_consumption,
+        a.jiluren,
+        a.beibaoxianren,
+        dengjiren,
+        a.weihudanwei,
+        jinchanglicheng,
+        weihuhetongbianhao,
+        weihuneirong,
+        a.weihuleibie,
+        a.type,
+        IFNULL(leixing, '') leixing,
+        a.dept_id,
+        is_bill,
+        a.create_user,
+        a.create_time,
+        a.update_user,
+        a.update_time,
+        a.is_deleted,a.fujian
+        FROM
+        manage_operations a
+        INNER JOIN anbiao_vehicle b ON a.vehicle_id = b.id
+        AND a.dept_id = #{deptId}
+        AND a.create_time
+        BETWEEN STR_TO_DATE(concat( #{beginTime},'00:00:00'),'%Y-%m-%d %H:%i:%s')
+        AND   STR_TO_DATE(concat(#{endTime},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+		AND a.is_deleted = 0
+        <if test="type != null and type != ''">
+            AND type=#{type}
+        </if>
+        <if test="cheliangpaizhao != null and cheliangpaizhao != ''">
+            AND cheliangpaizhao like '%${cheliangpaizhao}%'
+        </if>
+    </sql>
+
+    <select id="selectDetail" resultMap="operationsResultMap">
+     SELECT DISTINCT
+        b.cheliangpaizhao,
+        b.id vehicle_id,
+        a.id,
+        DATE_FORMAT(
+        a.jianyanriqi,
+        '%Y-%m-%d %T'
+        ) jianyanriqi,
+        DATE_FORMAT(a.youxiaoqi, '%Y-%m-%d %T') youxiaoqi,
+        DATE_FORMAT(
+        a.xiaciweihushijian,
+        '%Y-%m-%d %T'
+        ) xiaciweihushijian,
+        DATE_FORMAT(
+        a.jinchangriqi,
+        '%Y-%m-%d %T'
+        ) jinchangriqi,
+        DATE_FORMAT(
+        a.chuchangriqi,
+        '%Y-%m-%d %T'
+        ) chuchangriqi,
+        DATE_FORMAT(
+        a.shenyanriqi,
+        '%Y-%m-%d %T'
+        ) shenyanriqi,
+        DATE_FORMAT(
+        a.refueling_time,
+        '%Y-%m-%d %T'
+        ) refueling_time,
+        DATE_FORMAT(
+        a.dengjishijian,
+        '%Y-%m-%d %T'
+        ) dengjishijian,
+        a.zhengjianmingcheng,
+        CASE
+        WHEN ifnull(a. STATUS, 0) = 0 THEN
+        '已审核'
+        ELSE
+        '已审核'
+        END AS examine,
+        a.shifouhege,
+        a.beizhu,
+        IFNULL(jine, 0) jine,
+        xingming,
+        shenyanleixing,
+        IFNULL(a.fuel_type, 0) fuel_type,
+        a.oilcard_number,
+        IFNULL(a.fuel_volume, 0) fuel_volume,
+        IFNULL(a.unit_price, 0) unit_price,
+        IFNULL(a.meter_mileage, 0) meter_mileage,
+        IFNULL(a.oil_consumption, 0) oil_consumption,
+        a.jiluren,
+        a.beibaoxianren,
+        dengjiren,
+        a.weihudanwei,
+        jinchanglicheng,
+        weihuhetongbianhao,
+        weihuneirong,
+        a.weihuleibie,
+        a.type,
+        IFNULL(leixing, '') leixing,
+        a.dept_id,
+        is_bill,
+        a.create_user,
+        a.create_time,
+        a.update_user,
+        a.update_time,
+        a.is_deleted,a.fujian
+        FROM
+        manage_operations a
+        INNER JOIN anbiao_vehicle b ON a.vehicle_id = b.id
+        AND a.id = #{id}
+		AND a.is_deleted = 0
+    </select>
+
+    <sql id="querySql">
+
+    </sql>
+
+    <sql id="orderSql">
+        order by update_time desc
+    </sql>
+
+    <select id="selectPageList" resultMap="operationsResultMap" parameterType="org.springblade.manage.waybill.page.OperationsPage">
+        <if test="size==0">
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${total}
+        </if>
+        <if test="current != 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <select id="selectTotal"  parameterType="org.springblade.manage.waybill.page.OperationsPage" resultType="int">
+        select COUNT(1) from (
+        <include refid="tableSql"/>
+        <include refid="querySql" />
+        )d where 1 = 1
+    </select>
+
+</mapper>

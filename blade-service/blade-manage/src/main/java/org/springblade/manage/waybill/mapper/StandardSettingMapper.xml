@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.manage.waybill.mapper.StandardSettingMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="standardSettingResultMap" type="org.springblade.manage.waybill.vo.StandardSettingVO">
+        <id column="id" property="id"/>
+        <result column="vehicle_id" property="vehicleId"/>
+        <result column="yi" property="yi"/>
+        <result column="er" property="er"/>
+        <result column="san" property="san"/>
+        <result column="si" property="si"/>
+        <result column="wu" property="wu"/>
+        <result column="liu" property="liu"/>
+        <result column="qi" property="qi"/>
+        <result column="ba" property="ba"/>
+        <result column="jiu" property="jiu"/>
+        <result column="shi" property="shi"/>
+        <result column="shiyi" property="shiyi"/>
+        <result column="shier" property="shier"/>
+        <result column="cheliangpaizhao" property="cheliangpaizhao"/>
+        <result column="dept_id" property="deptId"/>
+    </resultMap>
+
+
+    <sql id="tableSql">
+        SELECT
+        a.vehicle_id,
+        b.cheliangpaizhao,
+        MAX(CASE yue WHEN '1' THEN shuju ELSE 0 END ) yi,
+        MAX(CASE yue WHEN '2' THEN shuju ELSE 0 END ) er,
+        MAX(CASE yue WHEN '3' THEN shuju ELSE 0 END ) san,
+        MAX(CASE yue WHEN '4' THEN shuju ELSE 0 END ) si,
+        MAX(CASE yue WHEN '5' THEN shuju ELSE 0 END ) wu,
+        MAX(CASE yue WHEN '6' THEN shuju ELSE 0 END ) liu,
+        MAX(CASE yue WHEN '7' THEN shuju ELSE 0 END ) qi,
+        MAX(CASE yue WHEN '8' THEN shuju ELSE 0 END ) ba,
+        MAX(CASE yue WHEN '9' THEN shuju ELSE 0 END ) jiu,
+        MAX(CASE yue WHEN '10' THEN shuju ELSE 0 END ) shi,
+        MAX(CASE yue WHEN '11' THEN shuju ELSE 0 END ) shiyi,
+        MAX(CASE yue WHEN '12' THEN shuju ELSE 0 END ) shier
+        FROM
+        manage_standard_setting a
+        INNER JOIN anbiao_vehicle b ON a.vehicle_id = b.id
+        GROUP BY a.vehicle_id,b.cheliangpaizhao
+        WHERE 1=1
+        <if test="deptId != null">
+            AND b.dept_id = #{deptId}
+        </if>
+        AND b.is_deleted = 0
+    </sql>
+    <select id="selectByPlate" resultMap="standardSettingResultMap">
+        select   *  from  manage_standard_setting where vehicle_id=#{vehicleId} and yue=#{yue}
+    </select>
+
+    <sql id="querySql">
+        <if test="cheliangpaizhao != null and cheliangpaizhao != ''">
+            AND cheliangpaizhao like '%${cheliangpaizhao}%'
+        </if>
+        <if test="zhuangtai != null and zhuangtai != ''">
+            AND zhuangtai=#{zhuangtai}
+        </if>
+    </sql>
+
+    <sql id="orderSql">
+
+    </sql>
+
+    <select id="selectPageList" resultMap="standardSettingResultMap" parameterType="org.springblade.manage.waybill.page.StandardSettingPage">
+        <if test="size==0">
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${total}
+        </if>
+        <if test="current != 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <select id="selectTotal"  parameterType="org.springblade.manage.waybill.page.StandardSettingPage" resultType="int">
+        select COUNT(1) from (
+        <include refid="tableSql"/>
+        )d where 1 = 1
+    </select>
+    <!-- 默认设置达标数据-->
+    <sql id="defaulttableSql">
+        SELECT
+            a.yi,
+            a.er,
+            a.san,
+            a.si,
+            a.wu,
+            a.liu,
+            a.qi,
+            a.ba,
+            a.jiu,
+            a.shi,
+            a.shiyi,
+            a.shier
+        FROM
+        manage_default a
+        WHERE 1=1
+        <if test="deptId != null">
+            AND a.dept_id = #{deptId}
+        </if>
+        AND b.is_deleted = 0
+    </sql>
+
+    <select id="selectdefaultPageList" resultMap="standardSettingResultMap" parameterType="org.springblade.manage.waybill.page.StandardSettingPage">
+        <if test="size==0">
+            select * from (
+            <include refid="defaulttableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${total}
+        </if>
+        <if test="current != 0" >
+            select * from (
+            <include refid="defaulttableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <select id="selectdefaultTotal"  parameterType="org.springblade.manage.waybill.page.StandardSettingPage" resultType="int">
+        select COUNT(1) from (
+        <include refid="defaulttableSql"/>
+        )d where 1 = 1
+    </select>
+    <!-- 右侧列表数据-->
+    <sql id="jiankongtableSql">
+        SELECT
+            cheliangpaizhao,
+            chepaiyanse,
+             IFNULL(shiji,0)as shiji,
+            dabiao,
+            CASE WHEN dabiao &lt; shiji  THEN '合格' ELSE '不合格' END zhuangtai
+            FROM(
+                      SELECT
+                    a.cheliangpaizhao,
+                    a.chepaiyanse,
+                    CONVERT(sum(d.mileageCount),DECIMAL(10,3)) shiji,
+                    a.dabiao
+                FROM
+                    (
+                    SELECT a.dept_id,a.cheliangpaizhao,a.chepaiyanse,IFNULL(b.shuju,c.shuju)dabiao from anbiao_vehicle a
+                    LEFT JOIN manage_standard_setting b
+                    on a.id=b.vehicle_id and b.yue=${month}
+                    LEFT JOIN manage_defaults c
+                    on a.dept_id = c.dept_id and c.yue=${month}
+                    WHERE a.dept_id=#{deptId}  AND a.cheliangpaizhao NOT LIKE '%挂%' and a.is_deleted=0
+                ) a
+                LEFT JOIN baobiao_vehdailyreport d
+                on a.cheliangpaizhao=d.plate
+                and a.chepaiyanse=d.color
+                and YEAR (date) = ${year}
+                AND MONTH (date) = ${month}
+                AND company = (
+                    SELECT dept_name FROM blade_dept WHERE id=#{deptId})
+                GROUP BY
+                a.cheliangpaizhao,a.chepaiyanse,a.dabiao
+                    )a
+    </sql>
+    <select id="selecJiankong" resultMap="standardSettingResultMap" parameterType="org.springblade.manage.waybill.page.StandardSettingPage">
+        <if test="size==0">
+            select * from (
+            <include refid="jiankongtableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${total}
+        </if>
+        <if test="current != 0" >
+            select * from (
+            <include refid="jiankongtableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+    <select id="selectJiankongTotal"  parameterType="org.springblade.manage.waybill.page.StandardSettingPage" resultType="int">
+        select COUNT(1) from (
+        <include refid="jiankongtableSql"/>
+        )d where 1 = 1  <include refid="querySql" />
+    </select>
+    <!--根据车辆牌照获取运营监控数据 -->
+    <select id="selectByYunYing"  resultMap="standardSettingResultMap" parameterType="org.springblade.manage.waybill.page.StandardSettingPage">
+        SELECT
+        a.yue,
+        IFNULL(b.wanchenglv,0)as wanchenglv
+        from
+        (
+        select lpad(n.key,2,'0') yue,0 as counts  from nums n where n.key &lt; 13
+        ) a LEFT JOIN
+        (
+        SELECT
+        plate,
+        MONTH (a.date) yue,
+        sum(mileageCount) shiji,
+        IFNULL(b.shuju,0)dabiao,
+        IFNULL(FORMAT(sum(mileageCount)/IFNULL(b.shuju,0),2),0) wanchenglv
+        FROM
+        (SELECT * FROM baobiao_vehdailyreport WHERE YEAR (date) = YEAR (NOW()) AND plate = #{cheliangpaizhao})a
+        LEFT JOIN(
+        SELECT
+        b.cheliangpaizhao,yue,shuju
+        FROM
+        manage_standard_setting a
+        INNER JOIN anbiao_vehicle b ON a.vehicle_id=b.id
+        AND b.cheliangpaizhao=#{cheliangpaizhao}
+        ) b ON MONTH (date)=b.yue AND a.plate=b.cheliangpaizhao
+        GROUP BY
+        a.plate,
+        MONTH (a.date),b.shuju
+        )b
+        on a.yue =b.yue
+        ORDER BY a.yue
+    </select>
+
+    <select id="selectByWanCheng"  resultMap="standardSettingResultMap" parameterType="org.springblade.manage.waybill.page.StandardSettingPage">
+        SELECT
+        a.yue,
+        FORMAT(FORMAT(IFNULL(b.wanchenglv,0),2)*100,0) wanchenglv
+        from
+        (
+        select lpad(n.key,2,'0') yue,0 as counts  from nums n where n.key  &lt; 13
+        ) a LEFT JOIN
+        (
+        SELECT
+        lpad(a.yue,2,'0') yue,
+        FORMAT(sum(d='已达标')/count(d),2) wanchenglv
+        from (		SELECT
+        a.dept_id,
+        a.cheliangpaizhao,
+        a.chepaiyanse,
+        a.yue,
+        sum(ifnull(d.mileageCount,0)) shiji,
+        a.dabiao,
+        CASE WHEN sum(ifnull(d.mileageCount,0))>=a.dabiao then '已达标' ELSE '未达标' end as d
+        FROM
+        (
+        SELECT  a.dept_id,a.cheliangpaizhao,a.chepaiyanse,ifnull(b.yue,c.yue) yue,IFNULL(max(b.shuju),min(c.shuju))dabiao from anbiao_vehicle a
+			LEFT JOIN manage_defaults c
+			on a.dept_id = c.dept_id
+			LEFT JOIN manage_standard_setting b
+			on a.id=b.vehicle_id  and b.yue =c.yue
+			WHERE a.dept_id=#{deptId}  AND a.cheliangpaizhao NOT LIKE '%挂%' and a.is_deleted=0
+			GROUP BY a.dept_id,a.cheliangpaizhao,a.chepaiyanse,b.yue,c.yue
+			ORDER BY a.cheliangpaizhao,c.yue
+        ) a
+        LEFT JOIN baobiao_vehdailyreport d
+        on a.cheliangpaizhao=d.plate
+        and a.chepaiyanse=d.color
+        and YEAR (d.date) = ${year}
+        AND MONTH(d.date) = a.yue
+        AND company =(SELECT dept_name FROM blade_dept WHERE id=#{deptId})
+        GROUP BY
+        a.dept_id,a.cheliangpaizhao,a.chepaiyanse,a.yue,a.dabiao) a
+        GROUP BY a.dept_id,a.yue
+        )b
+        on a.yue =b.yue
+        ORDER BY a.yue
+    </select>
+
+    <!--******************************************************************左侧数据 *********************************************************************-->
+
+    <!--月在线率 -->
+    <select id="selectByZaiXian"  resultMap="standardSettingResultMap" parameterType="org.springblade.manage.waybill.page.StandardSettingPage">
+        SELECT
+        a.yue,
+       FORMAT(FORMAT(IFNULL(b.zaixianlv,1),2)*100,0) zaixianlv
+        from
+        (
+        select lpad(n.key,2,'0') yue,0 as counts  from nums n where n.key &lt; 13
+        ) a LEFT JOIN
+        (
+        select
+            lpad(a.yue,2,'0') yue,zaixianlv
+         from (
+        SELECT
+        month(createDate) yue,
+        FORMAT(((SELECT count(1) FROM anbiao_vehicle WHERE dept_id=#{deptId} AND cheliangpaizhao NOT LIKE '%挂%' and is_deleted=0)-count(DISTINCT plate))/(SELECT count(1) FROM anbiao_vehicle WHERE dept_id=2 AND cheliangpaizhao NOT LIKE '%挂%' and is_deleted=0),2)  zaixianlv
+        FROM
+        baobiao_offlinedetail WHERE company=(SELECT dept_name FROM blade_dept WHERE id=#{deptId})
+        AND YEAR(createDate)=YEAR (NOW())
+        GROUP BY month(createDate))a
+        )b
+        on a.yue =b.yue
+        ORDER BY a.yue
+    </select>
+    <!--月达标率 -->
+    <select id="selectByYueDaBiao" resultMap="standardSettingResultMap" parameterType="org.springblade.manage.waybill.page.StandardSettingPage">
+        SELECT
+        FORMAT(sum(CASE WHEN dabiao  &lt; shiji THEN 1 ELSE 0 END)/count(1),2) wanchenglv
+			FROM(
+					SELECT
+							a.cheliangpaizhao,
+							a.chepaiyanse,
+							sum(d.mileageCount) shiji,
+							a.dabiao
+					FROM
+							(
+							SELECT a.dept_id,a.cheliangpaizhao,a.chepaiyanse,IFNULL(b.shuju,c.shuju)dabiao from anbiao_vehicle a
+							LEFT JOIN manage_standard_setting b
+							on a.id=b.vehicle_id and b.yue=${month}
+							LEFT JOIN manage_defaults c
+							on a.dept_id = c.dept_id and c.yue=${month}
+							WHERE a.dept_id=#{deptId}  AND a.cheliangpaizhao NOT LIKE '%挂%' and a.is_deleted=0
+					) a
+					LEFT JOIN baobiao_vehdailyreport d
+					on a.cheliangpaizhao=d.plate
+					and a.chepaiyanse=d.color
+					and YEAR (date) = ${year}
+					AND MONTH (date) = ${month}
+					AND company = (
+							SELECT dept_name FROM blade_dept WHERE id=#{deptId})
+					GROUP BY
+					a.cheliangpaizhao,a.chepaiyanse,a.dabiao
+					)a
+    </select>
+    <!--运营监控(本月) -->
+    <select id="selecBenYueJiankong" resultMap="standardSettingResultMap" parameterType="org.springblade.manage.waybill.page.StandardSettingPage">
+       select  * from(
+       SELECT
+            a.cheliangpaizhao,
+            chepaiyanse,
+            shiji,
+            dabiao,
+            CASE WHEN shiji&gt;dabiao THEN '100' ELSE FORMAT(FORMAT(shiji/dabiao,2)*100,0) END wanchenglv,
+            b.hegelv
+            FROM(
+                SELECT
+                    a.cheliangpaizhao,
+                    a.chepaiyanse,
+                    CONVERT(sum(d.mileageCount),DECIMAL(10,0)) shiji,
+                    a.dabiao
+                FROM
+                    (
+                    SELECT a.dept_id,a.cheliangpaizhao,a.chepaiyanse,IFNULL(b.shuju,c.shuju)dabiao from anbiao_vehicle a
+                    LEFT JOIN manage_standard_setting b
+                    on a.id=b.vehicle_id and b.yue=${month}
+                    LEFT JOIN manage_defaults c
+                    on a.dept_id = c.dept_id and c.yue=${month}
+                    WHERE a.dept_id=#{deptId}  AND a.cheliangpaizhao NOT LIKE '%挂%' and a.is_deleted=0
+                ) a
+                LEFT JOIN baobiao_vehdailyreport d
+                on a.cheliangpaizhao=d.plate
+                and a.chepaiyanse=d.color
+                and YEAR (date) = ${year}
+                AND MONTH (date) = ${month}
+                AND company = (
+                    SELECT dept_name FROM blade_dept WHERE id=#{deptId})
+                GROUP BY
+                a.cheliangpaizhao,a.chepaiyanse,a.dabiao
+                )a
+                LEFT JOIN(
+                SELECT
+                a.cheliangpaizhao,
+                FORMAT(FORMAT(sum(CASE WHEN shiji&gt;a.dabiao then 1 ELSE 0 end)/count(1),2)*100,0) hegelv
+                FROM(
+                SELECT
+                            a.cheliangpaizhao,
+                            a.chepaiyanse,
+                            a.yue,
+                            sum(ifnull(d.mileageCount,0)) shiji,
+                            a.dabiao,
+                            CASE WHEN sum(ifnull(d.mileageCount,0))&gt;=a.dabiao then '已达标' ELSE '未达标' end as d
+                        FROM
+                            (
+                            SELECT  a.dept_id,a.cheliangpaizhao,a.chepaiyanse,ifnull(b.yue,c.yue) yue,IFNULL(max(b.shuju),min(c.shuju))dabiao from anbiao_vehicle a
+                            LEFT JOIN manage_defaults c
+                            on a.dept_id = c.dept_id
+                            LEFT JOIN manage_standard_setting b
+                            on a.id=b.vehicle_id  and b.yue =c.yue
+                            WHERE a.dept_id=#{deptId}  AND a.cheliangpaizhao NOT LIKE '%挂%' and a.is_deleted=0
+                            GROUP BY a.dept_id,a.cheliangpaizhao,a.chepaiyanse,b.yue,c.yue
+                            ORDER BY a.cheliangpaizhao,c.yue
+                        ) a
+                        LEFT JOIN baobiao_vehdailyreport d
+                        on a.cheliangpaizhao=d.plate
+                        and a.chepaiyanse=d.color
+                        and YEAR (d.date) = ${year}
+                        AND MONTH(d.date) = a.yue
+                        AND company =(SELECT dept_name FROM blade_dept WHERE id=#{deptId})
+                        GROUP BY
+                        a.cheliangpaizhao,a.chepaiyanse,a.yue,a.dabiao
+                )a GROUP BY cheliangpaizhao
+                )b ON a.cheliangpaizhao=b.cheliangpaizhao)a  ORDER BY (wanchenglv+0) ASC
+    </select>
+</mapper>

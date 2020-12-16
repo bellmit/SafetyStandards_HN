@@ -1,0 +1,17 @@
+package org.springblade.deadline.service;
+
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import org.springblade.deadline.entity.Deadline;
+
+/**
+ * @Description:
+ * @Param:
+ * @return:
+ * @Author: wj
+ * @Date: 2019-04-23
+ */
+public interface  DeadlineService extends IService<Deadline> {
+
+	Deadline selectByMainboard(String mainboard);
+}

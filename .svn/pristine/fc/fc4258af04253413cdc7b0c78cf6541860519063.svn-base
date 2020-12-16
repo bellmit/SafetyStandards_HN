@@ -1,0 +1,56 @@
+package org.springblade.upload.upload.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.springblade.upload.upload.entity.FileUpload;
+
+import java.util.List;
+
+
+/**
+* @Description:
+* @Param: 
+* @return: 
+* @Author: wj
+* @Date: 2019-04-11
+*/ 
+public interface FileUploadMapper extends BaseMapper<FileUpload> {
+	/**
+	* @Description:
+	* @param: filename
+	* @return: org.springblade.deadline.entity.FileUpload
+	* @Author: wj
+	* @Date: 2019-04-11
+	*/
+	FileUpload selectByFileName(String filename);
+	/**
+	* @Description:
+	* @param: [attachcode]
+	* @return: java.util.List<org.springblade.deadline.entity.FileUpload>
+	* @Author: wj
+	* @Date: 2019-04-11
+	*/
+	List<FileUpload> selectAll(String attachcode);
+	/**
+	* @Description: 根据attachcode与保存名称查询需要清理的数据
+	* @Param: [attachcode, str]
+	* @return: java.util.List<org.springblade.anbiao.upload.entity.FileUpload>
+	* @Author: wj
+	* @Date: 2019-05-22
+	*/ 
+//	List<FileUpload>  selectByNotSaveName(String attachcode,List<String> str);
+
+	/**
+	 * 根据id修改附件状态
+	 * @param FileUpload
+	 * @return
+	 */
+	boolean updateCorrelation(FileUpload FileUpload);
+
+	boolean delByFileName(String filename);
+	/**
+	 * 自定义新增
+	 * @param FileUpload
+	 * @return
+	 */
+	boolean insertAttachfile(FileUpload FileUpload);
+}

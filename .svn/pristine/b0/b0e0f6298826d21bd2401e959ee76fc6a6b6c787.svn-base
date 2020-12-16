@@ -1,0 +1,1 @@
+restart.include.blade-alarm-api=/blade-alarm-api[\\w-]+\.jar

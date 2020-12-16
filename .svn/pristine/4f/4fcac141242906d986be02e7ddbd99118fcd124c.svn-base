@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.anbiao.yingjijiuyuan.mapper.YuanxiudingMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="yuanxiudingResultMap" type="org.springblade.anbiao.yingjijiuyuan.entity.Yuanxiuding">
+        <id column="id" property="id"/>
+        <result column="yuanid" property="yuanid"/>
+        <result column="yuanmingcheng" property="yuanmingcheng"/>
+        <result column="xiugaiyiju" property="xiugaiyiju"/>
+        <result column="xiugaitiaokuan" property="xiugaitiaokuan"/>
+        <result column="xiudingshijian" property="xiudingshijian"/>
+        <result column="pizhunren" property="pizhunren"/>
+        <result column="beizhu" property="beizhu"/>
+        <result column="is_deleted" property="isdel"/>
+    </resultMap>
+
+    <!-- 假删除 -->
+    <update id="deleteYuanxiuding" parameterType="java.lang.String" >
+         update anbiao_yuanxiuding set
+            is_deleted = 1
+        WHERE id = #{id}
+    </update>
+
+    <!-- 根据应急预案id 查询列表 -->
+    <select id="selectByYuanId" resultMap="yuanxiudingResultMap" parameterType="java.lang.String">
+        select  *  from  anbiao_yuanxiuding
+        where yuanid=#{id} and ifnull(is_deleted,0)=0
+    </select>
+
+</mapper>

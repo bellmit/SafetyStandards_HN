@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.anbiao.qiyeshouye.mapper.QiYeShouYeMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="ResultMap" type="org.springblade.anbiao.qiyeshouye.entity.QiYeShouYe">
+    </resultMap>
+
+    <select id="selectMonthVehcile" resultType="org.springblade.anbiao.qiyeshouye.entity.QiYeShouYe">
+        select
+            deptid as deptId,
+            IFNULL(max(jkvehnum),0) as zcvehnum,
+            IFNULL(max(sxvehnum),0) as sxvehnum,
+            IFNULL(max(tyvehnum),0) as tyvehnum,
+            IFNULL(max(jkvehnum),0)-IFNULL(max(sxvehnum),0) as lxvehnum
+        from
+            baobiao_cheliangjiankong_info
+        where deptid = #{deptId}
+            and date_format(time,'%Y-%m') = date_format(CURDATE(),'%Y-%m')
+        GROUP BY
+            deptid
+    </select>
+
+    <select id="selectYearAlarm" resultType="org.springblade.anbiao.qiyeshouye.entity.QiYeShouYe">
+        select
+            id as deptId,
+            dept_name as deptName,
+            date,
+            baojingcishu,
+            bdbaojingcishu,
+            case
+                when IFNULL(bdbaojingcishu,0) = 0 or IFNULL(baojingcishu,0) = 0 then '0.00%'
+                else CONCAT(ROUND((bdbaojingcishu*1.0/baojingcishu)*100,2),'%')
+            end as bdzhanbi,
+            sbbaojingcishu,
+            case
+                when IFNULL(sbbaojingcishu,0) = 0 or IFNULL(baojingcishu,0) = 0 then '0.00%'
+                else CONCAT(ROUND((sbbaojingcishu*1.0/baojingcishu)*100,2),'%')
+            end as sbzhanbi,
+            baojingclcishu,
+            case
+                when IFNULL(baojingclcishu,0) = 0 or IFNULL(baojingcishu,0) = 0 then '0.00%'
+                else CONCAT(ROUND((baojingclcishu*1.0/baojingcishu)*100,2),'%')
+            end as zongchulilv,
+            bdbaojingclcishu,
+            case
+                when IFNULL(bdbaojingclcishu,0) = 0 or IFNULL(baojingcishu,0) = 0 then '0.00%'
+                else CONCAT(ROUND((bdbaojingclcishu*1.0/baojingcishu)*100,2),'%')
+            end as bdchulilv,
+            sbbaojingclcishu,
+            case
+                when IFNULL(sbbaojingclcishu,0) = 0 or IFNULL(baojingcishu,0) = 0 then '0.00%'
+                else CONCAT(ROUND((sbbaojingclcishu*1.0/baojingcishu)*100,2),'%')
+            end as sbchulilv,
+            ifnull(bdbaojingcishu,0) - ifnull(bdbaojingclcishu,0) as bdweichulishu,
+            ifnull(sbbaojingcishu,0) - ifnull(sbbaojingclcishu,0) as sbweichulishu
+        from
+            anbiao_baojingjiesuan_year
+        where 1=1
+            and id = #{deptId}
+            and date = #{year}
+    </select>
+
+    <select id="selectYearAlarmTendency" resultType="org.springblade.anbiao.qiyeshouye.entity.QiYeShouYe">
+        select
+            cid as deptId,
+            company as deptName,
+            CONCAT(nian,'-',yue) as date,
+            baojingcishu,
+            baojingclcishu as zcbaojingclcishu,
+            0 as csbaojingclcishu
+        from
+            baobiao_alarmmonthreport
+        where cid = #{deptId}
+            and nian = #{year}
+        order by yue asc
+    </select>
+
+    <select id="selectSevenAlarmStatistics" resultType="org.springblade.anbiao.qiyeshouye.entity.QiYeShouYe">
+        <!--select
+            right(a.day1, 5) as date,
+            IFNULL(b.baojingzongshu,0) as baojingcishu,
+            IFNULL(b.chulizongshu,0) as chulizongshu,
+            IFNULL(b.baojingzongshu,0)- IFNULL(b.chulizongshu,0) as weichulizongshu,
+            IFNULL(b.gpsbaojingshu,0) as bdbaojingcishu,
+            IFNULL(b.shebeibaojingshu,0) as sbbaojingcishu,
+            IFNULL(b.gpschulishu,0) as sevengpschulishu,
+            IFNULL(b.shebeichulishu,0) as sevenshebeichulishu,
+            IFNULL((IFNULL(b.gpsbaojingshu,0)-IFNULL(b.gpschulishu,0)),0) as bdweichulishu,
+            IFNULL((IFNULL(b.shebeibaojingshu,0)-IFNULL(b.shebeichulishu,0)),0) as sbweichulishu
+            from(
+                select * from anbiao_sevenDate
+            )a
+            left join(
+            select
+            b.time,
+            IFNULL(sum(b.gpsbaojingshu),0) as gpsbaojingshu,
+            IFNULL(sum(c.shebeibaojingshu),0) as shebeibaojingshu,
+            IFNULL(sum(b.gpschulishu),0) as gpschulishu,
+            IFNULL(sum(c.shebeichulishu),0) as shebeichulishu,
+            IFNULL(SUM(b.gpsbaojingshu),0)+IFNULL(SUM(c.shebeibaojingshu),0) as baojingzongshu,
+            IFNULL(SUM(b.gpschulishu),0)+IFNULL(SUM(c.shebeichulishu),0) as chulizongshu
+            from(
+            select
+            dept_id,dept_name as qiyemingcheng,jigouleixing,province,city,country
+            from
+            anbiao_organization
+            where jigouleixing in ('qiye','geti') and isdelete = 0
+            and dept_id = #{deptId}
+            )a
+            left join(
+            select
+            a.company,
+            time,
+            COUNT(a.AlarmReportID) as gpsbaojingshu,
+            sum(a.chulishu) as gpschulishu
+            from(
+            SELECT
+            a.company,
+            a.AlarmReportID,
+            date_format(cutofftime,'%Y-%m-%d') time,
+            b.chulizhuangtai,
+            b.remark,
+            case
+            when IFNULL(chulizhuangtai,'') = 1 then 1
+            else 0
+            end as chulishu
+            FROM
+            baobiao_alarmsummary_cutofftime AS a
+            left JOIN baobiao_alarmhandleresult AS b ON a.AlarmReportID = b.baojingid  and ifnull(b.is_deleted,0) = 0
+            where 1=1
+            and date_format(cutofftime,'%Y-%m') &gt;= date_format(DATE_SUB(curdate(),INTERVAL 7 DAY),'%Y-%m')
+            and date_format(cutofftime,'%Y-%m') &lt;= date_format(DATE_SUB(curdate(),INTERVAL 0 DAY),'%Y-%m')
+            and AlarmType in ('超速报警','疲劳驾驶报警','夜间行驶报警','无数据报警','不定位报警')
+            and passed = 100
+            and AnalyzeMode = 1
+            )a
+            group by
+            a.company,
+            time
+            )b on a.qiyemingcheng = b.company
+            left join(
+            select
+            a.company,
+            time,
+            COUNT(a.id) as shebeibaojingshu,
+            sum(a.chulishu) as shebeichulishu
+            from(
+            SELECT
+            a.id,
+            a.company,
+            b.chulizhuangtai,
+            b.remark,
+            date_format(GpsTime,'%Y-%m-%d') as time,
+            case
+            when IFNULL(chulizhuangtai,'') = 1 then 1
+            else 0
+            end as chulishu
+            FROM
+            baobiao_driverbehavior AS a
+            left JOIN baobiao_alarmhandleresult AS b ON a.id = b.baojingid AND remark = 1 and ifnull(b.is_deleted,0) = 0
+            where 1=1
+            and stateEx = '核定报警'
+            and date_format(GpsTime,'%Y-%m') &gt;= date_format(DATE_SUB(curdate(),INTERVAL 7 DAY),'%Y-%m')
+            and date_format(GpsTime,'%Y-%m') &lt;= date_format(DATE_SUB(curdate(),INTERVAL 0 DAY),'%Y-%m')
+            and AlarmType in ('接打电话报警','疲劳驾驶报警','分神驾驶报警','抽烟报警')
+            )a
+            group by
+            a.company,
+            time
+            )c on a.qiyemingcheng = c.company and b.time = c.time
+            where IFNULL(b.time,'') != ''
+            GROUP BY
+            b.time
+            )b on a.day1 = b.time
+            ORDER BY a.day1 asc -->
+
+        select
+            right(a.day1, 5) as date,
+            IFNULL(b.baojingzongshu,0) as baojingcishu,
+            IFNULL(b.chulizongshu,0) as chulizongshu,
+            IFNULL(b.baojingzongshu,0)- IFNULL(b.chulizongshu,0) as weichulizongshu,
+            IFNULL(b.gpsbaojingshu,0) as bdbaojingcishu,
+            IFNULL(b.shebeibaojingshu,0) as sbbaojingcishu,
+            IFNULL(b.gpschulishu,0) as sevengpschulishu,
+            IFNULL(b.shebeichulishu,0) as sevenshebeichulishu,
+            IFNULL((IFNULL(b.gpsbaojingshu,0)-IFNULL(b.gpschulishu,0)),0) as bdweichulishu,
+            IFNULL((IFNULL(b.shebeibaojingshu,0)-IFNULL(b.shebeichulishu,0)),0) as sbweichulishu
+        from(
+            select * from anbiao_sevenDate
+            )a
+        left join(
+            select
+                b.*
+            from(
+                select
+                    dept_id,dept_name as qiyemingcheng,jigouleixing,province,city,country
+                from
+                    anbiao_organization
+                where jigouleixing in ('qiye','geti') and isdelete = 0
+                    and dept_id = #{deptId}
+                )a
+        left join(
+            select
+                cid,
+                company,
+                date,
+                ifnull(sum(baojingcishu),0) as baojingzongshu,
+                ifnull(sum(baojingclcishu),0) as chulizongshu,
+                ifnull(sum(chaosu),0) as gpschaosu,
+                ifnull(sum(pilao),0) as gpspilao,
+                ifnull(sum(yejian),0) as gpsyejian,
+                ifnull(sum(wushuju),0)+ifnull(sum(budingwei),0) as gpsyichang,
+                ifnull(sum(chaosu),0)+ifnull(sum(pilao),0)+ifnull(sum(yejian),0)+ifnull(sum(wushuju),0)+ifnull(sum(budingwei),0) as gpsbaojingshu,
+                ifnull(sum(pilaoshipin),0) as dmspilao,
+                ifnull(sum(dadianhua),0) as dmsjiedadianhua,
+                ifnull(sum(chouyan),0) as dmschouyan,
+                ifnull(sum(fenshen),0) as dmsfenshen,
+                ifnull(sum(pilaoshipin),0)+ifnull(sum(dadianhua),0)+ifnull(sum(chouyan),0)+ifnull(sum(fenshen),0)	shebeibaojingshu,
+                ifnull(sum(chaosucl),0) as chaosucl,
+                ifnull(sum(pilaocl),0) as pilaocl,
+                ifnull(sum(yejiancl),0) as yejiancl,
+                ifnull(sum(wushujucl),0)+ifnull(sum(budingweicl),0) as yichangcl,
+                ifnull(sum(chaosucl),0)+ifnull(sum(pilaocl),0)+ifnull(sum(yejiancl),0)+ifnull(sum(wushujucl),0)+ifnull(sum(budingweicl),0) as gpschulishu,
+                ifnull(sum(pilaoshipincl),0) as pilaoshipincl,
+                ifnull(sum(dadianhuacl),0) as dadianhuacl,
+                ifnull(sum(chouyancl),0) as chouyancl,
+                ifnull(sum(fenshencl),0) as fenshencl,
+                ifnull(sum(pilaoshipincl),0)+ifnull(sum(dadianhuacl),0)+ifnull(sum(chouyancl),0)+ifnull(sum(fenshencl),0) as shebeichulishu
+            from
+                baobiao_alarmdailyreport
+            where 1=1
+                and date &gt;= date_format(DATE_SUB(curdate(),INTERVAL 7 DAY),'%Y-%m-%d')
+                and date &lt;= date_format(DATE_SUB(curdate(),INTERVAL 0 DAY),'%Y-%m-%d')
+            GROUP BY
+                cid,
+                company,
+                date
+            )b on a.qiyemingcheng = b.company
+            where IFNULL(b.date,'') != ''
+        )b on b.date = a.day1
+        ORDER BY a.day1 asc
+    </select>
+
+</mapper>

@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.gps2.mapper.Gps2PointDataMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="pointResultMap" type="java.util.Map">
+    </resultMap>
+
+<!--    <select id="selectPointData" resultType="org.springblade.gps.entity.VehilePTData">-->
+<!--        select a.Velocity as Speed,-->
+<!--        a.Longitude as longitude,-->
+<!--        a.Latitude as latitude,-->
+<!--        a.gpsmileage,-->
+<!--        a.[Time] as GpsTime,-->
+<!--        a.VehId as VehId,-->
+<!--        b.cph as plate-->
+<!--        from Dyndata as a-->
+<!--        inner join Vehicle b-->
+<!--        on a.VehId = b.Id-->
+<!--        where a.[Time] &gt;= #{param1}-->
+<!--        AND a.[Time] &lt;= #{param2}-->
+<!--        AND a.VehId = #{param3}-->
+<!--        ORDER BY [Time]-->
+<!--    </select>-->
+
+    <select id="selectPointData" resultType="org.springblade.gps.entity.VehilePTData" parameterType="map">
+        select
+            VehicleId as VehId,
+            GpsTime,
+            Longitude as longitude,
+            Latitude as latitude,
+            Velocity as Speed
+        from
+            HistoryLocation
+        where 1=1
+            and GpsTime &gt;= #{beginTime}
+            and GpsTime &lt;= #{endTime}
+            and VehicleId = #{vehId}
+        ORDER BY GpsTime
+    </select>
+    <!--获取企业车辆牌照相关信息-->
+    <select id="selectcompanyAll" resultType="org.springblade.gps.entity.VehiclePTCompany">
+
+            SELECT
+	            a.id,
+            	a.userid,
+	            a.cph,
+	            a.Deviceid,
+	            a.platecolor,
+            	a.vehtype,
+                b.khqc AS company
+            FROM
+	            Vehicle a
+            INNER JOIN Client b ON a.userid = b.id
+            WHERE
+	            b.khqc = #{company}
+
+
+
+
+    </select>
+    <!--根据车牌 车牌颜色查询gps库 车辆id-->
+    <select id="selectOneGpsVehicle" resultType="org.springblade.gps.entity.GpsVehicle">
+
+                SELECT
+	                TOP 1 id AS vehid,
+                	cph,
+	                platecolor
+                FROM
+	                Vehicle
+                WHERE
+	                cph = #{cph}
+                AND platecolor =#{color}
+
+
+
+
+
+
+    </select>
+    <!--根据车辆id 查询车辆停车点信息-->
+    <select id="selectallofVehid" resultType="org.springblade.gps.entity.VehicleStopData">
+       select * from ( SELECT
+        Longitude,
+        Latitude,
+        begintime,
+        endtime,
+        vehid,
+        velocity speed,
+        cph,
+        CONCAT (
+        (
+        floor(
+        datediff(SECOND, begintime, endtime) / 86400
+        )
+        ),
+        '天',
+        (
+        floor(
+        datediff(SECOND, begintime, endtime) / 3600
+        ) % 24
+        ),
+        '时',
+        (
+        floor(
+        datediff(SECOND, begintime, endtime) / 60
+        ) % 60
+        ),
+        '分',
+        (
+        datediff(SECOND, begintime, endtime) % 60
+        ),
+        '秒'
+        ) AS timesShow,
+        datediff(SECOND, begintime, endtime) AS times
+        FROM
+        (
+        SELECT
+        a.*, (
+        SELECT
+        MIN (TIME)
+        FROM
+        dyndata
+        WHERE
+        vehid = #{vehid}
+        AND TIME &gt;= #{begintime}
+        AND TIME &lt;= #{endtime}
+        AND velocity = 0
+        AND Latitude = a.Latitude
+        AND Longitude = a.Longitude
+        ) begintime,
+        (
+        SELECT
+        MAX (TIME)
+        FROM
+        dyndata
+        WHERE
+         vehid = #{vehid}
+        AND TIME &gt;= #{begintime}
+        AND TIME &lt;= #{endtime}
+        AND velocity = 0
+        AND Latitude = a.Latitude
+        AND Longitude = a.Longitude
+        ) endtime
+        FROM
+        (
+        SELECT
+        velocity,
+        vehicle.id vehid,
+        Longitude,
+        Latitude,
+        cph
+        FROM
+        dyndata,
+        vehicle
+        WHERE
+        vehicle.id = dyndata.vehid
+         and vehid = #{vehid}
+        AND TIME &gt;= #{begintime}
+        AND TIME &lt;= #{endtime}
+        AND velocity = 0
+        GROUP BY
+        Longitude,
+        Latitude,
+        vehicle.id,
+        velocity,
+        cph
+        ) a
+        ) a
+        WHERE
+        datediff(SECOND, begintime, endtime) >= 600
+        ) a where 1=1
+        <include refid="querytabel"/>
+        ORDER BY
+        begintime
+
+
+
+
+
+
+
+    </select>
+    <sql id="querytabel">
+        <if test="timequery=='10分钟'.toString()">
+            AND times>600
+
+        </if>
+        <if test="timequery=='1小时'.toString()">
+            AND times>3600
+
+        </if>
+        <if test="timequery=='6小时'.toString()">
+            AND times>21600
+
+        </if>
+        <if test="timequery=='12小时'.toString()">
+            AND times>43200
+
+        </if>
+
+
+    </sql>
+    <!--获取企业下的所有车辆停车点-->
+    <select id="selectallofCompany" resultType="org.springblade.gps.entity.VehicleStopData">
+      select *from(  SELECT
+        Longitude,
+        Latitude,
+        begintime,
+        endtime,
+        vehid,
+        velocity speed,
+        cph,
+        platecolor,
+        CONCAT (
+        (
+        floor(
+        datediff(SECOND, begintime, endtime) / 86400
+        )
+        ),
+        '天',
+        (
+        floor(
+        datediff(SECOND, begintime, endtime) / 3600
+        ) % 24
+        ),
+        '时',
+        (
+        floor(
+        datediff(SECOND, begintime, endtime) / 60
+        ) % 60
+        ),
+        '分',
+        (
+        datediff(SECOND, begintime, endtime) % 60
+        ),
+        '秒'
+        ) AS timesShow,
+        datediff(SECOND, begintime, endtime) AS times
+        FROM
+        (
+        SELECT
+        a.*, (
+        SELECT
+        MIN (TIME)
+        FROM
+        dyndata
+        WHERE
+        vehid = a.vehid
+        AND TIME &gt;= #{begintime}
+        AND TIME &lt;= #{endtime}
+        AND velocity = 0
+        AND Latitude = a.Latitude
+        AND Longitude = a.Longitude
+        ) begintime,
+        (
+        SELECT
+        MAX (TIME)
+        FROM
+        dyndata
+        WHERE
+        vehid = a.vehid
+        AND TIME &gt;= #{begintime}
+        AND TIME &lt;= #{endtime}
+        AND velocity = 0
+        AND Latitude = a.Latitude
+        AND Longitude = a.Longitude
+        ) endtime
+        FROM
+        (
+        SELECT
+        velocity,
+        vehicle.id vehid,
+        Longitude,
+        Latitude,
+        cph,
+        platecolor
+        FROM
+        dyndata,
+        vehicle
+        WHERE
+        vehicle.id = dyndata.vehid
+        AND vehid IN (
+        SELECT
+        id
+        FROM
+        Vehicle
+        WHERE
+        userid = (
+        SELECT
+        id
+        FROM
+        Client
+        WHERE
+        khqc = #{company}
+        )
+        )
+        AND TIME &gt;= #{begintime}
+        AND TIME &lt;= #{endtime}
+        AND velocity = 0
+        GROUP BY
+        Longitude,
+        Latitude,
+        vehicle.id,
+        velocity,
+        cph,
+        platecolor
+        ) a
+        ) a
+        WHERE
+        datediff(SECOND, begintime, endtime) >= 600
+        ) aa
+        where 1=1
+        ORDER BY
+        vehid,
+        begintime
+
+    </select>
+    <!--查询企业下停车的车辆和gps车辆id-->
+    <select id="selectPlateVehid" resultType="org.springblade.gps.entity.GpsPlateVehid">
+
+            select cph,vehid from (SELECT
+        Longitude,
+        Latitude,
+        begintime,
+        endtime,
+        vehid,
+        platecolor,
+        cph,
+        CONVERT (VARCHAR(100), begintime, 23) tonjishijian,
+        CONCAT (
+        (
+        floor(
+        datediff(SECOND, begintime, endtime) / 86400
+        )
+        ),
+        '天',
+        (
+        floor(
+        datediff(SECOND, begintime, endtime) / 3600
+        ) % 24
+        ),
+        '时',
+        (
+        floor(
+        datediff(SECOND, begintime, endtime) / 60
+        ) % 60
+        ),
+        '分',
+        (
+        datediff(SECOND, begintime, endtime) % 60
+        ),
+        '秒'
+        ) AS tingcheshijian,
+        datediff(SECOND, begintime, endtime) AS times
+        FROM
+        (
+        SELECT
+        a.*, (
+        SELECT
+        MIN (TIME)
+        FROM
+        dyndata
+        WHERE
+        vehid = a.vehid
+        AND TIME &gt;= #{begintime}
+        AND TIME &lt;= #{endtime}
+        AND velocity = 0
+        AND Latitude = a.Latitude
+        AND Longitude = a.Longitude
+        ) begintime,
+        (
+        SELECT
+        MAX (TIME)
+        FROM
+        dyndata
+        WHERE
+        vehid = a.vehid
+        AND TIME &gt;= #{begintime}
+        AND TIME &lt;= #{endtime}
+        AND velocity = 0
+        AND Latitude = a.Latitude
+        AND Longitude = a.Longitude
+        ) endtime
+        FROM
+        (
+        SELECT
+        vehicle.id vehid,
+        Longitude,
+        Latitude,
+        platecolor,
+        cph
+        FROM
+        dyndata,
+        vehicle
+        WHERE
+        vehicle.id = dyndata.vehid
+        AND vehid in(
+
+
+
+        select id from Vehicle where userid=(
+        select  id from Client where khqc=#{company}
+
+
+
+        )
+
+
+        )
+        AND TIME &gt;= #{begintime}
+        AND TIME &lt;= #{endtime}
+        AND velocity = 0
+        GROUP BY
+        Longitude,
+        Latitude,
+        vehicle.id,
+        platecolor,
+        cph
+        ) a
+        ) a
+        WHERE
+        datediff(SECOND, begintime, endtime) >= 600
+
+        ) a GROUP BY cph,vehid
+
+
+
+
+    </select>
+
+
+</mapper>

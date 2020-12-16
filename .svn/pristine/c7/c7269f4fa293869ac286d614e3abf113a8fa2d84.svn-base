@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.alarm.mapper.StopvehicleMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="stopvehicleResultMap" type="org.springblade.alarm.entity.Stopvehicle">
+        <id column="id" property="id"/>
+        <result column="vehid" property="vehid"/>
+        <result column="plate" property="plate"/>
+        <result column="color" property="color"/>
+        <result column="company" property="company"/>
+        <result column="begintime" property="begintime"/>
+        <result column="endtime" property="endtime"/>
+        <result column="lat" property="lat"/>
+        <result column="lon" property="lon"/>
+        <result column="location" property="location"/>
+        <result column="Inserttime" property="Inserttime"/>
+        <result column="times" property="times"/>
+    </resultMap>
+    <insert id="insertStopvehicle">
+            INSERT INTO baobiao_stopvehicle (
+            id,
+            vehid,
+            color,
+	        company,
+	        begintime,
+	        endtime,
+	        lat,
+	        lon,
+	        location,
+	        Inserttime,
+	        plate,
+	        times
+             )
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.id},
+            #{item.vehid},
+            #{item.color},
+            #{item.company},
+            #{item.begintime},
+            #{item.endtime},
+            #{item.lat},
+            #{item.lon},
+            #{item.location},
+            NOW(),
+            #{item.plate},
+            #{item.times}
+            )
+        </foreach>
+
+
+
+
+
+    </insert>
+
+
+    <select id="selectStopvehiclePage" resultMap="stopvehicleResultMap">
+                    SELECT
+	                        dept_name
+                    FROM
+	                        blade_dept
+                    WHERE
+	                        tree_code LIKE '000001000003000004%'
+
+                    AND NOT dept_name LIKE '安全部'
+                    AND NOT dept_name LIKE '安全员'
+
+
+
+
+
+    </select>
+    <select id="deptAll" resultType="java.lang.String">
+
+                   SELECT
+	                        dept_name
+                    FROM
+	                        blade_dept
+                    WHERE
+	                        tree_code LIKE '000001000003000004%'
+
+                    AND NOT dept_name LIKE '安全部'
+                    AND NOT dept_name LIKE '安全员'
+
+
+
+    </select>
+
+</mapper>

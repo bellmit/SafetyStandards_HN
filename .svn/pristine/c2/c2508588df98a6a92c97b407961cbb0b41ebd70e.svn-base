@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.system.mapper.DeptMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="deptResultMap" type="org.springblade.system.entity.Dept">
+        <id column="id" property="id"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="dept_name" property="deptName"/>
+        <result column="full_name" property="fullName"/>
+        <result column="sort" property="sort"/>
+        <result column="remark" property="remark"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="tree_code" property="treeCode"/>
+        <result column="extend_type" property="extendType"/>
+    </resultMap>
+
+    <resultMap id="treeNodeResultMap" type="org.springblade.system.vo.DeptVO">
+        <id column="id" property="id"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="label" property="label"/>
+        <result column="tree_code" property="treeCode"/>
+        <result column="extend_type" property="extendType"/>
+        <result column="title" property="title"/>
+        <result column="value" property="value"/>
+        <result column="key" property="key"/>
+        <result column="existChild" property="existChild"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="baseColumnList">
+        select
+        id, parent_id, dept_name, full_name, sort, remark, is_deleted
+    </sql>
+
+    <select id="selectDeptPage" resultMap="deptResultMap">
+        select * from blade_dept where is_deleted = 0
+    </select>
+
+    <select id="tree" resultMap="treeNodeResultMap">
+        SELECT DISTINCT
+        xiaji.id,
+        xiaji.parent_id,
+        xiaji.dept_name,
+        xiaji.tree_code,
+        xiaji.extend_type,
+        case when (select COUNT(*) from blade_dept as t1 where t1.parent_id=xiaji.id  AND t1.is_deleted = 0)>0 then 1 else 0 end existChild
+        FROM
+        blade_dept shangji,
+        blade_dept xiaji
+        WHERE xiaji.tree_code LIKE CONCAT(shangji.tree_code,'%')
+        AND xiaji.is_deleted = 0
+        <choose>
+            <when test="type==1 ">
+                AND xiaji.id=#{param1}
+            </when>
+            <otherwise>
+                and xiaji.parent_id=#{param1}
+            </otherwise>
+        </choose>
+
+    </select>
+
+    <select id="treeDG" resultMap="treeNodeResultMap">
+        SELECT DISTINCT
+        xiaji.id,
+        xiaji.parent_id,
+        xiaji.dept_name,
+        xiaji.tree_code,
+        xiaji.extend_type,
+        case when (select COUNT(*) from blade_dept as t1 where t1.parent_id=xiaji.id)>0 then 1 else 0 end existChild
+        FROM
+        blade_dept shangji,
+        blade_dept xiaji
+        WHERE xiaji.tree_code LIKE CONCAT(shangji.tree_code,'%')
+        AND xiaji.is_deleted = 0
+        and shangji.id=#{param1}
+        ORDER BY xiaji.id
+    </select>
+    <select id="YDtree" resultMap="treeNodeResultMap">
+         SELECT DISTINCT
+        xiaji.id,
+        xiaji.parent_id,
+        xiaji.dept_name,
+        xiaji.tree_code,
+        xiaji.extend_type,
+        xiaji.dept_name title,
+        xiangxi.jigouleixing,
+        case when (select COUNT(*) from blade_dept as t1 where t1.parent_id=xiaji.id)>0 then 1 else 0 end existChild
+        FROM
+        blade_dept shangji,
+        blade_dept xiaji,
+        anbiao_organization xiangxi
+        WHERE xiaji.tree_code LIKE CONCAT(shangji.tree_code,'%')
+        AND xiaji.is_deleted = 0
+        AND xiaji.extend_type='机构'
+        AND shangji.extend_type='机构'
+        and xiangxi.dept_id = xiaji.id
+        AND shangji.id=#{param1}
+    </select>
+
+    <select id="selectByJGBM" resultMap="deptResultMap">
+  	select b.* FROM
+		(
+		select
+			max(shangji.TREE_CODE) TREE_CODE
+		from
+			blade_dept shangji,
+			blade_dept xiaji
+		WHERE
+			xiaji.TREE_CODE LIKE CONCAT(shangji.tree_code,'%')
+			and shangji.EXTEND_TYPE=#{param1}
+			and xiaji.id=#{param2}
+		)a,blade_dept b where a.TREE_CODE=b.TREE_CODE
+    </select>
+
+    <insert id="insertDept" parameterType="org.springblade.system.entity.Dept">
+    insert  into  blade_dept(id,parent_id,dept_name,full_name,sort,remark,tree_code,extend_type)
+     values (#{id},#{parentId},#{deptName},#{fullName},#{sort},#{remark},#{treeCode},#{extendType})
+    </insert>
+
+    <select id="selectByDeptId" resultMap="deptResultMap">
+        SELECT
+         	a.*,
+            case when (select COUNT(*) from blade_dept as t1 where t1.parent_id=a.id)>0 then 1 else 0 end existChild
+         from  blade_dept a WHERE id=#{param1}
+    </select>
+
+    <select id="selectCountByparentId" resultType="java.lang.Integer">
+        select  count(1)  from  blade_dept where  is_deleted = 0 and parent_id=#{param1}
+    </select>
+
+    <select id="selectMaxId" resultType="java.lang.Integer">
+            SELECT max(id) id FROM blade_dept;
+    </select>
+
+    <select id="selectByName" resultType="java.lang.Integer">
+         select  count(1)  from  blade_dept where  is_deleted = 0 and full_name=#{param1}
+    </select>
+
+    <select id="getDeptByName" resultMap="deptResultMap">
+        SELECT id,dept_name from blade_dept WHERE dept_name= #{name} and is_deleted = 0 limit 1
+    </select>
+
+    <select id="getByName" resultMap="deptResultMap">
+        SELECT id,dept_name from blade_dept WHERE dept_name like concat('%', #{deptname} ,'%')
+        and is_deleted = 0
+    </select>
+
+    <select id="selectByTreeCode" resultMap="deptResultMap">
+            SELECT  CONCAT(
+                        (SELECT TREE_CODE FROM blade_dept WHERE id = #{param1}),
+                        (
+                        SELECT CONCAT(
+                                    CASE  WHEN LENGTH ((SELECT max(id)+1 FROM blade_dept)) = 1 THEN '00000'
+                                                WHEN LENGTH ((SELECT max(id)+1 FROM blade_dept)) = 2 THEN '0000'
+                                                WHEN LENGTH ((SELECT max(id)+1 FROM blade_dept)) = 3 THEN '000'
+                                                WHEN LENGTH ((SELECT max(id)+1 FROM blade_dept)) = 4 THEN '00'
+                                                WHEN LENGTH ((SELECT max(id)+1 FROM blade_dept)) = 5 THEN '0'
+                                    ELSE '' END ,(SELECT max(id)+1 FROM blade_dept)
+                                    )
+                        )
+                    ) tree_code
+    </select>
+    <!--获取机构自述-->
+    <select id="getDeptSubTree" resultType="org.springblade.system.vo.DeptSubVO">
+         SELECT DISTINCT
+                xiaji.id,
+                xiaji.parent_id,
+                xiaji.dept_name,
+                xiaji.dept_name as title
+            FROM
+                blade_dept shangji,
+                blade_dept xiaji
+            WHERE
+                xiaji.tree_code LIKE CONCAT(shangji.tree_code,'%')
+            AND
+                xiaji.is_deleted = 0 AND xiaji.extend_type='机构'
+            and
+                shangji.id=#{deptId}
+    </select>
+    <!--获取下级企业id-->
+    <select id="getDetpIds" resultType="java.lang.Integer">
+        SELECT DISTINCT
+             xiaji.id,
+                xiaji.parent_id,
+                xiaji.dept_name,
+                xiaji.dept_name as title
+        FROM
+            blade_dept shangji,
+            blade_dept xiaji
+        WHERE
+            xiaji.tree_code LIKE CONCAT(shangji.tree_code, '%')
+        AND xiaji.is_deleted = 0
+        AND xiaji.extend_type = '机构'
+        AND LENGTH(xiaji.tree_code) >= 18
+        AND shangji.id = #{deptId}
+    </select>
+
+    <!--获取省、县运管-->
+    <select id="getRegionGovList" resultType="org.springblade.system.vo.DeptSubVO">
+        select distinct
+            a.id,
+            a.parent_id,
+            a.dept_name,
+            a.dept_name as title
+        FROM blade_dept a
+        inner join anbiao_organization b
+        on a.id = b.dept_id and b.jigouleixing = #{param1}
+        and b.isdelete = 0
+        where a.extend_type='机构' and a.is_deleted = 0
+        <if test="param2 != null and param2 > 0">
+            and a.parent_id = #{param2}
+        </if>
+    </select>
+    <!--获取市运管-->
+    <select id="getRegionGovList_Shi" resultType="org.springblade.system.vo.DeptSubVO">
+        select distinct
+        a.id,
+        a.parent_id,
+        a.dept_name,
+        a.dept_name as title
+        FROM blade_dept a
+        inner join anbiao_organization b
+        on a.id = b.dept_id
+        and b.isdelete = 0
+        where a.extend_type='机构' and a.is_deleted = 0
+            and a.id = #{param2}
+        union
+        select distinct
+        a.id,
+        a.parent_id,
+        a.dept_name,
+        a.dept_name as title
+        FROM blade_dept a
+        inner join anbiao_organization b
+        on a.id = b.dept_id
+        and b.isdelete = 0
+        where a.extend_type='机构' and a.is_deleted = 0
+            and a.parent_id = #{param2}
+    </select>
+
+    <!--  获取省市县 -->
+    <select id="getRegionList" resultType="org.springblade.system.vo.DeptSubVO">
+        select distinct id, parent_id as parentId, dict_value as deptName,dict_value as title from blade_dict
+        where is_deleted = 0
+            and code = #{param1}
+        <if test="param2 != null and param2 > 0">
+            and parent_id = #{param2}
+        </if>
+    </select>
+
+</mapper>

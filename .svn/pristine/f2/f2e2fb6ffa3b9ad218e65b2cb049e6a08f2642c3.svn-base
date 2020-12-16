@@ -1,0 +1,5 @@
+D:\idea\he\SafetyStandards\blade-service-api\blade-dict-api\src\main\java\org\springblade\system\feign\IDictClient.java
+D:\idea\he\SafetyStandards\blade-service-api\blade-dict-api\src\main\java\org\springblade\system\dto\DictDTO.java
+D:\idea\he\SafetyStandards\blade-service-api\blade-dict-api\src\main\java\org\springblade\system\vo\DictVO.java
+D:\idea\he\SafetyStandards\blade-service-api\blade-dict-api\src\main\java\org\springblade\system\entity\Dict.java
+D:\idea\he\SafetyStandards\blade-service-api\blade-dict-api\src\main\java\org\springblade\system\feign\IDictClientFallback.java

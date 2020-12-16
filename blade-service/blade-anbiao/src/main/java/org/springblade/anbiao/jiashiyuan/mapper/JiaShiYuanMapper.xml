@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.anbiao.jiashiyuan.mapper.JiaShiYuanMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="jiaShiYuanResultMap" type="org.springblade.anbiao.jiashiyuan.entity.JiaShiYuan">
+
+    </resultMap>
+
+    <resultMap id="jiaShiYuanVOResultMap" type="org.springblade.anbiao.jiashiyuan.vo.JiaShiYuanVO">
+    </resultMap>
+
+
+
+    <insert id="insertJSY" parameterType="org.springblade.anbiao.jiashiyuan.entity.JiaShiYuan">
+insert into  anbiao_jiashiyuan
+(id,jiashiyuanxingming,xingbie,shenfenzhenghao,chushengshijian,nianling,shoujihaoma,congyerenyuanleixing,shenfenzhengyouxiaoqi,
+wenhuachengdu,pingyongriqi,jidongjiashiyuan,jiashiyuanleixing,dept_id,shenfenzhengfujian,congyezhengfujian,jiashizhengfujian,
+jiatingzhuzhi,danganbianhao,jiashizhenghao,zhunjiachexing,jialing,weifajifen,jiashizhengchulingriqi,jiashizhengyouxiaoqi,tijianyouxiaoqi,
+congyezigezheng,congyeleibie,congyezhengyouxiaoqi,congyezhengchulingri,zhengjianhefajiguan,fazhengjiguan,chengxinkaoheshijian,
+xiacichengxinkaoheshijian,jixujiaoyushijian,xiacijixujiaoyushijian,congyezigeleibie,zhengjianzhuangtai,huzhaohaoma,huzhaoleibie,guojiama,
+huzhaoyouxiaoqi,zhunjiazhenghao,zhunjialeixing,zhunyunxian,zhunjiazhengyouxiaoqi,jiaonabiaozhun,jiaonajine,shifoujiaona,chaosuweifajilu,
+jiaotongweifajilu,zhirensiwangzeren,weiguileixing,jiachejingli,beizhu,fuyinjian,caozuorenid,caozuoshijian,caozuoren,bumen,lizhishijian,
+denglumima,isdelete,zhaopian,tijianriqi
+)
+values
+(#{id},#{jiashiyuanxingming},#{xingbie},#{shenfenzhenghao},#{chushengshijian},#{nianling},#{shoujihaoma},#{congyerenyuanleixing},#{shenfenzhengyouxiaoqi},
+#{wenhuachengdu},#{pingyongriqi},#{jidongjiashiyuan},#{jiashiyuanleixing},#{deptId},#{shenfenzhengfujian},#{congyezhengfujian},#{jiashizhengfujian},
+#{jiatingzhuzhi},#{danganbianhao},#{jiashizhenghao},#{zhunjiachexing},#{jialing},#{weifajifen},#{jiashizhengchulingriqi},#{jiashizhengyouxiaoqi},#{tijianyouxiaoqi},
+#{congyezigezheng},#{congyeleibie},#{congyezhengyouxiaoqi},#{congyezhengchulingri},#{zhengjianhefajiguan},#{fazhengjiguan},#{chengxinkaoheshijian},
+#{xiacichengxinkaoheshijian},#{jixujiaoyushijian},#{xiacijixujiaoyushijian},#{congyezigeleibie},#{zhengjianzhuangtai},#{huzhaohaoma},#{huzhaoleibie},#{guojiama},
+#{huzhaoyouxiaoqi},#{zhunjiazhenghao},#{zhunjialeixing},#{zhunyunxian},#{zhunjiazhengyouxiaoqi},#{jiaonabiaozhun},#{jiaonajine},#{shifoujiaona},#{chaosuweifajilu},
+#{jiaotongweifajilu},#{zhirensiwangzeren},#{weiguileixing},#{jiachejingli},#{beizhu},#{fuyinjian},#{caozuorenid},#{caozuoshijian},#{caozuoren},#{bumen},#{lizhishijian},
+#{denglumima},#{isdelete},#{zhaopian},#{tijianriqi}
+)
+    </insert>
+
+    <update id="updateDel" parameterType="java.lang.String">
+        UPDATE anbiao_jiashiyuan SET isdelete = 1 where id = #{id}
+    </update>
+
+    <sql id="tableSql">
+        SELECT
+        a.id,jiashiyuanxingming,
+        xingbie,
+        shenfenzhenghao,chushengshijian,nianling,shoujihaoma,congyerenyuanleixing,shenfenzhengyouxiaoqi,
+        wenhuachengdu,pingyongriqi,jidongjiashiyuan,jiashiyuanleixing,dept_id,shenfenzhengfujian,congyezhengfujian,jiashizhengfujian,
+        jiatingzhuzhi,danganbianhao,jiashizhenghao,zhunjiachexing,jialing,weifajifen,jiashizhengchulingriqi,jiashizhengyouxiaoqi,tijianyouxiaoqi,
+        congyezigezheng,congyeleibie,congyezhengyouxiaoqi,congyezhengchulingri,zhengjianhefajiguan,fazhengjiguan,chengxinkaoheshijian,
+        xiacichengxinkaoheshijian,jixujiaoyushijian,xiacijixujiaoyushijian,congyezigeleibie,zhengjianzhuangtai,huzhaohaoma,huzhaoleibie,guojiama,
+        huzhaoyouxiaoqi,zhunjiazhenghao,zhunjialeixing,zhunyunxian,zhunjiazhengyouxiaoqi,jiaonabiaozhun,jiaonajine,shifoujiaona,chaosuweifajilu,
+        jiaotongweifajilu,zhirensiwangzeren,weiguileixing,jiachejingli,beizhu,fuyinjian,caozuorenid,caozuoshijian,caozuoren,bumen,lizhishijian,
+        denglumima,isdelete,zhaopian,tijianriqi,createtime,
+        b.dept_name deptName
+        FROM
+        anbiao_jiashiyuan a
+        inner join  (
+        <include refid="org.springblade.anbiao.guanlijigouherenyuan.mapper.OrganizationsMapper.getByDeptId"/>
+        ) b
+        on a.dept_id = b.id
+        WHERE 1=1 and ifnull(a.isdelete,0) = 0
+
+        <if test="ids !=null and ids != ''and ids == '1'.toString()">
+            and a.id in (
+            SELECT biaoid from anbiao_jinritixing_jiesuan where IFNULL(isdelete,0)=0 and dept_id = #{deptId} and tongjiriqi = #{tongjiriqi}
+            and tixingleixing = #{tixingleixing} and tixingxiangqingid = #{tixingxiangqingid} )
+        </if>
+    </sql>
+
+    <sql id="querySql">
+        <if test="jiashiyuanxingming !=null and jiashiyuanxingming != ''">
+            AND jiashiyuanxingming  LIKE '%${jiashiyuanxingming}%'
+        </if>
+        <if test="deptName !=null and deptName != ''">
+            AND deptName LIKE '%${deptName}%'
+        </if>
+        <if test="jiashiyuanleixing !=null and jiashiyuanleixing != ''">
+            AND jiashiyuanleixing LIKE '%${jiashiyuanleixing}%'
+        </if>
+
+
+    </sql>
+    <sql id="orderSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by caozuoshijian
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+    </sql>
+
+    <select id="selectPageList" parameterType="org.springblade.anbiao.jiashiyuan.page.JiaShiYuanPage" resultType="org.springblade.anbiao.jiashiyuan.vo.JiaShiYuanVO">
+        <if test="size == 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${total}
+        </if>
+        <if test="current != 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <select id="selectTotal" parameterType="org.springblade.anbiao.jiashiyuan.page.JiaShiYuanPage" resultType="int">
+        select COUNT(1) from (
+        <include refid="tableSql" />
+        )d
+        where 1 = 1
+        <include refid="querySql" />
+    </select>
+
+    <select id="selectByIds" parameterType="java.lang.String" resultType="org.springblade.anbiao.jiashiyuan.vo.JiaShiYuanVO">
+        SELECT
+        a.*,b.dept_name deptName
+        FROM
+        anbiao_jiashiyuan a
+        inner join  blade_dept b
+        on a.dept_id = b.id
+        WHERE 1=1 and ifnull(a.isdelete ,0) = 0 and a.id=#{id}
+    </select>
+
+    <select id = "selectByCardNo" parameterType="java.lang.String" resultType="org.springblade.anbiao.jiashiyuan.vo.JiaShiYuanVO">
+        select a.*,b.dept_name as deptName
+        from anbiao_jiashiyuan a
+        inner join  blade_dept b
+        on a.dept_id = b.id
+        WHERE 1=1 and ifnull(a.isdelete ,0) = 0 and a.shenfenzhenghao=#{cardNo}
+    </select>
+
+
+    <select id = "selectByCar" parameterType="java.lang.String" resultType="org.springblade.anbiao.cheliangguanli.entity.Vehicle">
+        select
+            b.id,b.dept_id,b.cheliangpaizhao,b.chepaiyanse,b.shiyongxingzhi
+        from
+            anbiao_cheliang_jiashiyuan a,
+            (
+                select
+                    id,dept_id,cheliangpaizhao,chepaiyanse,shiyongxingzhi
+                from
+                    anbiao_vehicle
+                where is_deleted = 0
+            ) b
+        where 1=1
+            and a.vehid = b.id
+            and a.jiashiyuanid = #{jiashiyuanid}
+    </select>
+
+    <update id="updatePassWord" parameterType="java.lang.String">
+        UPDATE anbiao_jiashiyuan SET denglumima = #{password} where id = #{id}
+    </update>
+
+    <sql id="tableJVSql">
+        select
+        a.dept_name as deptName,a.jiashiyuanxingming,shoujihaoma,b.cheliangpaizhao,b.shiyongxingzhi,b.createtime as caozuoshijian,
+        case when IFNULL(c.shu,0) &gt; 0 then '已绑车' else '未绑车' end as biaoshi
+        from (
+        select
+        a.id,
+        jiashiyuanxingming,
+        xingbie,
+        zhaopian,
+        shenfenzhenghao,
+        shoujihaoma,
+        dept_id,
+        shenfenzhengfujian,
+        congyezhengfujian,
+        jiashizhengfujian,
+        createtime,
+        dept_name
+        from
+        anbiao_jiashiyuan a
+        inner join  (
+        <include refid="org.springblade.anbiao.guanlijigouherenyuan.mapper.OrganizationsMapper.getByDeptId"/>
+        ) b on a.dept_id = b.id
+        where 1=1
+        and isdelete = 0
+        )a
+        left join(
+        select
+        b.id as vehicleid,b.cheliangpaizhao,b.chepaiyanse,b.shiyongxingzhi,jiashiyuanid,a.createtime
+        from
+        anbiao_cheliang_jiashiyuan a,
+        (
+        select id,dept_id,cheliangpaizhao,chepaiyanse,shiyongxingzhi
+        from
+        anbiao_vehicle
+        where is_deleted = 0
+        ) b
+        where 1=1
+        and a.vehid = b.id
+        )b on a.id = b.jiashiyuanid
+        right join(
+        select jiashiyuanxingming,COUNT(jiashiyuanid) as shu from anbiao_cheliang_jiashiyuan a right join anbiao_jiashiyuan b on a.jiashiyuanid = b.id
+        GROUP BY jiashiyuanxingming
+        <if test=" biaoshi == ''">
+            HAVING COUNT(jiashiyuanid) &gt;= 0
+        </if>
+        <if test=" biaoshi == '已绑车'">
+            HAVING COUNT(jiashiyuanid) &gt; 0
+        </if>
+        <if test=" biaoshi == '未绑车'">
+            HAVING COUNT(jiashiyuanid) = 0
+        </if>
+        )c on c.jiashiyuanxingming = a.jiashiyuanxingming
+        where 1=1
+    </sql>
+
+    <sql id="queryJVSql">
+        <if test="jiashiyuanxingming !=null and jiashiyuanxingming != ''">
+            AND jiashiyuanxingming  LIKE '%${jiashiyuanxingming}%'
+        </if>
+
+        <if test="deptName !=null and deptName != ''">
+            AND deptName LIKE '%${deptName}%'
+        </if>
+    </sql>
+    <sql id="orderJVSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by caozuoshijian
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+    </sql>
+
+    <select id="selectJVList" parameterType="org.springblade.anbiao.jiashiyuan.page.JiaShiYuanPage" resultType="org.springblade.anbiao.jiashiyuan.vo.JiaShiYuanVO">
+        <if test="size == 0" >
+            select * from (
+            <include refid="tableJVSql" />
+            )b
+            where 1=1
+            <include refid="queryJVSql" />
+            <include refid="orderJVSql" />
+            limit ${total}
+        </if>
+        <if test="current != 0" >
+            select * from (
+            <include refid="tableJVSql" />
+            )b
+            where 1=1
+            <include refid="queryJVSql" />
+            <include refid="orderJVSql" />
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <select id="selectJVTotal" parameterType="org.springblade.anbiao.jiashiyuan.page.JiaShiYuanPage" resultType="int">
+        select COUNT(1) from (
+        <include refid="tableJVSql" />
+        )d
+        where 1 = 1
+        <include refid="queryJVSql" />
+    </select>
+
+
+
+
+</mapper>

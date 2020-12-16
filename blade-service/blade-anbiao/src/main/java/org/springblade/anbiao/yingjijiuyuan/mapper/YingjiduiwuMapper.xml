@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.anbiao.yingjijiuyuan.mapper.YingjiduiwuMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="yingjiduiwuVOResultMap" type="org.springblade.anbiao.yingjijiuyuan.vo.YingjiduiwuVO">
+        <id column="id" property="id"/>
+        <result column="dept_id" property="deptId"/>
+        <result column="deptName" property="deptName"/>
+        <result column="caozuoren" property="caozuoren"/>
+        <result column="caozuorenid" property="caozuorenid"/>
+        <result column="caozuoshijian" property="caozuoshijian"/>
+        <result column="duiwumingcheng" property="duiwumingcheng"/>
+        <result column="fuzebumen" property="fuzebumen"/>
+        <result column="fuzeren" property="fuzeren"/>
+        <result column="fuzerendianhua" property="fuzerendianhua"/>
+        <result column="fuerenzhiwu" property="fuerenzhiwu"/>
+        <result column="is_deleted" property="isdel"/>
+    </resultMap>
+
+    <select id="selectByKey" resultMap="yingjiduiwuVOResultMap" parameterType="java.lang.String">
+        select  a.*,b.dept_name as deptName
+        from  anbiao_yingjiduiwu a
+            inner join blade_dept b  on a.dept_id = b.id
+         where a.id=#{id}
+    </select>
+
+    <!-- 假删除 -->
+    <update id="deleteYingjiduiwu" parameterType="java.lang.String" >
+         update anbiao_yingjiduiwu set
+            is_deleted = 1
+        WHERE id = #{id}
+  </update>
+
+    <sql id="tableSql">
+        SELECT
+        a.*,
+        b.dept_name as deptName
+        FROM
+        anbiao_yingjiduiwu a
+        inner join  (
+        <include refid="org.springblade.anbiao.guanlijigouherenyuan.mapper.OrganizationsMapper.getByDeptId"/>
+        ) b
+        on a.dept_id = b.id
+        WHERE 1=1 and ifnull(a.is_deleted,0) = 0
+
+    </sql>
+
+    <sql id="querySql">
+        <if test="deptName !=null and deptName != ''">
+            AND deptName LIKE '%${deptName}%'
+        </if>
+    </sql>
+    <sql id="orderSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by caozuoshijian
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+    </sql>
+
+    <select id="selectYingjiduiwuPage" resultMap="yingjiduiwuVOResultMap"
+            parameterType="org.springblade.anbiao.yingjijiuyuan.page.YingjiduiwuPage" resultType="org.springblade.anbiao.yingjijiuyuan.vo.YingjiduiwuVO">
+        <if test="size == 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${total}
+        </if>
+        <if test="current != 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <select id="selectYingjiduiwuTotal"
+            parameterType="org.springblade.anbiao.yingjijiuyuan.page.YingjiduiwuPage"
+            resultType="int">
+        select COUNT(1) from (
+        <include refid="tableSql" />
+        )d
+        where 1 = 1
+        <include refid="querySql" />
+    </select>
+
+</mapper>

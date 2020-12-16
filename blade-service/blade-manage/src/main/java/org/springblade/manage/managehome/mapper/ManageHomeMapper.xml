@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.manage.managehome.mapper.ManageHomeMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="homeResultMap" type="org.springblade.manage.managehome.entity.ManageHome">
+
+    </resultMap>
+
+
+    <select id="selectHome" parameterType="String" resultMap="homeResultMap">
+     SELECT
+		IFNULL((SELECT sum(onet_weight) FROM manage_waybill WHERE dept_id=#{deptId} and YEAR(out_time)=year(NOW())),0)/1000 nianchuku,
+		IFNULL((SELECT sum(inet_weight) FROM manage_waybill WHERE dept_id=#{deptId} and  YEAR(into_time)=year(NOW())),0)/1000 nianruku,
+		IFNULL((SELECT sum((inet_weight/1000)*danjia) FROM manage_waybill WHERE  dept_id=#{deptId} and  YEAR(out_time)=year(NOW()))/10000,0) nianshouru,
+		IFNULL((SELECT sum(jine)  FROM manage_waybill a INNER JOIN  manage_waybill_fujian b ON a.id=b.waybill_id WHERE  dept_id=#{deptId} and  YEAR(out_time)=year(NOW()))/10000,0) nianzhichu,
+
+		IFNULL((SELECT sum((inet_weight/1000)*danjia) FROM manage_waybill WHERE dept_id=#{deptId} and  YEAR(out_time)=year(NOW()) AND ${month}= MONTH(out_time))/10000,0) yueshouru,
+		IFNULL((SELECT sum(jine)  FROM manage_waybill a INNER JOIN  manage_waybill_fujian b ON a.id=b.waybill_id WHERE dept_id=#{deptId} and  YEAR(out_time)=year(NOW()) AND ${month}= MONTH(out_time))/10000,0) yuezhichu,
+		IFNULL((SELECT sum(onet_weight) FROM manage_waybill WHERE dept_id=#{deptId} and  YEAR(out_time)=year(NOW()) AND MONTH(out_time)=${month} ),0)/1000 yuechuku,
+		IFNULL((SELECT sum(inet_weight) FROM manage_waybill WHERE dept_id=#{deptId} and  YEAR(into_time)=year(NOW()) AND MONTH(into_time)=${month}),0)/1000 yueruku,
+
+		IFNULL((SELECT sum(onet_weight) FROM manage_waybill WHERE dept_id=#{deptId} and  YEAR(out_time)=year(NOW()) AND MONTH(out_time)=MONTH(NOW()) AND DAY(out_time)=DAY(NOW())),0)/1000 richuku,
+		IFNULL((SELECT sum(inet_weight) FROM manage_waybill WHERE dept_id=#{deptId} and  YEAR(into_time)=year(NOW()) AND MONTH(into_time)=MONTH(NOW()) AND DAY(into_time)=DAY(NOW())),0)/1000 riruku,
+		IFNULL((SELECT sum((inet_weight/1000)*danjia) FROM manage_waybill WHERE dept_id=#{deptId} and  YEAR(out_time)=year(NOW()) AND MONTH(NOW())= MONTH(out_time) AND DAY(NOW())= DAY(out_time))/10000,0) rishouru,
+		IFNULL((SELECT sum(jine)  FROM manage_waybill a INNER JOIN  manage_waybill_fujian b ON a.id=b.waybill_id WHERE dept_id=#{deptId} and YEAR(out_time)=year(NOW()) AND MONTH(NOW())= MONTH(out_time) AND DAY(NOW())= DAY(out_time))/10000,0) rizhichu
+    </select>
+
+    <select id="selectyue" parameterType="String" resultMap="homeResultMap">
+        SELECT
+        a.KEY AS ri,
+        IFNULL(b.inetweight,0)/1000  huoyunliang
+        FROM
+        nums a
+        LEFT JOIN(
+        SELECT
+        into_time,
+        sum(inet_weight) inetweight
+        FROM
+        manage_waybill
+        WHERE
+        YEAR (into_time) = YEAR (NOW())
+        AND MONTH (into_time) = MONTH (NOW())
+        and dept_id=#{deptId}
+        GROUP BY
+        into_time
+        ) b ON  a.key=DAY(b.into_time)
+        WHERE
+        a.KEY &lt;= DAY (LAST_DAY(NOW()))
+        GROUP BY
+        a.KEY,b.inetweight
+        ORDER BY
+        a.KEY
+    </select>
+
+    <select id="selectnian" parameterType="String" resultMap="homeResultMap">
+        SELECT a.yue,IFNULL(b.inetweight,0)as huoyunliang from
+        (
+        select lpad(n.key,2,'0') yue,0 as counts  from nums n where n.key &lt; 13
+        ) a LEFT JOIN
+        (
+        SELECT
+        month(into_time) yue,
+        sum(inet_weight)/1000 inetweight
+        FROM
+        manage_waybill
+        WHERE
+        YEAR (into_time) = YEAR (NOW())
+        AND MONTH (into_time) = MONTH (NOW())
+        and dept_id=#{deptId}
+        GROUP BY
+        month(into_time)
+        )b on a.yue =b.yue
+        ORDER BY a.yue
+    </select>
+
+    <select id="selectzaiyun"  parameterType="String" resultMap="homeResultMap">
+        SELECT
+            b.cheliangpaizhao chepaihao,
+            onet_weight chukuliang,
+            out_time chukushijian,
+            forwarde_unit fahuo,
+            receive_unit shouhuo
+        FROM
+            manage_waybill a
+        inner JOIN
+        anbiao_vehicle  b ON a.vehicle_id=b.id and  b.dept_id=#{deptId}
+        WHERE
+            STATUS = 0;
+    </select>
+
+    <select id="selectxianzhi"  parameterType="String" resultMap="homeResultMap">
+    SELECT cheliangpaizhao chepaihao FROM anbiao_vehicle WHERE dept_id=#{deptId} AND id not in(
+    SELECT vehicle_id FROM manage_waybill WHERE status=0 GROUP BY vehicle_id
+    )  GROUP BY cheliangpaizhao
+    </select>
+
+
+</mapper>

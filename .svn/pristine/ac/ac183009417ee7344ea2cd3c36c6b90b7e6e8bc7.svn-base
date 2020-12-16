@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.alarm.mapper.AlarmsummaryMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="alarmsummaryResultMap" type="org.springblade.alarm.vo.AlarmsummaryVO">
+        <id column="AlarmReportID" property="alarmReportID"/>
+        <result column="VehId" property="vehId"/>
+        <result column="BeginTime" property="beginTime"/>
+        <result column="EndTime" property="endTime"/>
+        <result column="MaxSpeed" property="maxSpeed"/>
+        <result column="AlarmType" property="alarmType"/>
+        <result column="Longitude" property="longitude"/>
+        <result column="Latitude" property="latitude"/>
+        <result column="Velocity" property="velocity"/>
+        <result column="Angle" property="angle"/>
+        <result column="Local" property="local"/>
+        <result column="Elevation" property="elevation"/>
+        <result column="Limited" property="limited"/>
+        <result column="Passed" property="passed"/>
+        <result column="Time" property="time"/>
+        <result column="KeepTime" property="keepTime"/>
+        <result column="Road_Name" property="roadName"/>
+        <result column="Road_Level" property="roadLevel"/>
+        <result column="Road_Limited" property="roadLimited"/>
+        <result column="DisposeAlarmName" property="disposeAlarmName"/>
+        <result column="DisposeAlarmTime" property="disposeAlarmTime"/>
+        <result column="alarmcl" property="alarmcl"/>
+        <result column="alarmclmsg" property="alarmclmsg"/>
+        <result column="alarmhdremark" property="alarmhdremark"/>
+        <result column="PushState" property="pushState"/>
+        <result column="verifyName" property="verifyName"/>
+        <result column="verifyTime" property="verifyTime"/>
+        <result column="AnalyzeMode" property="analyzeMode"/>
+        <result column="SysPassed" property="sysPassed"/>
+        <result column="status" property="status"/>
+        <result column="SynTime" property="synTime"/>
+        <result column="plateNumber" property="plateNumber"/>
+        <result column="color" property="color"/>
+        <result column="company" property="company"/>
+        <result column="OperatType" property="operatType"/>
+        <result column="EndSpeed" property="endSpeed"/>
+        <result column="Distance" property="distance"/>
+        <result column="Road_Limited2" property="roadLimited2"/>
+        <result column="IsSupplements" property="isSupplements"/>
+        <result column="CutoffTime" property="cutoffTime"/>
+        <result column="verifyTime2" property="verifyTime2"/>
+        <result column="AlarmID" property="alarmID"/>
+        <result column="endLongitude" property="endLongitude"/>
+        <result column="endLatitude" property="endLatitude"/>
+        <result column="endRoadName" property="endRoadName"/>
+        <result column="isRegionV" property="isRegionV"/>
+        <result column="AnalyzeID" property="analyzeID"/>
+        <result column="atNocturnal" property="atNocturnal"/>
+        <result column="BaoJingType" property="baoJingType"/>
+        <result column="ChaoSuBi" property="chaoSuBi"/>
+    </resultMap>
+
+
+    <select id="selectAlarmsummaryPage" resultMap="alarmsummaryResultMap">
+        select * from baobiao_alarmsummary where is_deleted = 0
+    </select>
+
+</mapper>

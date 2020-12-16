@@ -1,0 +1,36 @@
+
+spring:
+  redis:
+    host: 59.63.188.53
+    port: 6379
+    password: mxcxyzk123
+    database: 0
+    ssl: false
+
+##
+blade:
+  datasource:
+    dev:
+      url: jdbc:mysql://localhost:3306/blade?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&tinyInt1isBit=false&allowMultiQueries=true&serverTimezone=GMT%2B8
+      username: root
+      password: mxcx123
+      #    url: jdbc:mysql://60.171.241.126:3366/blade?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&tinyInt1isBit=false&allowMultiQueries=true&serverTimezone=GMT%2B8
+      #    username: root
+      #    password: mxcx123
+    gps3:
+        url: jdbc:sqlserver://202.100.168.30:22431;databaseName=GPSDB
+        username: cqmxsafe
+        password: mxcx123
+    gps2:
+        url: jdbc:sqlserver://202.100.168.30:22431;databaseName=GPSDB
+        username: cqmxsafe
+        password: mxcx123
+log:
+    datasource:
+        dev:
+            url: jdbc:mysql://localhost:3306/blade-log?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&tinyInt1isBit=false&allowMultiQueries=true&serverTimezone=GMT%2B8
+            username: root
+            password: mxcx123
+
+
+

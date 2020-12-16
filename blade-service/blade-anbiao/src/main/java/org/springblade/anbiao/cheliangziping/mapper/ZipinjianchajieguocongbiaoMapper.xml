@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.anbiao.cheliangziping.mapper.Zipingjianchajieguocongbiao">
+
+    <insert id="InsertAllcongbiao" parameterType="java.util.List">
+        INSERT INTO anbiao_zipinjiancha_jieguo (
+        id,
+        zipinjianchaxiang_id,
+        is_hege,
+        beizhu,
+        zipinjiancha_id
+        )
+        VALUES
+        <foreach collection ="list" item="item" index= "index" separator =",">
+            (
+            #{item.id},
+            #{item.zipinjianchaxiangId},
+            #{item.isHege},
+            #{item.beizhu},
+            #{item.zipinjianchaId}
+
+            )
+        </foreach>
+    </insert>
+
+    <update id="updatetable" parameterType="java.util.List">
+
+        <!--<foreach collection="list" item="bean" index="index" open="" close="" separator=";">-->
+            <!--UPDATE anbiao_zipinjiancha_jieguo-->
+            <!--<set>-->
+                <!--is_hege = #{bean.isHege},-->
+                <!--beizhu = #{bean.beizhu}-->
+            <!--</set>-->
+            <!--<where>-->
+                <!--id = #{bean.id}-->
+            <!--</where>-->
+        <!--</foreach>-->
+        <!--<foreach collection="list" item="item" index="index" open="" close=";" separator=";">-->
+            <!--update anbiao_zipinjiancha_jieguo-->
+            <!--set-->
+            <!--is_hege = #{item.isHege},-->
+            <!--beizhu = #{item.beizhu}-->
+
+            <!--where-->
+                <!--id = #{item.id}-->
+        <!--</foreach>-->
+        <!--<foreach collection="list" item="item" index="index" open="" close="" separator=";">-->
+            <!--update anbiao_zipinjiancha_jieguo-->
+            <!--<set>-->
+                <!--is_hege =${item.isHege},-->
+                <!--beizhu=${item.beizhu}-->
+            <!--</set>-->
+            <!--where id = ${item.id}-->
+        <!--</foreach>-->
+        update
+        anbiao_zipinjiancha_jieguo
+        set
+        is_hege = CASE
+        <foreach collection="list" item="m" index="index">
+                when id = #{m.id} then #{m.isHege}
+        </foreach>
+        END,
+        beizhu=case
+        <foreach collection="list" item="m" index="index">
+        <if test="m.beizhu!=null and m.beizhu!=''">
+            when id = #{m.id} then #{m.beizhu}
+        </if>
+        </foreach>
+        end
+        WHERE
+        id in
+        <foreach collection="list" item="m" index="index" open="(" separator="," close=")">
+            #{m.id}
+        </foreach>
+    </update>
+
+    <delete id="delete">
+         delete from anbiao_zipinjiancha_jieguo where zhubiaoid=#{id}
+    </delete>
+
+    <select id="selectallByID" resultType="java.lang.String">
+        select id from  anbiao_zipinjiancha_jieguo where  zhubiaoid=#{id}
+    </select>
+
+    <select id="zhouqi" resultType="org.springblade.anbiao.cheliangziping.entity.ZipinZhouQI">
+    SELECT
+	MAX(zhouqi_count) AS number,
+	zijianzhouqi
+    FROM
+	anbiao_zipinjaincha
+    GROUP BY
+	zijianzhouqi
+
+    </select>
+
+
+</mapper>
