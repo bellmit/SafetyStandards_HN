@@ -27,7 +27,7 @@
 
 
     <insert id="insertMap" parameterType="org.springblade.anbiao.configure.entity.Configure">
-        insert   into  ${tableName} (id,dept_id,shujubiaoziduan,shijiziduan,label,biaodancanshu)
+        insert into ${tableName} (id,dept_id,shujubiaoziduan,shijiziduan,label,biaodancanshu)
         values (#{id},#{deptId},#{shujubiaoziduan},#{shijiziduan},#{label},#{biaodancanshu})
     </insert>
 

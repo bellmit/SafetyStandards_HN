@@ -39,6 +39,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -228,26 +229,42 @@ public class AlarmsummaryCutofftimeServiceImpl extends ServiceImpl<AlarmsummaryC
     }
 
     @Override
-    public Map<String, Object> selectShifouBaojing(ShishiBaojingTongjiPage shishiBaojingTongjiPage) {
-        List<String> strings = cutofftimeMapper.selectShifouBaojing(shishiBaojingTongjiPage);
-        Map<String,Object> gpsMap = new HashMap<String,Object>();
-        gpsMap.put("chaosu",0);
-        gpsMap.put("pilao",0);
-        gpsMap.put("yejian",0);
-        gpsMap.put("yichang",0);
-        strings.forEach(item->{
-            if("超速报警".equals(item)){
-                gpsMap.put("chaosu",1);
-            }else if("疲劳驾驶报警".equals(item)){
-                gpsMap.put("pilao",1);
-            }else if("夜间行驶报警".equals(item)){
-                gpsMap.put("yejian",1);
-            }else{
-                gpsMap.put("yichang",1);
-            }
-        });
-        return gpsMap;
-    }
+	public Map<String, Object> selectShifouBaojing(ShishiBaojingTongjiPage shishiBaojingTongjiPage) {
+		if(shishiBaojingTongjiPage.getBeginTime() == null){
+			//设置日期格式
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+			shishiBaojingTongjiPage.setBeginTime(df.format(new Date()));
+		}
+		if(shishiBaojingTongjiPage.getEndTime() == null){
+			//设置日期格式
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+			shishiBaojingTongjiPage.setEndTime(df.format(new Date()));
+		}
+		List<String> strings = cutofftimeMapper.selectShifouBaojing(shishiBaojingTongjiPage);
+		Map<String,Object> gpsMap = new HashMap<String,Object>();
+		gpsMap.put("chaosu",0);
+		gpsMap.put("pilao",0);
+		gpsMap.put("yejian",0);
+		gpsMap.put("yichang",0);
+		gpsMap.put("gaosujinxing",0);
+		gpsMap.put("buzaixian",0);
+		strings.forEach(item->{
+			if("超速报警".equals(item)){
+				gpsMap.put("chaosu",1);
+			}else if("疲劳驾驶报警".equals(item)){
+				gpsMap.put("pilao",1);
+			}else if("夜间行驶报警".equals(item)){
+				gpsMap.put("yejian",1);
+			}else if("高速禁行".equals(item)){
+				gpsMap.put("gaosujinxing",1);
+			}else if("24小时不在线报警".equals(item)){
+				gpsMap.put("buzaixian",1);
+			}else if("不定位报警".equals(item) || "无数据报警".equals(item)){
+				gpsMap.put("yichang",1);
+			}
+		});
+		return gpsMap;
+	}
 
     @Override
     public AlarmPage selectAlarmMGPage(AlarmPage alarmPage) {
@@ -324,11 +341,7 @@ public class AlarmsummaryCutofftimeServiceImpl extends ServiceImpl<AlarmsummaryC
                 a.get(i).setOrderNum(offsetNo+i+1);
             }
         }
-
-
-
         alarmPage.setRecords(a);
-
         return alarmPage;
     }
 
@@ -341,8 +354,6 @@ public class AlarmsummaryCutofftimeServiceImpl extends ServiceImpl<AlarmsummaryC
 	public List<String> findoperattype(String deptId) {
 		List<String> findoperattype = cutofftimeMapper.findoperattype(deptId);
 		   findoperattype.add("全部");
-
-
 		return findoperattype;
 	}
 

@@ -32,8 +32,8 @@ public class ZhengFuShouYeNewServiceImpl extends ServiceImpl<ZhengFuShouYeNewMap
 	private ZhengFuShouYeNewMapper zhengFuShouYeNewMapper;
 
 	@Override
-	public ZhengFuShouYeNew selectGetOne(String deptId, String date) {
-		return zhengFuShouYeNewMapper.selectGetOne(deptId, date);
+	public List<ZhengFuShouYeNew>  selectGetOne(String deptId, String xiaJiDeptId, String date) {
+		return zhengFuShouYeNewMapper.selectGetOne(deptId, xiaJiDeptId, date);
 	}
 
 	@Override

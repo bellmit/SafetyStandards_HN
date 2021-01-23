@@ -163,7 +163,7 @@ public interface ZhengFuBaoJingTongJiMapper extends BaseMapper<ZhengFuBaoJingTon
 	 * @param zhengFuBaoJingTongJiJieSuanPage
 	 * @return
 	 */
-	List<ZhengFuBaoJingTongJiJieSuan>  selectGetCLTJPMTJ(ZhengFuBaoJingTongJiJieSuanPage zhengFuBaoJingTongJiJieSuanPage);
+	List<ZhengFuBaoJingTongJiJieSuan> selectGetCLTJPMTJ(ZhengFuBaoJingTongJiJieSuanPage zhengFuBaoJingTongJiJieSuanPage);
 	int selectCLTJPMTotal(ZhengFuBaoJingTongJiJieSuanPage zhengFuBaoJingTongJiJieSuanPage);
 
 	/**
@@ -172,4 +172,15 @@ public interface ZhengFuBaoJingTongJiMapper extends BaseMapper<ZhengFuBaoJingTon
 	 * @return
 	 */
 	List<TtsMessageInfo> selectByAlarmGuId(String alarmGuId);
+
+	/**
+	 *车辆日运行情况统计
+	 * @param zhengFuBaoJingTongJiJieSuanPage
+	 * @return
+	 */
+	List<ZhengFuRiYunXingTongJi> selectGetCLRYXTJ(ZhengFuBaoJingTongJiJieSuanPage zhengFuBaoJingTongJiJieSuanPage);
+	int selectCLRYXTJTotal(ZhengFuBaoJingTongJiJieSuanPage zhengFuBaoJingTongJiJieSuanPage);
+
+
+
 }

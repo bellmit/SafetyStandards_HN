@@ -70,6 +70,9 @@ public class GpsPointDataController {
 	@ApiLog("获取点位数据-获取gps数据(new)")
 	@ApiOperation(value = "获取点位数据-获取gps数据(new)", notes = "获取点位数据", position = 1)
 	public R getPointDataNew(@ApiParam(value = "车辆id", required = true) @RequestParam String vehid, @ApiParam(value = "开始时间", required = true) @RequestParam String beginTime, @ApiParam(value = "结束时间", required = true) @RequestParam String endTime, @ApiParam(value = "标识（0、GPS；1、主动安全）", required = true) @RequestParam int mark) throws IOException {
+		if(StringUtils.isBlank(beginTime) || StringUtils.isBlank(endTime)){
+			return R.data(null);
+		}
 		if (mark == 0) {
 			String url = gpsServer.getPointurlPrefix() + "getHistory?stime=" + beginTime + "&etime=" + endTime + "&VehId=" + vehid;
 			String jsonstr = InterfaceUtil.getUrlData(url.replace(" ", "%20"));
@@ -105,6 +108,9 @@ public class GpsPointDataController {
 	@ApiLog("获取点位数据-获取gps数据")
 	@ApiOperation(value = "获取点位数据-获取gps数据", notes = "获取点位数据", position = 1)
 	public R getPointData(@ApiParam(value = "车辆id", required = true) @RequestParam String vehid, @ApiParam(value = "开始时间", required = true) @RequestParam String beginTime, @ApiParam(value = "结束时间", required = true) @RequestParam String endTime, @ApiParam(value = "标识（0、GPS；1、主动安全）", required = true) @RequestParam int mark) throws IOException {
+		if(StringUtils.isBlank(beginTime) || StringUtils.isBlank(endTime)){
+			return R.data(null);
+		}
 		if (mark == 0) {
 			List<VehilePTData> list = gpsPointDataService.selectPointData(beginTime, endTime, vehid);
 
@@ -141,6 +147,9 @@ public class GpsPointDataController {
 	@ApiLog("获取点位数据-平均速度走势")
 	@ApiOperation(value = "获取点位数据-平均速度走势", notes = "平均速度走势", position = 1)
 	public R getAvgTrend(@ApiParam(value = "车辆id", required = true) @RequestParam String vehid, @ApiParam(value = "开始时间", required = true) @RequestParam String beginTime, @ApiParam(value = "结束时间", required = true) @RequestParam String endTime, @ApiParam(value = "标识（0、GPS；1、主动安全）", required = true) @RequestParam int mark,@ApiParam(value = "刻度数", required = true) @RequestParam int scaleNum) throws IOException {
+		if(StringUtils.isBlank(beginTime) || StringUtils.isBlank(endTime)){
+			return R.data(null);
+		}
 		if (mark == 0) {
 			List<VehilePTData> list = gpsPointDataService.selectPointData(beginTime, endTime, vehid);
 			int size = list.size() / scaleNum;
@@ -170,7 +179,10 @@ public class GpsPointDataController {
 	@ApiLog("获取图片视频数据-获取gps数据")
     @ApiOperation(value = "获取图片视频数据-获取gps数据", notes = "获取图片视频数据", position = 2)
     public R getImageData(@ApiParam(value = "报警编号", required = true) @RequestParam String alarmNumber, @ApiParam(value = "报警类型", required = true) @RequestParam String alarmType) throws IOException {
-        String url;
+		if(StringUtils.isBlank(alarmNumber)){
+			return R.data(null);
+		}
+		String url;
         if ("车距过近报警".equals(alarmType) || "车道偏离报警".equals(alarmType) || "前向碰撞报警".equals(alarmType)) {
 //            url = "http://202.100.168.30:8096/AdasAlarm/AdasQueryMedias?AlarmNumber=" + alarmNumber;
 //            url = "http:/60.171.241.126:7096/AdasAlarm/AdasQueryMedias?AlarmNumber=" + alarmNumber;
@@ -305,7 +317,6 @@ public class GpsPointDataController {
 			}
 		}
 		vehiclePTPage.setRecords(vehiclePTList);
-        System.out.println(vehiclePTList);
         return R.data(vehiclePTPage);
     }
 
@@ -399,16 +410,6 @@ public class GpsPointDataController {
 			}
 			vehiclePTList.get(i).put("status",vehiclePTList.get(i).get("VehState"));
 			vehiclePTList.get(i).put("shiyongxingzhi",vehiclePTList.get(i).get("shiyongxingzhi"));
-
-//			if("运行".equals(vehiclePTList.get(i).getStatus()) && item.getAcc()==1){
-//				item.setAccShow("在线-运行-acc开");
-//			}else if("运行".equals(item.getStatus()) && item.getAcc()==0){
-//				item.setAccShow("在线-停车-acc关");
-//			}else if("离线".equals(item.getStatus()) && item.getAcc()==0){
-//				item.setAccShow("离线-离线-acc关");
-//			}else if("离线".equals(item.getStatus()) && item.getAcc()==1){
-//				item.setAccShow("在线-停车-acc开");
-//			}
 		}
 		vehiclePTPage.setList(vehiclePTList);
 		return R.data(vehiclePTPage);

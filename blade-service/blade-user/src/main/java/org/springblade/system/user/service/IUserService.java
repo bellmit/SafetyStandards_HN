@@ -21,7 +21,9 @@ import org.springblade.core.mp.base.BaseService;
 import org.springblade.system.user.entity.User;
 import org.springblade.system.user.entity.UserInfo;
 import org.springblade.system.user.page.UserPage;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -189,5 +191,19 @@ public interface IUserService extends BaseService<User> {
 	 * @return
 	 */
 	User getZFUserInfo(String type,String userId);
+
+	/**
+	 * 自定义锁定
+	 * @return
+	 */
+	boolean updateLocked(@RequestParam("isLocked") Integer isLocked, @RequestParam("loginErrorCount") Integer loginErrorCount
+		, @RequestParam("lastLoginErrorTime") String lastLoginErrorTime, @RequestParam("id") String id);
+
+	/**
+	 * 根据登录名称查询用户
+	 * @param account
+	 * @return
+	 */
+	User selectByName(String account);
 }
 

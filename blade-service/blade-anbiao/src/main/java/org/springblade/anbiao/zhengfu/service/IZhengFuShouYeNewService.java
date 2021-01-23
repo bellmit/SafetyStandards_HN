@@ -28,7 +28,7 @@ public interface IZhengFuShouYeNewService extends IService<ZhengFuShouYeNew> {
 	 * @param date
 	 * @return
 	 */
-	ZhengFuShouYeNew selectGetOne(@Param("deptId") String deptId, @Param("date") String date);
+	List<ZhengFuShouYeNew> selectGetOne(@Param("deptId") String deptId, @Param("xiaJiDeptId") String xiaJiDeptId, @Param("date") String date);
 
 	/**
 	 * 查询超速报警次数、疲劳报警总数、夜间行驶报警次数、异常报警次数

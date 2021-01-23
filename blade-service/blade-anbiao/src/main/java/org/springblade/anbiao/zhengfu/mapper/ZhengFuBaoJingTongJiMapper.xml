@@ -17,6 +17,10 @@
     <resultMap id="ttsResultMap" type="org.springblade.anbiao.zhengfu.entity.TtsMessageInfo">
     </resultMap>
 
+    <resultMap id="ryxResultMap" type="org.springblade.anbiao.zhengfu.entity.ZhengFuRiYunXingTongJi">
+    </resultMap>
+
+
     <select id="selectGetZFBaoJing" resultType="org.springblade.anbiao.zhengfu.entity.ZhengFuBaoJingTongJi">
     <!--select
        a.areaname,
@@ -1463,7 +1467,7 @@ GROUP BY
                baobiao_alarmvehdailyreport
        where 1=1
            and date_format(date,'%Y-%m') = date_format(now(),'%Y-%m')
-           and IFNULL(baojingcishu,0) > 0
+           and IFNULL(baojingcishu,0) &gt; 0
        GROUP BY cid,company
    )c on a.deptId = c.cid
 ORDER BY danchebaojingbi desc
@@ -1555,7 +1559,7 @@ ORDER BY danchebaojingbi desc
         baobiao_alarmvehdailyreport
         where 1=1
         and date_format(date,'%Y-%m') = date_format(now(),'%Y-%m')
-        and IFNULL(baojingcishu,0) > 0
+        and IFNULL(baojingcishu,0) &gt; 0
         GROUP BY cid,company
         )c on a.deptId = c.cid
         ORDER BY danchebaojingbi desc
@@ -2795,7 +2799,7 @@ ORDER BY danchebaojingbi desc
             a.plate,
             a.color,
             a.FlagState,
-            a.AlarmType as alarmtype,
+            case when ifnull(a.AlarmType,'') = '疲劳驾驶报警' then '生理疲劳报警' else a.AlarmType end as alarmtype,
             a.Alarmlevel as alarmlevel,
             a.Velocity as velocity,
             a.High,
@@ -3056,8 +3060,8 @@ ORDER BY danchebaojingbi desc
             a.plate,
             a.color,
             a.AlarmType as alarmtype,
-            a.BeginTime as beginTime,
-            a.EndTime as endTime,
+            DATE_FORMAT(a.BeginTime,"%Y-%m-%d %H:%i:%s") as beginTime,
+            DATE_FORMAT(a.EndTime,"%Y-%m-%d %H:%i:%s") as endTime,
             a.calctime,
             a.status as alarmlevel,
             a.alarmGuid,
@@ -3090,7 +3094,7 @@ ORDER BY danchebaojingbi desc
             a.chulimiaoshu,
             a.chulirenid,
             a.chuliren,
-            a.chulishijian,
+            DATE_FORMAT(a.chulishijian,"%Y-%m-%d %H:%i:%s") as chulishijian,
             a.fujian,
             a.beizhu,
             a.remark
@@ -3145,6 +3149,23 @@ ORDER BY danchebaojingbi desc
             </if>
                 and passed = 100
                 and AnalyzeMode = 1
+
+            <if test="zhengfuid != null and zhengfuid != '' ">
+                and a.company in (
+                    select qiyemingcheng from anbiao_zhengfu_qiye
+                    where 1=1
+                    <if test="province != null and province != '' ">
+                        and province = #{deptId}
+                    </if>
+                    <if test="city != null and city != '' ">
+                        and city = #{deptId}
+                    </if>
+                    <if test="country != null and country != '' ">
+                        and country = #{deptId}
+                    </if>
+                )
+            </if>
+
             <if test="deptName != null and deptName != '' ">
                 and a.company = #{deptName}
             </if>
@@ -3175,9 +3196,9 @@ ORDER BY danchebaojingbi desc
             a.VehId,
             a.plate,
             a.color,
-            a.AlarmType as alarmtype,
-            a.GpsTime as begintime,
-            a.GpsTime as endtime,
+            case when ifnull(a.AlarmType,'') = '疲劳驾驶报警' then '生理疲劳报警' else a.AlarmType end as alarmtype,
+            DATE_FORMAT(a.GpsTime,"%Y-%m-%d %H:%i:%s") as beginTime,
+            DATE_FORMAT(a.GpsTime,"%Y-%m-%d %H:%i:%s") as endTime,
             '' as calctime,
             ifnull(a.Alarmlevel,'') as alarmlevel,
             ifnull(a.AlarmGuid,'') as alarmGuid,
@@ -3229,6 +3250,22 @@ ORDER BY danchebaojingbi desc
         <if test="begintime != null and begintime != '' and endtime != null and endtime != '' ">
             and date_format(GpsTime,'%Y-%m-%d') &gt;= date_format(#{begintime},'%Y-%m-%d')
             and date_format(GpsTime,'%Y-%m-%d') &lt;= date_format(#{endtime},'%Y-%m-%d')
+        </if>
+
+        <if test="zhengfuid != null and zhengfuid != '' ">
+            and a.company in (
+                select qiyemingcheng from anbiao_zhengfu_qiye
+                where 1=1
+                <if test="province != null and province != '' ">
+                    and province = #{deptId}
+                </if>
+                <if test="city != null and city != '' ">
+                    and city = #{deptId}
+                </if>
+                <if test="country != null and country != '' ">
+                    and country = #{deptId}
+                </if>
+            )
         </if>
 
         <if test="deptName != null and deptName != '' ">
@@ -3951,4 +3988,165 @@ ORDER BY danchebaojingbi desc
             and AlarmGuid = #{alarmGuId}
         order by time desc
     </select>
+
+    <sql id="CLRYXTJSql">
+        select
+            a.qiyeid as deptId,
+            a.qiyemingcheng as company,
+            b.cheliangpaizhao,
+            b.chepaiyanse,
+            b.shiyongxingzhi,
+            b.LocatePositionCount as DaysOnline,
+            b.DriftPositionRate,
+            b.IntactPositionRate,
+            b.QualifiedPositionRate,
+            CONCAT(#{begintime},'至',#{endtime}) as date
+        from (
+            select
+                DISTINCT
+                b.dept_id as qiyeid,
+                b.dept_name as qiyemingcheng,
+                b.jigouleixing,
+                b.province,
+                b.city,
+                b.country,
+                a.dept_name as zhengfuname,
+                a.dept_id as zhengfuid,
+                case
+                    when IFNULL(a.country,'') != '' then a.country
+                    when IFNULL(a.city,'') != '' and IFNULL(a.country,'') = '' then a.city
+                    when IFNULL(a.province,'') != '' and IFNULL(a.city,'') = '' and IFNULL(a.country,'') = '' then a.province
+                end as areaname
+            from (
+                select
+                    a.id as dept_id,a.parent_id,a.dept_name,tree_code,province,city,country
+                from
+                    blade_dept a,anbiao_organization b
+                where a.id = b.dept_id
+                    and jigouleixing in('xianZF','shiZF','shengZF')
+                    and b.isdelete = 0
+                <if test=" (deptId != null and deptId != '') and ( xiaJiDeptId == null or xiaJiDeptId == '' ) ">
+                    and a.parent_id = #{deptId}
+                </if>
+                <if test="xiaJiDeptId != null and xiaJiDeptId != '' ">
+                    and a.id = #{xiaJiDeptId}
+                </if>
+                )a
+            inner join(
+                select
+                    dept_id,dept_name,jigouleixing,province,city,country
+                from
+                    anbiao_organization
+                where 1=1
+                    and jigouleixing in ('qiye','geti')
+                    and isdelete = 0
+                )b on a.dept_id in(b.province,b.city,b.country)
+            where 1=1
+                and b.province is not null
+            )a
+        inner join(
+            select
+                a.dept_id,
+                a.cheliangpaizhao,
+                a.chepaiyanse,
+                a.shiyongxingzhi,
+                IFNULL(SUM(b.LocatePositionCount),0) LocatePositionCount,
+                case when IFNULL(SUM(b.DriftPositionRate),0) = 0 then '0.00%'
+                else concat(ROUND(SUM(b.DriftPositionRate)*10,2),'%')
+                end as DriftPositionRate,
+                case when IFNULL(SUM(b.IntactPositionRate),0) = 0 then '0.00%'
+                else concat(ROUND(SUM(b.IntactPositionRate)*10,2),'%')
+                end as IntactPositionRate,
+                case when IFNULL(SUM(b.PositionCount),0) = 0 or IFNULL(SUM(b.QualifiedPositionCount),0) = 0 then '0.00%'
+                else concat(ROUND((SUM(b.QualifiedPositionCount)*1.0/SUM(b.PositionCount))*100,2),'%')
+                end as QualifiedPositionRate
+            from
+                anbiao_vehicle a
+            inner join(
+                select
+                    vehicleId,
+                    LEFT(date,10) as date,
+                    case when IFNULL(sum(LocatePositionCount),0) &gt; 0 then 1
+                    else 0
+                    end as LocatePositionCount,
+                    sum(DriftPositionRate) as DriftPositionRate,
+                    sum(IntactPositionRate) as IntactPositionRate,
+                    sum(QualifiedPositionCount) as QualifiedPositionCount,
+                    sum(PositionCount) as PositionCount
+                from
+                    statisticdetail
+                where 1=1
+                    and date &gt;= #{begintime}
+                    and date &lt;= #{endtime}
+                GROUP BY
+                    VehicleId,
+                    LEFT(date,10)
+                )b on a.id = b.vehicleId
+            group by
+                a.dept_id,
+                a.cheliangpaizhao,
+                a.chepaiyanse,
+                a.shiyongxingzhi
+            )b on a.qiyeid = b.dept_id
+    </sql>
+
+    <sql id="orderCLRYXTJSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by cheliangpaizhao desc
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+    </sql>
+
+    <sql id="queryCLRYXTJSql">
+        <if test="deptName != null and deptName != '' ">
+            and company like '%${deptName}%'
+        </if>
+
+        <if test="cheliangpaizhao != null and cheliangpaizhao != '' ">
+            and cheliangpaizhao like '%${cheliangpaizhao}%'
+        </if>
+
+        <if test="shiyongxingzhi != null and shiyongxingzhi != '' ">
+            and shiyongxingzhi like '%${shiyongxingzhi}%'
+        </if>
+    </sql>
+
+    <select timeout="600" id="selectGetCLRYXTJ" resultMap="ryxResultMap"
+            parameterType="org.springblade.anbiao.zhengfu.page.ZhengFuBaoJingTongJiJieSuanPage">
+        <if test="size == 0">
+            select * from (
+            <include refid="CLRYXTJSql"/>
+            )b
+            where 1=1
+            <include refid="queryCLRYXTJSql"/>
+            <include refid="orderCLRYXTJSql"/>
+            limit ${total}
+        </if>
+        <if test="current != 0">
+            select * from (
+            <include refid="CLRYXTJSql"/>
+            )b
+            where 1=1
+            <include refid="queryCLRYXTJSql"/>
+            <include refid="orderCLRYXTJSql"/>
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <select timeout="90" id="selectCLRYXTJTotal"
+            parameterType="org.springblade.anbiao.zhengfu.page.ZhengFuBaoJingTongJiJieSuanPage"
+            resultType="int">
+        select COUNT(1) from (
+        <include refid="CLRYXTJSql"/>
+        )d where 1 = 1
+        <include refid="queryCLRYXTJSql"/>
+    </select>
+
+
 </mapper>

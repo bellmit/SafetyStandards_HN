@@ -185,5 +185,15 @@ public class BiaozhunhuamubanServiceImpl extends ServiceImpl<BiaozhunhuamubanMap
 		return Mapper.selectGetQYWJ(deptId);
 	}
 
+	@Override
+	public boolean deleteBiaozhunhuamuban(Integer caozuorenid, String caozuoren, Integer deptId) {
+		return Mapper.deleteBiaozhunhuamuban(caozuorenid, caozuoren, deptId);
+	}
+
+	@Override
+	public boolean deleteSafetyProductionFile(Integer caozuorenid, String caozuoren, Integer deptId) {
+		return Mapper.deleteSafetyProductionFile(caozuorenid, caozuoren, deptId);
+	}
+
 
 }

@@ -21,6 +21,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springblade.core.mp.base.TenantEntity;
 
+import java.util.Date;
+
 /**
  * 实体类
  */
@@ -157,4 +159,29 @@ public class User extends TenantEntity {
 	 */
 	@ApiModelProperty(value = "岗位id")
 	private String gangweiid;
+
+	/**
+	 * 账号是否被锁定
+	 */
+	@ApiModelProperty(value = "账号是否被锁定")
+	private Integer isLocked;
+
+	/**
+	 * 登录错误计数
+	 */
+	@ApiModelProperty(value = "登录错误计数")
+	private Integer loginErrorCount;
+
+	/**
+	 * 最后一次登录错误时间
+	 */
+	@ApiModelProperty(value = "最后一次登录错误时间")
+	private Date lastLoginErrorTime;
+
+	/**
+	 * 修改者
+	 */
+	@ApiModelProperty(value = "修改者")
+	private Integer updateUser;
+
 }

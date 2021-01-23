@@ -161,9 +161,11 @@ public class OrganizationsController extends BladeController {
 	public R<Dept> insert(@RequestBody Organizations organization,BladeUser user) {
 		int i=iSysClient.selectByName(organization.getDeptName());
 		Dept obj=new Dept();
-		String msg;
+		R r = new R();
 		if(i>0){
-			msg="系统已存在相同名称";
+			r.setMsg("该机构已存在");
+			r.setCode(500);
+			r.setData("");
 		}else{
 			String str="1";
 			//登录页
@@ -214,9 +216,11 @@ public class OrganizationsController extends BladeController {
 			if(flag==true){
 				obj=iSysClient.selectById(dept.getId().toString());
 			}
-			msg="操作成功";
+			r.setMsg("操作成功");
+			r.setCode(200);
+			r.setData(obj);
 		}
-		return R.data(obj,msg);
+		return r;
 	}
 
 	/**
@@ -228,9 +232,11 @@ public class OrganizationsController extends BladeController {
 	public R<Dept> update(@RequestBody Organizations organization,BladeUser user) {
 		int i=iSysClient.selectByName(organization.getDeptName());
 		Dept obj=new Dept();
-		String msg;
+		R r = new R();
 		if(i>1){
-			msg="系统已存在相同名称";
+			r.setMsg("该机构已存在");
+			r.setCode(500);
+			r.setData("");
 		}else{
 			String str="1";
 			//登录页
@@ -274,9 +280,11 @@ public class OrganizationsController extends BladeController {
 			if(flag==true){
 				obj=iSysClient.selectById(dept.getId().toString());
 			}
-			msg="操作成功";
+			r.setMsg("操作成功");
+			r.setCode(200);
+			r.setData(obj);
 		}
-		return R.data(obj,msg);
+		return r;
 	}
 
 	/**
@@ -286,21 +294,23 @@ public class OrganizationsController extends BladeController {
 	@ApiLog("删除-企业资料")
 	@ApiOperation(value = "删除-企业资料", notes = "传入id", position = 5)
 	public R del(@ApiParam(value = "id", required = true) @RequestParam String id) {
+		R r = new R();
 		int i=iSysClient.selectCountByparentId(id);
-		int code=201;
 		Object obj=new Object();
-		String msg;
 		if(i>0){
-			msg="该组织下还存在下级，不能删除";
+			r.setMsg("该组织下还存在下级，不能删除");
+			r.setCode(500);
+			r.setData("");
 		}else{
 			boolean flag=iSysClient.removeById(id);
 			//清楚企业基本信息
 			organizationService.updateDel(organizationService.selectByDeptId(id).getId());
-			code=R.status(flag).getCode();
 			obj=R.status(flag).getData();
-			msg="删除成功";
+			r.setMsg("删除成功");
+			r.setCode(200);
+			r.setData(obj);
 		}
-		return R.data(code,obj,msg);
+		return  r;
 	}
 
 /********************************** 配置表 ***********************/

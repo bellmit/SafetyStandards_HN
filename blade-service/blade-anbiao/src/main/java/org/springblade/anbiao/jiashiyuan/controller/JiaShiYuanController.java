@@ -2,6 +2,7 @@ package org.springblade.anbiao.jiashiyuan.controller;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
@@ -12,6 +13,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang.StringUtils;
 import org.springblade.anbiao.cheliangguanli.entity.Vehicle;
 import org.springblade.anbiao.configure.entity.Configure;
 import org.springblade.anbiao.configure.service.IConfigureService;
@@ -209,25 +211,25 @@ public class JiaShiYuanController {
 	public R detail(String id) {
 		JiaShiYuan detal=iJiaShiYuanService.selectByIds(id);
 		//照片
-//		if(StrUtil.isNotEmpty(detal.getZhaopian())){
-//			detal.setZhaopian(fileUploadClient.getUrl(detal.getZhaopian()));
-//		}
-//		//身份证附件
-//		if(StrUtil.isNotEmpty(detal.getShenfenzhengfujian())){
-//			detal.setShenfenzhengfujian(fileUploadClient.getUrl(detal.getShenfenzhengfujian()));
-//		}
-//		//从业证附件
-//		if(StrUtil.isNotEmpty(detal.getCongyezhengfujian())){
-//			detal.setCongyezhengfujian(fileUploadClient.getUrl(detal.getCongyezhengfujian()));
-//		}
-//		//驾驶证附件
-//		if(StrUtil.isNotEmpty(detal.getJiashizhengfujian())){
-//			detal.setJiashizhengfujian(fileUploadClient.getUrl(detal.getJiashizhengfujian()));
-//		}
-//		//复印件
-//		if(StrUtil.isNotEmpty(detal.getFuyinjian())){
-//			detal.setFuyinjian(fileUploadClient.getUrl(detal.getFuyinjian()));
-//		}
+		if(StrUtil.isNotEmpty(detal.getZhaopian())){
+			detal.setZhaopian(fileUploadClient.getUrl(detal.getZhaopian()));
+		}
+		//身份证附件
+		if(StrUtil.isNotEmpty(detal.getShenfenzhengfujian())){
+			detal.setShenfenzhengfujian(fileUploadClient.getUrl(detal.getShenfenzhengfujian()));
+		}
+		//从业证附件
+		if(StrUtil.isNotEmpty(detal.getCongyezhengfujian())){
+			detal.setCongyezhengfujian(fileUploadClient.getUrl(detal.getCongyezhengfujian()));
+		}
+		//驾驶证附件
+		if(StrUtil.isNotEmpty(detal.getJiashizhengfujian())){
+			detal.setJiashizhengfujian(fileUploadClient.getUrl(detal.getJiashizhengfujian()));
+		}
+		//复印件
+		if(StrUtil.isNotEmpty(detal.getFuyinjian())){
+			detal.setFuyinjian(fileUploadClient.getUrl(detal.getFuyinjian()));
+		}
 		return R.data(detal);
 	}
 
@@ -240,29 +242,65 @@ public class JiaShiYuanController {
 	public R<JiaShiYuanPage<JiaShiYuanVO>> list(@RequestBody JiaShiYuanPage jiaShiYuanPage) {
 		jiaShiYuanPage.setJiashiyuanleixing("驾驶员");
 		JiaShiYuanPage<JiaShiYuanVO> pages = iJiaShiYuanService.selectPageList(jiaShiYuanPage);
-//		List<JiaShiYuanVO>  list=pages.getRecords();
-//		for (int i = 0; i <list.size() ; i++) {
-//			//照片
-//			if(StrUtil.isNotEmpty(list.get(i).getZhaopian())){
-//				list.get(i).setZhaopian(fileUploadClient.getUrl(list.get(i).getZhaopian()));
-//			}
-//			//身份证附件
-//			if(StrUtil.isNotEmpty(list.get(i).getShenfenzhengfujian())){
-//				list.get(i).setShenfenzhengfujian(fileUploadClient.getUrl(list.get(i).getShenfenzhengfujian()));
-//			}
-//			//从业证附件
-//			if(StrUtil.isNotEmpty(list.get(i).getCongyezhengfujian())){
-//				list.get(i).setCongyezhengfujian(fileUploadClient.getUrl(list.get(i).getCongyezhengfujian()));
-//			}
-//			//驾驶证附件
-//			if(StrUtil.isNotEmpty(list.get(i).getJiashizhengfujian())){
-//				list.get(i).setJiashizhengfujian(fileUploadClient.getUrl(list.get(i).getJiashizhengfujian()));
-//			}
-//			//复印件
-//			if(StrUtil.isNotEmpty(list.get(i).getFuyinjian())){
-//				list.get(i).setFuyinjian(fileUploadClient.getUrl(list.get(i).getFuyinjian()));
-//			}
-//		}
+		List<JiaShiYuanVO>  list=pages.getRecords();
+		String log="[";
+		for (int i = 0; i <list.size() ; i++) {
+			//照片
+			if(StrUtil.isNotEmpty(list.get(i).getZhaopian())){
+				String str = list.get(i).getZhaopian();
+				String str1 =str.substring(0, str.lastIndexOf("/"));
+				String str2 =str.substring(str1.length()+1, str.length());
+				log=log+"{\"name\":\""+str2+"\",\"url\":\""+str+"\",\"id\":\""+""+"\",\"savename\":\""+str2+"\"}";
+				list.get(i).setZhaopian(fileUploadClient.getUrl(str2));
+				if(StringUtils.isBlank(list.get(i).getZhaopian())){
+					list.get(i).setZhaopian(log+"]");
+				}
+			}
+			//身份证附件
+			if(StrUtil.isNotEmpty(list.get(i).getShenfenzhengfujian())){
+				String str = list.get(i).getShenfenzhengfujian();
+				String str1 =str.substring(0, str.lastIndexOf("/"));
+				String str2 =str.substring(str1.length()+1, str.length());
+				log=log+"{\"name\":\""+str2+"\",\"url\":\""+str+"\",\"id\":\""+""+"\",\"savename\":\""+str2+"\"}";
+				list.get(i).setShenfenzhengfujian(fileUploadClient.getUrl(str2));
+				if(StringUtils.isBlank(list.get(i).getShenfenzhengfujian())){
+					list.get(i).setShenfenzhengfujian(log+"]");
+				}
+			}
+			//从业证附件
+			if(StrUtil.isNotEmpty(list.get(i).getCongyezhengfujian())){
+				String str = list.get(i).getCongyezhengfujian();
+				String str1 =str.substring(0, str.lastIndexOf("/"));
+				String str2 =str.substring(str1.length()+1, str.length());
+				log=log+"{\"name\":\""+str2+"\",\"url\":\""+str+"\",\"id\":\""+""+"\",\"savename\":\""+str2+"\"}";
+				list.get(i).setCongyezhengfujian(fileUploadClient.getUrl(str2));
+				if(StringUtils.isBlank(list.get(i).getCongyezhengfujian())){
+					list.get(i).setCongyezhengfujian(log+"]");
+				}
+			}
+			//驾驶证附件
+			if(StrUtil.isNotEmpty(list.get(i).getJiashizhengfujian())){
+				String str = list.get(i).getJiashizhengfujian();
+				String str1 =str.substring(0, str.lastIndexOf("/"));
+				String str2 =str.substring(str1.length()+1, str.length());
+				log=log+"{\"name\":\""+str2+"\",\"url\":\""+str+"\",\"id\":\""+""+"\",\"savename\":\""+str2+"\"}";
+				list.get(i).setJiashizhengfujian(fileUploadClient.getUrl(str2));
+				if(StringUtils.isBlank(list.get(i).getJiashizhengfujian())){
+					list.get(i).setJiashizhengfujian(log+"]");
+				}
+			}
+			//复印件
+			if(StrUtil.isNotEmpty(list.get(i).getFuyinjian())){
+				String str = list.get(i).getFuyinjian();
+				String str1 =str.substring(0, str.lastIndexOf("/"));
+				String str2 =str.substring(str1.length()+1, str.length());
+				log=log+"{\"name\":\""+str2+"\",\"url\":\""+str+"\",\"id\":\""+""+"\",\"savename\":\""+str2+"\"}";
+				list.get(i).setFuyinjian(fileUploadClient.getUrl(str2));
+				if(StringUtils.isBlank(list.get(i).getFuyinjian())){
+					list.get(i).setFuyinjian(log+"]");
+				}
+			}
+		}
 		return R.data(pages);
 	}
 

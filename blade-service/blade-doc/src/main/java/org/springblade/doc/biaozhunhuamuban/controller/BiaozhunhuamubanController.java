@@ -730,12 +730,13 @@ public class BiaozhunhuamubanController extends BladeController  {
 		@ApiImplicitParam(name = "targetId", value = "目标文件id", required = true)
 	})
 	public R swapFileSort(@RequestParam Integer originId,@RequestParam  Integer targetId) {
-//		Biaozhunhuamuban origin = biaozhunhuamubanService.getById(originId);
-//		Biaozhunhuamuban target = biaozhunhuamubanService.getById(targetId);
-//		int originSort = origin.getSort();
-//		int targetSort = target.getSort();
-//		boolean a = biaozhunhuamubanService.updateSortById(originId,targetSort);
-//		boolean b = biaozhunhuamubanService.updateSortById(targetId,originSort);
+		/*Biaozhunhuamuban origin = biaozhunhuamubanService.getById(originId);
+		Biaozhunhuamuban target = biaozhunhuamubanService.getById(targetId);
+		int originSort = origin.getSort();
+		int targetSort = target.getSort();
+		boolean a = biaozhunhuamubanService.updateSortById(originId,targetSort);
+		boolean b = biaozhunhuamubanService.updateSortById(targetId,originSort);*/
+
 		boolean a= biaozhunhuamubanService.swapFileSort(originId,targetId);
 		return R.success("移动成功");
 	}
@@ -754,9 +755,9 @@ public class BiaozhunhuamubanController extends BladeController  {
 	@ApiOperation(value = "预览-所属人的文件", notes = "传入文件性质,预览他对应的文件", position = 9)
 	public R<BiaozhunhuawenjianVO> imgPreviewBySuoshuren(@ApiParam(value = "文件性质", required = true)@RequestParam String fileProperty,
 														 BladeUser user ){
-//		if(user==null){
-//			return R.fail("user信息为空");
-//		}
+		/*if(user==null){
+			return R.fail("user信息为空");
+		}*/
 		BiaozhunhuawenjianVO biaozhunhuawenjian= iBiaozhunhuawenjianService.selectPicPathBySuoshurenId(fileProperty,user.getUserId());
 		if(biaozhunhuawenjian==null){
 			return R.data(biaozhunhuawenjian,"该文件不存在对应的预览图片资源");
@@ -873,18 +874,19 @@ public class BiaozhunhuamubanController extends BladeController  {
 
 
 	/**
+	 *
 	 *文件对应图片预览
-	 * @author: th
 	 * @CreateDate: 2019-05-12 15:08
 	 * @param id
-	 * @return: org.springblade.core.tool.api.R<org.springblade.anbiao.BiaozhunhuawenjianVO>
+	 * @return: org.springblade.core.tool.api.R<org.springblade.anbiao.BiaozhunhuawenjianVO
 	 */
 	@PostMapping("/imgPreview")
 	@ApiLog("安全标准化文件-预览-文件")
 	@ApiOperation(value = "预览-文件", notes = "传入id,filetype(filetype为解析后的文件类型,有1正式文件,2pdf文件,3img文件,预览用3,保留filetype参数,是以防将来做pdf预览)", position = 9)
 	public R<BiaozhunhuamubanVO> imgPreview(@ApiParam(value = "id", required = true)@RequestParam Integer id,
 											@ApiParam(value = "docSource", required = false,defaultValue = "0")@RequestParam(required = false,defaultValue = "0") Integer docSource){
-		//BiaozhunhuawenjianVO biaozhunhuawenjian= iBiaozhunhuawenjianService.selectPicPath(id,fileType);
+		/*BiaozhunhuawenjianVO biaozhunhuawenjian= iBiaozhunhuawenjianService.selectPicPath(id,fileType);*/
+
 		if(docSource==1){
 			BiaozhunhuamubanVO vo = new BiaozhunhuamubanVO();
 			SafetyProductionFile safe = safetyProductionFileService.selectByBindId(id);
@@ -923,10 +925,24 @@ public class BiaozhunhuamubanController extends BladeController  {
 			if(vo.getIsEdit()==0){
 				path = vo.getMubanPath();
 			}
-			String pic = StrUtil.replace(StrUtil.replace(fileParse.getPath(path),FilePathConstant.SUBTEMPLATE_PATH,FilePathConstant.SUBTEMPLATE_IMG_PATH),".docx","");
-			File file = new File(pic);
-			File[] files=file.listFiles();
-			for(int i = 0; i < files.length; i++){
+			System.out.println(path);
+			System.out.println(fileParse.getPath(path));
+			String pic ="";
+			pic = StrUtil.replace(StrUtil.replace(fileParse.getPath(path),FilePathConstant.SUBTEMPLATE_PATH,FilePathConstant.SUBTEMPLATE_IMG_PATH),".docx","");
+			if (vo.getDeptId() != 1 ){
+				pic = pic+"\\"+vo.getName().substring(0, vo.getName().indexOf("."));
+			}
+			File file =null;
+			file = new File(pic);
+			File[] files;
+			files =file.listFiles();
+
+			if(files == null){
+				String picName = pic+"\\"+vo.getName().substring(0, vo.getName().indexOf("."));
+				file = new File(picName);
+				files =file.listFiles();
+			}
+			for(int i = 0;i < files.length;i++){
 				if (files[i].isFile()) {
 					try{
 						list.add(fileParse.pathToUrl(files[i].getPath()));
@@ -990,6 +1006,7 @@ public class BiaozhunhuamubanController extends BladeController  {
     public R aKeyGeneration(Integer deptId,Integer yunyingleixing,Integer isOnlyDir,String caozuoren,Integer caozuorenid){
 		// TODO: 2019/9/3 非线程安全，改成多例模式或者用消息队列
 		List<Integer> deptIds = iSysClient.getDetpIds(deptId);
+		System.out.println(deptIds);
 		List<BiaozhunhuamubanVO> mubanList = biaozhunhuamubanService.getMubanTree(yunyingleixing,isOnlyDir);
 		for (Integer id : deptIds) {
 			int i = biaozhunhuamubanService.getCountByDetpId(id);
@@ -1051,8 +1068,6 @@ public class BiaozhunhuamubanController extends BladeController  {
 		return R.data(biaozhunhuamubanVOList,"绑定成功");
 	}
 
-
-
 	@GetMapping("/cancelSafetyBind")
 	@ApiLog("安全标准化文件-安全生产完档取消绑定")
 	@ApiOperation(value = "安全标准化文件-安全生产完档取消绑定", notes = "传入节点id", position = 1)
@@ -1083,6 +1098,31 @@ public class BiaozhunhuamubanController extends BladeController  {
 		return R.data(biaozhunhuamubanService.selectGetQYWJ(biaozhunhuamubanPage.getDeptId()));
 	}
 
+	@GetMapping("/deleteBiaozhunhuamuban")
+	@ApiLog("安全标准化文件-根据企业ID删除标准化考评文件")
+	@ApiOperation(value = "安全标准化文件-安全生产完档取消绑定", notes = "传入节点id", position = 15)
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "deptId", value = "企业ID", required = true),
+		@ApiImplicitParam(name = "caozuorenid", value = "操作人ID", required = true),
+		@ApiImplicitParam(name = "caozuoren", value = "操作人", required = true)
+	})
+	public R deleteBiaozhunhuamuban(@RequestParam Integer deptId,Integer caozuorenid,String caozuoren ) {
+		biaozhunhuamubanService.deleteBiaozhunhuamuban(caozuorenid, caozuoren, deptId);
+		return R.success("删除成功");
+	}
+
+	@GetMapping("/deleteSafetyProductionFile")
+	@ApiLog("安全标准化文件-根据企业ID删除标准化文档件")
+	@ApiOperation(value = "安全标准化文件-安全生产完档取消绑定", notes = "传入节点id", position = 16)
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "deptId", value = "企业ID", required = true),
+		@ApiImplicitParam(name = "caozuorenid", value = "操作人ID", required = true),
+		@ApiImplicitParam(name = "caozuoren", value = "操作人", required = true)
+	})
+	public R deleteSafetyProductionFile(@RequestParam Integer deptId,Integer caozuorenid,String caozuoren ) {
+		biaozhunhuamubanService.deleteSafetyProductionFile(caozuorenid, caozuoren, deptId);
+		return R.success("删除成功");
+	}
 
 }
 

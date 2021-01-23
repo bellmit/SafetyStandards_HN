@@ -49,4 +49,6 @@ public class ZhengFuBaoGaoPage<T> extends BasePage<T> {
 	@ApiModelProperty(value = "排序字段")
 	private String orderColumns;
 
+	@ApiModelProperty(value = "运管名称")
+	private String zhengfuname;
 }

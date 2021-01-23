@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springblade.anbiao.cheliangguanli.entity.Vehicle;
 import org.springblade.anbiao.cheliangguanli.entity.VehicleCP;
+import org.springblade.anbiao.cheliangguanli.entity.VehicleGDSTJ;
 import org.springblade.anbiao.cheliangguanli.entity.VehicleToGps;
 import org.springblade.anbiao.cheliangguanli.mapper.VehicleMapper;
 import org.springblade.anbiao.cheliangguanli.page.VehiclePage;
@@ -87,6 +88,11 @@ public class VehicleServiceImpl extends ServiceImpl<VehicleMapper, Vehicle> impl
 	}
 
 	@Override
+	public boolean updateVehicleSignStatus(String id) {
+		return vehicleMapper.updateVehicleSignStatus(id);
+	}
+
+	@Override
 	public boolean updateVehicleScrapStatus(String id) {
 		return vehicleMapper.updateVehicleScrapStatus(id);
 	}
@@ -139,5 +145,75 @@ public class VehicleServiceImpl extends ServiceImpl<VehicleMapper, Vehicle> impl
 	@Override
 	public VehicleVO selectByZongDuan(String id) {
 		return vehicleMapper.selectByZongDuan(id);
+	}
+
+	@Override
+	public VehiclePage<VehicleGDSTJ> selectGDSVehiclePage(VehiclePage vehiclePage) {
+		Integer total = vehicleMapper.selectGDSVehicleTotal(vehiclePage);
+		if(vehiclePage.getSize()==0){
+			if(vehiclePage.getTotal()==0){
+				vehiclePage.setTotal(total);
+			}
+			List<VehicleGDSTJ> vehlist = vehicleMapper.selectGDSVehiclePage(vehiclePage);
+			vehiclePage.setRecords(vehlist);
+			return vehiclePage;
+		}
+		Integer pagetotal = 0;
+		if (total > 0) {
+			if(total%vehiclePage.getSize()==0){
+				pagetotal = total / vehiclePage.getSize();
+			}else {
+				pagetotal = total / vehiclePage.getSize() + 1;
+			}
+			List<VehicleGDSTJ> vehlist = vehicleMapper.selectGDSVehiclePage(vehiclePage);
+			vehiclePage.setRecords(vehlist);
+		}
+		if (pagetotal >= vehiclePage.getCurrent()) {
+			vehiclePage.setPageTotal(pagetotal);
+			Integer offsetNo = 0;
+			if (vehiclePage.getCurrent() > 1) {
+				offsetNo = vehiclePage.getSize() * (vehiclePage.getCurrent() - 1);
+			}
+			vehiclePage.setTotal(total);
+			vehiclePage.setOffsetNo(offsetNo);
+			List<VehicleGDSTJ> vehlist = vehicleMapper.selectGDSVehiclePage(vehiclePage);
+			vehiclePage.setRecords(vehlist);
+		}
+		return vehiclePage;
+	}
+
+	@Override
+	public VehiclePage<VehicleGDSTJ> selectGDSMXVehiclePage(VehiclePage vehiclePage) {
+		Integer total = vehicleMapper.selectGDSMXVehicleTotal(vehiclePage);
+		if(vehiclePage.getSize()==0){
+			if(vehiclePage.getTotal()==0){
+				vehiclePage.setTotal(total);
+			}
+			List<VehicleGDSTJ> vehlist = vehicleMapper.selectGDSMXVehiclePage(vehiclePage);
+			vehiclePage.setRecords(vehlist);
+			return vehiclePage;
+		}
+		Integer pagetotal = 0;
+		if (total > 0) {
+			if(total%vehiclePage.getSize()==0){
+				pagetotal = total / vehiclePage.getSize();
+			}else {
+				pagetotal = total / vehiclePage.getSize() + 1;
+			}
+			List<VehicleGDSTJ> vehlist = vehicleMapper.selectGDSMXVehiclePage(vehiclePage);
+			vehiclePage.setRecords(vehlist);
+		}
+		if (pagetotal >= vehiclePage.getCurrent()) {
+			vehiclePage.setPageTotal(pagetotal);
+			Integer offsetNo = 0;
+			if (vehiclePage.getCurrent() > 1) {
+				offsetNo = vehiclePage.getSize() * (vehiclePage.getCurrent() - 1);
+			}
+			vehiclePage.setTotal(total);
+			vehiclePage.setOffsetNo(offsetNo);
+			List<VehicleGDSTJ> vehlist = vehicleMapper.selectGDSMXVehiclePage(vehiclePage);
+			vehiclePage.setRecords(vehlist);
+		}
+		return vehiclePage;
 	}
 }

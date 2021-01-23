@@ -5,3 +5,6 @@ fileserver:
   path-prefix: ${fileserver.dev.path}
   url-prefix: ${fileserver.dev.url}
   falg: ${fileserver.dev.flag}
+  photoLogo: ${fileserver.dev.photoLogo}
+alarmserver:
+  address-path: ${alarmserver.dev.address}

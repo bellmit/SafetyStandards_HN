@@ -51,10 +51,10 @@ public interface IAlarmdangerousService extends IService<Alarmdangerous> {
 	/**
 	 * gps 车牌报警 分页
 	 */
-	 AlarmPlatePage    gpslistpage(AlarmPlatePage alarmPlatePage);
+	 AlarmPlatePage gpslistpage(AlarmPlatePage alarmPlatePage);
 	/**
 	 * 主动防御 车牌报警 分页
 	 */
-	AlarmPlatePage    zhudonglistpage(AlarmPlatePage alarmPlatePage);
+	AlarmPlatePage zhudonglistpage(AlarmPlatePage alarmPlatePage);
 
 }

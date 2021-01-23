@@ -171,4 +171,45 @@ public class Alarmhandleresult implements Serializable {
     @TableField(exist = false)
     private String[] idss;
 
+	/**
+	 * 二次处理形式
+	 */
+	@ApiModelProperty(value = "二次处理形式")
+	private String twicechulixingshi;
+
+	/**
+	 * 二次处理描述
+	 */
+	@ApiModelProperty(value = "二次处理描述")
+	private String twicechulimiaoshu;
+
+	/**
+	 * 二次处理附件
+	 */
+	@ApiModelProperty(value = "二次处理附件")
+	private String twicefujian;
+
+	/**
+	 * 二次处理人
+	 */
+	@ApiModelProperty(value = "二次处理人")
+	private String twicechuliren;
+
+	/**
+	 * 二次处理时间
+	 */
+	@ApiModelProperty(value = "二次处理时间")
+	private String twicechulishijian;
+
+	/**
+	 * 二次处理人ID
+	 */
+	@ApiModelProperty(value = "二次处理人ID")
+	private Integer twicechulirenid;
+
+	/**
+	 * 处理最终结果
+	 */
+	@ApiModelProperty(value = "处理最终结果")
+	private Integer endresult;
 }

@@ -71,6 +71,7 @@ public class AlarmInfoController {
 	public R OperatType(String deptId){
 			return  R.data(cutofftimeService.findoperattype(deptId));
 	}
+
     @PostMapping("/list")
 	@ApiLog("分页查询-GPS报警")
     @ApiOperation(value = "分页查询-GPS报警", notes = "传入AlarmPage", position = 1)
@@ -148,17 +149,105 @@ public class AlarmInfoController {
      * @param chulimiaoshu
      * @param fujian
      */
-    @PostMapping("/insertChuli")
-	@ApiLog("新增-处理记录")
-    @ApiOperation(value = "Add-新增处理记录", notes = "传入alarmResult", position = 7)
-    public R insertChuli(@ApiParam(value = "ids串", required = true) String ids, @ApiParam(value = "报警类型", required = true) String alarmType, @ApiParam(value = "处理形式", required = true) String chulixingshi, @ApiParam(value = "处理描述") String chulimiaoshu, @ApiParam(value = "附件") String fujian,
-                         BladeUser bladeUser,String deptId) {
-        System.out.println("ids:" + ids);
-//        Dept dept = sysClient.selectByJGBM("机构", bladeUser.getRoleId());
-        Dept dept = sysClient.selectById(deptId);
-//        String deptId = dept.getId().toString();
-        String[] idsss = ids.split(",");
-        //去除素组中重复的数组
+//    @PostMapping("/insertChuli")
+//	@ApiLog("新增-处理记录")
+//    @ApiOperation(value = "Add-新增处理记录", notes = "传入alarmResult", position = 7)
+//    public R insertChuli(@ApiParam(value = "ids串", required = true) String ids, @ApiParam(value = "报警类型", required = true) String alarmType, @ApiParam(value = "处理形式", required = true) String chulixingshi, @ApiParam(value = "处理描述") String chulimiaoshu, @ApiParam(value = "附件") String fujian,
+//                         BladeUser bladeUser,String deptId) {
+////        Dept dept = sysClient.selectByJGBM("机构", bladeUser.getRoleId());
+//        Dept dept = sysClient.selectById(deptId);
+////        String deptId = dept.getId().toString();
+//        String[] idsss = ids.split(",");
+//        //去除素组中重复的数组
+//		List<String> listid = new ArrayList<String>();
+//		for (int i=0; i<idsss.length; i++) {
+//			if(!listid.contains(idsss[i])) {
+//				listid.add(idsss[i]);
+//			}
+//		}
+//		//返回一个包含所有对象的指定类型的数组
+//		String[]  idss= listid.toArray(new String[1]);
+//
+//        int count = alarmhandleresultService.selectAlarmCountByIdsAndDetpId(idss,dept.getDeptName());
+//        if(count<idss.length){
+//            return R.fail("当前单位与报警所属单位不符，不能进行处理");
+//        }
+//        Alarmhandleresult result = new Alarmhandleresult();
+//        result.setIdss(idss);
+//        result.setBaojingleixing(alarmType);
+//		result.setRemark(true);
+//        //根据报警id 报警类型
+//        List<String> resultids = alarmhandleresultService.selectIdList(result);
+//        List<Alarmhandleresult> list = new ArrayList<>();
+//        int code = 200;
+//        String msg = "";
+//        boolean delnum = false;
+//        boolean addnum = false;
+//
+//        for (int i = 0; i < idss.length; i++) {
+//            Alarmhandleresult alarmResult = new Alarmhandleresult();
+//            alarmResult.setBaojingid(idss[i]);
+//            alarmResult.setChulizhuangtai(1);
+//            alarmResult.setChuliren(bladeUser.getUserName());
+//            alarmResult.setChulishijian(DateUtil.now());
+//            alarmResult.setQiyemingcheng(dept.getDeptName());
+//            alarmResult.setQiyeid(Integer.parseInt(deptId));
+//            alarmResult.setChulixingshi(chulixingshi);
+//            alarmResult.setBaojingleixing(alarmType);
+//            //登录页
+//            if (StringUtil.isNotBlank(fujian)) {
+//                fileUploadClient.updateCorrelation(fujian, "1");
+//            }
+//            alarmResult.setFujian(fujian);
+//            String str = CommonTool.HtmlToText(chulimiaoshu);
+//            alarmResult.setChulimiaoshu(str);
+//			alarmResult.setRemark(true);
+//			//根据报警id查询是否出处理过 处理过就不添加
+//			List<Alarmhandleresult> alarmhandleresult = alarmhandleresultService.selectBybaojin(idss[i]);
+//			if(alarmhandleresult.size()==0){
+//				list.add(alarmResult);
+//			}
+//        }
+//        //保存之前，先删除要保存的报警已处理记录
+//        if (resultids.size() > 0) {
+//            System.out.println(" resultids: " + resultids.size());
+//            delnum = alarmhandleresultService.removeByIds(resultids);
+//        }
+//        //添加记录
+//        addnum = alarmhandleresultService.saveBatch(list);
+//        //更新日报百分比
+////		String company=dept.getDeptName();
+////		DateTime yesterday = DateUtil.yesterday();
+////		String cutoffTime=yesterday.toString();
+////		Integer updateribao = alarmhandleresultService.updateribao(cutoffTime, company, deptId);
+//
+//		if (delnum && addnum) {
+//            msg = "更新成功";
+//        } else if (addnum) {
+//            msg = "保存成功";
+//        } else {
+//            code = 400;
+//            msg = "保存失败";
+//        }
+//        return R.fail(code, msg);
+//    }
+
+	/**
+	 * 添加处理记录
+	 */
+	@PostMapping("/insertChuli")
+	@ApiLog("新增-报警处理记录")
+	@ApiOperation(value = "新增-报警处理记录", notes = "传入alarmResult", position = 7)
+	public R insertChuli(
+		@ApiParam(value = "报警id（传入多个报警ID需以英文逗号隔开）", required = true) String ids,
+		@ApiParam(value = "报警类型", required = true) String alarmType,
+		@ApiParam(value = "处理形式", required = true) String chulixingshi,
+		@ApiParam(value = "处理描述") String chulimiaoshu,
+		@ApiParam(value = "附件") String fujian,BladeUser bladeUser,String deptId) {
+
+		Dept dept = sysClient.selectById(deptId);
+		String[] idsss = ids.split(",");
+		//去除素组中重复的数组
 		List<String> listid = new ArrayList<String>();
 		for (int i=0; i<idsss.length; i++) {
 			if(!listid.contains(idsss[i])) {
@@ -168,69 +257,193 @@ public class AlarmInfoController {
 		//返回一个包含所有对象的指定类型的数组
 		String[]  idss= listid.toArray(new String[1]);
 
-        int count = alarmhandleresultService.selectAlarmCountByIdsAndDetpId(idss,dept.getDeptName());
-        if(count<idss.length){
-            return R.fail("当前单位与报警所属单位不符，不能进行处理");
-        }
-        Alarmhandleresult result = new Alarmhandleresult();
-        result.setIdss(idss);
-        result.setBaojingleixing(alarmType);
-		result.setRemark(true);
-        //根据报警id 报警类型
-        List<String> resultids = alarmhandleresultService.selectIdList(result);
-        List<Alarmhandleresult> list = new ArrayList<>();
-        int code = 200;
-        String msg = "";
-        boolean delnum = false;
-        boolean addnum = false;
+		int count = alarmhandleresultService.selectAlarmCountByIdsAndDetpId(idss,dept.getDeptName());
+		System.out.println(count);
+		if(count<idss.length){
+			return R.fail("当前所属单位与报警单位不符，不能进行报警处理");
+		}
+		Alarmhandleresult result = new Alarmhandleresult();
+		result.setIdss(idss);
+		result.setBaojingleixing(alarmType);
+		result.setRemark(null);
+		//根据报警id 报警类型
 
-        for (int i = 0; i < idss.length; i++) {
-            Alarmhandleresult alarmResult = new Alarmhandleresult();
-            alarmResult.setBaojingid(idss[i]);
-            alarmResult.setChulizhuangtai(1);
-            alarmResult.setChuliren(bladeUser.getUserName());
-            alarmResult.setChulishijian(DateUtil.now());
-            alarmResult.setQiyemingcheng(dept.getDeptName());
-            alarmResult.setQiyeid(Integer.parseInt(deptId));
-            alarmResult.setChulixingshi(chulixingshi);
-            alarmResult.setBaojingleixing(alarmType);
-            //登录页
-            if (StringUtil.isNotBlank(fujian)) {
-                fileUploadClient.updateCorrelation(fujian, "1");
-            }
-            alarmResult.setFujian(fujian);
-            String str = CommonTool.HtmlToText(chulimiaoshu);
-            alarmResult.setChulimiaoshu(str);
-			alarmResult.setRemark(true);
-			//根据报警id查询是否出处理过 处理过就不添加
-			List<Alarmhandleresult> alarmhandleresult = alarmhandleresultService.selectBybaojin(idss[i]);
-			if(alarmhandleresult.size()==0){
-				list.add(alarmResult);
+		List<Alarmhandleresult> resultids = alarmhandleresultService.selectIdList(result);
+		System.out.println(resultids);
+		int code = 200;
+		String msg = "";
+		Integer delnum = 0;
+		boolean addnum = false;
+		Integer countnum = 0;
+		for (int i = 0; i < idss.length; i++) {
+			List<Alarmhandleresult> list = new ArrayList<>();
+			System.out.println(resultids.size()+"+++++++++++++++++++++++++++++++"+countnum+"+++++++++++++"+idss.length);
+			if (resultids.size() > 0 && resultids.size() > countnum) {
+				for(int j=0;j<= i;j++){
+					System.out.println(countnum+"+++++++++"+resultids.size());
+					// || resultids.get(j).getShensushenhebiaoshi()  == null
+					if(countnum >= resultids.size()){
+						return R.fail(code, msg);
+					}
+					if(resultids.get(j).getShensushenhebiaoshi() == null){
+						Alarmhandleresult alarmResult = new Alarmhandleresult();
+						alarmResult.setBaojingid(idss[i]);
+						alarmResult.setChulizhuangtai(1);
+						if (bladeUser == null){
+							alarmResult.setChuliren("hyp");
+							alarmResult.setChulirenid(1);
+						}else{
+							alarmResult.setChuliren(bladeUser.getUserName());
+							alarmResult.setChulirenid(bladeUser.getUserId());
+						}
+						alarmResult.setChulishijian(DateUtil.now());
+						alarmResult.setQiyemingcheng(dept.getDeptName());
+						alarmResult.setQiyeid(Integer.parseInt(deptId));
+						alarmResult.setChulixingshi(chulixingshi);
+						alarmResult.setBaojingleixing(alarmType);
+						//登录页
+						if (StringUtil.isNotBlank(fujian)) {
+							fileUploadClient.updateCorrelation(fujian, "1");
+						}
+						alarmResult.setFujian(fujian);
+						String str = CommonTool.HtmlToText(chulimiaoshu);
+						alarmResult.setChulimiaoshu(str);
+						alarmResult.setRemark(true);
+						alarmResult.setEndresult(1);
+						//根据报警id查询是否出处理过 处理过就不添加
+						List<Alarmhandleresult> alarmhandleresult = alarmhandleresultService.selectBybaojin(idss[i]);
+						if(alarmhandleresult.size()==0){
+							list.add(alarmResult);
+						}
+						//添加记录
+						addnum = alarmhandleresultService.saveBatch(list);
+
+						if (delnum>0 && addnum) {
+							msg = "更新成功";
+						} else if (addnum) {
+							msg = "保存成功";
+						} else {
+							code = 400;
+							msg = "保存失败";
+						}
+					}else{
+						System.out.println(resultids.get(j).getShensushenhebiaoshi()+"++++++++++++++"+resultids.get(j).getBaojingid()+"++++++++++"+idss[i]);
+						if(resultids.get(j).getShensushenhebiaoshi() == 2 && resultids.get(j).getBaojingid().equals(idss[i])){
+							if (StringUtil.isNotBlank(fujian)) {
+								fileUploadClient.updateCorrelation(fujian, "1");
+							}
+							String str = CommonTool.HtmlToText(chulimiaoshu);
+							Integer userId ;
+							String userName;
+							if (bladeUser == null){
+								userId = 1;
+								userName = "hyp";
+							}else{
+								userId = bladeUser.getUserId();
+								userName = bladeUser.getUserName();
+							}
+							String baojingid = resultids.get(j).getBaojingid();
+							addnum = alarmhandleresultService.updateAftertreatment(chulixingshi,str,userName,DateUtil.now(),userId,fujian,baojingid);
+							if (delnum>0 && addnum) {
+								msg = "更新成功";
+							} else if (addnum) {
+								msg = "保存成功";
+							} else {
+								code = 400;
+								msg = "保存失败";
+							}
+							countnum +=1;
+						}else{
+							Alarmhandleresult alarmResult = new Alarmhandleresult();
+							alarmResult.setBaojingid(idss[i]);
+							alarmResult.setChulizhuangtai(1);
+							if (bladeUser == null){
+								alarmResult.setChuliren("hyp");
+								alarmResult.setChulirenid(1);
+							}else{
+								alarmResult.setChuliren(bladeUser.getUserName());
+								alarmResult.setChulirenid(bladeUser.getUserId());
+							}
+							alarmResult.setChulishijian(DateUtil.now());
+							alarmResult.setQiyemingcheng(dept.getDeptName());
+							alarmResult.setQiyeid(Integer.parseInt(deptId));
+							alarmResult.setChulixingshi(chulixingshi);
+							alarmResult.setBaojingleixing(alarmType);
+							//登录页
+							if (StringUtil.isNotBlank(fujian)) {
+								fileUploadClient.updateCorrelation(fujian, "1");
+							}
+							alarmResult.setFujian(fujian);
+							String str = CommonTool.HtmlToText(chulimiaoshu);
+							alarmResult.setChulimiaoshu(str);
+							alarmResult.setRemark(true);
+							alarmResult.setEndresult(1);
+							//根据报警id查询是否出处理过 处理过就不添加
+							List<Alarmhandleresult> alarmhandleresult = alarmhandleresultService.selectBybaojin(idss[i]);
+							if(alarmhandleresult.size()==0){
+								list.add(alarmResult);
+							}
+							//添加记录
+							addnum = alarmhandleresultService.saveBatch(list);
+
+							if (delnum>0 && addnum) {
+								msg = "更新成功";
+							} else if (addnum) {
+								msg = "保存成功";
+							} else {
+								code = 400;
+								msg = "保存失败";
+							}
+							countnum = j;
+						}
+					}
+				}
+			} else{
+				Alarmhandleresult alarmResult = new Alarmhandleresult();
+				alarmResult.setBaojingid(idss[i]);
+				alarmResult.setChulizhuangtai(1);
+				if (bladeUser == null){
+					alarmResult.setChuliren("hyp");
+					alarmResult.setChulirenid(1);
+				}else{
+					alarmResult.setChuliren(bladeUser.getUserName());
+					alarmResult.setChulirenid(bladeUser.getUserId());
+				}
+				alarmResult.setChulishijian(DateUtil.now());
+				alarmResult.setQiyemingcheng(dept.getDeptName());
+				alarmResult.setQiyeid(Integer.parseInt(deptId));
+				alarmResult.setChulixingshi(chulixingshi);
+				alarmResult.setBaojingleixing(alarmType);
+				//登录页
+				if (StringUtil.isNotBlank(fujian)) {
+					fileUploadClient.updateCorrelation(fujian, "1");
+				}
+				alarmResult.setFujian(fujian);
+				String str = CommonTool.HtmlToText(chulimiaoshu);
+				alarmResult.setChulimiaoshu(str);
+				alarmResult.setRemark(true);
+				alarmResult.setEndresult(1);
+				//根据报警id查询是否出处理过 处理过就不添加
+				List<Alarmhandleresult> alarmhandleresult = alarmhandleresultService.selectBybaojin(idss[i]);
+				if(alarmhandleresult.size()==0){
+					list.add(alarmResult);
+				}
+				//添加记录
+				addnum = alarmhandleresultService.saveBatch(list);
+
+				if (delnum>0 && addnum) {
+					msg = "更新成功";
+				} else if (addnum) {
+					msg = "保存成功";
+				} else {
+					code = 400;
+					msg = "保存失败";
+				}
 			}
-        }
-        //保存之前，先删除要保存的报警已处理记录
-        if (resultids.size() > 0) {
-            System.out.println(" resultids: " + resultids.size());
-            delnum = alarmhandleresultService.removeByIds(resultids);
-        }
-        //添加记录
-        addnum = alarmhandleresultService.saveBatch(list);
-        //更新日报百分比
-//		String company=dept.getDeptName();
-//		DateTime yesterday = DateUtil.yesterday();
-//		String cutoffTime=yesterday.toString();
-//		Integer updateribao = alarmhandleresultService.updateribao(cutoffTime, company, deptId);
+		}
+		return R.fail(code, msg);
+	}
 
-		if (delnum && addnum) {
-            msg = "更新成功";
-        } else if (addnum) {
-            msg = "保存成功";
-        } else {
-            code = 400;
-            msg = "保存失败";
-        }
-        return R.fail(code, msg);
-    }
     @PostMapping("/selectBJDetail")
     @ApiLog("报警详情")
     @ApiOperation(value="报警详情",notes="传入报警id",position=13)
@@ -322,7 +535,7 @@ public class AlarmInfoController {
 		result.setBaojingleixing(alarmType);
 		result.setRemark(false);
 		//根据报警id 报警类型
-		List<String> resultids = alarmhandleresultService.selectIdList(result);
+		List<Alarmhandleresult> resultids = alarmhandleresultService.selectIdList(result);
 		List<Alarmhandleresult> list = new ArrayList<>();
 		int code = 200;
 		String msg = "";
@@ -360,11 +573,6 @@ public class AlarmInfoController {
 		}
 		//添加记录
 		addnum = alarmhandleresultService.saveBatch(list);
-		//更新日报百分比
-//		String company=dept.getDeptName();
-//		DateTime yesterday = DateUtil.yesterday();
-//		String cutoffTime=yesterday.toString();
-//		Integer updateribao = alarmhandleresultService.updateribao(cutoffTime, company, deptId);
 		if (delnum && addnum) {
 			msg = "更新成功";
 		} else if (addnum) {

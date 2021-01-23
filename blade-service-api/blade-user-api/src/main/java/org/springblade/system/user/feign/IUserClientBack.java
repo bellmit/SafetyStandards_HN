@@ -5,6 +5,8 @@ import org.springblade.system.user.entity.User;
 import org.springblade.system.user.entity.UserInfo;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
+
 /**
  * @program: SafetyStandards
  * @description: IUserClientBack
@@ -45,4 +47,15 @@ public class IUserClientBack  implements IUserClient{
 	public User ZFlogin(String account, String password) {
 		return null;
 	}
+
+	@Override
+	public boolean updateLocked(Integer isLocked, Integer loginErrorcount, String lastLoginErrorTime, String id) {
+		return false;
+	}
+
+	@Override
+	public User selectByName(String account) {
+		return null;
+	}
+
 }

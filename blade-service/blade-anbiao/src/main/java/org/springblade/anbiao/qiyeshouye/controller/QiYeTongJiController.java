@@ -10,9 +10,11 @@ package org.springblade.anbiao.qiyeshouye.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
+import org.springblade.anbiao.qiyeshouye.entity.QiYeInOutAreaTongJi;
 import org.springblade.anbiao.qiyeshouye.entity.QiYeOffLineTongJi;
 import org.springblade.anbiao.qiyeshouye.entity.QiYeRiYunXingTongJi;
 import org.springblade.anbiao.qiyeshouye.entity.QiYeTongJi;
+import org.springblade.anbiao.qiyeshouye.page.QiYeInOutAreaPage;
 import org.springblade.anbiao.qiyeshouye.page.QiYeOffLineTongJiPage;
 import org.springblade.anbiao.qiyeshouye.page.QiYeTongJiPage;
 import org.springblade.anbiao.qiyeshouye.service.IQiYeTongJiService;
@@ -94,6 +96,21 @@ public class QiYeTongJiController {
 			qiYeOffLineTongJiPage.setOrderColumn(qiYeOffLineTongJiPage.getOrderColumns());
 		}
 		QiYeOffLineTongJiPage<QiYeOffLineTongJi> pages = iQiYeTongJiService.selectGet24HoursOffLineTJ(qiYeOffLineTongJiPage);
+		return R.data(pages);
+	}
+
+	@PostMapping(value = "/getQYInOutAreaTJ")
+	@ApiLog("企业-进出区域统计")
+	@ApiOperation(value = "企业-进出区域统计", notes = "传入qiYeInOutAreaPage",position = 6)
+	public R<QiYeInOutAreaPage<QiYeInOutAreaTongJi>> getQYInOutAreaTJ(@RequestBody QiYeInOutAreaPage qiYeInOutAreaPage) {
+		//排序条件
+		////默认车辆牌照降序
+		if(qiYeInOutAreaPage.getOrderColumns()==null){
+			qiYeInOutAreaPage.setOrderColumn("KeepTime");
+		}else{
+			qiYeInOutAreaPage.setOrderColumn(qiYeInOutAreaPage.getOrderColumns());
+		}
+		QiYeInOutAreaPage<QiYeInOutAreaTongJi> pages = iQiYeTongJiService.selectGetInOutAreaTJ(qiYeInOutAreaPage);
 		return R.data(pages);
 	}
 

@@ -20,8 +20,10 @@ public class VehiclePage<T> extends BasePage<T> {
     private static final long serialVersionUID = 1L;
     @ApiModelProperty(value = "企业 id", required = true)
     private Integer deptId;
+
     @ApiModelProperty(value = "企业名称")
     private String deptName;
+
     @ApiModelProperty(value = "车辆牌照")
     private String cheliangpaizhao;
 
@@ -51,4 +53,13 @@ public class VehiclePage<T> extends BasePage<T> {
 
 	@ApiModelProperty(value = "车辆状态")
 	private String cheliangzhuangtai;
+
+	@ApiModelProperty(value = "开始时间")
+	private String begintime;
+
+	@ApiModelProperty(value = "结束时间")
+	private String endtime;
+
+	@ApiModelProperty(value = "所属地市")
+	private String areaName;
 }

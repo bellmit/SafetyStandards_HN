@@ -61,4 +61,16 @@ public class ZhengFuBaoJingTongJiJieSuanPage<T> extends BasePage<T> {
 	@ApiModelProperty(value = "区分地区、企业报警排名")
 	private String leiXing;
 
+	@ApiModelProperty(value = "政府ID ")
+	private String zhengfuid;
+
+	@ApiModelProperty(value = "省ID ")
+	private String province;
+
+	@ApiModelProperty(value = "市ID ")
+	private String city;
+
+	@ApiModelProperty(value = "县ID ")
+	private String country;
+
 }

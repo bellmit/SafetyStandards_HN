@@ -131,6 +131,13 @@ public class AlarmsummaryCutofftime implements Serializable {
     @ApiModelProperty(value = "持续时间")
     @TableField("KeepTime")
     private Integer keepTime;
+
+	/**
+	 * 持续时间展示转换
+	 */
+	@ApiModelProperty(value = "持续时间展示转换")
+	private String keeptimeShow;
+
     /**
      * 道路名称
      */
@@ -207,6 +214,13 @@ public class AlarmsummaryCutofftime implements Serializable {
      */
     @ApiModelProperty(value = "是否严重报警")
     private Integer status;
+
+	/**
+	 * 报警等级
+	 */
+	@ApiModelProperty(value = "报警等级")
+	private String statusShow;
+
     /**
      * 同步入库时间
      */

@@ -45,7 +45,7 @@ public class AlarmhandleresultServiceImpl extends ServiceImpl<AlarmhandleresultM
 
 
     @Override
-    public List<String> selectIdList(Alarmhandleresult result) {
+    public List<Alarmhandleresult> selectIdList(Alarmhandleresult result) {
         return alarmhandleresultMapper.selectIdList(result);
     }
 
@@ -167,6 +167,10 @@ public class AlarmhandleresultServiceImpl extends ServiceImpl<AlarmhandleresultM
 		return integer;
 	}
 
+	@Override
+	public boolean updateAftertreatment(String twicechulixingshi, String twicechulimiaoshu, String twicechuliren, String twicechulishijian, Integer twicechulirenid, String twicefujian, String id) {
+		return alarmhandleresultMapper.updateAftertreatment(twicechulixingshi, twicechulimiaoshu, twicechuliren, twicechulishijian, twicechulirenid, twicefujian, id);
+	}
 
 
 }

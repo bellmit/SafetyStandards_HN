@@ -37,7 +37,7 @@ public interface ZhengFuShouYeNewMapper extends BaseMapper<ZhengFuShouYeNew> {
 	 * @param date
 	 * @return
 	 */
-	ZhengFuShouYeNew selectGetOne(@Param("deptId") String deptId, @Param("date") String date);
+	List<ZhengFuShouYeNew> selectGetOne(@Param("deptId") String deptId, @Param("xiaJiDeptId") String xiaJiDeptId, @Param("date") String date);
 
 
 	/**

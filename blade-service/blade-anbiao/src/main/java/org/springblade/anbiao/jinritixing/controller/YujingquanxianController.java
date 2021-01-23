@@ -52,7 +52,7 @@ public class YujingquanxianController extends BladeController {
 	/**
 	* 查询所有预警
 	*/
-	@GetMapping("/allyujing")
+	@PostMapping("/allyujing")
 	@ApiLog("查询所有-预警权限")
 	@ApiOperation(value = "查询所有-预警权限", notes = "查询所有预警", position = 1)
 	public R<YujingquanxianPage<YujingquanxianVO>> allyujing(@RequestBody YujingquanxianPage yujingquanxianPage) {

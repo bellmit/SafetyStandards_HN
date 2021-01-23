@@ -15,6 +15,7 @@ import org.springblade.anbiao.zhengfu.service.IOrganizationService;
 import org.springblade.anbiao.zhengfu.service.IZhengFuBaoJingTongJiService;
 import org.springblade.core.log.annotation.ApiLog;
 import org.springblade.core.tool.api.R;
+import org.springblade.system.entity.Dept;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -386,8 +387,37 @@ public class ZhengFuBaoJingTongJiController {
 	@ApiLog("政府报警统计-所有报警详情明细")
 	@ApiOperation(value = "政府报警统计-所有报警详情明细", notes = "传入deptId",position = 10)
 	public R<ZhengFuBaoJingTongJiJieSuanPage<ZhengFuBaoJingTongJiLv>> getZFALLBJMX(@RequestBody ZhengFuBaoJingTongJiJieSuanPage zhengFuBaoJingTongJiJieSuanPage) {
+		R r = new R();
+
+		if(StringUtils.isBlank(zhengFuBaoJingTongJiJieSuanPage.getDeptName())){
+			Organization jb = iOrganizationService.selectGetZFJB(zhengFuBaoJingTongJiJieSuanPage.getDeptId());
+			if(!StringUtils.isBlank(jb.getProvince()) && StringUtils.isBlank(jb.getCity())){
+				zhengFuBaoJingTongJiJieSuanPage.setProvince(jb.getProvince());
+			}
+
+			if(!StringUtils.isBlank(jb.getCity()) && StringUtils.isBlank(jb.getCountry())){
+				zhengFuBaoJingTongJiJieSuanPage.setCity(jb.getCity());
+			}
+
+			if(!StringUtils.isBlank(jb.getCountry())){
+				zhengFuBaoJingTongJiJieSuanPage.setCountry(jb.getCountry());
+			}
+			zhengFuBaoJingTongJiJieSuanPage.setZhengfuid(zhengFuBaoJingTongJiJieSuanPage.getDeptId());
+		}else{
+			zhengFuBaoJingTongJiJieSuanPage.setDeptName(zhengFuBaoJingTongJiJieSuanPage.getDeptName());
+		}
+
 		ZhengFuBaoJingTongJiJieSuanPage<ZhengFuBaoJingTongJiLv> pages = iZhengFuBaoJingTongJiService.selectGetAllMXTJ(zhengFuBaoJingTongJiJieSuanPage);
-		return R.data(pages);
+		if(pages != null){
+			r.setCode(200);
+			r.setData(pages);
+			r.setMsg("获取成功");
+		}else{
+			r.setCode(500);
+			r.setData("");
+			r.setMsg("获取失败");
+		}
+		return r;
 	}
 
 	@PostMapping(value = "/getZFDQBJTJPM")
@@ -472,6 +502,38 @@ public class ZhengFuBaoJingTongJiController {
 				return rs;
 			}
 		}
+	}
+
+	@PostMapping(value = "/getZFCLRYXTJ")
+	@ApiLog("政府报警统计-车辆日运行情况统计")
+	@ApiOperation(value = "政府报警统计-车辆日运行情况统计", notes = "传入zhengFuBaoJingTongJiJieSuanPage(deptId、begintime、endtime)",position = 16)
+	public R<ZhengFuBaoJingTongJiJieSuanPage<ZhengFuRiYunXingTongJi>> getZFCLRYXTJ(@RequestBody ZhengFuBaoJingTongJiJieSuanPage zhengFuBaoJingTongJiJieSuanPage) {
+
+		Organization jb = iOrganizationService.selectGetZFJB(zhengFuBaoJingTongJiJieSuanPage.getDeptId());
+		if(jb == null){
+			return R.data(null);
+		}
+		if( !StringUtils.isBlank(jb.getProvince()) && StringUtils.isBlank(jb.getCity()) ){
+			zhengFuBaoJingTongJiJieSuanPage.setDeptId(zhengFuBaoJingTongJiJieSuanPage.getDeptId());
+		}
+
+		if(!StringUtils.isBlank(jb.getCity()) && StringUtils.isBlank(jb.getCountry())){
+			zhengFuBaoJingTongJiJieSuanPage.setDeptId(zhengFuBaoJingTongJiJieSuanPage.getDeptId());
+		}
+
+		if(!StringUtils.isBlank(jb.getCountry())) {
+			zhengFuBaoJingTongJiJieSuanPage.setXiaJiDeptId(zhengFuBaoJingTongJiJieSuanPage.getDeptId());
+		}
+
+		//排序条件
+		////默认处理牌照降序
+		if(zhengFuBaoJingTongJiJieSuanPage.getOrderColumns()==null){
+			zhengFuBaoJingTongJiJieSuanPage.setOrderColumn("");
+		}else{
+			zhengFuBaoJingTongJiJieSuanPage.setOrderColumn(zhengFuBaoJingTongJiJieSuanPage.getOrderColumns());
+		}
+		ZhengFuBaoJingTongJiJieSuanPage<ZhengFuRiYunXingTongJi> pages = iZhengFuBaoJingTongJiService.selectGetCLRYXTJ(zhengFuBaoJingTongJiJieSuanPage);
+		return R.data(pages);
 	}
 
 }

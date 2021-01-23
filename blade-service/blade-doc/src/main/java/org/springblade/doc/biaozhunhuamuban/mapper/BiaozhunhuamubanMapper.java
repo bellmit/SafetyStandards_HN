@@ -201,5 +201,20 @@ public interface BiaozhunhuamubanMapper extends BaseMapper<Biaozhunhuamuban> {
 	 */
 	List<BiaoZhunHua> selectGetQYWJ(@Param("deptId") Integer deptId);
 
+	/**
+	 * 根据企业ID删除标准化模板文件
+	 * @param deptId
+	 * @return
+	 */
+	boolean deleteBiaozhunhuamuban(@Param("caozuorenid") Integer caozuorenid,@Param("caozuoren") String caozuoren
+	,@Param("deptId") Integer deptId);
+
+	/**
+	 * 根据企业ID删除标准化文档文件
+	 * @param deptId
+	 */
+	boolean deleteSafetyProductionFile(@Param("caozuorenid") Integer caozuorenid,@Param("caozuoren") String caozuoren
+		,@Param("deptId") Integer deptId);
+
 
 }

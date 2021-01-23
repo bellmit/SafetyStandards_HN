@@ -14,6 +14,9 @@
         <result column="is_deleted" property="isDeleted"/>
     </resultMap>
 
+    <resultMap id="dictVOResultMap" type="org.springblade.system.vo.DictVO">
+    </resultMap>
+
     <resultMap id="treeNodeResultMap" type="org.springblade.core.tool.node.TreeNode">
         <id column="id" property="id"/>
         <result column="parent_id" property="parentId"/>
@@ -120,7 +123,47 @@
     </select>
 
     <select id="tree" resultMap="treeNodeResultMap">
-        select id, parent_id, dict_value as title, id as 'value', id as 'key' from blade_dict where is_deleted = 0
+        select id, parent_id, dict_value as title, id as 'value', id as 'key' from blade_dict
+        where is_deleted = 0
+        <if test=" type == '其他' ">
+            and code not in ('DiQu','省','市','县')
+        </if>
+
+        <if test=" type == '地区' ">
+            and parent_id in (
+                select id from blade_dict
+                where code in ('DiQu','省','市','县')
+            )
+        </if>
     </select>
+
+    <!--  其他字典   -->
+    <select id="OtherTree" resultMap="dictVOResultMap">
+        select id,parent_id,`code`,dict_key,dict_value,case when (select COUNT(1) from blade_dict where parent_id = a.id ) &gt; 0 then 1 else 0 end as childrens from blade_dict as a
+        where 1=1
+        <if test=" type == '其他' ">
+            and code != 'DiQu'
+            and parent_id = 0
+            and is_deleted = 0
+        </if>
+
+        <if test=" type == '地区' ">
+            and id in (
+                select id from blade_dict
+                where code = 'DiQu'
+                    and dict_key = -1
+            )
+        </if>
+
+    </select>
+
+    <!--  根据上级ID获取下级字典   -->
+    <select id="RegionalismTree" resultMap="dictVOResultMap">
+        select id,parent_id,`code`,dict_key,dict_value,case when (select COUNT(1) from blade_dict where parent_id = a.id ) &gt; 0 then 1 else 0 end as childrens from blade_dict as a
+        where 1=1
+            and parent_id = #{id}
+            and is_deleted = 0
+    </select>
+
 
 </mapper>

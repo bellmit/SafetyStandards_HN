@@ -17,6 +17,7 @@
             a.name,
             a.caozuoren,
             a.caozuoshijian,
+            a.countenddate,
             DATE_FORMAT(a.createtime,'%Y-%m-%d') as createtimeshow,
             case
                 when a.property=#{property} then DATE_FORMAT(a.countdate,'%Y-%m-%d')
@@ -44,8 +45,9 @@
         </if>
             and year(a.countDate) = year(#{time})
             and ifnull(a.is_deleted,0) = 0
+
         <if test=" yunguanId != null and yunguanId != '' ">
-            and d.yunguanid = #{yunguanId}
+            and a.dept_id = #{yunguanId}
         </if>
     <if test=" province != null and province != '' ">
         UNION
@@ -57,6 +59,7 @@
                 a.name,
                 a.caozuoren,
                 a.caozuoshijian,
+                a.countenddate,
                 DATE_FORMAT(a.createtime,'%Y-%m-%d') as createtimeshow,
                 case when a.property=#{property} then DATE_FORMAT(a.countdate,'%Y-%m-%d')
                 else CONCAT(DATE_FORMAT(a.countdate,'%Y/%m/%d'),' - ',DATE_FORMAT(a.countenddate,'%Y/%m/%d')) end as countdate
@@ -70,16 +73,25 @@
                 and year(a.countDate) = year(#{time})
                 and ifnull(a.is_deleted,0) = 0
                 and a.dept_id = #{province}
+
             <if test=" yunguanId != null and yunguanId != '' ">
                 and a.dept_id = #{yunguanId}
             </if>
         </if>
     </sql>
 
+    <sql id="querySql">
+
+        <if test="zhengfuname != null and zhengfuname != '' ">
+            and zhengfuname like concat('%', #{zhengfuname} ,'%')
+        </if>
+
+    </sql>
+
     <sql id="orderSql">
         <!-- 默认排序规则 -->
         <if test="orderColumn == null or orderColumn == ''">
-            order by countdate asc
+            order by countenddate desc
         </if>
         <if test="orderColumn != null and orderColumn != ''">
             order by ${orderColumn}
@@ -96,6 +108,7 @@
             <include refid="tableSql"/>
             )b
             where 1=1
+            <include refid="querySql"/>
             <include refid="orderSql"/>
             limit ${total}
         </if>
@@ -104,6 +117,7 @@
             <include refid="tableSql"/>
             )b
             where 1=1
+            <include refid="querySql"/>
             <include refid="orderSql"/>
             limit ${offsetNo},${size}
         </if>
@@ -115,6 +129,7 @@
         select COUNT(1) from (
         <include refid="tableSql"/>
         )d where 1 = 1
+        <include refid="querySql"/>
     </select>
 
 </mapper>

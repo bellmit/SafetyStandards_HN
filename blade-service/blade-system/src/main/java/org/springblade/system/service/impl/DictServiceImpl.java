@@ -56,8 +56,8 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements ID
 	}
 
 	@Override
-	public List<DictVO> tree() {
-		return ForestNodeMerger.merge(baseMapper.tree());
+	public List<DictVO> tree(DictPage dictPage) {
+		return ForestNodeMerger.merge(baseMapper.tree(dictPage));
 	}
 
 	@Override
@@ -111,5 +111,15 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements ID
 			throw new ApiException("当前字典键值已存在!");
 		}
 		return saveOrUpdate(dict);
+	}
+
+	@Override
+	public List<DictVO> OtherTree(DictPage dictPage) {
+		return baseMapper.OtherTree(dictPage);
+	}
+
+	@Override
+	public List<DictVO> RegionalismTree(Integer id) {
+		return baseMapper.RegionalismTree(id);
 	}
 }

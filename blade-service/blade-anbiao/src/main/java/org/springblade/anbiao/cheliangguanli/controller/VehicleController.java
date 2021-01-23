@@ -12,19 +12,13 @@ import lombok.AllArgsConstructor;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.util.TextUtils;
-import org.springblade.anbiao.cheliangguanli.entity.GpsVehicleDetail;
-import org.springblade.anbiao.cheliangguanli.entity.Vehicle;
-import org.springblade.anbiao.cheliangguanli.entity.VehicleCP;
-import org.springblade.anbiao.cheliangguanli.entity.VehicleCount;
-import org.springblade.anbiao.cheliangguanli.page.CheliangrenyuanbangdingPage;
+import org.springblade.anbiao.cheliangguanli.entity.*;
 import org.springblade.anbiao.cheliangguanli.page.VehiclePage;
 import org.springblade.anbiao.cheliangguanli.service.ICheliangrenyuanbangdingService;
 import org.springblade.anbiao.cheliangguanli.service.IVehicleService;
-import org.springblade.anbiao.cheliangguanli.vo.CheliangrenyuanbangdingVO;
 import org.springblade.anbiao.cheliangguanli.vo.VehicleVO;
 import org.springblade.anbiao.configure.entity.Configure;
 import org.springblade.anbiao.configure.service.IConfigureService;
-import org.springblade.anbiao.jiashiyuan.entity.JiaShiYuan;
 import org.springblade.anbiao.jiashiyuan.service.IJiaShiYuanService;
 import org.springblade.common.tool.CheckPhoneUtil;
 import org.springblade.core.log.annotation.ApiLog;
@@ -48,7 +42,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author :elvis.he
+ * @author :hyp
  * @program : SafetyStandards
  * @description: VehicleController
  * @create : 2019-04-22 17:50
@@ -72,7 +66,6 @@ public class VehicleController {
     public R<VehiclePage<VehicleVO>> list(@RequestBody VehiclePage vehiclepage) {
 		vehiclepage.setCheliangleixing("2");
         VehiclePage<VehicleVO> pages = vehicleService.selectVehiclePage(vehiclepage);
-		List<VehicleVO>  list=pages.getRecords();
 //		for (int i = 0; i <list.size() ; i++) {
 //			//车辆照片
 //			if(StrUtil.isNotEmpty(list.get(i).getCheliangzhaopian())){
@@ -268,25 +261,124 @@ public class VehicleController {
         return R.status(vehicleService.updateById(vehicle));
     }
 
-    @PostMapping("/del")
+	@PostMapping("/del")
 	@ApiLog("删除-车辆资料管理")
-    @ApiOperation(value = "删除-车辆资料管理", notes = "传入车辆id", position = 5)
-    public R del(@RequestParam String id) {
-        return R.status(vehicleService.deleleVehicle(id));
-    }
+	@ApiOperation(value = "删除-车辆资料管理", notes = "传入车辆id", position = 5)
+	public R del(@RequestParam String id) {
+		R r = new R();
+		String[] idsss = id.split(",");
+		//去除素组中重复的数组
+		List<String> listid = new ArrayList<String>();
+		for (int i=0; i<idsss.length; i++) {
+			if(!listid.contains(idsss[i])) {
+				listid.add(idsss[i]);
+			}
+		}
+		//返回一个包含所有对象的指定类型的数组
+		String[]  idss= listid.toArray(new String[1]);
+		for(int i = 0;i< idss.length;i++){
+			boolean ss = vehicleService.deleleVehicle(idsss[i]);
+			if (ss){
+				r.setMsg("删除成功");
+				r.setCode(200);
+				r.setData(ss);
+			}else{
+				r.setMsg("删除失败");
+				r.setCode(500);
+				r.setData(null);
+			}
+		}
+		return r;
+	}
 
 	@PostMapping("/updateVehicleOutStatus")
 	@ApiLog("停用-车辆资料管理")
 	@ApiOperation(value = "停用-车辆资料管理", notes = "传入车辆id", position = 15)
 	public R updateVehicleOutStatus(@RequestParam String id) {
-		return R.status(vehicleService.updateVehicleOutStatus(id));
+		R r = new R();
+		String[] idsss = id.split(",");
+		//去除素组中重复的数组
+		List<String> listid = new ArrayList<String>();
+		for (int i=0; i<idsss.length; i++) {
+			if(!listid.contains(idsss[i])) {
+				listid.add(idsss[i]);
+			}
+		}
+		//返回一个包含所有对象的指定类型的数组
+		String[]  idss= listid.toArray(new String[1]);
+		for(int i = 0;i< idss.length;i++){
+			boolean ss = vehicleService.updateVehicleOutStatus(idsss[i]);
+			if (ss){
+				r.setMsg("停用成功");
+				r.setCode(200);
+				r.setData(ss);
+			}else{
+				r.setMsg("停用失败");
+				r.setCode(500);
+				r.setData(null);
+			}
+		}
+		return r;
+	}
+
+	@PostMapping("/updateVehicleSignStatus")
+	@ApiLog("启用-车辆资料管理")
+	@ApiOperation(value = "启用-车辆资料管理", notes = "传入车辆id", position = 15)
+	public R updateVehicleSignStatus(@RequestParam String id) {
+		R r = new R();
+		String[] idsss = id.split(",");
+		//去除素组中重复的数组
+		List<String> listid = new ArrayList<String>();
+		for (int i=0; i<idsss.length; i++) {
+			if(!listid.contains(idsss[i])) {
+				listid.add(idsss[i]);
+			}
+		}
+		//返回一个包含所有对象的指定类型的数组
+		String[]  idss= listid.toArray(new String[1]);
+		for(int i = 0;i< idss.length;i++){
+			boolean ss = vehicleService.updateVehicleSignStatus(idsss[i]);
+			if (ss){
+				r.setMsg("启用成功");
+				r.setCode(200);
+				r.setData(ss);
+			}else{
+				r.setMsg("启用失败");
+				r.setCode(500);
+				r.setData(null);
+			}
+		}
+		return r;
 	}
 
 	@PostMapping("/updateVehicleScrapStatus")
 	@ApiLog("报废-车辆资料管理")
 	@ApiOperation(value = "报废-车辆资料管理", notes = "传入车辆id", position = 16)
 	public R updateVehicleScrapStatus(@RequestParam String id) {
-		return R.status(vehicleService.updateVehicleScrapStatus(id));
+		R r = new R();
+		String[] idsss = id.split(",");
+		//去除素组中重复的数组
+		List<String> listid = new ArrayList<String>();
+		for (int i=0; i<idsss.length; i++) {
+			if(!listid.contains(idsss[i])) {
+				listid.add(idsss[i]);
+			}
+		}
+		//返回一个包含所有对象的指定类型的数组
+		String[]  idss= listid.toArray(new String[1]);
+		for(int i = 0;i< idss.length;i++){
+			boolean ss = vehicleService.updateVehicleScrapStatus(idsss[i]);
+			if (ss){
+				r.setMsg("启用成功");
+				r.setCode(200);
+				r.setData(ss);
+			}else{
+				r.setMsg("启用失败");
+				r.setCode(500);
+				r.setData(null);
+			}
+		}
+		return r;
 	}
 
     /********************************** 配置表 ***********************/
@@ -644,6 +736,7 @@ public class VehicleController {
 				}
 
 				vehicle.setCreatetime(LocalDateTime.now());
+				vehicle.setCaozuoshijian(LocalDateTime.now());
 				if(user != null){
 					vehicle.setCaozuoren(user.getUserName());
 					vehicle.setCaozuorenid(user.getUserId());
@@ -960,6 +1053,7 @@ public class VehicleController {
 				vehicle.setChezhudianhua(String.valueOf(a.get("车主电话")).trim());
 			}
 			vehicle.setCreatetime(LocalDateTime.now());
+			vehicle.setCaozuoshijian(LocalDateTime.now());
 			if(user != null){
 				vehicle.setCaozuoren(user.getUserName());
 				vehicle.setCaozuorenid(user.getUserId());
@@ -1061,8 +1155,49 @@ public class VehicleController {
 	@ApiLog("车辆资料管理-车辆异动")
 	@ApiOperation(value = "车辆资料管理-车辆异动", notes = "传入车辆ID,企业ID", position = 10)
 	public R updateDeptId(@RequestParam String id,@RequestParam String deptId) {
-		return R.status(vehicleService.updateDeptId(deptId,id));
+		R r = new R();
+		String[] idsss = id.split(",");
+		//去除素组中重复的数组
+		List<String> listid = new ArrayList<String>();
+		for (int i=0; i<idsss.length; i++) {
+			if(!listid.contains(idsss[i])) {
+				listid.add(idsss[i]);
+			}
+		}
+		//返回一个包含所有对象的指定类型的数组
+		String[]  idss= listid.toArray(new String[1]);
+		for(int i = 0;i< idss.length;i++){
+			boolean ss = vehicleService.updateDeptId(deptId,idsss[i]);
+			if (ss){
+				r.setMsg("更新成功");
+				r.setCode(200);
+				r.setData(ss);
+			}else{
+				r.setMsg("更新失败");
+				r.setCode(500);
+				r.setData(null);
+			}
+		}
+		return r;
 	}
+
+	@PostMapping("/selectGDSVehicleList")
+	@ApiLog("分页-各地市车辆变更统计列表")
+	@ApiOperation(value = "分页-各地市车辆变更统计列表", notes = "传入vehiclepage", position = 11)
+	public R<VehiclePage<VehicleGDSTJ>> selectGDSVehicleList(@RequestBody VehiclePage vehiclepage) {
+		VehiclePage<VehicleGDSTJ> pages = vehicleService.selectGDSVehiclePage(vehiclepage);
+		return R.data(pages);
+	}
+
+	@PostMapping("/selectGDSMXVehicleList")
+	@ApiLog("分页-各地市车辆变更明细统计列表")
+	@ApiOperation(value = "分页-各地市车辆变更明细统计列表", notes = "传入vehiclepage", position = 12)
+	public R<VehiclePage<VehicleGDSTJ>> selectGDSMXVehicleList(@RequestBody VehiclePage vehiclepage) {
+		VehiclePage<VehicleGDSTJ> pages = vehicleService.selectGDSMXVehiclePage(vehiclepage);
+		return R.data(pages);
+	}
+
+
 
 
 }

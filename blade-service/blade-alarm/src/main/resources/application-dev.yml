@@ -1,5 +1,4 @@
 #服务器端口
-
 server:
   port: 9106
 
@@ -12,6 +11,11 @@ spring:
 
 #    #安徽
 #    url: jdbc:mysql://60.171.241.126:3366/blade?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&tinyInt1isBit=false&allowMultiQueries=true&serverTimezone=GMT%2B8
+#    username: root
+#    password: mxcx123
+
+    #河南
+#    url: jdbc:mysql://36.133.42.142:3366/blade?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&tinyInt1isBit=false&allowMultiQueries=true&serverTimezone=GMT%2B8
 #    username: root
 #    password: mxcx123
 
@@ -41,4 +45,5 @@ spring:
       port: 27017
       database: alarm    #指定操作的数据库
 
-
+alarmserver:
+  address-path: 河南

@@ -84,13 +84,20 @@
         <result column="is_deleted" property="isdel"/>
         <result column="yunshujiezhi" property="yunshujiezhi"/>
     </resultMap>
+
     <resultMap id="CPResultMap" type="org.springblade.anbiao.cheliangguanli.entity.VehicleCP">
         <id column="id" property="id"/>
         <result column="cheliangpaizhao" property="cheliangpaizhao"/>
     </resultMap>
+
     <resultMap id="GPSVehicleResultMap" type="org.springblade.anbiao.cheliangguanli.entity.VehicleToGps">
         <id column="id" property="id"/>
     </resultMap>
+
+    <resultMap id="GDSVehicleResultMap" type="org.springblade.anbiao.cheliangguanli.entity.VehicleGDSTJ">
+        <id column="id" property="id"/>
+    </resultMap>
+
 
     <select id="selectByKey" resultMap="vehicleVOResultMap" parameterType="java.lang.String">
         select  a.*, b.dept_name as deptName from  anbiao_vehicle a
@@ -124,34 +131,41 @@
         where 1=1
             and cheliangpaizhao=#{cheliangpaizhao}
             and chepaiyanse=#{chepaiyanse}
-            and ifnull(is_deleted,0) = 0 LIMIT 1;
+            and ifnull(is_deleted,0) = 0
+            and ifnull(cheliangzhuangtai,0) != 2
+        LIMIT 1;
     </select>
 
     <select id="selectCPYS" resultMap="vehicleVOResultMap" parameterType="java.lang.String">
         select cheliangpaizhao from anbiao_vehicle
         where cheliangpaizhao=#{cheliangpaizhao}
-        and chepaiyanse=#{chepaiyanse}
-        and ifnull(is_deleted,0) = 0 LIMIT 1;
+            and chepaiyanse=#{chepaiyanse}
+            and ifnull(is_deleted,0) = 0
+            and ifnull(cheliangzhuangtai,0) != 2
+        LIMIT 1;
     </select>
 
     <!-- 车辆 删除 -->
     <update id="deleteVehicle" parameterType="java.lang.String" >
-         update anbiao_vehicle set
-            is_deleted = 1
+         update anbiao_vehicle set is_deleted = 1 , caozuoshijian = NOW()
         WHERE id = #{id}
   </update>
 
     <!-- 车辆 停用 -->
     <update id="updateVehicleOutStatus" parameterType="java.lang.String" >
-         update anbiao_vehicle set
-            cheliangzhuangtai = 1
+         update anbiao_vehicle set cheliangzhuangtai = 1 , caozuoshijian = NOW()
+        WHERE id = #{id}
+  </update>
+
+    <!-- 车辆 起用 -->
+    <update id="updateVehicleSignStatus" parameterType="java.lang.String" >
+         update anbiao_vehicle set cheliangzhuangtai = 0 , caozuoshijian = NOW()
         WHERE id = #{id}
   </update>
 
     <!-- 车辆 报废 -->
     <update id="updateVehicleScrapStatus" parameterType="java.lang.String" >
-         update anbiao_vehicle set
-            cheliangzhuangtai = 2
+         update anbiao_vehicle set cheliangzhuangtai = 2 , caozuoshijian = NOW()
         WHERE id = #{id}
   </update>
 
@@ -192,21 +206,25 @@
         ifnull(zongduanxinghao,'') as zongduanxinghao,
         ifnull(yunshujiezhi,'') as yunshujiezhi,
         ifnull(jiashiyuanxingming,'') as jiashiyuanxingming,
-        case when ifnull(caozuoshijian,'') != '' then caozuoshijian
-            else createtime
+        case when ifnull(a.caozuoshijian,'') != '' then a.caozuoshijian
+        else a.createtime
         end as caozuoshijian,
         ifnull(jiashiyuandianhua,'') as jiashiyuandianhua,
         ifnull(yayunyuanxingming,'') as yayunyuanxingming,
         ifnull(yayunyuandianhua,'') as yayunyuandianhua,
         ifnull(chezhu,'') as chezhu,
-        ifnull(chezhudianhua,'') as chezhudianhua
+        ifnull(chezhudianhua,'') as chezhudianhua,
+        ifnull(c.area,'') as area
     FROM
         anbiao_vehicle a
+        inner join anbiao_organization c on a.dept_id = c.dept_id and c.isdelete = 0
         inner join  (
         <include refid="org.springblade.anbiao.guanlijigouherenyuan.mapper.OrganizationsMapper.getByDeptId"/>
         ) b
         on a.dept_id = b.id
-    WHERE 1=1 and ifnull(a.is_deleted,0) = 0
+    WHERE 1=1
+        and ifnull(a.is_deleted,0) = 0
+        and ifnull(cheliangzhuangtai,0) != 2
         <if test="ids !=null and ids != ''and ids == '1'.toString()">
             and a.id in (
             SELECT biaoid from anbiao_jinritixing_jiesuan where IFNULL(isdelete,0)=0 and dept_id = #{deptId} and tongjiriqi = #{tongjiriqi}
@@ -231,6 +249,10 @@
             AND deptName like CONCAT('%',#{deptName},'%')
         </if>
 
+        <if test="areaName !=null and areaName != ''">
+            AND area like CONCAT('%',#{areaName},'%')
+        </if>
+
         <if test='cheliangleixing !=null and cheliangleixing != ""and cheliangleixing == "1" '>
             AND cheliangpaizhao LIKE '%挂%'
         </if>
@@ -239,13 +261,17 @@
             AND cheliangpaizhao NOT LIKE '%挂%'
         </if>
 
-        <if test="cheliangzhuangtai !=null and cheliangzhuangtai != '' and cheliangzhuangtai == '停用'.toString() ">
-            AND ifnull(cheliangzhuangtai,1) = 1
+        <if test="cheliangzhuangtai !=null and cheliangzhuangtai != '' and cheliangzhuangtai == '0'.toString() ">
+            AND ifnull(cheliangzhuangtai,0) = 0
         </if>
 
-        <if test="cheliangzhuangtai !=null and cheliangzhuangtai != '' and cheliangzhuangtai == '报废'.toString() ">
-            AND ifnull(cheliangzhuangtai,2) = 2
+        <if test="cheliangzhuangtai !=null and cheliangzhuangtai != '' and cheliangzhuangtai == '1'.toString() ">
+            AND ifnull(cheliangzhuangtai,0) = 1
         </if>
+
+<!--        <if test="cheliangzhuangtai !=null and cheliangzhuangtai != '' and cheliangzhuangtai == '报废'.toString() ">-->
+<!--            AND ifnull(cheliangzhuangtai,'') = 2-->
+<!--        </if>-->
     </sql>
     <sql id="orderSql">
         <!-- 默认排序规则 -->
@@ -302,11 +328,14 @@
         <include refid="org.springblade.anbiao.guanlijigouherenyuan.mapper.OrganizationsMapper.getByDeptId"/>
         ) b
         on a.dept_id = b.id
-        WHERE 1=1 and ifnull(a.is_deleted,0) = 0
+        WHERE 1=1
+            and ifnull(a.is_deleted,0) = 0
+            and ifnull(a.cheliangzhuangtai,0) != 2
         <if test="cheliangpaizhao !=null and cheliangpaizhao != ''">
             AND cheliangpaizhao  LIKE '%${cheliangpaizhao}%'
         </if>
     </select>
+
     <select id="vehicleDayCount" resultType="int">
             SELECT count(1)
             FROM
@@ -314,10 +343,10 @@
         WHERE
 	        dept_id = #{deptId}
         AND is_deleted = 0
+        and ifnull(cheliangzhuangtai,0) != 2
         AND cheliangpaizhao NOT LIKE '%挂'
-
-
     </select>
+
     <select id="xianzhiVehcleCount" resultType="int">
             SELECT
 	        count(1)
@@ -338,6 +367,7 @@
 	        cheliangpaizhao = #{cheliangpaizhao}
         AND chepaiyanse = #{chepaiyanse}
         AND is_deleted=0
+        and ifnull(cheliangzhuangtai,0) != 2
         AND  dept_id=#{deptId}
     </select>
 
@@ -347,7 +377,6 @@
             CASE
             WHEN cheliangzhuangtai=0 and ifnull(a.is_deleted,0) = 0 THEN '在用'
             WHEN cheliangzhuangtai=1 and ifnull(a.is_deleted,0) = 0 THEN '停用'
-            WHEN cheliangzhuangtai=2 and ifnull(a.is_deleted,0) = 0 THEN '报废'
             WHEN ifnull(a.is_deleted,1) = 1 THEN '删除'
             END cheliangzhuangtai,
         </if>
@@ -358,14 +387,16 @@
         where 1=1
         <if test="caozuoshijian !=null and caozuoshijian != '' ">
             and (a.createtime &gt; #{caozuoshijian} or a.caozuoshijian &gt; #{caozuoshijian})
+            and ifnull(a.cheliangzhuangtai,0) != 2
+            order by a.caozuoshijian asc
         </if>
 
         <if test=" caozuoshijian ==null or caozuoshijian == '' ">
+            and ifnull(b.is_deleted,0) = 0
             and ifnull(a.cheliangzhuangtai,0) = 0
             and ifnull(a.is_deleted,0) = 0
         </if>
     </select>
-
 
     <select id="selectByYYS" resultMap="GPSVehicleResultMap" parameterType="java.lang.String" >
         select DISTINCT id,yunyingshang from anbiao_vehicle
@@ -547,10 +578,230 @@
     <select id="selectByZongDuan" resultMap="vehicleVOResultMap" parameterType="java.lang.String" >
         select zongduanid from anbiao_vehicle
         where is_deleted = 0
+            and ifnull(cheliangzhuangtai,0) != 2
             and zongduanid = #{id}
         group by
             zongduanid
         LIMIT 1
     </select>
+
+    <sql id="tableGDSSql">
+        select
+            case when IFNULL(b.area,'') = '' then '河南' else b.area end as areaName,
+            concat(#{begintime},'至',#{endtime}) as date,
+            SUM(b.shu) as xzshu,
+            SUM(zyshu) as zyshu,
+            SUM(tyshu) as tyshu,
+            SUM(scshu) as scshu,
+            max(b.shiyongxingzhi) as shiyongxingzhi,
+            case when IFNULL(max(b.shiyongxingzhi),'') = '道路货物运输' then SUM(b.shu) end as dlhwxzshu,
+            case when IFNULL(max(b.shiyongxingzhi),'') = '道路危险品运输' then SUM(b.shu) end as dlwxpxzshu,
+            case when IFNULL(max(b.shiyongxingzhi),'') = '道路旅客运输' then SUM(b.shu) end as dllkxzshu,
+
+            case when IFNULL(max(b.shiyongxingzhi),'') = '道路货物运输' and ifnull(SUM(zyshu),0) &gt; 0 then SUM(b.zyshu) else 0 end as dlhwzyshu,
+            case when IFNULL(max(b.shiyongxingzhi),'') = '道路危险品运输' and ifnull(SUM(zyshu),0) &gt; 0 then SUM(b.zyshu) else 0 end as dlwxpzyshu,
+            case when IFNULL(max(b.shiyongxingzhi),'') = '道路旅客运输' and ifnull(SUM(zyshu),0) &gt; 0 then SUM(b.zyshu) else 0 end as dllkzyshu,
+
+            case when IFNULL(max(b.shiyongxingzhi),'') = '道路货物运输' and ifnull(SUM(tyshu),0) &gt; 0 then SUM(b.tyshu) else 0 end as dlhwtyshu,
+            case when IFNULL(max(b.shiyongxingzhi),'') = '道路危险品运输' and ifnull(SUM(tyshu),0) &gt; 0 then SUM(b.tyshu) else 0 end as dlwxptyshu,
+            case when IFNULL(max(b.shiyongxingzhi),'') = '道路旅客运输' and ifnull(SUM(tyshu),0) &gt; 0 then SUM(b.tyshu) else 0 end as dllktyshu,
+
+            case when IFNULL(max(b.shiyongxingzhi),'') = '道路货物运输' and ifnull(SUM(scshu),0) &gt; 0 then SUM(b.scshu) else 0 end as dlhwscshu,
+            case when IFNULL(max(b.shiyongxingzhi),'') = '道路危险品运输' and ifnull(SUM(scshu),0) &gt; 0 then SUM(b.scshu) else 0 end as dlwxpscshu,
+            case when IFNULL(max(b.shiyongxingzhi),'') = '道路旅客运输' and ifnull(SUM(scshu),0) &gt; 0 then SUM(b.scshu) else 0 end as dllkscshu
+        from(
+            <include refid="org.springblade.anbiao.guanlijigouherenyuan.mapper.OrganizationsMapper.getByDeptId"/>
+            )a
+        inner JOIN(
+            select
+                a.dept_id,
+                COUNT(1) as shu,
+                max(shiyongxingzhi) as shiyongxingzhi,
+                CASE WHEN max(cheliangzhuangtai)=0 and ifnull(max(a.is_deleted),0) = 0 THEN 1 end as zyshu,
+                CASE WHEN max(cheliangzhuangtai)=1 and ifnull(max(a.is_deleted),0) = 0 THEN 1 end as tyshu,
+                CASE WHEN max(cheliangzhuangtai)=2 and ifnull(max(a.is_deleted),0) = 0 THEN 1 end as bfshu,
+                CASE WHEN ifnull(max(a.is_deleted),1) = 1 THEN 1 END scshu,
+                max(a.createtime) as createtime,
+                b.area
+            from
+                anbiao_vehicle a
+                inner join anbiao_organization b on a.dept_id = b.dept_id
+            where 1=1
+                and b.isdelete = 0
+                and ifnull(a.cheliangzhuangtai,0) != 2
+                and a.createtime &gt;= #{begintime}
+                and a.createtime &lt;= #{endtime}
+            GROUP BY
+                shiyongxingzhi,
+                dept_id,
+                b.area
+            )b on a.id = b.dept_id
+        where 1=1
+        GROUP BY
+            b.area,
+            b.shiyongxingzhi
+    </sql>
+
+    <sql id="queryGDSSql">
+
+    </sql>
+
+    <sql id="orderGDSSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by date
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+    </sql>
+
+    <select id="selectGDSVehiclePage" resultMap="GDSVehicleResultMap"
+            parameterType="org.springblade.anbiao.cheliangguanli.page.VehiclePage" resultType="org.springblade.anbiao.cheliangguanli.entity.VehicleGDSTJ">
+        <if test="size == 0" >
+            select * from (
+            <include refid="tableGDSSql" />
+            )b
+            where 1=1
+            <include refid="queryGDSSql" />
+            <include refid="orderGDSSql" />
+            limit ${total}
+        </if>
+        <if test="current != 0" >
+            select * from (
+            <include refid="tableGDSSql" />
+            )b
+            where 1=1
+            <include refid="queryGDSSql" />
+            <include refid="orderGDSSql" />
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <select id="selectGDSVehicleTotal" parameterType="org.springblade.anbiao.cheliangguanli.page.VehiclePage" resultType="int">
+        select COUNT(1) from (
+        <include refid="tableGDSSql" />
+        )d
+        where 1 = 1
+        <include refid="queryGDSSql" />
+    </select>
+
+
+    <sql id="tableGDSMXSql">
+        select
+            case when IFNULL(b.area,'') = '' then '河南' else b.area end as areaName,
+            b.dept_id as deptId,
+            a.dept_name as deptName,
+            b.cheliangpaizhao,
+            b.chepaiyanse,
+            b.shiyongxingzhi,
+            b.cheliangzhuangtai,
+            case when ifnull(b.caozuoshijian,'') = '' then b.createtime else b.caozuoshijian end as caozuoshijian,
+            a.is_deleted,
+            b.caozuoren
+        from(
+            <include refid="org.springblade.anbiao.guanlijigouherenyuan.mapper.OrganizationsMapper.getByDeptId"/>
+            )a
+        inner JOIN(
+            select
+                a.dept_id,
+                cheliangpaizhao,
+                chepaiyanse,
+                shiyongxingzhi,
+                CASE
+                    WHEN cheliangzhuangtai=0 and ifnull(a.is_deleted,0) = 0 THEN '在用'
+                    WHEN cheliangzhuangtai=1 and ifnull(a.is_deleted,0) = 0 THEN '停用'
+                    WHEN ifnull(a.is_deleted,1) = 1 THEN '删除'
+                END cheliangzhuangtai,
+                a.caozuoshijian,
+                a.createtime,
+                a.caozuoren,
+                a.is_deleted,
+                b.area
+            from
+                anbiao_vehicle a
+                inner join anbiao_organization b on a.dept_id = b.dept_id
+            where 1=1
+                and b.isdelete = 0
+                and ifnull(a.cheliangzhuangtai,0) != 2
+                and a.caozuoshijian &gt;= #{begintime}
+                and a.caozuoshijian &lt;= #{endtime}
+            )b on a.id = b.dept_id
+        ORDER BY b.dept_id
+    </sql>
+
+    <sql id="queryGDSMXSql">
+        <if test="cheliangpaizhao !=null and cheliangpaizhao != ''">
+            AND cheliangpaizhao like CONCAT('%',#{cheliangpaizhao},'%')
+        </if>
+
+        <if test="deptName !=null and deptName != ''">
+            AND deptName like CONCAT('%',#{deptName},'%')
+        </if>
+
+        <if test="cheliangzhuangtai !=null and cheliangzhuangtai != '' and cheliangzhuangtai == '新增'.toString() ">
+            AND createtime &gt;= #{begintime}
+            AND createtime &lt;= #{endtime}
+        </if>
+
+        <if test="cheliangzhuangtai !=null and cheliangzhuangtai != '' and cheliangzhuangtai == '在用'.toString() ">
+            AND ifnull(cheliangzhuangtai,'') = 0
+        </if>
+
+        <if test="cheliangzhuangtai !=null and cheliangzhuangtai != '' and cheliangzhuangtai == '停用'.toString() ">
+            AND ifnull(cheliangzhuangtai,'') = 1
+        </if>
+
+        <if test="cheliangzhuangtai !=null and cheliangzhuangtai != '' and cheliangzhuangtai == '删除'.toString() ">
+            AND ifnull(is_deleted,0) = 1
+        </if>
+
+    </sql>
+    <sql id="orderGDSMXSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by cheliangpaizhao
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+    </sql>
+
+    <select id="selectGDSMXVehiclePage" resultMap="GDSVehicleResultMap"
+            parameterType="org.springblade.anbiao.cheliangguanli.page.VehiclePage" resultType="org.springblade.anbiao.cheliangguanli.entity.VehicleGDSTJ">
+        <if test="size == 0" >
+            select * from (
+            <include refid="tableGDSMXSql" />
+            )b
+            where 1=1
+            <include refid="queryGDSMXSql" />
+            <include refid="orderGDSMXSql" />
+            limit ${total}
+        </if>
+        <if test="current != 0" >
+            select * from (
+            <include refid="tableGDSMXSql" />
+            )b
+            where 1=1
+            <include refid="queryGDSMXSql" />
+            <include refid="orderGDSMXSql" />
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <select id="selectGDSMXVehicleTotal" parameterType="org.springblade.anbiao.cheliangguanli.page.VehiclePage" resultType="int">
+        select COUNT(1) from (
+        <include refid="tableGDSMXSql" />
+        )d
+        where 1 = 1
+        <include refid="queryGDSMXSql" />
+    </select>
+
 
 </mapper>

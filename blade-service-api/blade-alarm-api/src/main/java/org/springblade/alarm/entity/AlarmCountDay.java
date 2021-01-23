@@ -73,4 +73,28 @@ public class AlarmCountDay {
 	 */
 	@ApiModelProperty(value = "主动防碰撞统计")
 	private Integer zhudongFangpenzhuangCount=0;
+
+	/**
+	 *24小时不在线报警
+	 */
+	@ApiModelProperty(value = "24小时不在线报警")
+	private Integer buzaixianbaojing=0;
+
+	/**
+	 * 高速禁行报警
+	 */
+	@ApiModelProperty(value = "高速禁行")
+	private Integer gaosujinxing=0;
+
+	/**
+	 * 驾驶员异常报警
+	 */
+	@ApiModelProperty(value = "驾驶员异常报警")
+	private Integer jiashiyuanyichangbaojing=0;
+
+	/**
+	 * 行人碰撞预警
+	 */
+	@ApiModelProperty(value = "行人碰撞预警")
+	private Integer xingrenpengzhuangyujing=0;
 }

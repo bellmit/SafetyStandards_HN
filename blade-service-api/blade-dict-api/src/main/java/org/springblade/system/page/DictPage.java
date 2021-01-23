@@ -36,4 +36,8 @@ public class DictPage<T> extends BasePage<T> {
 
 	@ApiModelProperty(value = "每页条数")
 	private Integer pagesize;
+
+	@ApiModelProperty(value = "类型 ")
+	private String type;
+
 }

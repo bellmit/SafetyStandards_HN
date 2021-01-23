@@ -232,11 +232,12 @@
             where 1=1
                 and date &gt;= date_format(DATE_SUB(curdate(),INTERVAL 7 DAY),'%Y-%m-%d')
                 and date &lt;= date_format(DATE_SUB(curdate(),INTERVAL 0 DAY),'%Y-%m-%d')
+                and cid = #{deptId}
             GROUP BY
                 cid,
                 company,
                 date
-            )b on a.qiyemingcheng = b.company
+            )b on a.dept_id = b.cid
             where IFNULL(b.date,'') != ''
         )b on b.date = a.day1
         ORDER BY a.day1 asc

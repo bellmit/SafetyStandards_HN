@@ -48,6 +48,13 @@
         b.shensushenheren,
         b.shensushenheshijian,
         b.shensushenheyijian,
+        b.twicechulixingshi,
+        b.twicechulimiaoshu,
+        b.twicefujian,
+        b.twicechuliren,
+        b.twicechulishijian,
+        b.twicechulirenid,
+        b.endresult,
         b.remark,
         a.alarmlevel,
         a.alarmGuid,
@@ -102,7 +109,11 @@
                 and chulizhuangtai = '1' and remark=1
             </if>
             <if test="shifouchuli=='未处理'.toString()">
-                and chulizhuangtai is null
+                and (
+                    IFNULL(chulizhuangtai,'') = '' or
+                    IFNULL(shensushenhebiaoshi,0) = 2
+                )
+                and IFNULL(twicechuliren,'') = ''
             </if>
         </if>
         <if test="shifoushenshu != null and shifoushenshu != '' ">
@@ -420,45 +431,45 @@
     </select>
     <!--查询时间段的主动防御报警-->
     <select id="timeZhudong" parameterType="org.springblade.alarm.page.AlarmTimePage" resultType="org.springblade.alarm.entity.Driverbehavior">
-                SELECT
-                	id,
-                	AlarmNumber,
-                	AlarmID,
-                	cid,
-                	company,
-                	VehID,
-                	plate,
-                	color,
-                	FlagState,
-                	AlarmType,
-                	Alarmlevel,
-                	Velocity,
-                	High,
-                	Lon as longitude,
-                    Lat as latitude,
-                	GpsTime,
-                	VehStatus,
-                	A_Time,
-                	AlarmIDNumber,
-                	OwnNo,
-                	IsPicture,
-                	IsVideo,
-                	RoadName,
-                	StateEx,
-                	insertTime,
-                	OperatType
-                FROM
-                	baobiao_driverbehavior
-                where
-                	GpsTime
-	            BETWEEN STR_TO_DATE(
-		            concat(#{beginTime}), '%Y-%m-%d %H:%i:%s'  )
-                AND STR_TO_DATE(concat(#{endTime}), '%Y-%m-%d %H:%i:%s' )
-                AND company = #{company}
-                AND  plate=#{plateNumber}
-				AND  color=#{color}
-			    AND StateEx='核定报警'
-                ORDER BY GpsTime
+        SELECT
+            id,
+            AlarmNumber,
+            AlarmID,
+            cid,
+            company,
+            VehID,
+            plate,
+            color,
+            FlagState,
+            AlarmType,
+            Alarmlevel,
+            Velocity,
+            High,
+            Lon as longitude,
+            Lat as latitude,
+            GpsTime,
+            VehStatus,
+            A_Time,
+            AlarmIDNumber,
+            OwnNo,
+            IsPicture,
+            IsVideo,
+            RoadName,
+            StateEx,
+            insertTime,
+            OperatType
+        FROM
+            baobiao_driverbehavior
+        where
+            GpsTime
+        BETWEEN STR_TO_DATE(
+            concat(#{beginTime}), '%Y-%m-%d %H:%i:%s'  )
+        AND STR_TO_DATE(concat(#{endTime}), '%Y-%m-%d %H:%i:%s' )
+        AND company = #{company}
+        AND  plate=#{plateNumber}
+        AND  color=#{color}
+        AND StateEx='核定报警'
+        ORDER BY GpsTime
 
     </select>
 

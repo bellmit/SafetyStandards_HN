@@ -271,4 +271,7 @@ public class Vehicle implements Serializable {
 	@ApiModelProperty(value = "导入错误信息图标")
 	@TableField(exist = false)
 	private String importUrl;
+
+	@ApiModelProperty(value = "所属地市")
+	private String area;
 }

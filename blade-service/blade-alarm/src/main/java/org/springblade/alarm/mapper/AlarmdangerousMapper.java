@@ -57,45 +57,45 @@ public interface AlarmdangerousMapper extends BaseMapper<Alarmdangerous> {
 	 * @param alarmdangerousPage
 	 * @return
 	 */
-	List<AlarmdangerousCount>  Gpsdangerous(AlarmdangerousPage alarmdangerousPage);
+	List<AlarmdangerousCount> Gpsdangerous(AlarmdangerousPage alarmdangerousPage);
 	/**
 	 * gps严重 车牌 报警 次数 total
 	 */
-	Integer  Gpsdangeroustotal(AlarmdangerousPage alarmdangerousPage);
+	Integer Gpsdangeroustotal(AlarmdangerousPage alarmdangerousPage);
 
 	/**
 	 * 主动防御严重 车牌 报警 次数
 	 * @param alarmdangerousPage
 	 * @return
 	 */
-	List<AlarmdangerousCount>  zhudongdangerous(AlarmdangerousPage alarmdangerousPage);
+	List<AlarmdangerousCount> zhudongdangerous(AlarmdangerousPage alarmdangerousPage);
 	/**
 	 * 主动防御严重 车牌 报警 次数 total
 	 */
-	Integer  zhudongdangeroustotal(AlarmdangerousPage alarmdangerousPage);
+	Integer zhudongdangeroustotal(AlarmdangerousPage alarmdangerousPage);
 	/**
 	 *  gps严重分页
 	 * @return
 	 */
-	List<Alarmdangerous>   selectGpspage(AlarmPlatePage alarmPlatePage);
+	List<Alarmdangerous> selectGpspage(AlarmPlatePage alarmPlatePage);
 	/**
 	 * gps严重报警 条数
 	 */
-	Integer   selectGpspagetotal(AlarmPlatePage alarmPlatePage);
+	Integer selectGpspagetotal(AlarmPlatePage alarmPlatePage);
 
 	/**
 	 * 主动防御严重分页
 	 * @param alarmPlatePage
 	 * @return
 	 */
-	List<DriverbehaviorVO>  selectZhudongpage(AlarmPlatePage alarmPlatePage);
+	List<DriverbehaviorVO> selectZhudongpage(AlarmPlatePage alarmPlatePage);
 
 	/**主动防御严重报警 条数
 	 *
 	 * @param alarmPlatePage
 	 * @return
 	 */
-	Integer   selectZhudongpagetotal(AlarmPlatePage alarmPlatePage);
+	Integer selectZhudongpagetotal(AlarmPlatePage alarmPlatePage);
 
 
 

@@ -36,7 +36,12 @@
                 where a.id = b.dept_id
                     and jigouleixing in('xianZF','shiZF','shengZF')
                     and b.isdelete = 0
+                <if test="deptId != null and deptId != '' ">
                     and a.id = #{deptId}
+                </if>
+                <if test="xiaJiDeptId != null and xiaJiDeptId != '' ">
+                    and a.parent_id = #{xiaJiDeptId}
+                </if>
                 )a
             inner join(
                 select
@@ -364,15 +369,15 @@
             ifnull(sum(bjche.bjcheliangshu),0) as bjcheliangshu,
             case
                 when IFNULL(sum(c.baojingcishu),0) = 0 or IFNULL(sum(c.baojingclcishu),0) = 0 then '0.00%'
-                    else concat(ROUND((IFNULL(sum(c.baojingclcishu),0)*1.0)/IFNULL(sum(c.baojingcishu),0)*100,4),'%')
+                    else concat(ROUND((IFNULL(sum(c.baojingclcishu),0)*1.0)/IFNULL(sum(c.baojingcishu),0)*100,2),'%')
             end as baojingcishuchulilv,
             case
                 when IFNULL(sum(c.beidoubj),0) = 0 or IFNULL(sum(c.beidoubjcl),0) = 0 then '0.00%'
-                    else concat(ROUND((IFNULL(sum(c.beidoubjcl),0)*1.0)/IFNULL(sum(c.beidoubj),0)*100,4),'%')
+                    else concat(ROUND((IFNULL(sum(c.beidoubjcl),0)*1.0)/IFNULL(sum(c.beidoubj),0)*100,2),'%')
             end as beidoubjchulilv,
             case
                 when IFNULL(sum(c.zhudongbj),0) = 0 or IFNULL(sum(c.zhudongbjcl),0) = 0 then '0.00%'
-                    else concat(ROUND((IFNULL(sum(c.zhudongbjcl),0)*1.0)/IFNULL(sum(c.zhudongbj),0)*100,4),'%')
+                    else concat(ROUND((IFNULL(sum(c.zhudongbjcl),0)*1.0)/IFNULL(sum(c.zhudongbj),0)*100,2),'%')
             end as zhudongbjchulilv
         from(
             select

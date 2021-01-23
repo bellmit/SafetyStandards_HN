@@ -5,9 +5,12 @@ fileserver:
         path: D:\BS\static\
         url: http://60.171.241.126:8204/
         flag: false
+        photoLogo: D:\BS\static\photoLogo
         ##
 gpsserver:
     dev:
         pointurl: http://60.171.241.126:7096/
         imgurl: http://60.171.241.126:7096/
-
+alarmserver:
+    dev:
+        address: 河南

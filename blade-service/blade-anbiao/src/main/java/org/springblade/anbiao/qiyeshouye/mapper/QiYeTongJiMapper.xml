@@ -12,7 +12,8 @@
     <resultMap id="OffLineResultMap" type="org.springblade.anbiao.qiyeshouye.entity.QiYeOffLineTongJi">
     </resultMap>
 
-
+    <resultMap id="InOutAreaResultMap" type="org.springblade.anbiao.qiyeshouye.entity.QiYeInOutAreaTongJi">
+    </resultMap>
 
     <!-- 查询报警统计汇总列表 -->
     <sql id="tableSql">
@@ -518,6 +519,131 @@
         <include refid="table24HoursOffLineSql"/>
         )d where 1 = 1
         <include refid="query24HoursOffLineSql"/>
+    </select>
+
+    <!-- 查询进出区域汇总列表 -->
+    <sql id="tableInOutAreaSql">
+        SELECT
+            mm.name as areaName,
+            CASE mm.areaType when 'rect' then '矩形' when 'circle' then '圆形' when 'polygon' then '多边形' ELSE '' end as
+            areaType,
+            v.cheliangpaizhao,
+            v.chepaiyanse,
+            v.shiyongxingzhi as operatType,
+            d.dept_name AS deptName,
+            a.inTime,
+            a.outTime,
+            a.inOutTimes,
+            a.IsAcross,
+            a.KeepTime,
+            case when (floor(a.KeepTime / 86400)) = 0 and (floor(a.KeepTime / 3600) % 24) = 0 and (floor(a.KeepTime / 60) % 60) = 0 then CONCAT((a.KeepTime % 60) , '秒')
+            when (floor(a.KeepTime / 86400)) = 0 and (floor(a.KeepTime / 3600) % 24) = 0 then CONCAT((floor(a.KeepTime / 60) % 60) , '分' , (a.KeepTime % 60) , '秒')
+            when (floor(a.KeepTime / 86400)) = 0 then CONCAT((floor(a.KeepTime / 3600) % 24) ,'时' , (floor(a.KeepTime / 60) % 60) , '分' , (a.KeepTime % 60) , '秒')
+            ELSE CONCAT((floor(a.KeepTime / 86400)), '天', (floor(a.KeepTime / 3600) % 24) ,'时' , (floor(a.KeepTime / 60) % 60) , '分' , (a.KeepTime % 60) , '秒')
+            end as keeptimeShow
+        FROM(
+            select
+                VehicleId,
+                Guid,
+                MIN(Time) as inTime,
+                Max(Time) as outTime,
+                MAX(AreaId) as AreaId,
+                count(VehicleId) as inOutTimes,
+                max(IsAcross) as IsAcross,
+                TIMESTAMPDIFF(SECOND, MIN(Time), Max(Time)) as KeepTime
+            from
+                baobiao_areaalarm
+            where 1=1
+                and left(Time,10) &gt;= #{beginTime}
+                and left(Time,10) &lt;= #{endTime}
+            group by
+                VehicleId,
+                Guid
+            ) AS a
+        JOIN anbiao_vehicle AS v ON v.id = a.VehicleId and v.is_deleted=0
+        JOIN (
+            SELECT
+                DISTINCT
+                xiaji.id,
+                xiaji.parent_id,
+                xiaji.dept_name,
+                xiaji.is_deleted
+            FROM
+                blade_dept shangji,
+                blade_dept xiaji
+            WHERE xiaji.tree_code LIKE CONCAT(shangji.tree_code,'%')
+                AND xiaji.is_deleted = 0 AND xiaji.extend_type='机构'
+                and shangji.id = #{deptId}
+            ) AS d ON d.id = v.dept_id
+            JOIN maparea as mm on mm.areaid=a.AreaId
+        where 1=1
+    </sql>
+
+    <sql id="orderInOutAreaSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by KeepTime desc
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order == 0">
+            asc
+        </if>
+    </sql>
+
+    <sql id="queryInOutAreaSql">
+
+        <if test="cheliangpaizhao != null and cheliangpaizhao != ''">
+            and cheliangpaizhao like '%${cheliangpaizhao}%'
+        </if>
+
+        <if test="deptName != null ">
+            and deptName like '%${deptName}%'
+        </if>
+
+        <if test="areaName != null ">
+            and areaName like '%${areaName}%'
+        </if>
+
+        <if test="keepTime != null ">
+            and KeepTime/60 &gt;= ${keepTime}
+        </if>
+
+    </sql>
+
+    <select timeout="600" id="selectGetInOutAreaTJ" resultMap="InOutAreaResultMap"
+            parameterType="org.springblade.anbiao.qiyeshouye.page.QiYeInOutAreaPage">
+        <if test="size == 0">
+            select * from (
+            <include refid="tableInOutAreaSql"/>
+            )b
+            where 1=1
+            <include refid="queryInOutAreaSql"/>
+            <include refid="orderInOutAreaSql"/>
+            limit ${total}
+        </if>
+        <if test="current != 0">
+            select * from (
+            <include refid="tableInOutAreaSql"/>
+            )b
+            where 1=1
+            <include refid="queryInOutAreaSql"/>
+            <include refid="orderInOutAreaSql"/>
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <select timeout="90" id="selectGetInOutAreaTJTotal"
+            parameterType="org.springblade.anbiao.qiyeshouye.page.QiYeInOutAreaPage"
+            resultType="int">
+        select COUNT(1) from (
+        <include refid="tableInOutAreaSql"/>
+        )d where 1 = 1
+        <include refid="queryInOutAreaSql"/>
     </select>
 
 </mapper>

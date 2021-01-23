@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import org.apache.ibatis.annotations.Param;
 import org.springblade.anbiao.cheliangguanli.entity.Vehicle;
 import org.springblade.anbiao.cheliangguanli.entity.VehicleCP;
+import org.springblade.anbiao.cheliangguanli.entity.VehicleGDSTJ;
 import org.springblade.anbiao.cheliangguanli.entity.VehicleToGps;
 import org.springblade.anbiao.cheliangguanli.page.VehiclePage;
 import org.springblade.anbiao.cheliangguanli.vo.VehicleVO;
@@ -51,6 +52,13 @@ public interface IVehicleService extends IService<Vehicle> {
 	 * @return
 	 */
 	boolean updateVehicleOutStatus(String id);
+
+	/**
+	 * 自定义启用
+	 * @param id
+	 * @return
+	 */
+	boolean updateVehicleSignStatus(String id);
 
 	/**
 	 * 自定义报废
@@ -125,4 +133,19 @@ public interface IVehicleService extends IService<Vehicle> {
 	 * @return
 	 */
 	VehicleVO selectByZongDuan(@Param("id") String id);
+
+	/**
+	 * 各地市车辆变更统计
+	 * @param vehiclePage
+	 * @return
+	 */
+	VehiclePage<VehicleGDSTJ> selectGDSVehiclePage(VehiclePage vehiclePage);
+
+	/**
+	 * 各地市车辆变更明细统计
+	 * @param vehiclePage
+	 * @return
+	 */
+	VehiclePage<VehicleGDSTJ> selectGDSMXVehiclePage(VehiclePage vehiclePage);
+
 }

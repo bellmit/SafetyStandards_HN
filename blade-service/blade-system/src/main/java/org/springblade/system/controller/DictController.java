@@ -17,8 +17,6 @@ package org.springblade.system.controller;
 
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
-import org.springblade.anbiao.zhengfu.entity.XinXiJiaoHuZhuTi;
-import org.springblade.anbiao.zhengfu.page.XinXiJiaoHuZhuTiPage;
 import org.springblade.core.boot.ctrl.BladeController;
 import org.springblade.core.log.annotation.ApiLog;
 import org.springblade.core.mp.support.Condition;
@@ -45,8 +43,7 @@ import static org.springblade.common.cache.CacheNames.DICT_VALUE;
 
 /**
  * 控制器
- *
- * @author Chill
+ * @author hyp
  */
 @RestController
 @AllArgsConstructor
@@ -97,10 +94,10 @@ public class DictController extends BladeController {
 	 *
 	 * @return
 	 */
-	@GetMapping("/tree")
+	@PostMapping("/tree")
 	@ApiOperation(value = "树形结构", notes = "树形结构", position = 3)
-	public R<List<DictVO>> tree() {
-		List<DictVO> tree = dictService.tree();
+	public R<List<DictVO>> tree(@RequestBody DictPage dictPage) {
+		List<DictVO> tree = dictService.tree(dictPage);
 		return R.data(tree);
 	}
 
@@ -155,6 +152,20 @@ public class DictController extends BladeController {
 		return R.data(list);
 	}
 
+	@PostMapping("/OtherTreeList")
+	@ApiLog("字典-其他/行政区域字典列表")
+	@ApiOperation(value = "字典-其他/行政区域字典列表", notes = "传入类型（其他/地区）", position = 11)
+	public R<List<DictVO>> OtherTreeList(@RequestBody DictPage dictPage) {
+		List<DictVO> pages = dictService.OtherTree(dictPage);
+		return R.data(pages);
+	}
 
+	@PostMapping("/RegionalismTreeList")
+	@ApiLog("字典-根据上级ID获取下级字典列表")
+	@ApiOperation(value = "分页-根据上级ID获取下级字典列表", notes = "传入Id", position = 12)
+	public R<List<DictVO>> RegionalismTreeList(@ApiParam(value = "主键集合", required = true) @RequestParam Integer id) {
+		List<DictVO> pages = dictService.RegionalismTree(id);
+		return R.data(pages);
+	}
 
 }

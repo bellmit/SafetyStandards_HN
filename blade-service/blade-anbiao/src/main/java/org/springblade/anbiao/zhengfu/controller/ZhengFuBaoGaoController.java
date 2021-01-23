@@ -60,7 +60,7 @@ public class ZhengFuBaoGaoController {
 
 		//排序条件
 		if(zhengFuBaoGaoPage.getOrderColumns()==null){
-			zhengFuBaoGaoPage.setOrderColumn("countdate");
+			zhengFuBaoGaoPage.setOrderColumn("countenddate");
 		}else{
 			zhengFuBaoGaoPage.setOrderColumn(zhengFuBaoGaoPage.getOrderColumns());
 		}

@@ -585,4 +585,37 @@ public class ZhengFuBaoJingTongJiServiceImpl extends ServiceImpl<ZhengFuBaoJingT
 		return zhengFuBaoJingTongJiMapper.selectByAlarmGuId(alarmGuId);
 	}
 
+	@Override
+	public ZhengFuBaoJingTongJiJieSuanPage<ZhengFuRiYunXingTongJi> selectGetCLRYXTJ(ZhengFuBaoJingTongJiJieSuanPage zhengFuBaoJingTongJiJieSuanPage) {
+		Integer total = zhengFuBaoJingTongJiMapper.selectCLRYXTJTotal(zhengFuBaoJingTongJiJieSuanPage);
+		if(zhengFuBaoJingTongJiJieSuanPage.getSize()==0){
+			if(zhengFuBaoJingTongJiJieSuanPage.getTotal()==0){
+				zhengFuBaoJingTongJiJieSuanPage.setTotal(total);
+			}
+			List<ZhengFuRiYunXingTongJi> organizationList = zhengFuBaoJingTongJiMapper.selectGetCLRYXTJ(zhengFuBaoJingTongJiJieSuanPage);
+			zhengFuBaoJingTongJiJieSuanPage.setRecords(organizationList);
+			return zhengFuBaoJingTongJiJieSuanPage;
+		}
+		Integer pagetotal = 0;
+		if (total > 0) {
+			if(total%zhengFuBaoJingTongJiJieSuanPage.getSize()==0){
+				pagetotal = total / zhengFuBaoJingTongJiJieSuanPage.getSize();
+			}else {
+				pagetotal = total / zhengFuBaoJingTongJiJieSuanPage.getSize() + 1;
+			}
+		}
+		if (pagetotal >= zhengFuBaoJingTongJiJieSuanPage.getCurrent()) {
+			zhengFuBaoJingTongJiJieSuanPage.setPageTotal(pagetotal);
+			Integer offsetNo = 0;
+			if (zhengFuBaoJingTongJiJieSuanPage.getCurrent() > 1) {
+				offsetNo = zhengFuBaoJingTongJiJieSuanPage.getSize() * (zhengFuBaoJingTongJiJieSuanPage.getCurrent() - 1);
+			}
+			zhengFuBaoJingTongJiJieSuanPage.setTotal(total);
+			zhengFuBaoJingTongJiJieSuanPage.setOffsetNo(offsetNo);
+			List<ZhengFuRiYunXingTongJi> organizationList = zhengFuBaoJingTongJiMapper.selectGetCLRYXTJ(zhengFuBaoJingTongJiJieSuanPage);
+			zhengFuBaoJingTongJiJieSuanPage.setRecords(organizationList);
+		}
+		return zhengFuBaoJingTongJiJieSuanPage;
+	}
+
 }

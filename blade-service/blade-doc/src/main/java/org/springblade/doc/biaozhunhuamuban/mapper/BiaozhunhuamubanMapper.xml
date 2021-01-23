@@ -598,4 +598,19 @@
             a.dept_name
     </select>
 
+    <!--删除标准化模板文件-->
+    <delete id="deleteBiaozhunhuamuban">
+        update anbiao_biaozhunhuamuban
+        set is_deleted=1,caozuoshijian=now(),caozuorenid=#{caozuorenid},caozuoren=#{caozuoren}
+        where dept_id=#{deptId}
+    </delete>
+
+    <!--删除标准化文档文件-->
+    <delete id="deleteSafetyProductionFile">
+        update anbiao_SafetyProductionFile
+        set is_deleted=1,caozuoshijian=now(),caozuorenid=#{caozuorenid},caozuoren=#{caozuoren}
+        where dept_id=#{deptId}
+    </delete>
+
+
 </mapper>

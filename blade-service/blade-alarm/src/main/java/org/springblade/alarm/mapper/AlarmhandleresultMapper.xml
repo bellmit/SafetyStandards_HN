@@ -39,8 +39,8 @@
         WHERE id = #{id}
     </update>
 
-    <select id="selectIdList" parameterType="org.springblade.alarm.entity.Alarmhandleresult" resultMap="idlist">
-        select id from baobiao_alarmhandleresult
+    <select id="selectIdList" parameterType="org.springblade.alarm.entity.Alarmhandleresult" resultMap="alarmhandleresultResultMap">
+        select id,shensushenhebiaoshi,baojingid from baobiao_alarmhandleresult
         where 1=1 and ifnull(is_deleted,0)=0
         and baojingleixing = #{baojingleixing}
         <if test=" remark == true">
@@ -56,15 +56,13 @@
 
     </select>
 
-    <select id="removeByAlmIds" parameterType="org.springblade.alarm.entity.Alarmhandleresult"
-            resultType="java.lang.Boolean">
+    <update id="removeByAlmIds" parameterType="java.lang.String" >
         update baobiao_alarmhandleresult
         set is_deleted = 1
-        where ifnull(is_deleted,0)=0 and  baojingid in
-        <foreach item="item" index="index" collection="idss" open="(" separator="," close=")">
-            #{item}
-        </foreach>
-    </select>
+        where ifnull(is_deleted,0)=0
+        and baojingid = #{baojingid}
+    </update>
+
     <select id="selectChuliDetail" parameterType="int" resultMap="alarmhandleresultResultMap">
     select 	id,
 	baojingid,
@@ -137,23 +135,28 @@
         ) ab  GROUP BY AlarmType
     </select>
     <select id="zhudonganquanweichuli" resultType="org.springblade.alarm.entity.AlarmWeichuliType">
-
-        SELECT COUNT(1) as number,AlarmType from (
-        select a.*,b.baojingid from(SELECT
-        *
-        FROM
-        baobiao_driverbehavior
-        WHERE
-         company = #{company}
-                 and   GpsTime BETWEEN STR_TO_DATE(
-	                concat(
-		            #{date},'00:00:00'),'%Y-%m-%d %H:%i:%s') AND   STR_TO_DATE(concat(#{date},'23:59:59'),'%Y-%m-%d %H:%i:%s')
-
-        ) a LEFT JOIN baobiao_alarmhandleresult b on a.id=b.baojingid
-
-        WHERE b.baojingid is null and a.stateEx='核定报警'
-
-        ) ab  GROUP BY AlarmType
+        SELECT
+            COUNT(1) as number,
+            AlarmType
+        from (
+            select
+                a.*,
+                b.baojingid
+            from(
+                SELECT
+                    *
+                FROM
+                    baobiao_driverbehavior
+                WHERE
+                    company = #{company}
+                    and GpsTime BETWEEN STR_TO_DATE(
+	                concat( #{date},'00:00:00'),'%Y-%m-%d %H:%i:%s') AND
+	                STR_TO_DATE(concat(#{date},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+                ) a
+                LEFT JOIN baobiao_alarmhandleresult b on a.id=b.baojingid
+            WHERE b.baojingid is null
+                and a.stateEx='核定报警'
+            ) ab  GROUP BY AlarmType
     </select>
     <select id="selectOneribao" resultType="java.lang.Integer">
         SELECT
@@ -188,12 +191,21 @@
         left join baobiao_alarmhandleresult as b
         on a.id = b.baojingid and ifnull(b.is_deleted,0) = 0
         where 1=1
-
         and GpsTime &gt;= CONCAT( #{date}, ' 00:00:00')
-
         and GpsTime &lt;= CONCAT( #{date}, ' 23:59:59')
         AND company=#{company}
         and stateEx ='核定报警'
     </select>
 
+    <update id="updateAftertreatment" parameterType="map" >
+        update baobiao_alarmhandleresult set
+            twicechulixingshi = #{twicechulixingshi},
+            twicechulimiaoshu = #{twicechulimiaoshu},
+            twicechuliren = #{twicechuliren},
+            twicechulishijian = #{twicechulishijian},
+            twicechulirenid = #{twicechulirenid},
+            twicefujian = #{twicefujian},
+            endresult = 1
+        where baojingid = #{id}
+    </update>
 </mapper>

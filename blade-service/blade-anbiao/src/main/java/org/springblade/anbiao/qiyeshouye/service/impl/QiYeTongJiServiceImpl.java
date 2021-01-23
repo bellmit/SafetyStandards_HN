@@ -9,10 +9,12 @@ package org.springblade.anbiao.qiyeshouye.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.AllArgsConstructor;
+import org.springblade.anbiao.qiyeshouye.entity.QiYeInOutAreaTongJi;
 import org.springblade.anbiao.qiyeshouye.entity.QiYeOffLineTongJi;
 import org.springblade.anbiao.qiyeshouye.entity.QiYeRiYunXingTongJi;
 import org.springblade.anbiao.qiyeshouye.entity.QiYeTongJi;
 import org.springblade.anbiao.qiyeshouye.mapper.QiYeTongJiMapper;
+import org.springblade.anbiao.qiyeshouye.page.QiYeInOutAreaPage;
 import org.springblade.anbiao.qiyeshouye.page.QiYeOffLineTongJiPage;
 import org.springblade.anbiao.qiyeshouye.page.QiYeTongJiPage;
 import org.springblade.anbiao.qiyeshouye.service.IQiYeTongJiService;
@@ -167,4 +169,39 @@ public class QiYeTongJiServiceImpl extends ServiceImpl<QiYeTongJiMapper, QiYeTon
 		}
 		return qiYeOffLineTongJiPage;
 	}
+
+	@Override
+	public QiYeInOutAreaPage<QiYeInOutAreaTongJi> selectGetInOutAreaTJ(QiYeInOutAreaPage qiYeInOutAreaPage) {
+		Integer total = qiYeTongJiMapper.selectGetInOutAreaTJTotal(qiYeInOutAreaPage);
+		if(qiYeInOutAreaPage.getSize()==0){
+			if(qiYeInOutAreaPage.getTotal()==0){
+				qiYeInOutAreaPage.setTotal(total);
+			}
+
+			List<QiYeInOutAreaTongJi> qiYeInOutAreaTongJiList = qiYeTongJiMapper.selectGetInOutAreaTJ(qiYeInOutAreaPage);
+			qiYeInOutAreaPage.setRecords(qiYeInOutAreaTongJiList);
+			return qiYeInOutAreaPage;
+		}
+		Integer pagetotal = 0;
+		if (total > 0) {
+			if(total%qiYeInOutAreaPage.getSize()==0){
+				pagetotal = total / qiYeInOutAreaPage.getSize();
+			}else {
+				pagetotal = total / qiYeInOutAreaPage.getSize() + 1;
+			}
+		}
+		if (pagetotal >= qiYeInOutAreaPage.getCurrent()) {
+			qiYeInOutAreaPage.setPageTotal(pagetotal);
+			Integer offsetNo = 0;
+			if (qiYeInOutAreaPage.getCurrent() > 1) {
+				offsetNo = qiYeInOutAreaPage.getSize() * (qiYeInOutAreaPage.getCurrent() - 1);
+			}
+			qiYeInOutAreaPage.setTotal(total);
+			qiYeInOutAreaPage.setOffsetNo(offsetNo);
+			List<QiYeInOutAreaTongJi> qiYeInOutAreaTongJiList = qiYeTongJiMapper.selectGetInOutAreaTJ(qiYeInOutAreaPage);
+			qiYeInOutAreaPage.setRecords(qiYeInOutAreaTongJiList);
+		}
+		return qiYeInOutAreaPage;
+	}
+
 }

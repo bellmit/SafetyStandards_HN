@@ -59,24 +59,63 @@ public class ZhengFuShouYeNewController {
 		calendar.setTime(new Date());
 		calendar.add(Calendar.DAY_OF_MONTH, -1);
 		String date = DateUtil.format(calendar.getTime(), "yyyy-MM-dd");
+		List<ZhengFuShouYeNew>  zhengFuShouYeNew ;
 		if(!StringUtils.isBlank(deptId)){
-			ZhengFuShouYeNew zhengFuShouYeNew = iZhengFuShouYeService.selectGetOne(deptId,date);
+			if("5446".equals(deptId)){
+				String xiaJiDeptId = deptId;
+				zhengFuShouYeNew = iZhengFuShouYeService.selectGetOne(null,xiaJiDeptId,date);
+			}else{
+				zhengFuShouYeNew = iZhengFuShouYeService.selectGetOne(deptId,null,date);
+			}
+			List<ZhengFuOrganization> zhengFuOrganizations = null;
 			if(zhengFuShouYeNew != null){
+				if(zhengFuShouYeNew.size() >= 1){
+					String dept = "";
+					Integer RegisterCount = 0;
+					Integer OnLineCount = 0;
+					for (int p = 0; p < zhengFuShouYeNew.size(); p++){
+						Organization jb = iOrganizationService.selectGetZFJB(zhengFuShouYeNew.get(p).getZhengfuid());
+						if(!StringUtils.isBlank(jb.getProvince()) && StringUtils.isBlank(jb.getCity())){
+							zhengFuOrganizations = iOrganizationService.selectGetZF(zhengFuShouYeNew.get(p).getZhengfuid(),null,null,null);
+						}
 
-				List<ZhengFuOrganization> zhengFuOrganizations = null;
-				Organization jb = iOrganizationService.selectGetZFJB(deptId);
-				if(!StringUtils.isBlank(jb.getProvince()) && StringUtils.isBlank(jb.getCity())){
-					zhengFuOrganizations = iOrganizationService.selectGetZF(deptId,null,null,null);
+						if(!StringUtils.isBlank(jb.getCity()) && StringUtils.isBlank(jb.getCountry())){
+							zhengFuOrganizations = iOrganizationService.selectGetZF(null,zhengFuShouYeNew.get(p).getZhengfuid(),null,null);
+						}
+
+						if(!StringUtils.isBlank(jb.getCountry())){
+							zhengFuOrganizations = iOrganizationService.selectGetZF(null,null,zhengFuShouYeNew.get(p).getZhengfuid(),null);
+						}
+						for (int i = 0; i < zhengFuOrganizations.size(); i++) {
+							if(zhengFuOrganizations.get(i).getJigouleixing().equals("qiye")){
+								dept += zhengFuOrganizations.get(i).getQiyeid() + ',';
+							}
+						}
+					}
+					String url = fileServer.getGpsVehiclePath() + "/GetMonitorInfo?dept=" + dept;
+					String jsonstr = InterfaceUtil.getUrlData(url.replace(" ", "%20"));
+					JSONArray jsonArray = (JSONArray) JSONArray.parse(jsonstr);
+
+					for (int i = 0; i < jsonArray.size(); i++){
+						RegisterCount += (Integer)jsonArray.getJSONObject(i).get("RegisterCount");
+						OnLineCount += (Integer)jsonArray.getJSONObject(i).get("zaixian");
+					}
+					zhengFuShouYeNew.get(0).setZcvehnumb(RegisterCount);
+					zhengFuShouYeNew.get(0).setSxvehnum(OnLineCount);
+				}else{
+					Organization jb = iOrganizationService.selectGetZFJB(deptId);
+					if(!StringUtils.isBlank(jb.getProvince()) && StringUtils.isBlank(jb.getCity())){
+						zhengFuOrganizations = iOrganizationService.selectGetZF(deptId,null,null,null);
+					}
+
+					if(!StringUtils.isBlank(jb.getCity()) && StringUtils.isBlank(jb.getCountry())){
+						zhengFuOrganizations = iOrganizationService.selectGetZF(null,deptId,null,null);
+					}
+
+					if(!StringUtils.isBlank(jb.getCountry())){
+						zhengFuOrganizations = iOrganizationService.selectGetZF(null,null,deptId,null);
+					}
 				}
-
-				if(!StringUtils.isBlank(jb.getCity()) && StringUtils.isBlank(jb.getCountry())){
-					zhengFuOrganizations = iOrganizationService.selectGetZF(null,deptId,null,null);
-				}
-
-				if(!StringUtils.isBlank(jb.getCountry())){
-					zhengFuOrganizations = iOrganizationService.selectGetZF(null,null,deptId,null);
-				}
-
 				if(zhengFuOrganizations.size() < 1){
 					R r = new R();
 					String[] aa = new String[0];
@@ -89,9 +128,10 @@ public class ZhengFuShouYeNewController {
 					Integer RegisterCount = 0;
 					Integer OnLineCount = 0;
 					for (int i = 0; i < zhengFuOrganizations.size(); i++) {
-						dept += zhengFuOrganizations.get(i).getQiyeid() + ',';
+						if(zhengFuOrganizations.get(i).getJigouleixing().equals("qiye")){
+							dept += zhengFuOrganizations.get(i).getQiyeid() + ',';
+						}
 					}
-
 					String url = fileServer.getGpsVehiclePath() + "/GetMonitorInfo?dept=" + dept;
 					String jsonstr = InterfaceUtil.getUrlData(url.replace(" ", "%20"));
 					JSONArray jsonArray = (JSONArray) JSONArray.parse(jsonstr);
@@ -100,9 +140,10 @@ public class ZhengFuShouYeNewController {
 						RegisterCount += (Integer)jsonArray.getJSONObject(i).get("RegisterCount");
 						OnLineCount += (Integer)jsonArray.getJSONObject(i).get("zaixian");
 					}
-					zhengFuShouYeNew.setZcvehnumb(RegisterCount);
-					zhengFuShouYeNew.setSxvehnum(OnLineCount);
+					zhengFuShouYeNew.get(0).setZcvehnumb(RegisterCount);
+					zhengFuShouYeNew.get(0).setSxvehnum(OnLineCount);
 				}
+
 				rs.setCode(200);
 				rs.setData(zhengFuShouYeNew);
 				rs.setMsg("获取成功");

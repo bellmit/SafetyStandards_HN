@@ -78,6 +78,19 @@ public interface DictMapper extends BaseMapper<Dict> {
 	 *
 	 * @return
 	 */
-	List<DictVO> tree();
+	List<DictVO> tree(DictPage dictPage);
+
+	/**
+	 * 其他字典
+	 * @return
+	 */
+	List<DictVO> OtherTree(DictPage dictPage);
+
+	/**
+	 * 根据上级ID获取下级字典
+	 * @return
+	 */
+	List<DictVO> RegionalismTree(Integer id);
+
 
 }

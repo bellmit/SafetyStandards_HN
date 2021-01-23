@@ -44,7 +44,7 @@ public interface IDictService extends IService<Dict> {
 	 *
 	 * @return
 	 */
-	List<DictVO> tree();
+	List<DictVO> tree(DictPage dictPage);
 
 	/**
 	 * 获取字典表对应中文
@@ -84,5 +84,17 @@ public interface IDictService extends IService<Dict> {
 	 * @return
 	 */
 	boolean submit(Dict dict);
+
+	/**
+	 * 其他字典
+	 * @return
+	 */
+	List<DictVO> OtherTree(DictPage dictPage);
+
+	/**
+	 * 根据上级ID获取下级字典
+	 * @return
+	 */
+	List<DictVO> RegionalismTree(Integer id);
 
 }

@@ -90,27 +90,22 @@ public class AlarmdangerousController extends BladeController {
 				return  R.data(map);
 
 			}
-
-				return  R.fail("查询失败");
+			return  R.fail("查询失败");
 		}
 
 		@PostMapping("/alarmlist")
 		@ApiLog("严重报警统计-gps分页")
 		@ApiOperation(value = "严重报警-gps分页", notes = "AlarmPlatePage 对象", position = 3)
 		public  R alarmlist(@RequestBody AlarmPlatePage alarmPlatePage){
-
-
-				return  R.data(alarmdangerousService.gpslistpage(alarmPlatePage));
+			return  R.data(alarmdangerousService.gpslistpage(alarmPlatePage));
 		}
+
 		@PostMapping("/driverlist")
 		@ApiLog("严重报警统计-driver分页")
 		@ApiOperation(value = "严重报警-driver分页", notes = "AlarmPlatePage 对象", position = 3)
 		public  R driverlist(@RequestBody AlarmPlatePage alarmPlatePage){
-
-
 			return  R.data(alarmdangerousService.zhudonglistpage(alarmPlatePage));
 		}
-
 
 
 }

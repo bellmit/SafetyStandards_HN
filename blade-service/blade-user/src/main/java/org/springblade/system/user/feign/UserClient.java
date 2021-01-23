@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.util.Date;
+
 /**
  * 用户服务Feign实现类
  *
@@ -71,6 +73,16 @@ public class UserClient implements IUserClient {
 	@Override
 	public User ZFlogin(String account, String password) {
 		return service.ZFlogin(account, password);
+	}
+
+	@Override
+	public boolean updateLocked(Integer isLocked, Integer loginErrorcount, String lastLoginErrorTime, String id) {
+		return service.updateLocked(isLocked, loginErrorcount, lastLoginErrorTime, id);
+	}
+
+	@Override
+	public User selectByName(String account) {
+		return service.selectByName(account);
 	}
 
 

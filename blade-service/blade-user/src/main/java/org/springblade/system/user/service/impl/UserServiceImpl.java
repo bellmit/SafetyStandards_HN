@@ -31,6 +31,7 @@ import org.springblade.system.user.service.IUserService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -205,6 +206,16 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
 	public User getZFUserInfo(String type,String userId) {
 		User user = baseMapper.getZFUserInfo(type,userId);
 		return user;
+	}
+
+	@Override
+	public boolean updateLocked(Integer isLocked, Integer loginErrorCount, String lastLoginErrorTime, String id) {
+		return baseMapper.updateLocked(isLocked, loginErrorCount, lastLoginErrorTime, id);
+	}
+
+	@Override
+	public User selectByName(String account) {
+		return baseMapper.selectByName(account);
 	}
 
 }

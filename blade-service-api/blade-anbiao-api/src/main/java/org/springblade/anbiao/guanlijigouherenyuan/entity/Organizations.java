@@ -257,14 +257,20 @@ public class Organizations implements Serializable {
 	@ApiModelProperty(value = "上级id")
 	@TableField(exist = false)
 	private String parentId;
-	@ApiModelProperty(value = "运营类型")
-	private String  yunyingleixing;
-	@ApiModelProperty(value = "省")
-	private String  province;
-	@ApiModelProperty(value = "市")
-	private String  city;
-	@ApiModelProperty(value = "区县")
-	private String  country;
 
+	@ApiModelProperty(value = "运营类型")
+	private String yunyingleixing;
+
+	@ApiModelProperty(value = "省")
+	private String province;
+
+	@ApiModelProperty(value = "市")
+	private String city;
+
+	@ApiModelProperty(value = "区县")
+	private String country;
+
+	@ApiModelProperty(value = "所属地市")
+	private String area;
 
 }

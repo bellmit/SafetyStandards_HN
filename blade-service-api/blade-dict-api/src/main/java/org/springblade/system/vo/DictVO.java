@@ -17,6 +17,7 @@ package org.springblade.system.vo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springblade.core.tool.node.INode;
@@ -64,4 +65,11 @@ public class DictVO extends Dict implements INode {
 	 * 上级字典
 	 */
 	private String parentName;
+
+	/**
+	 * 是否有下级
+	 */
+	@ApiModelProperty(value = "是否有下级")
+	private Integer childrens;
+
 }

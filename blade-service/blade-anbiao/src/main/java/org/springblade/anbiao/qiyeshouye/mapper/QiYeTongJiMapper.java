@@ -16,9 +16,11 @@
 package org.springblade.anbiao.qiyeshouye.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.springblade.anbiao.qiyeshouye.entity.QiYeInOutAreaTongJi;
 import org.springblade.anbiao.qiyeshouye.entity.QiYeOffLineTongJi;
 import org.springblade.anbiao.qiyeshouye.entity.QiYeRiYunXingTongJi;
 import org.springblade.anbiao.qiyeshouye.entity.QiYeTongJi;
+import org.springblade.anbiao.qiyeshouye.page.QiYeInOutAreaPage;
 import org.springblade.anbiao.qiyeshouye.page.QiYeOffLineTongJiPage;
 import org.springblade.anbiao.qiyeshouye.page.QiYeTongJiPage;
 
@@ -63,5 +65,13 @@ public interface QiYeTongJiMapper extends BaseMapper<QiYeTongJi> {
 	 */
 	List<QiYeOffLineTongJi> selectGet24HoursOffLineTJ(QiYeOffLineTongJiPage qiYeOffLineTongJiPage);
 	int selectGet24HoursOffLineTJTotal(QiYeOffLineTongJiPage qiYeOffLineTongJiPage);
+
+	/**
+	 * 进出区域统计
+	 * @param qiYeInOutAreaPage
+	 * @return
+	 */
+	List<QiYeInOutAreaTongJi> selectGetInOutAreaTJ(QiYeInOutAreaPage qiYeInOutAreaPage);
+	int selectGetInOutAreaTJTotal(QiYeInOutAreaPage qiYeInOutAreaPage);
 
 }

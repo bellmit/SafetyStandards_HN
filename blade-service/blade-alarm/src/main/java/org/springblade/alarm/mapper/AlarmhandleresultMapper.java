@@ -21,6 +21,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springblade.alarm.entity.AlarmBaojingTongji;
 import org.springblade.alarm.entity.AlarmWeichuliType;
 import org.springblade.alarm.entity.Alarmhandleresult;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Map;
@@ -37,7 +38,7 @@ public interface AlarmhandleresultMapper extends BaseMapper<Alarmhandleresult> {
 	 * 根据报警id串 查询处理记录
 	 *
 	 */
-	List<String> selectIdList(Alarmhandleresult result);
+	List<Alarmhandleresult> selectIdList(Alarmhandleresult result);
 	/**
 	 * 根据报警id串 删除处理记录
 	 *
@@ -93,4 +94,18 @@ public interface AlarmhandleresultMapper extends BaseMapper<Alarmhandleresult> {
 	 * 更新日报出率
 	 */
 	Integer  updateRibao(@Param("id")String id,@Param("chulilv")String chulilv);
+
+	/**
+	 * 更新二次处理信息
+	 * @param twicechulixingshi
+	 * @param twicechulimiaoshu
+	 * @param twicechuliren
+	 * @param twicechulishijian
+	 * @param twicefujian
+	 * @param twicechulirenid
+	 * @return
+	 */
+	boolean updateAftertreatment(@RequestParam("twicechulixingshi") String twicechulixingshi, @RequestParam("twicechulimiaoshu") String twicechulimiaoshu, @RequestParam("twicechuliren") String twicechuliren,
+								 @RequestParam("twicechulishijian") String twicechulishijian, @RequestParam("twicechulirenid") Integer twicechulirenid, @RequestParam("twicefujian") String twicefujian, @RequestParam("id") String id);
+
 }

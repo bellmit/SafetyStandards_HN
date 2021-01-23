@@ -20,15 +20,17 @@ import com.alibaba.csp.sentinel.util.StringUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang.StringUtils;
-import org.springblade.alarm.entity.*;
+import org.springblade.alarm.entity.AlarmBaojingTongji;
+import org.springblade.alarm.entity.Driverbehavior;
+import org.springblade.alarm.entity.DriverbehaviorMG;
 import org.springblade.alarm.mapper.AlarmsummaryCutofftimeMapper;
 import org.springblade.alarm.mapper.DriverbehaviorMapper;
 import org.springblade.alarm.page.AlarmTimePage;
 import org.springblade.alarm.page.DriverAlarmPage;
 import org.springblade.alarm.page.ShishiBaojingTongjiPage;
 import org.springblade.alarm.service.IDriverbehaviorService;
-import org.springblade.alarm.vo.AlarmsummaryCutofftimeVO;
 import org.springblade.alarm.vo.DriverbehaviorVO;
+import org.springblade.common.configurationBean.AlarmServer;
 import org.springblade.common.enumconstant.EnmuAlarm;
 import org.springblade.common.tool.GpsToBaiduUtil;
 import org.springblade.common.tool.LatLotForLocation;
@@ -39,10 +41,8 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.NumberFormat;
-import java.util.HashMap;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -58,6 +58,7 @@ public class DriverbehaviorServiceImpl extends ServiceImpl<DriverbehaviorMapper,
     private DriverbehaviorMapper driverbehaviorMapper;
     private AlarmsummaryCutofftimeMapper alarmsummaryCutofftimeMapper;
 	private MongoTemplate mongoTemplate;
+	private AlarmServer alarmServer;
 
     @Override
     public DriverAlarmPage<DriverbehaviorVO> selectAlarmPage(DriverAlarmPage driverAlarmPage) {
@@ -227,19 +228,76 @@ public class DriverbehaviorServiceImpl extends ServiceImpl<DriverbehaviorMapper,
         driverMap.put("chouyan",0);
         driverMap.put("dadianhua",0);
 		driverMap.put("jiashiyuanyichang",0);
-        strings.forEach(item->{
-            if("分神驾驶报警".equals(item)){
-                driverMap.put("fenshen",1);
-            }else if("疲劳驾驶报警".equals(item)){
-                driverMap.put("pilaoshipin",1);
-            }else if("抽烟报警".equals(item)){
-                driverMap.put("chouyan",1);
-            }else if("驾驶员异常报警".equals(item)){
+		driverMap.put("chujuguojin",0);
+		driverMap.put("chedaopianli",0);
+		driverMap.put("qianxiangpengzhuang",0);
+		driverMap.put("xingrenpengzhuang",0);
+//		if("安徽".equals(alarmServer.getAddressPath())){
+//			strings.forEach(item->{
+//				if("分神报警".equals(item)){
+//					driverMap.put("fenshen",1);
+//				}else if("生理疲劳报警".equals(item)){
+//					driverMap.put("pilaoshipin",1);
+//				}else if("抽烟报警".equals(item)){
+//					driverMap.put("chouyan",1);
+//				}else if("驾驶员异常报警".equals(item)){
+//					driverMap.put("jiashiyuanyichang",1);
+//				}else if("接打电话报警".equals(item)){
+//					driverMap.put("dadianhua",1);
+//				}else if("车距过近报警".equals(item)){
+//					driverMap.put("chujuguojin",1);
+//				}else if("车道偏离报警".equals(item)){
+//					driverMap.put("chedaopianli",1);
+//				}else if("前向碰撞报警".equals(item)){
+//					driverMap.put("qianxiangpengzhuang",1);
+//				}else if("行人碰撞预警".equals(item)){
+//					driverMap.put("xingrenpengzhuang",1);
+//				}
+//			});
+//		}else{
+//			strings.forEach(item->{
+//				if("分神驾驶报警".equals(item)){
+//					driverMap.put("fenshen",1);
+//				}else if("生理疲劳报警".equals(item)){
+//					driverMap.put("pilaoshipin",1);
+//				}else if("抽烟报警".equals(item)){
+//					driverMap.put("chouyan",1);
+//				}else if("驾驶员异常报警".equals(item)){
+//					driverMap.put("jiashiyuanyichang",1);
+//				}else if("接打电话报警".equals(item)){
+//					driverMap.put("dadianhua",1);
+//				}else if("车距过近报警".equals(item)){
+//					driverMap.put("chujuguojin",1);
+//				}else if("车道偏离报警".equals(item)){
+//					driverMap.put("chedaopianli",1);
+//				}else if("前向碰撞报警".equals(item)){
+//					driverMap.put("qianxiangpengzhuang",1);
+//				}else if("行人碰撞预警".equals(item)){
+//					driverMap.put("xingrenpengzhuang",1);
+//				}
+//			});
+//		}
+		strings.forEach(item->{
+			if("分神驾驶报警".equals(item)){
+				driverMap.put("fenshen",1);
+			}else if("生理疲劳报警".equals(item)){
+				driverMap.put("pilaoshipin",1);
+			}else if("抽烟报警".equals(item)){
+				driverMap.put("chouyan",1);
+			}else if("驾驶员异常报警".equals(item)){
 				driverMap.put("jiashiyuanyichang",1);
-			}else{
-                driverMap.put("dadianhua",1);
-            }
-        });
+			}else if("接打电话报警".equals(item)){
+				driverMap.put("dadianhua",1);
+			}else if("车距过近报警".equals(item)){
+				driverMap.put("chujuguojin",1);
+			}else if("车道偏离报警".equals(item)){
+				driverMap.put("chedaopianli",1);
+			}else if("前向碰撞报警".equals(item)){
+				driverMap.put("qianxiangpengzhuang",1);
+			}else if("行人碰撞预警".equals(item)){
+				driverMap.put("xingrenpengzhuang",1);
+			}
+		});
         return driverMap;
     }
 
@@ -330,9 +388,6 @@ public class DriverbehaviorServiceImpl extends ServiceImpl<DriverbehaviorMapper,
 			}
 		}
 		driverAlarmPage.setRecords(a);
-
-
-
 		return driverAlarmPage;
 	}
 

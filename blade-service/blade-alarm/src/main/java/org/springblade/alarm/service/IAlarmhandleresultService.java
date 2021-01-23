@@ -18,6 +18,7 @@ package org.springblade.alarm.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.springblade.alarm.entity.AlarmWeichuliType;
 import org.springblade.alarm.entity.Alarmhandleresult;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Map;
@@ -34,7 +35,7 @@ public interface IAlarmhandleresultService extends IService<Alarmhandleresult> {
 	 * 根据报警id串 查询处理记录
 	 *
 	 */
-	List<String> selectIdList(Alarmhandleresult result);
+	List<Alarmhandleresult> selectIdList(Alarmhandleresult result);
 	/**
 	 * 根据报警id串 删除处理记录
 	 *
@@ -66,4 +67,19 @@ public interface IAlarmhandleresultService extends IService<Alarmhandleresult> {
 	 * 根据企业 cutoffTime时间更新处理率
 	 */
 	Integer updateribao(String cutoffTime,String company,String deptId);
+
+	/**
+	 * 更新二次处理信息
+	 * @param twicechulixingshi
+	 * @param twicechulimiaoshu
+	 * @param twicechuliren
+	 * @param twicechulishijian
+	 * @param twicefujian
+	 * @param twicechulirenid
+	 * @return
+	 */
+	boolean updateAftertreatment(@RequestParam("twicechulixingshi") String twicechulixingshi, @RequestParam("twicechulimiaoshu") String twicechulimiaoshu, @RequestParam("twicechuliren") String twicechuliren,
+								 @RequestParam("twicechulishijian") String twicechulishijian, @RequestParam("twicechulirenid") Integer twicechulirenid, @RequestParam("twicefujian") String twicefujian, @RequestParam("id") String id);
+
+
 }

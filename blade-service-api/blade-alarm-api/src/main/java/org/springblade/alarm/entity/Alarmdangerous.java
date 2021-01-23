@@ -55,7 +55,7 @@ public class Alarmdangerous implements Serializable {
 	 */
 	@ApiModelProperty(value = "车辆id")
 	@TableField("VehId")
-	private Integer VehId;
+	private String VehId;
 	/**
 	 * 开始时间
 	 */

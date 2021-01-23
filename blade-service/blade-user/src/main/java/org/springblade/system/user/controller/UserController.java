@@ -16,7 +16,6 @@
 package org.springblade.system.user.controller;
 
 
-import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.annotations.*;
@@ -140,7 +139,8 @@ public class UserController  {
 							@ApiParam(value = "passWord", required = true) @RequestParam String passWord,
 							@ApiParam(value = "oldpassWord", required = true) @RequestParam String oldpassWord) {
 		String msg;
-		UserInfo userInfo = userService.userInfo(bladeUser.getAccount(), DigestUtil.encrypt(oldpassWord));
+		System.out.println(DigestUtil.encrypt(oldpassWord));
+		UserInfo userInfo = userService.userInfo(userId,DigestUtil.encrypt(oldpassWord));
 		if(userInfo.getUser()==null){
 			msg="原密码不正确";
 			return R.fail(msg);
@@ -155,6 +155,22 @@ public class UserController  {
 	@ApiOperation(value = "分页-人员资料管理", notes = "传入userPage", position = 7)
 	public R<UserPage<User>> userlist(@RequestBody UserPage userPage) {
 		UserPage<User> pages = userService.selectUserByPage(userPage);
+		return R.data(pages);
+	}
+
+	@PostMapping("/getUserByName")
+	@ApiLog("根据用户名查询账号信息")
+	@ApiOperation(value = "根据用户名查询账号信息", notes = "传入name", position = 8)
+	public R<User> getUserByName(@ApiParam(value = "name", required = true) @RequestParam String name) {
+		User pages = userService.selectByName(name);
+		return R.data(pages);
+	}
+
+	@PostMapping("/updateLocked")
+	@ApiLog("登录失败更新锁定机制")
+	@ApiOperation(value = "登录失败更新锁定机制", notes = "传入相关参数", position = 9)
+	public R updateLocked(String id, Integer isLocked, Integer loginErrorcount, String lastLoginErrorTime) {
+		boolean pages = userService.updateLocked(isLocked,loginErrorcount,lastLoginErrorTime,id);
 		return R.data(pages);
 	}
 

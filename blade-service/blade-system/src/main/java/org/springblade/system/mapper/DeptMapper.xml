@@ -95,6 +95,8 @@
         AND xiaji.is_deleted = 0
         AND xiaji.extend_type='机构'
         AND shangji.extend_type='机构'
+        AND xiangxi.jigouleixing not like '%ZF%'
+	    AND xiaji.dept_name != '政府'
         and xiangxi.dept_id = xiaji.id
         AND shangji.id=#{param1}
     </select>

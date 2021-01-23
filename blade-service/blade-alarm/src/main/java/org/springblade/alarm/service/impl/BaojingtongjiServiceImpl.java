@@ -16,15 +16,16 @@
 package org.springblade.alarm.service.impl;
 
 import cn.hutool.core.date.DateUtil;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springblade.alarm.entity.*;
-import org.springblade.alarm.page.BaojingTJPage;
-import org.springblade.alarm.vo.BaojingtongjiVO;
 import org.springblade.alarm.mapper.BaojingtongjiMapper;
+import org.springblade.alarm.page.BaojingTJPage;
 import org.springblade.alarm.service.IBaojingtongjiService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springblade.alarm.vo.BaojingtongjiVO;
+import org.springblade.common.configurationBean.AlarmServer;
 import org.springframework.stereotype.Service;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 
 import java.util.Date;
 import java.util.List;
@@ -39,7 +40,9 @@ import java.util.Map;
 @Service
 @AllArgsConstructor
 public class BaojingtongjiServiceImpl extends ServiceImpl<BaojingtongjiMapper, BaojingTJ> implements IBaojingtongjiService {
-	private  BaojingtongjiMapper baojingtongjiMapper;
+	private BaojingtongjiMapper baojingtongjiMapper;
+	private AlarmServer alarmServer;
+
 	@Override
 	public IPage<BaojingtongjiVO> selectBaojingtongjiPage(IPage<BaojingtongjiVO> page, BaojingtongjiVO baojingtongji) {
 		return page.setRecords(baseMapper.selectBaojingtongjiPage(page, baojingtongji));
@@ -148,7 +151,6 @@ public class BaojingtongjiServiceImpl extends ServiceImpl<BaojingtongjiMapper, B
 		}
 		gpsList.forEach(item->{
 			String AlarmType=item.get("AlarmType").toString();//报警类型
-			System.out.println(item.get("baojingCount"));
 			Integer Count=Integer.valueOf(item.get("baojingCount").toString());//报警次数
 
 			if("超速报警".equals(AlarmType)){
@@ -158,31 +160,79 @@ public class BaojingtongjiServiceImpl extends ServiceImpl<BaojingtongjiMapper, B
 			}else if("夜间行驶报警".equals(AlarmType)){
 				alarmCountDay.setGpsYejianCount(Count);
 			}else  if("无数据报警".equals(AlarmType)){
-				 alarmCountDay.setGpsYichangCount(alarmCountDay.getGpsYichangCount()+Count);
+				alarmCountDay.setGpsYichangCount(alarmCountDay.getGpsYichangCount()+Count);
 			}else if("不定位报警".equals(AlarmType)){
 				alarmCountDay.setGpsYichangCount(alarmCountDay.getGpsYichangCount()+Count);
+			}else if("24小时不在线报警".equals(AlarmType)){
+				alarmCountDay.setBuzaixianbaojing(Count);
+			}else if ("高速禁行".equals(AlarmType)) {
+				alarmCountDay.setGaosujinxing(Count);
 			}
 		});
 		zhudongList.forEach(item->{
 			String AlarmType=item.get("AlarmType").toString();//报警类型
 			Integer Count=Integer.valueOf(item.get("baojingCount").toString());//报警次数
-			if("疲劳驾驶报警".equals(AlarmType)){
+//			if("安徽".equals(alarmServer.getAddressPath())) {
+//				if ("疲劳驾驶报警".equals(AlarmType)) {
+//					alarmCountDay.setZhudongJiashiyuanpilaoCount(Count);
+//				} else if ("接打电话报警".equals(AlarmType)) {
+//					alarmCountDay.setZhudongJiedadianhuaCount(Count);
+//				} else if ("抽烟报警".equals(AlarmType)) {
+//					alarmCountDay.setZhudongChouyanjiashiCount(Count);
+//				} else if ("分神报警".equals(AlarmType)) {
+//					alarmCountDay.setZhudongFenshenjiashiCount(Count);
+//				} else if ("车距过近报警 ".equals(AlarmType)) {
+//					alarmCountDay.setZhudongChejuguojinCount(Count);
+//				} else if ("车道偏离报警".equals(AlarmType)) {
+//					alarmCountDay.setZhudongChedaopianliCount(Count);
+//				} else if ("前向碰撞报警".equals(AlarmType)) {
+//					alarmCountDay.setZhudongFangpenzhuangCount(Count);
+//				} else if ("驾驶员异常报警".equals(AlarmType)) {
+//					alarmCountDay.setJiashiyuanyichangbaojing(Count);
+//				} else if ("行人碰撞预警".equals(AlarmType)) {
+//					alarmCountDay.setXingrenpengzhuangyujing(Count);
+//				}
+//			}else{
+//				if ("疲劳驾驶报警".equals(AlarmType)) {
+//					alarmCountDay.setZhudongJiashiyuanpilaoCount(Count);
+//				} else if ("接打电话报警".equals(AlarmType)) {
+//					alarmCountDay.setZhudongJiedadianhuaCount(Count);
+//				} else if ("抽烟报警".equals(AlarmType)) {
+//					alarmCountDay.setZhudongChouyanjiashiCount(Count);
+//				} else if ("分神驾驶报警".equals(AlarmType)) {
+//					alarmCountDay.setZhudongFenshenjiashiCount(Count);
+//				} else if ("车距过近报警 ".equals(AlarmType)) {
+//					alarmCountDay.setZhudongChejuguojinCount(Count);
+//				} else if ("车道偏离报警".equals(AlarmType)) {
+//					alarmCountDay.setZhudongChedaopianliCount(Count);
+//				} else if ("前向碰撞报警".equals(AlarmType)) {
+//					alarmCountDay.setZhudongFangpenzhuangCount(Count);
+//				} else if ("驾驶员异常报警".equals(AlarmType)) {
+//					alarmCountDay.setJiashiyuanyichangbaojing(Count);
+//				} else if ("行人碰撞预警".equals(AlarmType)) {
+//					alarmCountDay.setXingrenpengzhuangyujing(Count);
+//				}
+//			}
+			if ("疲劳驾驶报警".equals(AlarmType)) {
 				alarmCountDay.setZhudongJiashiyuanpilaoCount(Count);
-			}else if("接打电话报警".equals(AlarmType)){
+			} else if ("接打电话报警".equals(AlarmType)) {
 				alarmCountDay.setZhudongJiedadianhuaCount(Count);
-			}else if("抽烟报警".equals(AlarmType)){
+			} else if ("抽烟报警".equals(AlarmType)) {
 				alarmCountDay.setZhudongChouyanjiashiCount(Count);
-			}else if("分神驾驶报警".equals(AlarmType)){
+			} else if ("分神驾驶报警".equals(AlarmType)) {
 				alarmCountDay.setZhudongFenshenjiashiCount(Count);
-			}else if("车距过近报警 ".equals(AlarmType)){
+			} else if ("车距过近报警 ".equals(AlarmType)) {
 				alarmCountDay.setZhudongChejuguojinCount(Count);
-			}else if("车道偏离报警".equals(AlarmType)){
+			} else if ("车道偏离报警".equals(AlarmType)) {
 				alarmCountDay.setZhudongChedaopianliCount(Count);
-			}else  if("前向碰撞报警".equals(AlarmType)){
+			} else if ("前向碰撞报警".equals(AlarmType)) {
 				alarmCountDay.setZhudongFangpenzhuangCount(Count);
+			} else if ("驾驶员异常报警".equals(AlarmType)) {
+				alarmCountDay.setJiashiyuanyichangbaojing(Count);
+			} else if ("行人碰撞预警".equals(AlarmType)) {
+				alarmCountDay.setXingrenpengzhuangyujing(Count);
 			}
 		});
-
 		return alarmCountDay;
 	}
 

@@ -5,6 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 /**
+ * @author 呵呵哒
  * @description: nacos动态获取文件路径/url前缀
  * @projectName SafetyStandards
  * @date 2019/5/2211:35
@@ -28,6 +29,14 @@ public class FileServer {
 	 */
 	private String falg;
 
+	/**
+	 * gps相关数据地址
+	 */
 	private String gpsVehiclePath;
+
+	/**
+	 * 获取logo
+	 */
+	private String photoLogo;
 
 }

@@ -62,17 +62,14 @@ public class GpsVehicleController {
 		List<ZhengFuOrganization> zhengFuOrganizations = null;
 		Organization jb = iOrganizationService.selectGetZFJB(dept);
 		if(!StringUtils.isBlank(jb.getProvince()) && StringUtils.isBlank(jb.getCity())){
-			gpsVehiclePage.setZhengfuid(jb.getProvince());
 			zhengFuOrganizations = iOrganizationService.selectGetZF(dept,null,null,null);
 		}
 
 		if(!StringUtils.isBlank(jb.getCity()) && StringUtils.isBlank(jb.getCountry())){
-			gpsVehiclePage.setZhengfuid(jb.getCity());
 			zhengFuOrganizations = iOrganizationService.selectGetZF(null,dept,null,null);
 		}
 
 		if(!StringUtils.isBlank(jb.getCountry())){
-			gpsVehiclePage.setZhengfuid(jb.getCountry());
 			zhengFuOrganizations = iOrganizationService.selectGetZF(null,null,dept,null);
 		}
 
@@ -89,8 +86,10 @@ public class GpsVehicleController {
 			String deptIds_name = "";
 			if(StringUtils.isBlank(deptname.trim())) {
 				for (int i = 0; i < zhengFuOrganizations.size(); i++) {
-					deptIds = zhengFuOrganizations.get(i).getQiyeid();
-					deptId += deptIds+ ',';
+					if(zhengFuOrganizations.get(i).getJigouleixing().equals("qiye")){
+						deptIds = zhengFuOrganizations.get(i).getQiyeid();
+						deptId += deptIds+ ',';
+					}
 				}
 			}else{
 				List<Dept> depts = iSysClient.getByName(deptname.trim());
@@ -125,15 +124,15 @@ public class GpsVehicleController {
 				url = fileServer.getGpsVehiclePath() + "/GetList?dept=" + gpsVehiclePage.getDept() + "&zaixian=" + gpsVehiclePage.getZaixian() + "&zhuangtai=" + gpsVehiclePage.getZhuangtai() + "&page=" + gpsVehiclePage.getPage() + "&size=" + gpsVehiclePage.getPagesize();
 			}
 
-			if(gpsVehiclePage.getCph() != null){
+			if(!StringUtils.isBlank(gpsVehiclePage.getCph())){
 				url = fileServer.getGpsVehiclePath() + "/GetList?dept=" + gpsVehiclePage.getDept() + "&zaixian=" + gpsVehiclePage.getZaixian() + "&zhuangtai=" + gpsVehiclePage.getZhuangtai() + "&page=" + gpsVehiclePage.getPage() + "&size=" + gpsVehiclePage.getPagesize()+ "&cph=" + gpsVehiclePage.getCph();
 			}
 
-			if(gpsVehiclePage.getDeptname() != null){
+			if(!StringUtils.isBlank(gpsVehiclePage.getDeptname())){
 				url = fileServer.getGpsVehiclePath() + "/GetList?dept=" + gpsVehiclePage.getDept() + "&zaixian=" + gpsVehiclePage.getZaixian() + "&zhuangtai=" + gpsVehiclePage.getZhuangtai() + "&page=" + gpsVehiclePage.getPage() + "&size=" + gpsVehiclePage.getPagesize();
 			}
 
-			if(gpsVehiclePage.getCph() != null && gpsVehiclePage.getDeptname() != null){
+			if(!StringUtils.isBlank(gpsVehiclePage.getCph()) && !StringUtils.isBlank(gpsVehiclePage.getDeptname())){
 				url = fileServer.getGpsVehiclePath() + "/GetList?dept=" + gpsVehiclePage.getDept() + "&zaixian=" + gpsVehiclePage.getZaixian() + "&zhuangtai=" + gpsVehiclePage.getZhuangtai() + "&page=" + gpsVehiclePage.getPage() + "&size=" + gpsVehiclePage.getPagesize()+ "&cph=" + gpsVehiclePage.getCph();
 			}
 

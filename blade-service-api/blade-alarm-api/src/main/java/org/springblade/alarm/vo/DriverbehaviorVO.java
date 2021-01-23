@@ -104,4 +104,25 @@ public class DriverbehaviorVO extends Driverbehavior {
 	@ApiModelProperty(value = "移动距离")
 	private String distance;
 
+	@ApiModelProperty(value = "二次处理形式")
+	private String twicechulixingshi;
+
+	@ApiModelProperty(value = "二次处理描述")
+	private String twicechulimiaoshu;
+
+	@ApiModelProperty(value = "二次处理附件")
+	private String twicefujian;
+
+	@ApiModelProperty(value = "二次处理人")
+	private String twicechuliren;
+
+	@ApiModelProperty(value = "二次处理时间")
+	private String twicechulishijian;
+
+	@ApiModelProperty(value = "二次处理人ID")
+	private String twicechulirenid;
+
+	@ApiModelProperty(value = "最终处理结果")
+	private String endresult;
+
 }

@@ -140,4 +140,12 @@ public interface IZhengFuBaoJingTongJiService extends IService<ZhengFuBaoJingTon
 	 * @return
 	 */
 	List<TtsMessageInfo> selectByAlarmGuId(String alarmGuId);
+
+	/**
+	 *车辆日运行情况统计
+	 * @param zhengFuBaoJingTongJiJieSuanPage
+	 * @return
+	 */
+	ZhengFuBaoJingTongJiJieSuanPage<ZhengFuRiYunXingTongJi> selectGetCLRYXTJ(ZhengFuBaoJingTongJiJieSuanPage zhengFuBaoJingTongJiJieSuanPage);
+
 }

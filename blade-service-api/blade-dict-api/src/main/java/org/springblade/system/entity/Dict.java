@@ -88,5 +88,4 @@ public class Dict implements Serializable {
 	@ApiModelProperty(value = "是否已删除")
 	private Integer isDeleted;
 
-
 }
