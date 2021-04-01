@@ -29,7 +29,7 @@ import java.time.LocalDateTime;
 /**
  * 报警推送表 实体类
  *
- * @author elvis.he
+ * @author hyp
  * @since 2019-05-12
  */
 @Data

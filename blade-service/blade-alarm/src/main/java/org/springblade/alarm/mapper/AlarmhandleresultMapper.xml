@@ -114,26 +114,36 @@
             #{id}
         </foreach>
     </select>
+
     <select id="gpsweichuli" resultType="org.springblade.alarm.entity.AlarmWeichuliType">
-        SELECT COUNT(1) as number,AlarmType from (
-        select a.*,b.baojingid from(SELECT
-        *
-        FROM
-        baobiao_alarmsummary_cutofftime
-        WHERE 1=1
-            and CutoffTime BETWEEN STR_TO_DATE(
-	                concat(
-		            #{date},'00:00:00'),'%Y-%m-%d %H:%i:%s') AND   STR_TO_DATE(concat(#{date},'23:59:59'),'%Y-%m-%d %H:%i:%s')
-            and passed = 100
-            and AnalyzeMode = 1
-            and company = #{company}
+        SELECT
+            COUNT(1) as number,
+            AlarmType
+        from (
+            select
+                a.*,
+                b.baojingid
+            from(
+                SELECT
+                    *
+                FROM
+                    baobiao_alarmsummary_cutofftime a,
+                    (select id,dept_id from anbiao_vehicle) b
+                where 1=1
+                    and a.VehId = b.id
+                    and CutoffTime BETWEEN STR_TO_DATE(concat(#{date},'00:00:00'),'%Y-%m-%d %H:%i:%s')
+                    and STR_TO_DATE(concat(#{date},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+                    and passed = 100
+                    and AnalyzeMode = 1
+                    and b.dept_id = #{deptId}
+                ) a
+                LEFT JOIN baobiao_alarmhandleresult b on a.AlarmReportID=b.baojingid
+            WHERE b.baojingid is null
+            ) ab
+            GROUP BY AlarmType
 
-        ) a LEFT JOIN baobiao_alarmhandleresult b on a.AlarmReportID=b.baojingid
-
-          WHERE b.baojingid is null
-
-        ) ab  GROUP BY AlarmType
     </select>
+
     <select id="zhudonganquanweichuli" resultType="org.springblade.alarm.entity.AlarmWeichuliType">
         SELECT
             COUNT(1) as number,
@@ -148,7 +158,7 @@
                 FROM
                     baobiao_driverbehavior
                 WHERE
-                    company = #{company}
+                    cid = #{deptId}
                     and GpsTime BETWEEN STR_TO_DATE(
 	                concat( #{date},'00:00:00'),'%Y-%m-%d %H:%i:%s') AND
 	                STR_TO_DATE(concat(#{date},'23:59:59'),'%Y-%m-%d %H:%i:%s')

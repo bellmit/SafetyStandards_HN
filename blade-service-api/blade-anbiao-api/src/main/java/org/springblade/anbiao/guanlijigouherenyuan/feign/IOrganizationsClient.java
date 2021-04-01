@@ -1,10 +1,13 @@
 package org.springblade.anbiao.guanlijigouherenyuan.feign;
 
 import org.springblade.anbiao.guanlijigouherenyuan.entity.Organizations;
+import org.springblade.anbiao.guanlijigouherenyuan.vo.OrganizationsVO;
 import org.springblade.anbiao.zhengfu.entity.Organization;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 @FeignClient(
 	//定义Feign指向的service-id
@@ -32,5 +35,14 @@ public interface IOrganizationsClient {
 
 	@PostMapping(API_PREFIX + "/selectZFRenyuan")
 	Organization selectZFRenyuan(@RequestParam("id") String id);
+
+	@PostMapping(API_PREFIX + "/getZFQY")
+	List<OrganizationsVO> getZFQY();
+
+	@PostMapping(API_PREFIX + "/getZFQYOrderById")
+	List<OrganizationsVO> getZFQYOrderById();
+
+	@PostMapping(API_PREFIX + "/insertSelective")
+	Boolean insertSelective(OrganizationsVO organizationsVO);
 
 }

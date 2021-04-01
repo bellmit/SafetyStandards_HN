@@ -9,14 +9,12 @@ package org.springblade.anbiao.qiyeshouye.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.AllArgsConstructor;
-import org.springblade.anbiao.qiyeshouye.entity.QiYeInOutAreaTongJi;
-import org.springblade.anbiao.qiyeshouye.entity.QiYeOffLineTongJi;
-import org.springblade.anbiao.qiyeshouye.entity.QiYeRiYunXingTongJi;
-import org.springblade.anbiao.qiyeshouye.entity.QiYeTongJi;
+import org.springblade.anbiao.qiyeshouye.entity.*;
 import org.springblade.anbiao.qiyeshouye.mapper.QiYeTongJiMapper;
 import org.springblade.anbiao.qiyeshouye.page.QiYeInOutAreaPage;
 import org.springblade.anbiao.qiyeshouye.page.QiYeOffLineTongJiPage;
 import org.springblade.anbiao.qiyeshouye.page.QiYeTongJiPage;
+import org.springblade.anbiao.qiyeshouye.page.QiYeTpvehdataPage;
 import org.springblade.anbiao.qiyeshouye.service.IQiYeTongJiService;
 import org.springframework.stereotype.Service;
 
@@ -41,10 +39,13 @@ public class QiYeTongJiServiceImpl extends ServiceImpl<QiYeTongJiMapper, QiYeTon
 			if(qiYeTongJiPage.getTotal()==0){
 				qiYeTongJiPage.setTotal(total);
 			}
-
-			List<QiYeTongJi> zhengFuBaoJingTongJiList = qiYeTongJiMapper.selectGetBJTJ(qiYeTongJiPage);
-			qiYeTongJiPage.setRecords(zhengFuBaoJingTongJiList);
-			return qiYeTongJiPage;
+			if(qiYeTongJiPage.getTotal()==0){
+				return qiYeTongJiPage;
+			}else {
+				List<QiYeTongJi> zhengFuBaoJingTongJiList = qiYeTongJiMapper.selectGetBJTJ(qiYeTongJiPage);
+				qiYeTongJiPage.setRecords(zhengFuBaoJingTongJiList);
+				return qiYeTongJiPage;
+			}
 		}
 		Integer pagetotal = 0;
 		if (total > 0) {
@@ -75,10 +76,13 @@ public class QiYeTongJiServiceImpl extends ServiceImpl<QiYeTongJiMapper, QiYeTon
 			if(qiYeTongJiPage.getTotal()==0){
 				qiYeTongJiPage.setTotal(total);
 			}
-
-			List<QiYeTongJi> zhengFuBaoJingTongJiList = qiYeTongJiMapper.selectBJPMTJ(qiYeTongJiPage);
-			qiYeTongJiPage.setRecords(zhengFuBaoJingTongJiList);
-			return qiYeTongJiPage;
+			if(qiYeTongJiPage.getTotal()==0){
+				return qiYeTongJiPage;
+			}else {
+				List<QiYeTongJi> zhengFuBaoJingTongJiList = qiYeTongJiMapper.selectBJPMTJ(qiYeTongJiPage);
+				qiYeTongJiPage.setRecords(zhengFuBaoJingTongJiList);
+				return qiYeTongJiPage;
+			}
 		}
 		Integer pagetotal = 0;
 		if (total > 0) {
@@ -109,10 +113,13 @@ public class QiYeTongJiServiceImpl extends ServiceImpl<QiYeTongJiMapper, QiYeTon
 			if(qiYeTongJiPage.getTotal()==0){
 				qiYeTongJiPage.setTotal(total);
 			}
-
-			List<QiYeRiYunXingTongJi> zhengFuBaoJingTongJiList = qiYeTongJiMapper.selectGetRYXBJTJ(qiYeTongJiPage);
-			qiYeTongJiPage.setRecords(zhengFuBaoJingTongJiList);
-			return qiYeTongJiPage;
+			if(qiYeTongJiPage.getTotal()==0){
+				return qiYeTongJiPage;
+			}else {
+				List<QiYeRiYunXingTongJi> zhengFuBaoJingTongJiList = qiYeTongJiMapper.selectGetRYXBJTJ(qiYeTongJiPage);
+				qiYeTongJiPage.setRecords(zhengFuBaoJingTongJiList);
+				return qiYeTongJiPage;
+			}
 		}
 		Integer pagetotal = 0;
 		if (total > 0) {
@@ -143,10 +150,13 @@ public class QiYeTongJiServiceImpl extends ServiceImpl<QiYeTongJiMapper, QiYeTon
 			if(qiYeOffLineTongJiPage.getTotal()==0){
 				qiYeOffLineTongJiPage.setTotal(total);
 			}
-
-			List<QiYeOffLineTongJi> zhengFuBaoJingTongJiList = qiYeTongJiMapper.selectGet24HoursOffLineTJ(qiYeOffLineTongJiPage);
-			qiYeOffLineTongJiPage.setRecords(zhengFuBaoJingTongJiList);
-			return qiYeOffLineTongJiPage;
+			if(qiYeOffLineTongJiPage.getTotal()==0){
+				return qiYeOffLineTongJiPage;
+			}else {
+				List<QiYeOffLineTongJi> zhengFuBaoJingTongJiList = qiYeTongJiMapper.selectGet24HoursOffLineTJ(qiYeOffLineTongJiPage);
+				qiYeOffLineTongJiPage.setRecords(zhengFuBaoJingTongJiList);
+				return qiYeOffLineTongJiPage;
+			}
 		}
 		Integer pagetotal = 0;
 		if (total > 0) {
@@ -177,10 +187,13 @@ public class QiYeTongJiServiceImpl extends ServiceImpl<QiYeTongJiMapper, QiYeTon
 			if(qiYeInOutAreaPage.getTotal()==0){
 				qiYeInOutAreaPage.setTotal(total);
 			}
-
-			List<QiYeInOutAreaTongJi> qiYeInOutAreaTongJiList = qiYeTongJiMapper.selectGetInOutAreaTJ(qiYeInOutAreaPage);
-			qiYeInOutAreaPage.setRecords(qiYeInOutAreaTongJiList);
-			return qiYeInOutAreaPage;
+			if(qiYeInOutAreaPage.getTotal()==0){
+				return qiYeInOutAreaPage;
+			}else {
+				List<QiYeInOutAreaTongJi> qiYeInOutAreaTongJiList = qiYeTongJiMapper.selectGetInOutAreaTJ(qiYeInOutAreaPage);
+				qiYeInOutAreaPage.setRecords(qiYeInOutAreaTongJiList);
+				return qiYeInOutAreaPage;
+			}
 		}
 		Integer pagetotal = 0;
 		if (total > 0) {
@@ -202,6 +215,45 @@ public class QiYeTongJiServiceImpl extends ServiceImpl<QiYeTongJiMapper, QiYeTon
 			qiYeInOutAreaPage.setRecords(qiYeInOutAreaTongJiList);
 		}
 		return qiYeInOutAreaPage;
+	}
+
+
+	@Override
+	public QiYeTpvehdataPage<QiYeTpvehdataTongJi> selecttpvehdataTJ(QiYeTpvehdataPage qiYeTpvehdataPage) {
+		Integer total = qiYeTongJiMapper.selectGettpvehdataTJTotal(qiYeTpvehdataPage);
+		if(qiYeTpvehdataPage.getSize()==0){
+			if(qiYeTpvehdataPage.getTotal()==0){
+				qiYeTpvehdataPage.setTotal(total);
+			}
+
+			if(qiYeTpvehdataPage.getTotal()==0){
+				return qiYeTpvehdataPage;
+			}else{
+				List<QiYeTpvehdataTongJi> zhengFuBaoJingTongJiList = qiYeTongJiMapper.selecttpvehdataTJ(qiYeTpvehdataPage);
+				qiYeTpvehdataPage.setRecords(zhengFuBaoJingTongJiList);
+				return qiYeTpvehdataPage;
+			}
+		}
+		Integer pagetotal = 0;
+		if (total > 0) {
+			if(total%qiYeTpvehdataPage.getSize()==0){
+				pagetotal = total / qiYeTpvehdataPage.getSize();
+			}else {
+				pagetotal = total / qiYeTpvehdataPage.getSize() + 1;
+			}
+		}
+		if (pagetotal >= qiYeTpvehdataPage.getCurrent()) {
+			qiYeTpvehdataPage.setPageTotal(pagetotal);
+			Integer offsetNo = 0;
+			if (qiYeTpvehdataPage.getCurrent() > 1) {
+				offsetNo = qiYeTpvehdataPage.getSize() * (qiYeTpvehdataPage.getCurrent() - 1);
+			}
+			qiYeTpvehdataPage.setTotal(total);
+			qiYeTpvehdataPage.setOffsetNo(offsetNo);
+			List<QiYeTpvehdataTongJi> zhengFuBaoJingTongJiList = qiYeTongJiMapper.selecttpvehdataTJ(qiYeTpvehdataPage);
+			qiYeTpvehdataPage.setRecords(zhengFuBaoJingTongJiList);
+		}
+		return qiYeTpvehdataPage;
 	}
 
 }

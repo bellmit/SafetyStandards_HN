@@ -46,7 +46,7 @@
     </select>
 
     <select id="selectByLoginName" resultType="java.lang.Integer">
-        select count(1) from blade_user where account=#{account};
+        select count(1) from blade_user where account=#{account} and is_deleted = 0;
     </select>
 
     <insert id="insertPer" parameterType="org.springblade.system.user.entity.User">
@@ -83,7 +83,7 @@
     </update>
 
     <update id="deletePer" parameterType="org.springblade.system.user.entity.User">
-        update blade_user set is_deleted=1 where  id=#{param1}
+        update blade_user set is_deleted=1 where id=#{param1}
     </update>
 
 
@@ -99,7 +99,11 @@
             CONCAT(jigou.dept_name,case when bumen.dept_name is null then '' else concat('/',bumen.dept_name)end,'/',gangwei.dept_name) as deptName,
             gangwei.dept_name as postName,
             u.phone,
-            u.is_deleted as zhuangtai,
+            case
+                when ifnull(u.is_deleted,0) = 0 then '启用'
+                when ifnull(u.is_deleted,0) = 1 then '删除'
+                when ifnull(u.is_deleted,0) = 2 then '禁用'
+            end as zhuangtai,
             u.create_time as createTimes,
             u.update_time as updateTimes
         from blade_user u
@@ -113,17 +117,20 @@
             ON (gangwei.parent_id=jigou.id or bumen.parent_id=jigou.id) and jigou.extend_type='机构'
             INNER JOIN blade_dept shangji
             ON locate(shangji.tree_code,jigou.tree_code)>0 and shangji.id=#{deptId}
-        where u.is_deleted=0
+        where u.is_deleted != 1
     </sql>
     <sql id="querySql">
         <if test="deptName != null and deptName != ''">
-            and  locate(#{deptName},deptName)>0
+            and locate(#{deptName},deptName)>0
         </if>
         <if test="realName != null and realName != ''">
-            and  locate(#{realName},realName)>0
+            and locate(#{realName},realName)>0
         </if>
         <if test="account != null and account != ''">
-            and  locate(#{account},account)>0
+            and locate(#{account},account)>0
+        </if>
+        <if test="zhuangtai != null and zhuangtai != ''">
+            and locate(#{zhuangtai},zhuangtai)>0
         </if>
     </sql>
     <sql id="orderSql">
@@ -245,11 +252,13 @@
     FROM
         blade_user
     WHERE openid=#{param1}
+        and is_deleted = 0
     </select>
 
     <select id="bindDriverOpenId" parameterType="org.springblade.system.user.entity.User">
         update blade_user set openid=#{param2}
         where account=#{param1}
+            and is_deleted = 0
     </select>
 
     <select id="getWeixinUser" resultMap="userResultMap">
@@ -328,6 +337,41 @@
 
     <select id="selectByName" resultMap="userResultMap">
         select * from blade_user where account=#{account}
+        where is_deleted = 0
+    </select>
+
+    <update id="updateUserStatus" parameterType="map" >
+        update blade_user set
+            update_user = #{updateUser},
+            update_time = #{updateTime},
+            is_deleted = #{isDeleted}
+		where 1=1
+		 and id in
+        <foreach item="item" index="index" collection="idss" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+    <select id="selectNameById" resultMap="userResultMap">
+       select
+            u.id,
+            u.account as name
+        from
+            blade_user u
+            INNER JOIN blade_post p
+            ON u.id=p.user_id
+            INNER JOIN blade_dept gangwei
+            ON p.post_id=gangwei.id
+            LEFT JOIN blade_dept bumen
+            ON gangwei.parent_id = bumen.id and bumen.extend_type='部门'
+            INNER JOIN blade_dept jigou
+            ON (gangwei.parent_id=jigou.id or bumen.parent_id=jigou.id) and jigou.extend_type='机构'
+            INNER JOIN blade_dept shangji
+            ON locate(shangji.tree_code,jigou.tree_code)>0 and shangji.id= #{deptId}
+        where u.is_deleted = 0
+        GROUP BY
+            u.id,
+            u.account
     </select>
 
 </mapper>

@@ -31,7 +31,7 @@ import java.time.LocalDateTime;
 /**
  * 安全工作方针与目标实体类
  *
- * @author elvis.he
+ * @author hyp
  * @since 2019-04-28
  */
 @Data

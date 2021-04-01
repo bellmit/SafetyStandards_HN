@@ -57,19 +57,22 @@
     </resultMap>
     <!--查询时间端gps严重违规报警-->
     <select id="GpsCount" resultType="org.springblade.alarm.entity.AlarmWeichuliType">
-        SELECT
-        COUNT(1) as number,
-        alarmType
-        FROM
-        vw_alarmdangerous
-        WHERE
-        CutoffTime
-        BETWEEN STR_TO_DATE(concat( #{beginTime},'00:00:00'),'%Y-%m-%d %H:%i:%s')
-	    AND   STR_TO_DATE(concat(#{endTime},'23:59:59'),'%Y-%m-%d %H:%i:%s')
-		AND company = #{company}
+        select
+            COUNT(1) as number,
+            alarmType
+        from
+            baobiao_alarmsummary_cutofftime a,(select id,dept_id from anbiao_vehicle) b
+        where 1=1
+            and a.VehId = b.id
+            and AlarmType in ('超速报警','疲劳驾驶报警','夜间行驶报警','无数据报警','不定位报警')
+            and passed = 100
+            and AnalyzeMode = 1
+            and CutoffTime BETWEEN STR_TO_DATE(concat(#{beginTime},'00:00:00'),'%Y-%m-%d %H:%i:%s')
+            and STR_TO_DATE(concat(#{endTime},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+            and `status` = 3
+            and b.dept_id = #{deptId}
         GROUP BY
-        alarmType
-
+            alarmType
 
     </select>
     <!--查询时间端主动防御严重违规报警-->
@@ -80,18 +83,14 @@
         FROM
         baobiao_driverbehavior
         WHERE
-        GpsTime
-        BETWEEN STR_TO_DATE(concat( #{beginTime},'00:00:00'),'%Y-%m-%d %H:%i:%s')
-	    AND   STR_TO_DATE(concat(#{endTime},'23:59:59'),'%Y-%m-%d %H:%i:%s')
-		AND company = #{company}
-		AND StateEx='核定报警'
+            GpsTime BETWEEN STR_TO_DATE(concat( #{beginTime},'00:00:00'),'%Y-%m-%d %H:%i:%s')
+            AND  STR_TO_DATE(concat(#{endTime},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+            AND cid = #{deptId}
+            AND StateEx='核定报警'
         GROUP BY
-        alarmType
-
-
-
-
+            alarmType
     </select>
+
     <!--查询时间端gps严重违规报警 车牌 报警统计 total-->
     <select id="Gpsdangeroustotal" resultType="java.lang.Integer">
         select count(1) from (
@@ -100,28 +99,31 @@
 
     </select>
     <sql id="Gpsdangeroustable">
-        SELECT
-        COUNT(1) number,
-        plateNumber,
-        color
-        FROM
-        vw_alarmdangerous
-        WHERE
-        CutoffTime
-        BETWEEN STR_TO_DATE(concat( #{beginTime},'00:00:00'),'%Y-%m-%d %H:%i:%s')
-        AND   STR_TO_DATE(concat(#{endTime},'23:59:59'),'%Y-%m-%d %H:%i:%s')
-        AND company = #{company}
+        select
+            COUNT(1) number,
+            plateNumber,
+            color
+        from
+            baobiao_alarmsummary_cutofftime a,
+            (select id,dept_id from anbiao_vehicle) b
+        where 1=1
+            and a.VehId = b.id
+            and passed = 100
+            and AnalyzeMode = 1
+            and CutoffTime BETWEEN STR_TO_DATE(concat(#{beginTime},'00:00:00'),'%Y-%m-%d %H:%i:%s')
+            and STR_TO_DATE(concat(#{endTime},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+            and `status` = 3
+            and b.dept_id = #{deptId}
         <choose>
             <when test="alarmType=='异常车辆报警'">
-                AND (AlarmType='无数据报警' or AlarmType='不定位报警' )
+                and (AlarmType='无数据报警' or AlarmType='不定位报警' )
             </when>
             <otherwise>
-                AND AlarmType=#{alarmType}
+                and AlarmType=#{alarmType}
             </otherwise>
         </choose>
-
         GROUP BY
-        plateNumber,color
+            plateNumber,color
         ORDER BY number DESC
 
     </sql>
@@ -256,76 +258,79 @@
     <sql id="gpsTable">
        SELECT
             AlarmReportID,
-	        VehId,
-	        BeginTime,
-	        EndTime,
-	        MaxSpeed,
-	        AlarmType,
-	        Longitude,
-	        Latitude,
-	        Velocity,
-	        Angle,
-	        Limited,
-	        Passed,
-	        Time,
-	        KeepTime,
-	        Road_Name,
-	        Road_Level,
-	        Road_Limited,
-	        Local,
-	        Elevation,
-	        DisposeAlarmName,
-	        DisposeAlarmTime,
-	        alarmcl,
-	        alarmclmsg,
-	        alarmhdremark,
-	        PushState,
-	        verifyName,
-	        verifyTime,
-	        AnalyzeMode,
-	        SysPassed,
-	        status,
-	        SynTime,
-	        plateNumber,
-	        plateNumber as plate,
-	        color,
-	        company,
-	        OperatType,
-	        EndSpeed,
-	        Distance,
-	        Road_Limited2,
-	        IsSupplements,
-	        CutoffTime,
-	        verifyTime2,
-	        AlarmID,
-	        endLongitude,
-	        endLatitude,
-	        endRoadName,
-	        isRegionV,
-	        AnalyzeID,
-	        atNocturnal,
-	        BaoJingType,
-	        ChaoSuBi
-        FROM
-        vw_alarmdangerous
+            VehId,
+            BeginTime,
+            EndTime,
+            MaxSpeed,
+            AlarmType,
+            Longitude,
+            Latitude,
+            Velocity,
+            Angle,
+            Limited,
+            Passed,
+            Time,
+            KeepTime,
+            Road_Name,
+            Road_Level,
+            Road_Limited,
+            Local,
+            Elevation,
+            DisposeAlarmName,
+            DisposeAlarmTime,
+            alarmcl,
+            alarmclmsg,
+            alarmhdremark,
+            PushState,
+            verifyName,
+            verifyTime,
+            AnalyzeMode,
+            SysPassed,
+            status,
+            SynTime,
+            plateNumber,
+            plateNumber as plate,
+            color,
+            company,
+            OperatType,
+            EndSpeed,
+            Distance,
+            Road_Limited2,
+            IsSupplements,
+            CutoffTime,
+            verifyTime2,
+            AlarmID,
+            endLongitude,
+            endLatitude,
+            endRoadName,
+            isRegionV,
+            AnalyzeID,
+            atNocturnal,
+            BaoJingType,
+            ChaoSuBi
+        from
+            baobiao_alarmsummary_cutofftime a,(select id,dept_id from anbiao_vehicle) b
+        where 1=1
+            and a.VehId = b.id
+            and CutoffTime BETWEEN STR_TO_DATE(concat(#{beginTime},'00:00:00'),'%Y-%m-%d %H:%i:%s')
+            and STR_TO_DATE(concat(#{endTime},'23:59:59'),'%Y-%m-%d %H:%i:%s')
+            <choose>
+                <when test="alarmType=='异常车辆报警'">
+                    AND (AlarmType='无数据报警' or AlarmType='不定位报警' )
+                </when>
+                <otherwise>
+                    AND AlarmType=#{alarmType}
+                </otherwise>
+            </choose>
+            and passed = 100
+            and AnalyzeMode = 1
+            and `status` = 3
 
     </sql>
     <sql id="GpsQuery">
-        AND CutoffTime
-        BETWEEN STR_TO_DATE(concat( #{beginTime},'00:00:00'),'%Y-%m-%d %H:%i:%s')
-        AND   STR_TO_DATE(concat(#{endTime},'23:59:59'),'%Y-%m-%d %H:%i:%s')
-        AND company = #{company}
-        <choose>
-            <when test="alarmType=='异常车辆报警'">
-                AND (AlarmType='无数据报警' or AlarmType='不定位报警' )
-            </when>
-            <otherwise>
-                AND AlarmType=#{alarmType}
-            </otherwise>
-        </choose>
 
         AND plateNumber=#{plateNumber}
-        AND  color=#{color}
+        AND color=#{color}
 
 
     </sql>

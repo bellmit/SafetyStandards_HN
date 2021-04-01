@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * 安全工作方针与目标 Mapper 接口
  *
- * @author elvis.he
+ * @author hyp
  * @since 2019-04-28
  */
 public interface FangzhenmubiaoMapper extends BaseMapper<Fangzhenmubiao> {

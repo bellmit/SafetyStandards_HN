@@ -39,17 +39,17 @@ public interface IZhengFuBaoJingTongJiService extends IService<ZhengFuBaoJingTon
 	 * @param deptId
 	 * @return
 	 */
-	ZhengFuBaoJingTongJi selectGetZFBaoJingMonth(@Param("deptId") String deptId);
+	ZhengFuBaoJingTongJi selectGetZFBaoJingMonth(@Param("deptId") String deptId,@Param("date") String date);
 
-	List<ZhengFuBaoJingTongJi> selectGetZFBaoJingMonth_XiaJi(@Param("xiaJiDeptId") String xiaJiDeptId);
+	List<ZhengFuBaoJingTongJi> selectGetZFBaoJingMonth_XiaJi(@Param("xiaJiDeptId") String xiaJiDeptId,@Param("date") String date);
 	/**
 	 * 当年报警趋势、当年处警趋势
 	 * @param deptId
 	 * @return
 	 */
-	List<ZhengFuBaoJingTongJi> selectGetZFBaoJingQuShi(@Param("deptId") String deptId);
+	List<ZhengFuBaoJingTongJi> selectGetZFBaoJingQuShi(@Param("deptId") String deptId,@Param("firstDate") String firstDate, @Param("endDate") String endDate);
 
-	List<ZhengFuBaoJingTongJi> selectGetZFBaoJingQuShi_XiaJi(@Param("xiaJiDeptId") String xiaJiDeptId);
+	List<ZhengFuBaoJingTongJi> selectGetZFBaoJingQuShi_XiaJi(@Param("xiaJiDeptId") String xiaJiDeptId,@Param("firstDate") String firstDate, @Param("endDate") String endDate);
 
 	/**
 	 * 企业报警排名
@@ -147,5 +147,20 @@ public interface IZhengFuBaoJingTongJiService extends IService<ZhengFuBaoJingTon
 	 * @return
 	 */
 	ZhengFuBaoJingTongJiJieSuanPage<ZhengFuRiYunXingTongJi> selectGetCLRYXTJ(ZhengFuBaoJingTongJiJieSuanPage zhengFuBaoJingTongJiJieSuanPage);
+
+	/**
+	 * 企业日运行情况统计
+	 * @param zhengFuBaoJingTongJiJieSuanPage
+	 * @return
+	 */
+	ZhengFuBaoJingTongJiJieSuanPage<ZhengFuRiYunXingTongJi> selectGetQYRYXTJ(ZhengFuBaoJingTongJiJieSuanPage zhengFuBaoJingTongJiJieSuanPage);
+
+	/**
+	 * 政府车辆数
+	 * @param zhengFuBaoJingTongJiJieSuanPage
+	 * @return
+	 */
+	List<ZhengFuBaoJingTongJiJieSuan> seletGetVehicleCount(ZhengFuBaoJingTongJiJieSuanPage zhengFuBaoJingTongJiJieSuanPage);
+
 
 }

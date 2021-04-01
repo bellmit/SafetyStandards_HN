@@ -6,12 +6,13 @@ server:
 spring:
   servlet:
     multipart:
-      max-file-size: 10MB
-      max-request-size: 10MB
+      max-file-size: 100MB
+      max-request-size: 100MB
   datasource:
     url: ${blade.datasource.dev.url}
     username: ${blade.datasource.dev.username}
     password: ${blade.datasource.dev.password}
+
 #    url: jdbc:mysql://36.133.42.142:3366/blade?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&tinyInt1isBit=false&allowMultiQueries=true&serverTimezone=GMT%2B8
 #    username: root
 #    password: mxcx123

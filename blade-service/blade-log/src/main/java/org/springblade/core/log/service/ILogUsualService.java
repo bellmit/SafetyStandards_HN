@@ -21,7 +21,7 @@ import org.springblade.core.log.model.LogUsual;
 /**
  * 服务类
  *
- * @author Chill
+ * @author hyp
  * @since 2018-10-12
  */
 public interface ILogUsualService extends IService<LogUsual> {

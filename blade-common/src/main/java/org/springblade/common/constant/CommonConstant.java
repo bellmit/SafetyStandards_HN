@@ -5,7 +5,7 @@ import org.springblade.core.launch.constant.AppConstant;
 /**
  * 通用常量
  *
- * @author Chill
+ * @author hyp
  */
 public interface CommonConstant {
 

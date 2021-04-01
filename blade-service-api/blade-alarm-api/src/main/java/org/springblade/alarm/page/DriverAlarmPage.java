@@ -12,8 +12,8 @@ import org.springblade.common.BasePage;
  * Program: SafetyStandards
  *
  * @description: DriverAlarmPage
- * @author: elvis.he
- * @create: 2019-05-08
+ * @author: hyp
+ * @create2021-05-08
  **/
 @Data
 @EqualsAndHashCode(callSuper = true)

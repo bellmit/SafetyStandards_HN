@@ -32,7 +32,7 @@ import java.util.Map;
 /**
  * 报警推送 Mapper 接口
  *
- * @author elvis.he
+ * @author hyp
  * @since 2019-05-12
  */
 public interface AlarmsummaryCutofftimeMapper extends BaseMapper<AlarmsummaryCutofftime> {
@@ -87,7 +87,7 @@ public interface AlarmsummaryCutofftimeMapper extends BaseMapper<AlarmsummaryCut
 
     /**
      *根据机构id查询下级所有机构
-     * @author: th
+     * @author: hyp
      * @date: 2019/10/18 11:10
      * @param deptId
      * @return: java.util.List<java.lang.String>
@@ -101,4 +101,30 @@ public interface AlarmsummaryCutofftimeMapper extends BaseMapper<AlarmsummaryCut
 	 * 获取企业下的车辆类型
 	 */
 	List<String> findoperattype(String deptId);
+
+	/**
+	 * 根据企业ID、报警时间区间获取该企业的报警处理率
+	 * @param beginTime
+	 * @param endTime
+	 * @param deptName
+	 * @return
+	 */
+	List<AlarmsummaryCutofftimeVO> selectAlarmLv(@Param("beginTime") String beginTime,
+												 @Param("endTime")String endTime,
+												 @Param("deptName") String deptName);
+
+	/**
+	 * 更新报表处理率 property 文件属性（1日报、2周报、3月报、4年报）
+	 * @param processRate
+	 * @param deptId
+	 * @param property
+	 * @param countdate
+	 * @return
+	 */
+	boolean updateBaoBiaoMuLu(@Param("processRate") String processRate,
+							  @Param("deptId")String deptId,
+							  @Param("property") String property,
+							  @Param("countdate") String countdate);
+
+
 }

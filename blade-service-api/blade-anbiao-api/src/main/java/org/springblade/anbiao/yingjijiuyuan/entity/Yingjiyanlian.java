@@ -28,7 +28,7 @@ import java.io.Serializable;
 /**
  * 应急演练 实体类
  *
- * @author elvis.he
+ * @author hyp
  * @since 2019-04-26
  */
 @Data

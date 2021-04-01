@@ -28,7 +28,7 @@ import java.io.Serializable;
 /**
  * 应急救援-应急队伍-队伍成员 实体类
  *
- * @author elvis.he
+ * @author hyp
  * @since 2019-04-29
  */
 @Data

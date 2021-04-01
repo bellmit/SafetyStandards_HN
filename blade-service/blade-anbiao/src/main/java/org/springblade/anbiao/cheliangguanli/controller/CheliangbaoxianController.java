@@ -36,6 +36,7 @@ import org.springblade.core.tool.api.R;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  *  控制器
@@ -77,14 +78,37 @@ public class CheliangbaoxianController extends BladeController {
 	@ApiLog("新增-车辆保险")
 	@ApiOperation(value = "新增-车辆保险", notes = "传入cheliangbaoxian", position = 3)
 	public R insert(@RequestBody Cheliangbaoxian cheliangbaoxian,BladeUser user) {
-		cheliangbaoxian.setCaozuoren(user.getUserName());
-		cheliangbaoxian.setCaozuorenid(user.getUserId());
+		R r = new R();
+		//UUID uuid = UUID.randomUUID();
+		String uuid = UUID.randomUUID().toString().replaceAll("-","");
+		System.out.println(uuid);
+		if(user == null){
+			cheliangbaoxian.setCaozuoren("管理员");
+			cheliangbaoxian.setCaozuorenid(1);
+		}else{
+			cheliangbaoxian.setCaozuoren(user.getUserName());
+			cheliangbaoxian.setCaozuorenid(user.getUserId());
+		}
+
 		cheliangbaoxian.setCaozuoshijian(DateUtil.now());
 		cheliangbaoxian.setCreatetime(DateUtil.now());
 		if("".equals(cheliangbaoxian.getDengjishijian())){
 			cheliangbaoxian.setDengjishijian(null);
 		}
-		return R.status(cheliangbaoxianService.save(cheliangbaoxian));
+		cheliangbaoxian.setId(uuid);
+		//boolean detail = cheliangbaoxianService.save(cheliangbaoxian);
+		boolean detail = cheliangbaoxianService.insertSelective(cheliangbaoxian);
+		if(detail == true){
+			r.setMsg("新增数据成功");
+			r.setData(uuid);
+			r.setSuccess(true);
+			r.setCode(200);
+		}else{
+			r.setMsg("新增数据失败");
+			r.setSuccess(false);
+			r.setCode(500);
+		}
+		return r;
 	}
 
 	/**
@@ -94,8 +118,13 @@ public class CheliangbaoxianController extends BladeController {
 	@ApiLog("修改-车辆保险")
 	@ApiOperation(value = "修改-车辆保险", notes = "传入cheliangbaoxian", position = 4)
 	public R update(@RequestBody Cheliangbaoxian cheliangbaoxian,BladeUser user) {
-		cheliangbaoxian.setCaozuoren(user.getUserName());
-		cheliangbaoxian.setCaozuorenid(user.getUserId());
+		if(user == null){
+			cheliangbaoxian.setCaozuoren("管理员");
+			cheliangbaoxian.setCaozuorenid(1);
+		}else{
+			cheliangbaoxian.setCaozuoren(user.getUserName());
+			cheliangbaoxian.setCaozuorenid(user.getUserId());
+		}
 		cheliangbaoxian.setCaozuoshijian(DateUtil.now());
 		if("".equals(cheliangbaoxian.getCreatetime())){
 			cheliangbaoxian.setCreatetime(DateUtil.now());

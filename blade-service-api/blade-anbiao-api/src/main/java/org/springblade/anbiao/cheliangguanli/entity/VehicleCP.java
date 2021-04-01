@@ -13,7 +13,7 @@ import java.io.Serializable;
  * @program: SafetyStandards
  * @description: Vehicle
  * @author: elvis
- * @create: 2019-04-22 14:00
+ * @create2021-04-22 14:00
  **/
 @Data
 @TableName("anbiao_vehicle")

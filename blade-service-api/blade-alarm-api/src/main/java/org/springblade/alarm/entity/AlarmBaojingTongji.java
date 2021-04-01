@@ -9,7 +9,7 @@ import java.io.Serializable;
 /**
  * 报警处理页面中部统计 实体类
  *
- * @author elvis.he
+ * @author hyp
  * @since 2019-05-09
  */
 @Data

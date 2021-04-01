@@ -2,7 +2,9 @@ package org.springblade.job.doc;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springblade.anbiao.muban.feign.IMubanClient;
 import org.springblade.core.log.logger.BladeLogger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +26,9 @@ public class documentNumberCrontab {
 	private static boolean taskFlag = false;
 
 	private  BladeLogger logger;
+
+	@Autowired
+	private IMubanClient iMubanClient;
 
 	@Scheduled(cron = "0 31 17 * * ?")
 	private void configureTasks() {

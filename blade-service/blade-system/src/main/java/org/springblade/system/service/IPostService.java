@@ -53,7 +53,7 @@ public interface IPostService extends IService<Post> {
 	 * @Param: [post]
 	 * @return: boolean
 	 * @Author: hyp
-	 * @Date: 2019-07-25
+	 * @Date2021-07-25
 	 */
 	boolean  updateIsdefault(Post post);
 
@@ -110,7 +110,7 @@ public interface IPostService extends IService<Post> {
 
 	/**
 	 *根据单位id追加子级所有岗位权限
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/10/24 15:08
 	 * @param deptId
 	 * @param split
@@ -120,7 +120,7 @@ public interface IPostService extends IService<Post> {
 
 	/**
 	 *根据单位id同步子级所有权限
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/10/24 16:17
 	 * @param deptId
 	 * @param split

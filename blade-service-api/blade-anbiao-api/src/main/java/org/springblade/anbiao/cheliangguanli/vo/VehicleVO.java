@@ -9,8 +9,8 @@ import org.springblade.anbiao.cheliangguanli.entity.Vehicle;
  * 视图实体类
  * @program: SafetyStandards
  * @description: vehicle
- * @author: elvis.he
- * @create: 2019-04-22 14:00
+ * @author: hyp
+ * @create2021-04-22 14:00
  **/
 @Data
 @EqualsAndHashCode(callSuper = true)

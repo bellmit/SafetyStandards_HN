@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * User Feign接口类
  *
- * @author Chill
+ * @author hyp
  */
 @FeignClient(
 	//定义Feign指向的service-id

@@ -39,7 +39,7 @@ public class Cheliangbaoxian implements Serializable {
      * ID
      */
     @ApiModelProperty(value = "ID")
-	@TableId(value = "id", type = IdType.UUID)
+//	@TableId(value = "id", type = IdType.UUID)
     private String id;
     /**
      * 单位id

@@ -40,8 +40,6 @@ public class OrganizationsServiceImpl extends ServiceImpl<OrganizationsMapper, O
 
 	OrganizationsMapper mapper;
 
-
-
 	@Override
 	public boolean updateDel(String id) {
 		return mapper.updateDel(id);
@@ -92,6 +90,22 @@ public class OrganizationsServiceImpl extends ServiceImpl<OrganizationsMapper, O
 	public Organization selectZFRenyuan(String id) {
 		return mapper.selectZFRenyuan(id);
 	}
+
+	@Override
+	public List<OrganizationsVO> getZFQY() {
+		return mapper.getZFQY();
+	}
+
+	@Override
+	public List<OrganizationsVO> getZFQYOrderById() {
+		return mapper.getZFQYOrderById();
+	}
+
+	@Override
+	public boolean insertSelective(OrganizationsVO organizationsVO) {
+		return mapper.insertSelective(organizationsVO);
+	}
+
 
 	@Override
 	public List<Organizations> selectAll() {

@@ -23,7 +23,7 @@ import org.springblade.alarm.vo.AlarmsummaryVO;
 /**
  *  服务类
  *
- * @author elvis.he
+ * @author hyp
  * @since 2019-05-12
  */
 public interface IAlarmsummaryService extends IService<Alarmsummary> {

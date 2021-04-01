@@ -23,7 +23,7 @@ import java.util.List;
 /**
  *  应急救援-应急队伍-队伍成员 服务类
  *
- * @author elvis.he
+ * @author hyp
  * @since 2019-04-29
  */
 public interface IYingjiduiwuChengyuanService extends IService<YingjiduiwuChengyuan> {
@@ -40,7 +40,7 @@ public interface IYingjiduiwuChengyuanService extends IService<YingjiduiwuChengy
 	 * 自定义 假删除
 	 *
 	 * @param id
-	 * @author :elvis.he
+	 * @author :hyp
 	 */
 	boolean deleleChengyuan(String id);
 }

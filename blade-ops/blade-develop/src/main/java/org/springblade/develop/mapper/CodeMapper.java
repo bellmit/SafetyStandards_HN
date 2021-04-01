@@ -21,7 +21,7 @@ import org.springblade.develop.entity.Code;
 /**
  * Mapper 接口
  *
- * @author Chill
+ * @author hyp
  * @since 2018-12-24
  */
 public interface CodeMapper extends BaseMapper<Code> {

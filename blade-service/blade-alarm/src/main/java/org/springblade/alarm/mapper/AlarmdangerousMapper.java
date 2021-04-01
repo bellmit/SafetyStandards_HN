@@ -41,7 +41,7 @@ public interface AlarmdangerousMapper extends BaseMapper<Alarmdangerous> {
 	 * @param company
 	 * @return
 	 */
-	List<AlarmWeichuliType> GpsCount(@Param("beginTime") String beginTime, @Param("endTime")String endTime,@Param("company") String company);
+	List<AlarmWeichuliType> GpsCount(@Param("beginTime") String beginTime, @Param("endTime")String endTime,@Param("deptId") Integer deptId);
 
 	/**
 	 * 主动安全 严重统计
@@ -50,7 +50,7 @@ public interface AlarmdangerousMapper extends BaseMapper<Alarmdangerous> {
 	 * @param company
 	 * @return
 	 */
-	List<AlarmWeichuliType> zhudongCount(@Param("beginTime") String beginTime, @Param("endTime")String endTime,@Param("company") String company);
+	List<AlarmWeichuliType> zhudongCount(@Param("beginTime") String beginTime, @Param("endTime")String endTime,@Param("deptId") Integer deptId);
 
 	/**
 	 * gps严重 车牌 报警 次数

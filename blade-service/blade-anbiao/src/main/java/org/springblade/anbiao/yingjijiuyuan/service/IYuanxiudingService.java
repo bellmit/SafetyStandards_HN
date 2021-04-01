@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * 应急预案-修订完善记录 服务类
  *
- * @author elvis.he
+ * @author hyp
  * @since 2019-04-25
  */
 public interface IYuanxiudingService extends IService<Yuanxiuding> {
@@ -40,7 +40,7 @@ public interface IYuanxiudingService extends IService<Yuanxiuding> {
      * 自定义 假删除
      *
      * @param id
-     * @author :elvis.he
+     * @author :hyp
      */
     boolean deleleYuanxiuding(String id);
 

@@ -21,7 +21,7 @@ import org.springblade.core.log.model.LogUsual;
 /**
  * Mapper 接口
  *
- * @author Chill
+ * @author hyp
  * @since 2018-10-12
  */
 public interface LogUsualMapper extends BaseMapper<LogUsual> {

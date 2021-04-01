@@ -30,8 +30,7 @@ import java.util.List;
 
 /**
  * 服务实现类
- *
- * @author Chill
+ * @author 呵呵哒
  */
 @Service
 @AllArgsConstructor
@@ -117,6 +116,11 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements ID
 	}
 
 	@Override
+	public Dept selectByJGQY(String type, String deptId) {
+		return deptMapper.selectByJGBM(type,deptId);
+	}
+
+	@Override
 	public Dept selectByDeptId(Integer id) {
 		return deptMapper.selectByDeptId(id);
 	}
@@ -164,5 +168,10 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements ID
 	@Override
 	public List<Dept> getByName(String deptname) {
 		return deptMapper.getByName(deptname);
+	}
+
+	@Override
+	public List<Dept> QiYeList(Integer deptId) {
+		return deptMapper.QiYeList(deptId);
 	}
 }

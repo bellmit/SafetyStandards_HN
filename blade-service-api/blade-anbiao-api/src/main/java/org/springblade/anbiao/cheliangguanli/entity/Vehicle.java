@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
  * @program: SafetyStandards
  * @description: Vehicle
  * @author: elvis
- * @create: 2019-04-22 14:00
+ * @create2021-04-22 14:00
  **/
 @Data
 @TableName("anbiao_vehicle")
@@ -38,8 +38,10 @@ public class Vehicle implements Serializable {
 
     @ApiModelProperty(value = "车辆牌照",required = true)
     private String cheliangpaizhao;
+
     @ApiModelProperty(value = "车牌颜色",required = true)
     private String chepaiyanse;
+
     @ApiModelProperty(value = "使用性质")
     private String shiyongxingzhi;
 

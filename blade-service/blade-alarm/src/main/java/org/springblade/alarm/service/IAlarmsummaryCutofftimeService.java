@@ -16,6 +16,7 @@
 package org.springblade.alarm.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.apache.ibatis.annotations.Param;
 import org.springblade.alarm.entity.AlarmDay;
 import org.springblade.alarm.entity.AlarmsummaryCutofftime;
 import org.springblade.alarm.page.AlarmPage;
@@ -29,7 +30,7 @@ import java.util.Map;
 /**
  * gps平台报警服务类
  *
- * @author elvis.he
+ * @author hyp
  * @since 2019-05-12
  */
 public interface IAlarmsummaryCutofftimeService extends IService<AlarmsummaryCutofftime> {
@@ -64,7 +65,7 @@ public interface IAlarmsummaryCutofftimeService extends IService<AlarmsummaryCut
 
     /**
      *所有报警查询
-     * @author: th
+     * @author: hyp
      * @date: 2019/10/18 11:05
      * @param alarmPage
      * @return: org.springblade.alarm.page.AlarmPage
@@ -78,5 +79,29 @@ public interface IAlarmsummaryCutofftimeService extends IService<AlarmsummaryCut
 	 * 获取车辆类型
 	 */
 	List<String> findoperattype(String deptId);
+
+	/**
+	 * 根据企业ID、报警时间区间获取该企业的报警处理率
+	 * @param beginTime
+	 * @param endTime
+	 * @param deptName
+	 * @return
+	 */
+	List<AlarmsummaryCutofftimeVO> selectAlarmLv(@Param("beginTime") String beginTime, @Param("endTime")String endTime, @Param("deptName") String deptName);
+
+	/**
+	 * 更新报表处理率 property 文件属性（1日报、2周报、3月报、4年报）
+	 * @param processRate
+	 * @param deptId
+	 * @param property
+	 * @param countdate
+	 * @return
+	 */
+	boolean updateBaoBiaoMuLu(@Param("processRate") String processRate,
+							  @Param("deptId")String deptId,
+							  @Param("property") String property,
+							  @Param("countdate") String countdate);
+
+
 }
 

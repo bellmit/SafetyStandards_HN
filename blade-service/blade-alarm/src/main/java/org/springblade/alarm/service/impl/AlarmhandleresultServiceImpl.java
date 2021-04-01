@@ -34,7 +34,7 @@ import java.util.*;
 /**
  * 报警处理 服务实现类
  *
- * @author elvis.he
+ * @author hyp
  * @since 2019-05-12
  */
 @Service
@@ -70,10 +70,10 @@ public class AlarmhandleresultServiceImpl extends ServiceImpl<AlarmhandleresultM
     }
 
 	@Override
-	public List<AlarmWeichuliType> weichulitongji(String company) {
+	public List<AlarmWeichuliType> weichulitongji(Integer deptId) {
 		String date = DateUtil.format(new Date(), "yyyy-MM-dd");
 
-		List<AlarmWeichuliType> gpsweichuli = alarmhandleresultMapper.gpsweichuli(company, date);
+		List<AlarmWeichuliType> gpsweichuli = alarmhandleresultMapper.gpsweichuli(deptId, date);
 		//判断类型
 		int index=0; //记录 不在线 无数据报警总数
 		Iterator<AlarmWeichuliType> it = gpsweichuli.iterator();
@@ -110,7 +110,7 @@ public class AlarmhandleresultServiceImpl extends ServiceImpl<AlarmhandleresultM
 		}
 
 
-		List<AlarmWeichuliType> zhudonganquanweichuli = alarmhandleresultMapper.zhudonganquanweichuli(company, date);
+		List<AlarmWeichuliType> zhudonganquanweichuli = alarmhandleresultMapper.zhudonganquanweichuli(deptId, date);
 //
 //		for(Map<String, Object> item:gpsweichuli){
 //			 String alarmtype=String.valueOf(item.get("AlarmType"));

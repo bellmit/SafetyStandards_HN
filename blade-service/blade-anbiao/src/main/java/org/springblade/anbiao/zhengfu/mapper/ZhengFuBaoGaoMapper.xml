@@ -19,10 +19,7 @@
             a.caozuoshijian,
             a.countenddate,
             DATE_FORMAT(a.createtime,'%Y-%m-%d') as createtimeshow,
-            case
-                when a.property=#{property} then DATE_FORMAT(a.countdate,'%Y-%m-%d')
-                else CONCAT(DATE_FORMAT(a.countdate,'%Y/%m/%d'),' - ',DATE_FORMAT(a.countenddate,'%Y/%m/%d'))
-            end as countdate
+            CONCAT(DATE_FORMAT(a.countdate,'%Y/%m/%d'),' - ',DATE_FORMAT(a.countenddate,'%Y/%m/%d')) as countdate
         FROM
             baobiao_baobiaomulu AS a
         inner join(

@@ -42,7 +42,7 @@ public interface PostMenuMapper extends BaseMapper<PostMenu> {
 
 	/**
 	 *根据postIds批量删除权限
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/10/24 16:20
 	 * @param postIds
 	 * @param type
@@ -52,7 +52,7 @@ public interface PostMenuMapper extends BaseMapper<PostMenu> {
 
     /**
      *根据postIds获取所有postmenu
-     * @author: th
+     * @author: hyp
      * @date: 2019/10/24 16:27
      * @param postIds
      * @param type

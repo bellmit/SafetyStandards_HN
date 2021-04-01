@@ -16,10 +16,14 @@
 package org.springblade.system.user.controller;
 
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
+import org.springblade.common.tool.HttpUtils;
+import org.springblade.common.tool.TESTOKHttp;
 import org.springblade.core.log.annotation.ApiLog;
 import org.springblade.core.mp.support.Condition;
 import org.springblade.core.mp.support.Query;
@@ -39,13 +43,16 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
 /**
  * 控制器
  *
- * @author Chill
+ * @author hyp
  */
 @RestController
 @AllArgsConstructor
@@ -138,15 +145,39 @@ public class UserController  {
 	public R updatePassword(BladeUser bladeUser,@ApiParam(value = "userId", required = true) @RequestParam String userId,
 							@ApiParam(value = "passWord", required = true) @RequestParam String passWord,
 							@ApiParam(value = "oldpassWord", required = true) @RequestParam String oldpassWord) {
+		R r = new R();
 		String msg;
 		System.out.println(DigestUtil.encrypt(oldpassWord));
 		UserInfo userInfo = userService.userInfo(userId,DigestUtil.encrypt(oldpassWord));
 		if(userInfo.getUser()==null){
-			msg="原密码不正确";
-			return R.fail(msg);
+			r.setSuccess(false);
+			r.setMsg("原密码不正确");
+			r.setCode(500);
+			return r;
 		}else{
 			boolean temp = userService.updatePassword(userId,passWord);
-			return R.status(temp);
+			if(temp == true){
+				r.setSuccess(true);
+				r.setMsg("修改成功");
+				r.setCode(200);
+			}else{
+				r.setSuccess(false);
+				r.setMsg("修改失败");
+				r.setCode(500);
+			}
+			// 云南
+			String ss = TESTOKHttp.interfaceUtil("http://www.zhwlt.cn/api/userInfo/modifyThreePassword",
+				"username="+userInfo.getUser().getAccount()+"&oldUserPwd="+oldpassWord+"&newUserPwd="+passWord);
+			if(ss == "true"){
+				r.setSuccess(true);
+				r.setMsg("修改成功");
+				r.setCode(200);
+			}else{
+				r.setSuccess(false);
+				r.setMsg("修改失败");
+				r.setCode(500);
+			}
+			return r;
 		}
 	}
 
@@ -172,6 +203,69 @@ public class UserController  {
 	public R updateLocked(String id, Integer isLocked, Integer loginErrorcount, String lastLoginErrorTime) {
 		boolean pages = userService.updateLocked(isLocked,loginErrorcount,lastLoginErrorTime,id);
 		return R.data(pages);
+	}
+
+	@PostMapping("/updateUserStatus")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "status", value = "账号状态（启用：0，禁用：1，启用：2，删除：1）",required = true),
+		@ApiImplicitParam(name = "ids", value = "账号ID串，多个ID以英文逗号隔开", paramType = "query", required = true),
+		@ApiImplicitParam(name = "user", value = "当前登录用户对象", required = true)
+	})
+	@ApiLog("禁用、启用、删除用户账号信息")
+	@ApiOperation(value = "禁用、启用、删除用户账号信息", notes = "传入相关参数", position = 10)
+	public R updateUserStatus(String status, String ids,BladeUser user) {
+		String[] idsss = ids.split(",");
+		//去除素组中重复的数组
+		List<String> listid = new ArrayList<String>();
+		for (int i=0; i<idsss.length; i++) {
+			if(!listid.contains(idsss[i])) {
+				listid.add(idsss[i]);
+			}
+		}
+		//返回一个包含所有对象的指定类型的数组
+		String[] idss= listid.toArray(new String[1]);
+
+		//获取当前日期
+		Calendar calendar= Calendar.getInstance();
+		SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy-MM-dd :hh:mm:ss");
+		System.out.println(dateFormat.format(calendar.getTime()));
+		String date = dateFormat.format(calendar.getTime());
+		Integer updateUser = null;
+		if(user == null){
+			updateUser = 1;
+		}else{
+			updateUser = user.getUserId();
+		}
+		Integer isDeleted = null;
+		if("禁用".equals(status)){
+			isDeleted = 2;
+		}else if("启用".equals(status)){
+			isDeleted = 0;
+		}else if("删除".equals(status)){
+			isDeleted = 1;
+		}else{
+			isDeleted = 0;
+		}
+		boolean pages = userService.updateUserStatus(updateUser,date,isDeleted,idss);
+		return R.data(pages);
+	}
+
+	@PostMapping("/getUserNameById")
+	@ApiLog("根据企业ID查询所属下级所有的账号")
+	@ApiOperation(value = "根据企业ID查询所属下级所有的账号", notes = "传入deptId", position = 9)
+	public R<User> getUserNameById(@ApiParam(value = "deptId", required = true) @RequestParam String deptId) {
+		R r = new R();
+		List<User> pages = userService.selectNameById(deptId);
+		if (pages == null){
+			r.setData("暂无数据");
+			r.setCode(200);
+			r.setData(null);
+		}else{
+			r.setMsg("获取成功");
+			r.setCode(200);
+			r.setData(pages);
+		}
+		return r;
 	}
 
 }

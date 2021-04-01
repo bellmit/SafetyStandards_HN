@@ -92,12 +92,12 @@ public class Richenganpai implements Serializable {
      * 是否紧急(0否,1是)
      */
     @ApiModelProperty(value = "是否紧急(0否,1是)",required=true)
-    private Integer isJinji;
+    private Integer isJinji=0;
     /**
      * 是否重要(0否,1是)
      */
     @ApiModelProperty(value = "是否重要(0否,1是)",required=true)
-    private Integer isZhongyao;
+    private Integer isZhongyao=0;
     /**
      * 任务开始时间
      */
@@ -128,7 +128,7 @@ public class Richenganpai implements Serializable {
      * 是否删除
      */
     @ApiModelProperty(value = "是否删除")
-    private Integer isDeleted;
+    private Integer isDeleted=0;
     /**
      * 操作人
      */
@@ -148,7 +148,48 @@ public class Richenganpai implements Serializable {
      * 是否完成(0否,1是)
      */
     @ApiModelProperty(value = "是否完成(0否,1是,2超期完成)")
-    private Integer isFinish;
+    private Integer isFinish=0;
 
+	/**
+	 * 完成人
+	 */
+	@ApiModelProperty(value = "完成人")
+	private String finishuser;
+
+	/**
+	 * 完成人ID
+	 */
+	@ApiModelProperty(value = "完成人ID")
+	private Integer finishuserid;
+
+	/**
+	 * 完成时间
+	 */
+	@ApiModelProperty(value = "完成时间")
+	private String finishtime;
+
+	/**
+	 * 完成描述
+	 */
+	@ApiModelProperty(value = "完成描述")
+	private String finishremark;
+
+	/**
+	 * 完成附件
+	 */
+	@ApiModelProperty(value = "完成附件")
+	private String finishimg;
+
+	/**
+	 * 审核状态(0:审核通过、1:审核驳回)
+	 */
+	@ApiModelProperty(value = "审核状态(0:审核通过、1:审核驳回)")
+	private Integer finishstatus=0;
+
+	@ApiModelProperty(value = "标准化目录tier")
+	private String tier;
+
+	@ApiModelProperty(value = "标准化目录名称")
+	private String tiername;
 
 }

@@ -42,7 +42,7 @@ public interface IOrganizationsService extends IService<Organizations> {
 	* @Param: [id]
 	* @return: org.springblade.anbiao.guanlijigouherenyuan.vo.OrganizationsVO
 	* @Author: hyp
-	* @Date: 2019-05-16
+	* @Date2021-05-16
 	*/
 	OrganizationsVO selectByIds(String id);
 	/**
@@ -74,4 +74,11 @@ public interface IOrganizationsService extends IService<Organizations> {
 	boolean delByDeptId(String deptId);
 
 	Organization selectZFRenyuan(String id);
+
+	List<OrganizationsVO> getZFQY();
+
+	List<OrganizationsVO> getZFQYOrderById();
+
+	boolean insertSelective(OrganizationsVO organizationsVO);
+
 }

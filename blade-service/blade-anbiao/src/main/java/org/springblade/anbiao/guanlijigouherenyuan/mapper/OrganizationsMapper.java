@@ -57,4 +57,12 @@ public interface OrganizationsMapper extends BaseMapper<Organizations> {
 
 	Organization selectZFRenyuan(String id);
 
+	List<OrganizationsVO> getZFQY();
+
+	List<OrganizationsVO> getZFQYOrderById();
+
+	boolean insertSelective(OrganizationsVO organizationsVO);
+
+
+
 }

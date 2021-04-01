@@ -30,7 +30,7 @@ import java.time.LocalDateTime;
 /**
  * 事故报告调查处理-事故报告 实体类
  *
- * @author elvis.he
+ * @author hyp
  * @since 2019-04-28
  */
 @Data

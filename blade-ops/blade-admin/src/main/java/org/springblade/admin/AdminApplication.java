@@ -23,7 +23,7 @@ import org.springframework.cloud.client.SpringCloudApplication;
 /**
  * admin启动器
  *
- * @author Chill
+ * @author hyp
  */
 @EnableAdminServer
 @SpringCloudApplication

@@ -22,7 +22,7 @@ import org.springblade.develop.entity.Code;
 /**
  * 服务类
  *
- * @author Chill
+ * @author hyp
  * @since 2018-12-24
  */
 public interface ICodeService extends IService<Code> {

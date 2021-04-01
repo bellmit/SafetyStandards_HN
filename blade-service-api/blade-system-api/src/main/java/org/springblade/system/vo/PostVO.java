@@ -10,7 +10,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springblade.core.tool.node.INode;
 import org.springblade.system.entity.Post;
-import org.springblade.system.entity.PostMenu;
 
 import java.util.ArrayList;
 import java.util.List;

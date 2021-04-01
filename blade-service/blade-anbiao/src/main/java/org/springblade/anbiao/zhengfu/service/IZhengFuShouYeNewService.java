@@ -12,6 +12,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springblade.anbiao.zhengfu.entity.ZhengFuShouYe;
 import org.springblade.anbiao.zhengfu.entity.ZhengFuShouYeNew;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -55,7 +56,7 @@ public interface IZhengFuShouYeNewService extends IService<ZhengFuShouYeNew> {
 	 * @param year
 	 * @return
 	 */
-	List<ZhengFuShouYeNew> selectGetThree(@Param("deptId") String deptId, @Param("xiaJiDeptId") String xiaJiDeptId, @Param("year") int year, @Param("areaName") String areaName);
+	List<ZhengFuShouYeNew> selectGetThree(@Param("deptId") String deptId, @Param("xiaJiDeptId") String xiaJiDeptId, @Param("year") int year, @Param("firstDate") String firstDate, @Param("endDate") String endDate, @Param("areaName") String areaName);
 
 	/**
 	 *各地区详细报警数据表

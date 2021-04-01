@@ -10,8 +10,8 @@ import org.springblade.common.BasePage;
  * 应急队伍 分页实体类
  * Program: SafetyStandards
  * @description: YingjiduiwuPage
- * @author: elvis.he
- * @create: 2019-04-28 14:00
+ * @author: hyp
+ * @create2021-04-28 14:00
  **/
 @Data
 @EqualsAndHashCode(callSuper = true)

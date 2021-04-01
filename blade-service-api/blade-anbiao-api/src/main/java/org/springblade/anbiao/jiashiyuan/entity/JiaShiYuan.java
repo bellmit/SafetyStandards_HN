@@ -428,4 +428,8 @@ public class JiaShiYuan implements Serializable {
 	@ApiModelProperty(value = "导入错误信息2")
 	@TableField(exist = false)
 	private boolean Msg2;
+
+	@ApiModelProperty(value = "导入错误信息图标")
+	@TableField(exist = false)
+	private String importUrl;
 }

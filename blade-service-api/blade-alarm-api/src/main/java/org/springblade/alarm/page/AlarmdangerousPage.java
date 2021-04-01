@@ -25,6 +25,7 @@ public class AlarmdangerousPage extends BasePage {
 	private String alarmType;
 	@ApiModelProperty(value = "是否主动 gps 0 gps 1主动", required = true)
 	private Integer type;
-
+	@ApiModelProperty(value = "企业ID")
+	private Integer deptId;
 
 }

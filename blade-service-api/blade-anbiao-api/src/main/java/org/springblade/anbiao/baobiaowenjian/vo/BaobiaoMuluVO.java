@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 /**
  * 视图实体类
  *
- * @author elvis.he
+ * @author hyp
  * @since 2019-05-16
  */
 @Data
@@ -40,4 +40,5 @@ public class BaobiaoMuluVO extends BaobiaoMulu {
 	private Integer pilaoshipin;
 	@ApiModelProperty(value = "分神驾驶报警")
 	private Integer fenshen;
+
 }

@@ -20,6 +20,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springblade.anbiao.zhengfu.entity.ZhengFuShouYe;
 import org.springblade.anbiao.zhengfu.entity.ZhengFuShouYeNew;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -63,9 +64,9 @@ public interface ZhengFuShouYeNewMapper extends BaseMapper<ZhengFuShouYeNew> {
 	 *北斗报警、主动安全设备报警月趋势
 	 * @param deptId
 	 * @param year
-	 * @return
+	 * @return firstDate endDate
 	 */
-	List<ZhengFuShouYeNew> selectGetThree(@Param("deptId") String deptId, @Param("xiaJiDeptId") String xiaJiDeptId, @Param("year") int year, @Param("areaName") String areaName);
+	List<ZhengFuShouYeNew> selectGetThree(@Param("deptId") String deptId, @Param("xiaJiDeptId") String xiaJiDeptId, @Param("year") int year, @Param("firstDate") String firstDate, @Param("endDate") String endDate, @Param("areaName") String areaName);
 
 	/**
 	 *各地区详细报警数据表

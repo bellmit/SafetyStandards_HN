@@ -23,6 +23,11 @@ spring:
 #    username: root
 #    password: mxcx123
 
+#    #亚美
+#    url: jdbc:mysql://47.108.138.221:3366/blade?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&tinyInt1isBit=false&allowMultiQueries=true&serverTimezone=GMT%2B8
+#    username: root
+#    password: admin@sh
+
     driver-class-name: com.mysql.jdbc.Driver    #指定数据库驱动
     type: com.alibaba.druid.pool.DruidDataSource  #指定类型连接池
     #数据源其他配置
@@ -48,3 +53,6 @@ fileserver:
   path-prefix: ${fileserver.dev.path}
   url-prefix: ${fileserver.dev.url}
   gpsVehiclePath: ${fileserver.dev.gpsVehiclePath}
+#  gpsVehiclePath: http://36.133.42.216:40002/
+#  path-prefix: D:\BS\static\
+#  url-prefix: http://36.133.42.216:8204/

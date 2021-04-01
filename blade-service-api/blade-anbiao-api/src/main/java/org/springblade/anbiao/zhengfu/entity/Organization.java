@@ -141,4 +141,10 @@ public class Organization implements Serializable {
 	@ApiModelProperty(value = "政府运管ID")
 	private String yunguanid;
 
+	@ApiModelProperty(value = "企业ID")
+	private String qiyeid;
+
+	@ApiModelProperty(value = "企业名称")
+	private String qiyemingcheng;
+
 }

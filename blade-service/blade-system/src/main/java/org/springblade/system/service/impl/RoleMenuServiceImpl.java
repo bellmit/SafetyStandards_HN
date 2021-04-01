@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
 /**
  * 服务实现类
  *
- * @author Chill
+ * @author hyp
  */
 @Service
 public class RoleMenuServiceImpl extends ServiceImpl<RoleMenuMapper, RoleMenu> implements IRoleMenuService {

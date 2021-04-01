@@ -5,6 +5,7 @@
  */
 package org.springblade.anbiao.zhengfu.controller;
 
+import cn.hutool.core.date.DateUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -13,12 +14,17 @@ import org.springblade.anbiao.zhengfu.entity.*;
 import org.springblade.anbiao.zhengfu.page.ZhengFuBaoJingTongJiJieSuanPage;
 import org.springblade.anbiao.zhengfu.service.IOrganizationService;
 import org.springblade.anbiao.zhengfu.service.IZhengFuBaoJingTongJiService;
+import org.springblade.common.tool.DateUtils;
 import org.springblade.core.log.annotation.ApiLog;
 import org.springblade.core.tool.api.R;
 import org.springblade.system.entity.Dept;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -116,13 +122,28 @@ public class ZhengFuBaoJingTongJiController {
 	@ApiOperation(value = "政府报警统计-报警处理情况(月)", notes = "传入deptId或者xiaJiDeptId",position = 3)
 	public R getZFBJMonthList(String deptId,String xiaJiDeptId) throws IOException {
 		R rs = new R();
+
+		//获取前一天的日期
+		Calendar cal = Calendar.getInstance();
+		//日期
+		int day = cal.get(Calendar.DATE);
+		//月份
+		int month = cal.get(Calendar.MONTH) + 1;
+		//年份
+		int year = cal.get(Calendar.YEAR);
+
+		//获取前一天的日期
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(new Date());
+		calendar.add(Calendar.DAY_OF_MONTH, -1);
+		String date = DateUtil.format(calendar.getTime(), "yyyy-MM-dd");
 		if(StringUtils.isBlank(deptId) && StringUtils.isBlank(xiaJiDeptId)){
 			rs.setCode(500);
 			rs.setMsg("请传人参数deptId或者xiaJiDeptId");
 			return rs;
 		}
 		if(!StringUtils.isBlank(deptId)) {
-			ZhengFuBaoJingTongJi zhengFuBaoJingTongJis = iZhengFuBaoJingTongJiService.selectGetZFBaoJingMonth(deptId);
+			ZhengFuBaoJingTongJi zhengFuBaoJingTongJis = iZhengFuBaoJingTongJiService.selectGetZFBaoJingMonth(deptId,date);
 			if (zhengFuBaoJingTongJis != null) {
 				rs.setCode(200);
 				rs.setData(zhengFuBaoJingTongJis);
@@ -134,7 +155,7 @@ public class ZhengFuBaoJingTongJiController {
 			}
 		}
 		if(!StringUtils.isBlank(xiaJiDeptId)){
-			List<ZhengFuBaoJingTongJi> zhengFuBaoJingTongJis = iZhengFuBaoJingTongJiService.selectGetZFBaoJingMonth_XiaJi(xiaJiDeptId);
+			List<ZhengFuBaoJingTongJi> zhengFuBaoJingTongJis = iZhengFuBaoJingTongJiService.selectGetZFBaoJingMonth_XiaJi(xiaJiDeptId,date);
 			if (zhengFuBaoJingTongJis != null) {
 				rs.setCode(200);
 				rs.setData(zhengFuBaoJingTongJis);
@@ -153,6 +174,22 @@ public class ZhengFuBaoJingTongJiController {
 	@ApiOperation(value = "政府报警统计-报警处理情况(月)_new", notes = "传入deptId,type",position = 10)
 	public R getZFBJMonthListNew(String deptId,int type,int size) throws IOException {
 		R rs = new R();
+
+		//获取前一天的日期
+		Calendar cal = Calendar.getInstance();
+		//日期
+		int day = cal.get(Calendar.DATE);
+		//月份
+		int month = cal.get(Calendar.MONTH) + 1;
+		//年份
+		int year = cal.get(Calendar.YEAR);
+
+		//获取前一天的日期
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(new Date());
+		calendar.add(Calendar.DAY_OF_MONTH, -1);
+		String date = DateUtil.format(calendar.getTime(), "yyyy-MM-dd");
+
 		if(StringUtils.isBlank(deptId)){
 			rs.setCode(500);
 			rs.setMsg("请传人参数deptId");
@@ -165,13 +202,13 @@ public class ZhengFuBaoJingTongJiController {
 			if(!StringUtils.isBlank(deptId)){
 				Organization organization2 = iOrganizationService.selectGetGangWei(deptId);
 				if( !StringUtils.isBlank(organization2.getCountry()) ){
-					zhengFuBaoJingTongJi = iZhengFuBaoJingTongJiService.selectGetZFBaoJingMonth(deptId);
+					zhengFuBaoJingTongJi = iZhengFuBaoJingTongJiService.selectGetZFBaoJingMonth(deptId,date);
 				}else{
-					zhengFuBaoJingTongJi = iZhengFuBaoJingTongJiService.selectGetZFBaoJingMonth(deptId);
+					zhengFuBaoJingTongJi = iZhengFuBaoJingTongJiService.selectGetZFBaoJingMonth(deptId,date);
 					if(size > 0){
-						zhengFuBaoJingTongJis = iZhengFuBaoJingTongJiService.selectGetZFBaoJingMonth_XiaJi(deptId);
+						zhengFuBaoJingTongJis = iZhengFuBaoJingTongJiService.selectGetZFBaoJingMonth_XiaJi(deptId,date);
 					}else{
-						zhengFuBaoJingTongJis = iZhengFuBaoJingTongJiService.selectGetZFBaoJingMonth_XiaJi(deptId);
+						zhengFuBaoJingTongJis = iZhengFuBaoJingTongJiService.selectGetZFBaoJingMonth_XiaJi(deptId,date);
 					}
 				}
 			}else{
@@ -180,7 +217,7 @@ public class ZhengFuBaoJingTongJiController {
 			}
 		}else{
 			if(!StringUtils.isBlank(deptId)) {
-				zhengFuBaoJingTongJi = iZhengFuBaoJingTongJiService.selectGetZFBaoJingMonth(deptId);
+				zhengFuBaoJingTongJi = iZhengFuBaoJingTongJiService.selectGetZFBaoJingMonth(deptId,date);
 			}else{
 				rs.setCode(500);
 				rs.setMsg("传入deptId");
@@ -212,8 +249,15 @@ public class ZhengFuBaoJingTongJiController {
 			rs.setMsg("请传人参数deptId或者xiaJiDeptId");
 			return rs;
 		}
+		//6月之前的日期
+		Date now = new Date();
+		DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		//System.out.println("当前日期：" + DateUtils.stepMonth(now, -6));
+		String month_now = DATE_FORMAT.format(DateUtils.stepMonth(now,1));
+		String month_six = DATE_FORMAT.format(DateUtils.stepMonth(now, -12));
+
 		if(!StringUtils.isBlank(deptId)) {
-			List<ZhengFuBaoJingTongJi> zhengFuBaoJingTongJis = iZhengFuBaoJingTongJiService.selectGetZFBaoJingQuShi(deptId);
+			List<ZhengFuBaoJingTongJi> zhengFuBaoJingTongJis = iZhengFuBaoJingTongJiService.selectGetZFBaoJingQuShi(deptId,month_six,month_now);
 			if (zhengFuBaoJingTongJis != null) {
 				rs.setCode(200);
 				rs.setData(zhengFuBaoJingTongJis);
@@ -225,7 +269,7 @@ public class ZhengFuBaoJingTongJiController {
 			}
 		}
 		if(!StringUtils.isBlank(xiaJiDeptId)){
-			List<ZhengFuBaoJingTongJi> zhengFuBaoJingTongJis = iZhengFuBaoJingTongJiService.selectGetZFBaoJingQuShi_XiaJi(xiaJiDeptId);
+			List<ZhengFuBaoJingTongJi> zhengFuBaoJingTongJis = iZhengFuBaoJingTongJiService.selectGetZFBaoJingQuShi_XiaJi(xiaJiDeptId,month_six,month_now);
 			if (zhengFuBaoJingTongJis != null) {
 				rs.setCode(200);
 				rs.setData(zhengFuBaoJingTongJis);
@@ -287,6 +331,19 @@ public class ZhengFuBaoJingTongJiController {
 			rs.setMsg("请传人参数deptId");
 			return rs;
 		}
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		//获取前月的第一天
+		//获取当前日期
+		Calendar cal_1 = Calendar.getInstance();
+		cal_1.add(Calendar.MONTH, 0);
+		//设置为1号,当前日期既为本月第一天
+		cal_1.set(Calendar.DAY_OF_MONTH,1);
+		String firstDay = format.format(cal_1.getTime());
+		System.out.println("-----1------firstDay:"+firstDay);
+		Date d = new Date();
+		String dateNowStr = format.format(d);
+		System.out.println("格式化后的日期：" + dateNowStr);
+
 		List<ZhengFuBaoJingTongJi> zhengFuBaoJingTongJis = null;
 		String xiaJiDeptId = null;
 		Organization jb = iOrganizationService.selectGetZFJB(deptId);
@@ -322,10 +379,23 @@ public class ZhengFuBaoJingTongJiController {
 		//排序条件
 		////默认报警总数降序
 		if(zhengFuBaoJingTongJiJieSuanPage.getOrderColumns()==null){
-			zhengFuBaoJingTongJiJieSuanPage.setOrderColumn("chaoSuBaoJing");
+			zhengFuBaoJingTongJiJieSuanPage.setOrderColumn("danchebaojingbi");
 		}else{
 			zhengFuBaoJingTongJiJieSuanPage.setOrderColumn(zhengFuBaoJingTongJiJieSuanPage.getOrderColumns());
 		}
+		Organization jb = iOrganizationService.selectGetZFJB(zhengFuBaoJingTongJiJieSuanPage.getDeptId());
+		if(!StringUtils.isBlank(jb.getProvince()) && StringUtils.isBlank(jb.getCity())){
+			zhengFuBaoJingTongJiJieSuanPage.setDeptId(zhengFuBaoJingTongJiJieSuanPage.getDeptId());
+		}
+
+		if(!StringUtils.isBlank(jb.getCity()) && StringUtils.isBlank(jb.getCountry())){
+			zhengFuBaoJingTongJiJieSuanPage.setDeptId(zhengFuBaoJingTongJiJieSuanPage.getDeptId());
+		}
+
+		if(!StringUtils.isBlank(jb.getCountry())) {
+			zhengFuBaoJingTongJiJieSuanPage.setXiaJiDeptId(zhengFuBaoJingTongJiJieSuanPage.getDeptId());
+		}
+
 		ZhengFuBaoJingTongJiJieSuanPage<ZhengFuBaoJingTongJiJieSuan> pages = iZhengFuBaoJingTongJiService.selectGetBJTJ(zhengFuBaoJingTongJiJieSuanPage);
 		return R.data(pages);
 	}
@@ -441,7 +511,7 @@ public class ZhengFuBaoJingTongJiController {
 		//排序条件
 		////默认报警总数降序
 		if(zhengFuBaoJingTongJiJieSuanPage.getOrderColumns()==null){
-			zhengFuBaoJingTongJiJieSuanPage.setOrderColumn("");
+			zhengFuBaoJingTongJiJieSuanPage.setOrderColumn("danchebaojingbi");
 		}else{
 			zhengFuBaoJingTongJiJieSuanPage.setOrderColumn(zhengFuBaoJingTongJiJieSuanPage.getOrderColumns());
 		}
@@ -533,6 +603,38 @@ public class ZhengFuBaoJingTongJiController {
 			zhengFuBaoJingTongJiJieSuanPage.setOrderColumn(zhengFuBaoJingTongJiJieSuanPage.getOrderColumns());
 		}
 		ZhengFuBaoJingTongJiJieSuanPage<ZhengFuRiYunXingTongJi> pages = iZhengFuBaoJingTongJiService.selectGetCLRYXTJ(zhengFuBaoJingTongJiJieSuanPage);
+		return R.data(pages);
+	}
+
+	@PostMapping(value = "/GetQYRYXTJ")
+	@ApiLog("政府报警统计-企业日运行情况统计")
+	@ApiOperation(value = "政府报警统计-企业日运行情况统计", notes = "传入zhengFuBaoJingTongJiJieSuanPage(deptId、begintime、endtime)",position = 16)
+	public R<ZhengFuBaoJingTongJiJieSuanPage<ZhengFuRiYunXingTongJi>> GetQYRYXTJ(@RequestBody ZhengFuBaoJingTongJiJieSuanPage zhengFuBaoJingTongJiJieSuanPage) {
+
+		Organization jb = iOrganizationService.selectGetZFJB(zhengFuBaoJingTongJiJieSuanPage.getDeptId());
+		if(jb == null){
+			return R.data(null);
+		}
+		if( !StringUtils.isBlank(jb.getProvince()) && StringUtils.isBlank(jb.getCity()) ){
+			zhengFuBaoJingTongJiJieSuanPage.setDeptId(zhengFuBaoJingTongJiJieSuanPage.getDeptId());
+		}
+
+		if(!StringUtils.isBlank(jb.getCity()) && StringUtils.isBlank(jb.getCountry())){
+			zhengFuBaoJingTongJiJieSuanPage.setDeptId(zhengFuBaoJingTongJiJieSuanPage.getDeptId());
+		}
+
+		if(!StringUtils.isBlank(jb.getCountry())) {
+			zhengFuBaoJingTongJiJieSuanPage.setXiaJiDeptId(zhengFuBaoJingTongJiJieSuanPage.getDeptId());
+		}
+
+		//排序条件
+		////默认处理牌照降序
+		if(zhengFuBaoJingTongJiJieSuanPage.getOrderColumns()==null){
+			zhengFuBaoJingTongJiJieSuanPage.setOrderColumn("");
+		}else{
+			zhengFuBaoJingTongJiJieSuanPage.setOrderColumn(zhengFuBaoJingTongJiJieSuanPage.getOrderColumns());
+		}
+		ZhengFuBaoJingTongJiJieSuanPage<ZhengFuRiYunXingTongJi> pages = iZhengFuBaoJingTongJiService.selectGetQYRYXTJ(zhengFuBaoJingTongJiJieSuanPage);
 		return R.data(pages);
 	}
 

@@ -25,7 +25,7 @@ import java.util.List;
 /**
  *  Mapper 接口
  *
- * @author elvis.he
+ * @author hyp
  * @since 2019-05-12
  */
 public interface AlarmsummaryMapper extends BaseMapper<Alarmsummary> {

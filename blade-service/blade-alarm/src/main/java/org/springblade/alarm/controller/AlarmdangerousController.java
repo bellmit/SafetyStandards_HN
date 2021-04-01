@@ -46,16 +46,16 @@ import java.util.Map;
 @RequestMapping("/alarm/alarmdangerous")
 @Api(value = "严重报警接口", tags = "严重报警接口")
 public class AlarmdangerousController extends BladeController {
+
 		private IAlarmdangerousService  alarmdangerousService;
+
 		@GetMapping("/severityCount")
 		@ApiLog("严重报警统计-分类")
 		@ApiOperation(value = "严重报警-分类", notes = "", position = 1)
-		public R  severityCount(String beginTime,String endTime, String company){
-
-
-			return  R.data(alarmdangerousService.yanzhongCount(beginTime,endTime,company));
-
+		public R  severityCount(String beginTime,String endTime, Integer deptId){
+			return  R.data(alarmdangerousService.yanzhongCount(beginTime,endTime,deptId));
 		}
+
 		@PostMapping("/alarmTypeplateCout")
 		@ApiLog("严重报警统计-报警类型车牌统计")
 		@ApiOperation(value = "严重报警-报警类型车牌统计", notes = "", position = 2)

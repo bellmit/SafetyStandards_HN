@@ -15,12 +15,16 @@
  */
 package org.springblade.anbiao.richenganpai.controller;
 
-import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springblade.anbiao.richenganpai.entity.Richenganpai;
+import org.springblade.anbiao.richenganpai.page.RiChengAnPaiPage;
 import org.springblade.anbiao.richenganpai.service.IRichenganpaiService;
 import org.springblade.anbiao.richenganpai.vo.RichengIndexVo;
 import org.springblade.anbiao.richenganpai.vo.RichenganpaiVO;
@@ -30,17 +34,19 @@ import org.springblade.core.mp.support.Condition;
 import org.springblade.core.mp.support.Query;
 import org.springblade.core.secure.BladeUser;
 import org.springblade.core.tool.api.R;
-import org.springblade.core.tool.utils.Func;
 import org.springblade.system.feign.IDictClient;
+import org.springblade.system.user.entity.User;
+import org.springblade.system.user.feign.IUserClient;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import javax.validation.Valid;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
  *  控制器
- *
  * @author Blade
  * @since 2019-06-06
  */
@@ -54,9 +60,6 @@ public class RichenganpaiController extends BladeController {
 
 	private IDictClient dictClient;
 
-
-
-
 	@GetMapping("/richengIndex")
 	@ApiLog("日程首页数据-日程安排")
 	@ApiOperation(value = "日程首页数据-日程安排", notes = "传入单位id,日期", position = 3)
@@ -69,82 +72,77 @@ public class RichenganpaiController extends BladeController {
 		return R.data(list);
 	}
 
-
-	@GetMapping("/getRichengList")
+	@PostMapping(value = "/getRiChengByDateList")
 	@ApiLog("获取当天日程-日程安排")
-	@ApiOperation(value = "获取当天日程-日程安排", notes = "传入单位id,日期", position = 3)
-	@ApiImplicitParams({
-		@ApiImplicitParam(name = "deptId", value = "单位id", required = true),
-		@ApiImplicitParam(name = "date", value = "日期(yyyy-MM-dd)", required = true)
-	})
-	public R<List<RichenganpaiVO>> getRichengList(Integer deptId,String date, BladeUser user) {
-		List<RichenganpaiVO> list= richenganpaiService.getByDate(deptId,date,user.getUserId());
-		return R.data(list);
+	@ApiOperation(value = "获取当天日程-日程安排", notes = "传入riChengAnPaiPage", position = 3)
+	public R<RiChengAnPaiPage<RichenganpaiVO>> getRiChengByDateList(@RequestBody RiChengAnPaiPage riChengAnPaiPage) {
+		R r = new R();
+		//排序条件
+		////默认车辆牌照降序
+		if(riChengAnPaiPage.getOrderColumns()==null){
+			riChengAnPaiPage.setOrderColumn("renwukaishishijian");
+		}else{
+			riChengAnPaiPage.setOrderColumn(riChengAnPaiPage.getOrderColumns());
+		}
+		RiChengAnPaiPage<RichenganpaiVO> pages = richenganpaiService.selectByDate(riChengAnPaiPage);
+		if(pages != null){
+			r.setMsg("获取成功");
+			r.setData(pages);
+			r.setCode(200);
+		}else{
+			r.setMsg("获取成功,暂无数据");
+			r.setCode(200);
+		}
+		return r;
 	}
 
-
-
-	@GetMapping("/getRichengDetail")
-	@ApiLog("获取日程详细-日程安排")
-	@ApiOperation(value = "获取日程详细-日程安排", notes = "传入id", position = 3)
-	@ApiImplicitParam(name = "id", value = "日程id", required = true)
-	public R<Richenganpai> getRichengDetail(Integer id) {
-		Richenganpai richeng= richenganpaiService.getById(id);
-		return R.data(richeng);
-	}
-
-	@ApiLog("新增日程-日程安排")
-	@PostMapping("/addRicheng")
-	@ApiOperation(value = "新增日程-日程安排", notes = "传入日程", position = 3)
-	public R<Richenganpai> addRicheng(@RequestBody Richenganpai richen,BladeUser user) {
-		richen.setCaozuoren(user.getUserName());
-		richen.setCaozuorenid(user.getUserId());
-		richen.setCaozuoshijian(DateUtil.now());
-	 	richenganpaiService.save(richen);
-		return R.success("新增日程成功");
-	}
-
-
-
-	@PostMapping("/updateRicheng")
-	@ApiLog("修改日程-日程安排")
-	@ApiOperation(value = "修改日程-日程安排", notes = "传入日程", position = 3)
-	public R<Richenganpai> updateRicheng(@RequestBody Richenganpai richen,BladeUser user) {
-		richen.setCaozuoren(user.getUserName());
-		richen.setCaozuorenid(user.getUserId());
-		richen.setCaozuoshijian(DateUtil.now());
-		richenganpaiService.updateById(richen);
-		return R.success("修改日程成功");
-	}
-
-
-
-
-	@GetMapping("/getChaoqiRicheng")
+	@PostMapping(value = "/getRiChengChaoQiByDateList")
 	@ApiLog("获取超期日程-日程安排")
-	@ApiOperation(value = "获取超期日程-日程安排", notes = "传入单位id", position = 3)
-	@ApiImplicitParam(name = "deptId", value = "单位id", required = true)
-	public R<List<RichenganpaiVO>> getChaoqiRicheng(Integer deptId, BladeUser user) {
-		List<RichenganpaiVO> list= richenganpaiService.getChaoqiByDate(deptId,user.getUserId());
-		return R.data(list);
+	@ApiOperation(value = "获取超期日程-日程安排", notes = "传入riChengAnPaiPage", position = 3)
+	public R<RiChengAnPaiPage<RichenganpaiVO>> getRiChengChaoQiByDateList(@RequestBody RiChengAnPaiPage riChengAnPaiPage) {
+		R r = new R();
+		//排序条件
+		////默认车辆牌照降序
+		if(riChengAnPaiPage.getOrderColumns()==null){
+			riChengAnPaiPage.setOrderColumn("renwujiezhishijian");
+		}else{
+			riChengAnPaiPage.setOrderColumn(riChengAnPaiPage.getOrderColumns());
+		}
+		RiChengAnPaiPage<RichenganpaiVO> pages = richenganpaiService.selectChaoQiByDate(riChengAnPaiPage);
+		if(pages != null){
+			r.setMsg("获取成功");
+			r.setData(pages);
+			r.setCode(200);
+		}else{
+			r.setMsg("获取成功,暂无数据");
+			r.setCode(200);
+		}
+		return r;
 	}
 
-
-	@GetMapping("/getAnpaiRicheng")
+	@PostMapping(value = "/getAnpaiByUserList")
 	@ApiLog("获取当前用户安排的日程-日程安排")
-	@ApiOperation(value = "获取当前用户安排的日程-日程安排", notes = "传入单位id", position = 3)
-	@ApiImplicitParam(name = "deptId", value = "单位id", required = true)
-	public R<List<RichenganpaiVO>> getAnpaiRicheng(Integer deptId, BladeUser user) {
-		List<RichenganpaiVO> list= richenganpaiService.getAnpaiByUser(deptId,user.getUserId());
-		return R.data(list);
+	@ApiOperation(value = "获取当前用户安排的日程-日程安排", notes = "传入riChengAnPaiPage", position = 3)
+	public R<RiChengAnPaiPage<RichenganpaiVO>> getAnpaiByUserList(@RequestBody RiChengAnPaiPage riChengAnPaiPage) {
+		R r = new R();
+		//排序条件
+		////默认车辆牌照降序
+		if(riChengAnPaiPage.getOrderColumns()==null){
+			riChengAnPaiPage.setOrderColumn("renwukaishishijian");
+		}else{
+			riChengAnPaiPage.setOrderColumn(riChengAnPaiPage.getOrderColumns());
+		}
+		RiChengAnPaiPage<RichenganpaiVO> pages = richenganpaiService.selectAnpaiByUser(riChengAnPaiPage);
+		if(pages != null){
+			r.setMsg("获取成功");
+			r.setData(pages);
+			r.setCode(200);
+		}else{
+			r.setMsg("获取成功,暂无数据");
+			r.setCode(200);
+		}
+		return r;
 	}
-
-
-
-
-
-
-
 
 	/**
 	* 自定义分页
@@ -159,49 +157,160 @@ public class RichenganpaiController extends BladeController {
 	}
 
 	/**
-	* 新增
-	*/
-	@PostMapping("/save")
-	@ApiIgnore
-	@ApiLog("新增-日程安排")
-	@ApiOperation(value = "新增-日程安排", notes = "传入richenganpai", position = 4)
-	public R save(@Valid @RequestBody Richenganpai richenganpai) {
-		return R.status(richenganpaiService.save(richenganpai));
+	 * 详情
+	 */
+	@GetMapping("/detail")
+	@ApiOperation(value = "详情", notes = "传入richenganpai", position = 2)
+	public R<Richenganpai> detail(String Id) {
+		R r = new R();
+		Richenganpai detail = richenganpaiService.selectByIds(Id);
+		if(detail != null){
+			r.setMsg("获取成功");
+			r.setData(detail);
+			r.setCode(200);
+		}else{
+			r.setMsg("获取成功,暂无数据");
+			r.setCode(200);
+		}
+		return r;
 	}
 
 	/**
-	* 修改
-	*/
-	@PostMapping("/update")
-	@ApiIgnore
-	@ApiLog("修改-日程安排")
-	@ApiOperation(value = "修改-日程安排", notes = "传入richenganpai", position = 5)
-	public R update(@Valid @RequestBody Richenganpai richenganpai) {
-		return R.status(richenganpaiService.updateById(richenganpai));
-	}
-
-	/**
-	* 新增或修改
-	*/
+	 * 新增
+	 */
 	@PostMapping("/submit")
-	@ApiIgnore
-	@ApiLog("新增或修改-日程安排")
-	@ApiOperation(value = "新增或修改-日程安排", notes = "传入richenganpai", position = 6)
-	public R submit(@Valid @RequestBody Richenganpai richenganpai) {
-		return R.status(richenganpaiService.saveOrUpdate(richenganpai));
+	@ApiOperation(value = "新增或修改", notes = "传入richenganpai；zhixingrenIds(需传入id字符串，以英文逗号隔开)；zhixingrens(需传入名字字符串，以英文逗号隔开)", position = 6)
+	public R submit(@RequestBody Richenganpai richenganpai) {
+		R rs = new R();
+		if (StringUtils.isBlank(richenganpai.getCaozuoshijian())){
+			richenganpai.setCaozuoshijian(DateUtil.now());
+		}
+		if (richenganpai.getIsDeleted() != 0){
+			richenganpai.setIsDeleted(0);
+		}
+//		String id = richenganpai.getZhixingrenIds();
+//		String[] idsss = id.split(",");
+//		//去除素组中重复的数组
+//		List<String> listid = new ArrayList<String>();
+//		for (int i=0; i<idsss.length; i++) {
+//			if(!listid.contains(idsss[i])) {
+//				listid.add(idsss[i]);
+//			}
+//		}
+		//返回一个包含所有对象的指定类型的数组
+//		String[]  idss= listid.toArray(new String[1]);
+//		for(int i = 0;i< idss.length;i++){
+//			richenganpai.setZhixingrenIds(idss[i]);
+//			User user = richenganpaiService.getUserById(Integer.parseInt(idss[i]));
+//			if(user == null){
+//				rs.setMsg(idss[i]+"没有该人员");
+//			}else{
+//				richenganpai.setZhixingrens(user.getName());
+//				boolean ss = richenganpaiService.insertSelective(richenganpai);
+//				if(ss){
+//					rs.setCode(200);
+//					rs.setSuccess(true);
+//					rs.setMsg("新增日程安排信息成功");
+//				}else{
+//					rs.setCode(500);
+//					rs.setSuccess(false);
+//					rs.setMsg("新增日程安排信息失败");
+//				}
+//			}
+//		}
+		boolean ss = richenganpaiService.insertSelective(richenganpai);
+		if(ss){
+			rs.setCode(200);
+			rs.setSuccess(true);
+			rs.setMsg("新增日程安排信息成功");
+		}else{
+			rs.setCode(500);
+			rs.setSuccess(false);
+			rs.setMsg("新增日程安排信息失败");
+		}
+		return rs;
 	}
-
 
 	/**
-	* 删除
-	*/
-	@PostMapping("/remove")
-	@ApiIgnore
-	@ApiLog("删除-日程安排")
-	@ApiOperation(value = "删除-日程安排", notes = "传入ids", position = 7)
-	public R remove(@ApiParam(value = "主键集合", required = true) @RequestParam String ids) {
-		return R.status(richenganpaiService.removeByIds(Func.toIntList(ids)));
+	 * 修改
+	 */
+	@PostMapping("/update")
+	@ApiOperation(value = "修改", notes = "传入richenganpai；zhixingrenIds(需传入id字符串，以英文逗号隔开)；zhixingrens(需传入名字字符串，以英文逗号隔开)", position = 6)
+	public R update(@RequestBody Richenganpai richenganpai) {
+		R rs = new R();
+		if (StringUtils.isBlank(richenganpai.getCaozuoshijian())){
+			richenganpai.setCaozuoshijian(DateUtil.now());
+		}
+//		String id = richenganpai.getZhixingrenIds();
+//////		String[] idsss = id.split(",");
+//////		//去除素组中重复的数组
+//////		List<String> listid = new ArrayList<String>();
+//////		for (int i=0; i<idsss.length; i++) {
+//////			if(!listid.contains(idsss[i])) {
+//////				listid.add(idsss[i]);
+//////			}
+//////		}
+//////		//返回一个包含所有对象的指定类型的数组
+//////		String[]  idss= listid.toArray(new String[1]);
+//////		for(int i = 0;i< idss.length;i++){
+//////			richenganpai.setZhixingrenIds(idss[i]);
+//////			User user = richenganpaiService.getUserById(Integer.parseInt(idss[i]));
+//////			if(user == null){
+//////				rs.setMsg(idss[i]+"没有该人员");
+//////			}else{
+//////				richenganpai.setZhixingrens(user.getName());
+//////				boolean ss = richenganpaiService.updateSelective(richenganpai);
+//////				if(ss){
+//////					rs.setCode(200);
+//////					rs.setSuccess(true);
+//////					rs.setMsg("编辑日程安排信息成功");
+//////				}else{
+//////					rs.setCode(500);
+//////					rs.setSuccess(false);
+//////					rs.setMsg("编辑日程安排信息失败");
+//////				}
+//////			}
+//////		}
+		boolean ss = richenganpaiService.updateSelective(richenganpai);
+		if(ss){
+			rs.setCode(200);
+			rs.setSuccess(true);
+			rs.setMsg("编辑日程安排信息成功");
+		}else{
+			rs.setCode(500);
+			rs.setSuccess(false);
+			rs.setMsg("编辑日程安排信息失败");
+		}
+		return rs;
 	}
+
+	/**
+	 * 删除
+	 */
+	@GetMapping("/remove")
+	@ApiLog("删除日程安排")
+	@ApiOperation(value = "删除日程安排", notes = "传入日程安排ID、用户ID", position = 7)
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "Id", value = "日程安排ID", required = true),
+		@ApiImplicitParam(name = "userId", value = "用户ID", required = true),
+		@ApiImplicitParam(name = "userName", value = "用户名称", required = true)
+	})
+	public R remove(@RequestParam Integer Id,Integer userId,String userName) {
+		R rs = new R();
+		String updateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+		boolean ss = richenganpaiService.deleteBind(updateTime,userName,userId,Id);
+		if(ss){
+			rs.setCode(200);
+			rs.setSuccess(true);
+			rs.setMsg("删除日程安排信息成功");
+		}else{
+			rs.setCode(500);
+			rs.setSuccess(false);
+			rs.setMsg("删除日程安排信息失败");
+		}
+		return rs;
+	}
+
 
 
 }

@@ -44,7 +44,7 @@ public interface ManageHomeMapper {
 	* @Param: [deptId]
 	* @return: org.springblade.manage.managehome.entity.ManageHome
 	* @Author: 呵呵哒
-	* @Date: 2019-08-14
+	* @Date2021-08-14
 	*/
 	List<ManageHome> selectnian(String deptId);
 	/**

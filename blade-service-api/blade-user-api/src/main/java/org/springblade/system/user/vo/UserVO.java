@@ -23,7 +23,7 @@ import org.springblade.system.user.entity.User;
 /**
  * 视图实体类
  *
- * @author Chill
+ * @author hyp
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

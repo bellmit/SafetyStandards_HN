@@ -20,11 +20,13 @@ import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import org.springblade.common.cache.CacheNames;
 import org.springblade.core.boot.ctrl.BladeController;
+import org.springblade.core.log.annotation.ApiLog;
 import org.springblade.core.mp.support.Condition;
 import org.springblade.core.mp.support.Query;
 import org.springblade.core.tool.api.R;
 import org.springblade.core.tool.utils.Func;
 import org.springblade.desk.entity.Notice;
+import org.springblade.desk.page.NoticePage;
 import org.springblade.desk.service.INoticeService;
 import org.springblade.desk.vo.NoticeVO;
 import org.springblade.desk.wrapper.NoticeWrapper;
@@ -40,18 +42,34 @@ import java.util.Map;
 /**
  * 控制器
  *
- * @author Chill
- * @since 2018-09-29
+ * @author hyp
+ * @since 2020-11-29
  */
 @RestController
-@RequestMapping("notice")
 @AllArgsConstructor
-@Api(value = "用户博客", tags = "博客接口")
-public class NoticeController extends BladeController implements CacheNames {
+@RequestMapping("/desk/notice")
+@Api(value = "运维端-通知公告", tags = "运维端-通知公告")
+public class NoticeController {
 
 	private INoticeService noticeService;
 
 	private IDictClient dictClient;
+
+
+	@PostMapping(value = "/getNoticeAll")
+	@ApiLog("运维端-通知公告列表")
+	@ApiOperation(value = "运维端-通知公告列表", notes = "传入noticePage",position = 6)
+	public R<NoticePage<Notice>> getNoticeAll(@RequestBody NoticePage noticePage) {
+		//排序条件
+		////默认车辆牌照降序
+		if(noticePage.getOrderColumns()==null){
+			noticePage.setOrderColumn("releaseTime");
+		}else{
+			noticePage.setOrderColumn(noticePage.getOrderColumns());
+		}
+		NoticePage<Notice> pages = noticeService.selectGetAll(noticePage);
+		return R.data(pages);
+	}
 
 	/**
 	 * 详情

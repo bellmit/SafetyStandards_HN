@@ -132,5 +132,8 @@ public class ZhengFuBaoJingMingXi implements Serializable {
 	@ApiModelProperty(value = "IC卡登签")
 	private String icardsign;
 
+	@ApiModelProperty(value = "超速比展示")
+	private String ChaoSuBiShow;
+
 
 }

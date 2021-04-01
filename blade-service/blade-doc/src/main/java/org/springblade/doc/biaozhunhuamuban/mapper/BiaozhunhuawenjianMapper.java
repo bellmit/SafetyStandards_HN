@@ -44,8 +44,8 @@ public interface BiaozhunhuawenjianMapper extends BaseMapper<Biaozhunhuawenjian>
 
 	/**
 	 *逻辑删除文件
-	 * @author: th
-	 * @CreateDate: 2019-05-15 21:12
+	 * @author: hyp
+	 * @CreateDate2021-05-15 21:12
 	 * @param mubanId
 	 * @return: int
 	 */
@@ -53,8 +53,8 @@ public interface BiaozhunhuawenjianMapper extends BaseMapper<Biaozhunhuawenjian>
 
 	/**
 	 *根据模板id获取文件
-	 * @author: th
-	 * @CreateDate: 2019-05-15 21:18
+	 * @author: hyp
+	 * @CreateDate2021-05-15 21:18
 	 * @param mubanId
 	 * @return: java.util.List<org.springblade.anbiao.Biaozhunhuawenjian>
 	 */
@@ -62,7 +62,7 @@ public interface BiaozhunhuawenjianMapper extends BaseMapper<Biaozhunhuawenjian>
 
 	/**
 	 *根据文件所属人查询文件路径
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/5/19 14:41
 	 * @param fileProperty
 	 * @param fileSuoshurenId
@@ -72,7 +72,7 @@ public interface BiaozhunhuawenjianMapper extends BaseMapper<Biaozhunhuawenjian>
 
 	/**
 	 *更新记录
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/8/13 11:05
 	 * @param id
 	 * @return: int

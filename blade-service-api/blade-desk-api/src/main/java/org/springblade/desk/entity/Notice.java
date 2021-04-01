@@ -26,7 +26,7 @@ import java.util.Date;
 /**
  * 实体类
  *
- * @author Chill
+ * @author hyp
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -58,6 +58,12 @@ public class Notice extends BaseEntity {
 	 */
 	@ApiModelProperty(value = "内容")
 	private String content;
+
+	/**
+	 * 企业ID
+	 */
+	@ApiModelProperty(value = "企业ID")
+	private String tenantCode;
 
 
 }

@@ -28,7 +28,6 @@ import java.util.List;
 /**
  * 视图实体类
  *
- * @author th
  * @since 2019-05-04
  */
 @Data
@@ -64,6 +63,14 @@ public class BiaozhunhuamubanVO extends Biaozhunhuamuban implements INode {
 	@ApiModelProperty(value = "绑定来源(0是标准化文档，1是安全生产文档)")
 	private Integer  docSource = 0;
 
+	@ApiModelProperty(value = "下级list")
+	private List<BiaozhunhuamubanVO> childrenList;
+
+	@ApiModelProperty(value = "当前分值")
+	private Integer nowscores;
+
+	@ApiModelProperty(value = "总分")
+	private Integer totalpoints;
 
 
 	/**

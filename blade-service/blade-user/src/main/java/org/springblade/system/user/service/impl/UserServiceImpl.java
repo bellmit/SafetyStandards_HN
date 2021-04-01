@@ -15,7 +15,6 @@
  */
 package org.springblade.system.user.service.impl;
 
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.AllArgsConstructor;
@@ -31,20 +30,17 @@ import org.springblade.system.user.service.IUserService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 /**
  * 服务实现类
- *
- * @author Chill
+ * @author hyp
  */
 @Service
 @AllArgsConstructor
 public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implements IUserService {
 
 	private UserMapper userMapper;
-
 
 	@Override
 	public IPage<User> selectUserPage(IPage<User> page, User user) {
@@ -216,6 +212,16 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
 	@Override
 	public User selectByName(String account) {
 		return baseMapper.selectByName(account);
+	}
+
+	@Override
+	public boolean updateUserStatus(Integer updateUser, String updateTime, Integer isDeleted, String[] idss) {
+		return baseMapper.updateUserStatus(updateUser, updateTime, isDeleted, idss);
+	}
+
+	@Override
+	public List<User> selectNameById(String deptId) {
+		return baseMapper.selectNameById(deptId);
 	}
 
 }

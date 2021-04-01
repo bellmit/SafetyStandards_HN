@@ -30,7 +30,7 @@ import java.util.List;
 /**
  * 包装类,返回视图层所需的字段
  *
- * @author Chill
+ * @author hyp
  */
 @AllArgsConstructor
 public class UserWrapper extends BaseEntityWrapper<User, UserVO> {

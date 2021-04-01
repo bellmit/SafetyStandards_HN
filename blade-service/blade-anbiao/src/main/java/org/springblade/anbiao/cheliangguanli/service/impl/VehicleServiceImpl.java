@@ -19,7 +19,7 @@ import java.util.Map;
 /**
  * 车辆自定义接口实现
  *
- * @author :elvis.he
+ * @author :hyp
  */
 @Service
 @AllArgsConstructor
@@ -216,4 +216,16 @@ public class VehicleServiceImpl extends ServiceImpl<VehicleMapper, Vehicle> impl
 		}
 		return vehiclePage;
 	}
+
+	@Override
+	public List<Vehicle> vehileList(Integer deptId) {
+		return vehicleMapper.vehileList(deptId);
+	}
+
+	@Override
+	public boolean updateVehicleZongDuanId(String zongduanid, String caozuoren, String caozuorenid, String id) {
+		return vehicleMapper.updateVehicleZongDuanId(zongduanid, caozuoren, caozuorenid, id);
+	}
+
+
 }

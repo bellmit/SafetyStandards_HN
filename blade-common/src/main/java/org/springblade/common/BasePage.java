@@ -11,8 +11,8 @@ import java.util.List;
  *
  * @program: SafetyStandards
  * @description: BasePage
- * @author: elvis.he
- * @create: 2019-04-25 14:00
+ * @author: hyp
+ * @create2021-04-25 14:00
  **/
 @ApiModel(value = "BasePage对象", description = "BasePage对象")
 public class BasePage<T> {

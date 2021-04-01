@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
  * @program: SafetyStandards
  * @description: Guanlizhidu
  * @author: elvis
- * @create: 2019-04-24 15:00
+ * @create2021-04-24 15:00
  **/
 @Data
 @TableName("anbiao_guanlizhidu")

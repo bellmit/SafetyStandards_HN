@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * 应急预案-评审记录Mapper 接口
  *
- * @author elvis.he
+ * @author hyp
  * @since 2019-04-25
  */
 public interface YuanpingshenMapper extends BaseMapper<Yuanpingshen> {

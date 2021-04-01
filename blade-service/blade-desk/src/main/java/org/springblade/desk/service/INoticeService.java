@@ -18,21 +18,29 @@ package org.springblade.desk.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.springblade.core.mp.base.BaseService;
 import org.springblade.desk.entity.Notice;
+import org.springblade.desk.page.NoticePage;
+
+import java.util.List;
 
 /**
  * 服务类
  *
- * @author Chill
+ * @author hyp
  * @since 2018-09-29
  */
 public interface INoticeService extends BaseService<Notice> {
 
 	/**
-	 * 自定义分页
-	 * @param page
-	 * @param notice
+	 * 获取当天通知公告
 	 * @return
 	 */
-	IPage<Notice> selectNoticePage(IPage<Notice> page, Notice notice);
+	List<Notice> selectNoticePage();
+
+	/**
+	 * 获取所有通知公告
+	 * @param noticePage
+	 * @return
+	 */
+	NoticePage<Notice> selectGetAll(NoticePage noticePage);
 
 }

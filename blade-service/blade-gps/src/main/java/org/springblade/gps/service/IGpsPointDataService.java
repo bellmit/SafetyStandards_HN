@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * gps点位数据 服务类
  *
- * @author elvis.he
+ * @author hyp
  * @since 2019-05-17
  */
 public interface IGpsPointDataService extends IService<T> {

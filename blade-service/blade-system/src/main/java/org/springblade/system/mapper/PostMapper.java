@@ -45,7 +45,7 @@ public interface PostMapper extends BaseMapper<Post> {
 
 	/**
 	 *根据deptId获取下级所有postId
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/10/24 15:25
 	 * @param deptId
 	 * @return: java.util.List<java.lang.Integer>

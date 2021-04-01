@@ -26,8 +26,7 @@ import java.util.List;
 
 /**
  * Mapper 接口
- *
- * @author Chill
+ * @author 呵呵哒
  */
 public interface DeptMapper extends BaseMapper<Dept> {
 
@@ -106,6 +105,14 @@ public interface DeptMapper extends BaseMapper<Dept> {
 	Dept selectByJGBM(String type,String deptId);
 
 	/**
+	 * 根据传值岗位id 类型 获取相关下级信息
+	 * @param type
+	 * @param deptId
+	 * @return
+	 */
+	Dept selectByJGQY(String type,String deptId);
+
+	/**
 	 * 自定义根据id获取数据
 	 * @param id
 	 * @return
@@ -114,7 +121,7 @@ public interface DeptMapper extends BaseMapper<Dept> {
 
 	/**
 	 *获取机构子树
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/10/14 10:40
 	 * @param deptId
 	 * @return: java.util.List<java.lang.String>
@@ -123,7 +130,7 @@ public interface DeptMapper extends BaseMapper<Dept> {
 
     /**
      *获取下级企业id
-     * @author: th
+     * @author: hyp
      * @date: 2019/10/28 13:53
      * @param deptId
      * @return: java.util.List<java.lang.Integer>
@@ -166,6 +173,12 @@ public interface DeptMapper extends BaseMapper<Dept> {
 	 */
 	List<Dept> getByName(@Param("deptname") String deptname);
 
+	/**
+	 * 根据企业ID获取下级所有企业（企业、个体）
+	 * @param deptId
+	 * @return
+	 */
+	List<Dept> QiYeList(@Param("deptId") Integer deptId);
 
 
 }

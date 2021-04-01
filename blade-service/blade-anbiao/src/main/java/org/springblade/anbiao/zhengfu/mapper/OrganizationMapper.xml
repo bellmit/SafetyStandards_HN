@@ -211,7 +211,7 @@
                 </if>
             </if>
 
-            <if test="jigouleixing == null and jigouleixing == '' ">
+            <if test="jigouleixing == null or jigouleixing == '' ">
                 and a.jigouleixing in ('qiye','geti')
             </if>
                 and a.isdelete = 0

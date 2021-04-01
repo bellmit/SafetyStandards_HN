@@ -269,7 +269,149 @@ values
         <include refid="queryJVSql" />
     </select>
 
+    <select id="jiaShiYuanList" resultType="org.springblade.anbiao.jiashiyuan.entity.JiaShiYuan">
+        select
+            DISTINCT
+            id,
+            jiashiyuanxingming,
+            xingbie,
+            jiashiyuanleixing,
+            shenfenzhenghao,
+            shoujihaoma
+        from
+            anbiao_jiashiyuan
+        where isdelete = 0
+            AND dept_id= #{deptId}
+    </select>
 
+    <insert id="insertSelective" parameterType="org.springblade.anbiao.jiashiyuan.entity.JiaShiYuan" >
+        insert into anbiao_jiashiyuan
+        <trim prefix="(" suffix=")" suffixOverrides=",">
 
+            <if test="id != null">
+                id,
+            </if>
+
+            <if test="deptId != null">
+                dept_id,
+            </if>
+
+            <if test="jiashiyuanxingming != null">
+                jiashiyuanxingming,
+            </if>
+
+            <if test="xingbie != null">
+                xingbie,
+            </if>
+
+            <if test="shenfenzhenghao != null">
+                shenfenzhenghao,
+            </if>
+
+            <if test="nianling != null">
+                nianling,
+            </if>
+
+            <if test="chushengshijian != null">
+                chushengshijian,
+            </if>
+
+            <if test="shoujihaoma != null">
+                shoujihaoma,
+            </if>
+
+            <if test="denglumima != null">
+                denglumima,
+            </if>
+
+            <if test="jiashiyuanleixing != null">
+                jiashiyuanleixing,
+            </if>
+
+            <if test="isdelete != null">
+                isdelete,
+            </if>
+
+            <if test="createtime != null">
+                createtime,
+            </if>
+
+            <if test="caozuoren != null">
+                caozuoren,
+            </if>
+
+            <if test="caozuoshijian != null">
+                caozuoshijian,
+            </if>
+
+            <if test="caozuorenid != null">
+                caozuorenid
+            </if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+
+            <if test="id != null">
+                #{id},
+            </if>
+
+            <if test="deptId != null">
+                #{deptId},
+            </if>
+
+            <if test="jiashiyuanxingming != null">
+                #{jiashiyuanxingming},
+            </if>
+
+            <if test="xingbie != null">
+                #{xingbie},
+            </if>
+
+            <if test="shenfenzhenghao != null">
+                #{shenfenzhenghao},
+            </if>
+
+            <if test="nianling != null">
+                #{nianling},
+            </if>
+
+            <if test="chushengshijian != null">
+                #{chushengshijian},
+            </if>
+
+            <if test="shoujihaoma != null">
+                #{shoujihaoma},
+            </if>
+
+            <if test="denglumima != null">
+                #{denglumima},
+            </if>
+
+            <if test="jiashiyuanleixing != null">
+                #{jiashiyuanleixing},
+            </if>
+
+            <if test="isdelete != null">
+                #{isdelete},
+            </if>
+
+            <if test="createtime != null">
+                #{createtime},
+            </if>
+
+            <if test="caozuoren != null">
+                #{caozuoren},
+            </if>
+
+            <if test="caozuoshijian != null">
+                #{caozuoshijian},
+            </if>
+
+            <if test="caozuorenid != null">
+                #{caozuorenid}
+            </if>
+
+        </trim>
+    </insert>
 
 </mapper>

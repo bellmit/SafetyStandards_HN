@@ -146,10 +146,10 @@
                 dadianhua,
                 fenshen
             from
-                baobiao_alarmmonthreport
+                baobiao_alarmdailyreport
             where 1=1
-                and nian = #{year}
-		        and yue = #{month}
+                and YEAR(date) = #{year}
+                and MONTH(date) = #{month}
             )c on a.qiyeid = c.cid
         where 1=1
         <if test="areaName != null and areaName != '' ">
@@ -163,18 +163,114 @@
 
     <select id="selectGetTwoXJ" resultMap="ZhengFuShouYeNewResultMap" parameterType="map">
         select
+            a.zhengfuname,
+            a.zhengfuid,
+            a.areaname,
+            ifnull(sum(c.baojingcishu),0) as baojingcishu,
+            ifnull(sum(c.chaosu),0) as chaosu,
+            ifnull(sum(c.pilao),0) as pilao,
+            ifnull(sum(c.yejian),0) as yejian,
+            ifnull(sum(c.yichang),0) as yichang,
+            ifnull(sum(c.pilaoshipin),0) +
+            ifnull(sum(c.chouyan),0) +
+            ifnull(sum(c.dadianhua),0) +
+            ifnull(sum(c.fenshen),0) as zdbaojingcishu
+        from(
+            select
+                DISTINCT
+                b.dept_id as qiyeid,
+                b.dept_name as qiyemingcheng,
+                b.jigouleixing,
+                b.province,
+                b.city,
+                b.country,
+                a.dept_name as zhengfuname,
+                a.dept_id as zhengfuid,
+                case
+                when IFNULL(a.country,'') != '' then a.country
+                when IFNULL(a.city,'') != '' and IFNULL(a.country,'') = '' then a.city
+                when IFNULL(a.province,'') != '' and IFNULL(a.city,'') = '' and IFNULL(a.country,'') = '' then a.province
+                end as areaname
+            from (
+                select
+                    a.id as dept_id,a.parent_id,a.dept_name,tree_code,province,city,country
+                from
+                    blade_dept a,anbiao_organization b
+                where a.id = b.dept_id
+                    and jigouleixing in('xianZF','shiZF','shengZF')
+                    and b.isdelete = 0
+                <if test="deptId != null and deptId != '' ">
+                    and a.id = #{deptId}
+                </if>
+                <if test="xiaJiDeptId != null and xiaJiDeptId != '' ">
+                    and a.parent_id = #{xiaJiDeptId}
+                </if>
+            )a
+        inner join(
+            select
+                dept_id,dept_name,jigouleixing,province,city,country
+            from
+                anbiao_organization
+            where 1=1
+                and jigouleixing in ('qiye','geti')
+                and isdelete = 0
+            )b on a.dept_id in(b.province,b.city,b.country)
+        where 1=1
+            and b.province is not null
+        )a
+        left join(
+            select
+                cid,
+                baojingcishu,
+                company,
+                chaosu,
+                pilao,
+                yejian,
+                wushuju+budingwei as yichang,
+                pilaoshipin,
+                chouyan,
+                dadianhua,
+                fenshen
+            from
+                baobiao_alarmdailyreport
+            where 1=1
+                and YEAR(date) = #{year}
+                and MONTH(date) = #{month}
+            )c on a.qiyeid = c.cid
+        where 1=1
+        <if test="areaName != null and areaName != '' ">
+            and a.areaname = #{areaName}
+        </if>
+        GROUP BY
+            a.zhengfuname,
+            a.zhengfuid,
+            a.areaname
+    </select>
+
+
+    <select id="selectGetThree" resultMap="ZhengFuShouYeNewResultMap" parameterType="map">
+        select
         a.zhengfuname,
         a.zhengfuid,
         a.areaname,
+        c.yue as date,
         ifnull(sum(c.baojingcishu),0) as baojingcishu,
         ifnull(sum(c.chaosu),0) as chaosu,
+        ifnull(sum(c.chaosucl),0) as chaosucl,
         ifnull(sum(c.pilao),0) as pilao,
+        ifnull(sum(c.pilaocl),0) as pilaocl,
         ifnull(sum(c.yejian),0) as yejian,
+        ifnull(sum(c.yejiancl),0) as yejiancl,
         ifnull(sum(c.yichang),0) as yichang,
-        ifnull(sum(c.pilaoshipin),0) +
-        ifnull(sum(c.chouyan),0) +
-        ifnull(sum(c.dadianhua),0) +
-        ifnull(sum(c.fenshen),0) as zdbaojingcishu
+        ifnull(sum(c.yichangcl),0) as yichangcl,
+        ifnull(sum(pilaoshipin),0) as pilaoshipin,
+        ifnull(sum(pilaoshipincl),0) as pilaoshipincl,
+        ifnull(sum(dadianhua),0) as dadianhua,
+        ifnull(sum(dadianhuacl),0) as dadianhuacl,
+        ifnull(sum(chouyan),0) as chouyan,
+        ifnull(sum(chouyancl),0) as chouyancl,
+        ifnull(sum(fenshen),0) as fenshen,
+        ifnull(sum(fenshencl),0) as fenshencl
         from(
         select
         DISTINCT
@@ -224,18 +320,27 @@
         baojingcishu,
         company,
         chaosu,
+        chaosucl,
         pilao,
+        pilaocl,
         yejian,
+        yejiancl,
         wushuju+budingwei as yichang,
+        wushujucl+budingweicl as yichangcl,
         pilaoshipin,
-        chouyan,
+        pilaoshipincl,
         dadianhua,
-        fenshen
+        dadianhuacl,
+        chouyan,
+        chouyancl,
+        fenshen,
+        fenshencl,
+        left(date,7) as yue
         from
-        baobiao_alarmmonthreport
+            baobiao_alarmdailyreport
         where 1=1
-        and nian = #{year}
-        and yue = #{month}
+            and left(date,7) &gt;= #{firstDate}
+            and left(date,7) &lt;= #{endDate}
         )c on a.qiyeid = c.cid
         where 1=1
         <if test="areaName != null and areaName != '' ">
@@ -244,113 +349,8 @@
         GROUP BY
         a.zhengfuname,
         a.zhengfuid,
-        a.areaname
-    </select>
-
-
-    <select id="selectGetThree" resultMap="ZhengFuShouYeNewResultMap" parameterType="map">
-        select
-            a.zhengfuname,
-            a.zhengfuid,
-            a.areaname,
-            c.yue as date,
-            ifnull(sum(c.baojingcishu),0) as baojingcishu,
-            ifnull(sum(c.chaosu),0) as chaosu,
-            ifnull(sum(c.chaosucl),0) as chaosucl,
-            ifnull(sum(c.pilao),0) as pilao,
-            ifnull(sum(c.pilaocl),0) as pilaocl,
-            ifnull(sum(c.yejian),0) as yejian,
-            ifnull(sum(c.yejiancl),0) as yejiancl,
-            ifnull(sum(c.yichang),0) as yichang,
-            ifnull(sum(c.yichangcl),0) as yichangcl,
-            ifnull(sum(pilaoshipin),0) as pilaoshipin,
-            ifnull(sum(pilaoshipincl),0) as pilaoshipincl,
-            ifnull(sum(dadianhua),0) as dadianhua,
-            ifnull(sum(dadianhuacl),0) as dadianhuacl,
-            ifnull(sum(chouyan),0) as chouyan,
-            ifnull(sum(chouyancl),0) as chouyancl,
-            ifnull(sum(fenshen),0) as fenshen,
-            ifnull(sum(fenshencl),0) as fenshencl
-        from(
-            select
-                DISTINCT
-                b.dept_id as qiyeid,
-                b.dept_name as qiyemingcheng,
-                b.jigouleixing,
-                b.province,
-                b.city,
-                b.country,
-                a.dept_name as zhengfuname,
-                a.dept_id as zhengfuid,
-                case
-                when IFNULL(a.country,'') != '' then a.country
-                when IFNULL(a.city,'') != '' and IFNULL(a.country,'') = '' then a.city
-                when IFNULL(a.province,'') != '' and IFNULL(a.city,'') = '' and IFNULL(a.country,'') = '' then a.province
-                end as areaname
-            from (
-                select
-                    a.id as dept_id,a.parent_id,a.dept_name,tree_code,province,city,country
-                from
-                    blade_dept a,anbiao_organization b
-                where a.id = b.dept_id
-                    and jigouleixing in('xianZF','shiZF','shengZF')
-                    and b.isdelete = 0
-                <if test="deptId != null and deptId != '' ">
-                    and a.id = #{deptId}
-                </if>
-                <if test="xiaJiDeptId != null and xiaJiDeptId != '' ">
-                    and a.parent_id = #{xiaJiDeptId}
-                </if>
-                )a
-            inner join(
-                select
-                    dept_id,dept_name,jigouleixing,province,city,country
-                from
-                    anbiao_organization
-                where 1=1
-                    and jigouleixing in ('qiye','geti')
-                    and isdelete = 0
-                )b on a.dept_id in(b.province,b.city,b.country)
-            where 1=1
-                and b.province is not null
-            )a
-        left join(
-            select
-                cid,
-                baojingcishu,
-                company,
-                chaosu,
-                chaosucl,
-                pilao,
-                pilaocl,
-                yejian,
-                yejiancl,
-                wushuju+budingwei as yichang,
-                wushujucl+budingweicl as yichangcl,
-                pilaoshipin,
-                pilaoshipincl,
-                dadianhua,
-                dadianhuacl,
-                chouyan,
-                chouyancl,
-                fenshen,
-                fenshencl,
-                nian,
-                yue
-            from
-                baobiao_alarmmonthreport
-            where 1=1
-                and nian = #{year}
-            )c on a.qiyeid = c.cid
-        where 1=1
-        <if test="areaName != null and areaName != '' ">
-            and a.areaname = #{areaName}
-        </if>
-        GROUP BY
-            a.zhengfuname,
-            a.zhengfuid,
-            a.areaname,
-            c.yue
+        a.areaname,
+        c.yue
     </select>
 
 
@@ -380,47 +380,57 @@
                     else concat(ROUND((IFNULL(sum(c.zhudongbjcl),0)*1.0)/IFNULL(sum(c.zhudongbj),0)*100,2),'%')
             end as zhudongbjchulilv
         from(
+<!--            select-->
+<!--                DISTINCT-->
+<!--                b.dept_id as qiyeid,-->
+<!--                b.dept_name as qiyemingcheng,-->
+<!--                b.jigouleixing,-->
+<!--                b.province,-->
+<!--                b.city,-->
+<!--                b.country,-->
+<!--                a.dept_name as zhengfuname,-->
+<!--                a.dept_id as zhengfuid,-->
+<!--                case-->
+<!--                when IFNULL(a.country,'') != '' then a.country-->
+<!--                when IFNULL(a.city,'') != '' and IFNULL(a.country,'') = '' then a.city-->
+<!--                when IFNULL(a.province,'') != '' and IFNULL(a.city,'') = '' and IFNULL(a.country,'') = '' then a.province-->
+<!--                end as areaname-->
+<!--            from (-->
+<!--                select-->
+<!--                    a.id as dept_id,a.parent_id,a.dept_name,tree_code,province,city,country-->
+<!--                from-->
+<!--                    blade_dept a,anbiao_organization b-->
+<!--                where a.id = b.dept_id-->
+<!--                    and jigouleixing in('xianZF','shiZF','shengZF')-->
+<!--                    and b.isdelete = 0-->
+<!--                <if test="deptId != null and deptId != '' ">-->
+<!--                    and (a.parent_id = #{deptId} or a.id = #{deptId})-->
+<!--                </if>-->
+<!--                <if test="xiaJiDeptId != null and xiaJiDeptId != '' ">-->
+<!--                    and a.id = #{xiaJiDeptId}-->
+<!--                </if>-->
+<!--                )a-->
+<!--            inner join(-->
+<!--                select-->
+<!--                    dept_id,dept_name,jigouleixing,province,city,country-->
+<!--                from-->
+<!--                    anbiao_organization-->
+<!--                where 1=1-->
+<!--                    and jigouleixing in ('qiye','geti')-->
+<!--                    and isdelete = 0-->
+<!--                )b on a.dept_id in(b.province,b.city,b.country)-->
+<!--            where 1=1-->
+<!--                and b.province is not null-->
             select
-                DISTINCT
-                b.dept_id as qiyeid,
-                b.dept_name as qiyemingcheng,
-                b.jigouleixing,
-                b.province,
-                b.city,
-                b.country,
-                a.dept_name as zhengfuname,
-                a.dept_id as zhengfuid,
-                case
-                when IFNULL(a.country,'') != '' then a.country
-                when IFNULL(a.city,'') != '' and IFNULL(a.country,'') = '' then a.city
-                when IFNULL(a.province,'') != '' and IFNULL(a.city,'') = '' and IFNULL(a.country,'') = '' then a.province
-                end as areaname
-            from (
-                select
-                    a.id as dept_id,a.parent_id,a.dept_name,tree_code,province,city,country
-                from
-                    blade_dept a,anbiao_organization b
-                where a.id = b.dept_id
-                    and jigouleixing in('xianZF','shiZF','shengZF')
-                    and b.isdelete = 0
-                <if test="deptId != null and deptId != '' ">
-                    and a.parent_id = #{deptId}
-                </if>
-                <if test="xiaJiDeptId != null and xiaJiDeptId != '' ">
-                    and a.id = #{xiaJiDeptId}
-                </if>
-                )a
-            inner join(
-                select
-                    dept_id,dept_name,jigouleixing,province,city,country
-                from
-                    anbiao_organization
-                where 1=1
-                    and jigouleixing in ('qiye','geti')
-                    and isdelete = 0
-                )b on a.dept_id in(b.province,b.city,b.country)
-            where 1=1
-                and b.province is not null
+                qiyeid,qiyemingcheng,yunguanmingcheng as zhengfuname,yunguanid as zhengfuid,areaname
+            from anbiao_zhengfu_qiye
+            where 1=1 and jigouleixing in ('qiye','geti')
+            <if test=" (deptId != null and deptId != '') and ( xiaJiDeptId == null or xiaJiDeptId == '' ) ">
+                and (city = #{deptId} or province = #{deptId})
+            </if>
+            <if test="xiaJiDeptId != null and xiaJiDeptId != '' ">
+                and country = #{xiaJiDeptId}
+            </if>
             )a
         left join(
             select

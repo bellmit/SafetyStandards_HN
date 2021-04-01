@@ -139,7 +139,7 @@
 
     <!--  其他字典   -->
     <select id="OtherTree" resultMap="dictVOResultMap">
-        select id,parent_id,`code`,dict_key,dict_value,case when (select COUNT(1) from blade_dict where parent_id = a.id ) &gt; 0 then 1 else 0 end as childrens from blade_dict as a
+        select id,parent_id,`code`,dict_key,dict_value,case when (select COUNT(1) from blade_dict where parent_id = a.id ) &gt; 0 then 1 else 0 end as childrens from blade_dict
         where 1=1
         <if test=" type == '其他' ">
             and code != 'DiQu'
@@ -148,10 +148,9 @@
         </if>
 
         <if test=" type == '地区' ">
-            and id in (
-                select id from blade_dict
-                where code = 'DiQu'
-                    and dict_key = -1
+            and parent_id in (
+            select id from blade_dict
+            where code = 'DiQu'
             )
         </if>
 

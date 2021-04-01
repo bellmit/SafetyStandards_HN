@@ -30,7 +30,7 @@ import java.util.Date;
 /**
  * User Feign接口类
  *
- * @author Chill
+ * @author hyp
  */
 @FeignClient(
 	value = AppConstant.APPLICATION_USER_NAME,

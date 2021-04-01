@@ -29,7 +29,7 @@ import java.time.LocalDateTime;
 /**
  * 应急预案-修订完善记录 实体类
  *
- * @author elvis.he
+ * @author hyp
  * @since 2019-04-25
  */
 @Data

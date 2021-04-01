@@ -43,7 +43,6 @@ import org.springblade.system.user.entity.User;
 import org.springblade.system.user.feign.IUserFiegn;
 import org.springblade.system.vo.DeptSubVO;
 import org.springblade.system.vo.DeptVO;
-import org.springblade.system.vo.DictVO;
 import org.springblade.system.vo.MenuVO;
 import org.springblade.system.wrapper.DeptWrapper;
 import org.springblade.upload.upload.feign.IFileUploadClient;
@@ -58,8 +57,6 @@ import java.util.Map;
 
 /**
  * 控制器
- *
- * @author Chill
  */
 @RestController
 @AllArgsConstructor
@@ -752,6 +749,13 @@ public class DeptController extends BladeController {
 	public R<List<DeptSubVO>> getDeptById(@ApiParam(value = "deptId(市/县父级id)") @RequestParam Integer deptId,@ApiParam(value = "type(0省1市2县)", required = true) @RequestParam Integer type,
 										  @ApiParam(value = "remark(0省市县1运管，默认0)") @RequestParam Integer remark) {
 		List<DeptSubVO> list = deptService.getDeptById(deptId,type,remark);
+		return R.data(list);
+	}
+
+	@GetMapping("/getByIdDeptList")
+	@ApiOperation(value = "根据企业ID获取下级所有企业信息", notes = "传deptId", position = 25)
+	public R<List<Dept>> getByIdDeptList(@ApiParam(value = "deptId") @RequestParam Integer deptId) {
+		List<Dept> list = deptService.QiYeList(deptId);
 		return R.data(list);
 	}
 

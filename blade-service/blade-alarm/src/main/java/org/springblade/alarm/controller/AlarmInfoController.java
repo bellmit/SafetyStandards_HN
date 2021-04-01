@@ -24,10 +24,9 @@ import lombok.AllArgsConstructor;
 import org.springblade.alarm.entity.*;
 import org.springblade.alarm.page.*;
 import org.springblade.alarm.service.*;
-import org.springblade.alarm.vo.AlarmsummaryCutofftimeVO;
-import org.springblade.alarm.vo.DriverbehaviorVO;
-import org.springblade.alarm.vo.NotlocatedetailVO;
-import org.springblade.alarm.vo.OfflinedetailVO;
+import org.springblade.alarm.vo.*;
+import org.springblade.anbiao.qiyeshouye.entity.QiYeTongJi;
+import org.springblade.anbiao.qiyeshouye.page.QiYeTongJiPage;
 import org.springblade.common.tool.GpsToBaiduUtil;
 import org.springblade.core.log.annotation.ApiLog;
 import org.springblade.core.secure.BladeUser;
@@ -74,7 +73,7 @@ public class AlarmInfoController {
 
     @PostMapping("/list")
 	@ApiLog("分页查询-GPS报警")
-    @ApiOperation(value = "分页查询-GPS报警", notes = "传入AlarmPage", position = 1)
+    @ApiOperation(value = "分页查询-GPS报警", notes = "传入AlarmPage", position = 2)
     public R<AlarmPage<AlarmsummaryCutofftimeVO>> list(@RequestBody AlarmPage alarmPage) {
 		if("chaoSuBiShow".equals(alarmPage.getOrderColumn())){
 
@@ -89,7 +88,7 @@ public class AlarmInfoController {
 
     @PostMapping("/detail")
 	@ApiLog("详情-GPS报警")
-    @ApiOperation(value = "详情-GPS报警", notes = "传入报警id", position = 2)
+    @ApiOperation(value = "详情-GPS报警", notes = "传入报警id", position = 3)
     public R<AlarmsummaryCutofftimeVO> detail(@RequestParam String id) {
         AlarmsummaryCutofftimeVO vo = cutofftimeService.selectAlarmDetail(id);
         if("".equals(vo.getFujian()) && vo.getFujian()!=null){
@@ -100,7 +99,7 @@ public class AlarmInfoController {
 
     @PostMapping("/driverAlarmList")
 	@ApiLog("分页查询-驾驶员行为报警")
-    @ApiOperation(value = "分页查询-驾驶员行为报警", notes = "传入DriverAlarmPage", position = 3)
+    @ApiOperation(value = "分页查询-驾驶员行为报警", notes = "传入DriverAlarmPage", position = 4)
     public R<DriverAlarmPage<DriverbehaviorVO>> driverAlarmList(@RequestBody DriverAlarmPage driverAlarmPage) {
 		if("chaoSuBiShow".equals(driverAlarmPage.getOrderColumn())){
 
@@ -115,7 +114,7 @@ public class AlarmInfoController {
 
     @PostMapping("/driverAlarmDetail")
 	@ApiLog("详情-驾驶员行为报警")
-    @ApiOperation(value = "详情-驾驶员行为报警", notes = "传入报警id", position = 4)
+    @ApiOperation(value = "详情-驾驶员行为报警", notes = "传入报警id", position = 5)
     public R<DriverbehaviorVO> driverAlarmDetail(@RequestParam String id) {
         DriverbehaviorVO vo = driverbehaviorService.selectAlarmDetail(id);
         if("".equals(vo.getFujian()) && vo.getFujian()!=null){
@@ -126,7 +125,7 @@ public class AlarmInfoController {
 
     @PostMapping("/buzaixianlist")
 	@ApiLog("分页查询-24小时不在线")
-    @ApiOperation(value = "分页查询-24小时不在线", notes = "传入offlinePage", position = 5)
+    @ApiOperation(value = "分页查询-24小时不在线", notes = "传入offlinePage", position = 6)
     public R<OfflinePage<OfflinedetailVO>> buzaixianlist(@RequestBody OfflinePage offlinePage) {
         OfflinePage pages = offlinedetailService.selectAlarmPage(offlinePage);
         return R.data(pages);
@@ -134,7 +133,7 @@ public class AlarmInfoController {
 
     @PostMapping("/budingweilist")
 	@ApiLog("分页查询-24小时不定位")
-    @ApiOperation(value = "分页查询-24小时不定位", notes = "传入notlocatePage", position = 6)
+    @ApiOperation(value = "分页查询-24小时不定位", notes = "传入notlocatePage", position = 7)
     public R<NotlocatePage<NotlocatedetailVO>> budingweilist(@RequestBody NotlocatePage notlocatePage) {
         NotlocatePage pages = notlocatedetailService.selectAlarmPage(notlocatePage);
         return R.data(pages);
@@ -219,7 +218,7 @@ public class AlarmInfoController {
 ////		String company=dept.getDeptName();
 ////		DateTime yesterday = DateUtil.yesterday();
 ////		String cutoffTime=yesterday.toString();
-////		Integer updateribao = alarmhandleresultService.updateribao(cutoffTime, company, deptId);
+//		Integer updateribao = alarmhandleresultService.updateribao(cutoffTime, company, deptId);
 //
 //		if (delnum && addnum) {
 //            msg = "更新成功";
@@ -237,7 +236,7 @@ public class AlarmInfoController {
 	 */
 	@PostMapping("/insertChuli")
 	@ApiLog("新增-报警处理记录")
-	@ApiOperation(value = "新增-报警处理记录", notes = "传入alarmResult", position = 7)
+	@ApiOperation(value = "新增-报警处理记录", notes = "传入alarmResult", position = 8)
 	public R insertChuli(
 		@ApiParam(value = "报警id（传入多个报警ID需以英文逗号隔开）", required = true) String ids,
 		@ApiParam(value = "报警类型", required = true) String alarmType,
@@ -446,7 +445,7 @@ public class AlarmInfoController {
 
     @PostMapping("/selectBJDetail")
     @ApiLog("报警详情")
-    @ApiOperation(value="报警详情",notes="传入报警id",position=13)
+    @ApiOperation(value="报警详情",notes="传入报警id",position=9)
     public R selectBJDetail(String baojingid,String type){
         if("1".equals(type)){
             AlarmsummaryCutofftimeVO page=cutofftimeService.selectAlarmDetail(baojingid);
@@ -464,7 +463,7 @@ public class AlarmInfoController {
 
     @PostMapping("/shishiBaojingTongji")
 	@ApiLog("统计-实时报警")
-    @ApiOperation(value = "统计-实时报警", notes = "传入shishiBaojingTongjiPage", position = 8)
+    @ApiOperation(value = "统计-实时报警", notes = "传入shishiBaojingTongjiPage", position = 10)
     public R shishiBaojingTongji(@RequestBody ShishiBaojingTongjiPage shishiBaojingTongjiPage) {
         Map<String, Object> baojingtongji = new HashMap<>();
 
@@ -481,7 +480,7 @@ public class AlarmInfoController {
 
     @PostMapping("/chaosu")
 	@ApiLog("超速报警-处理统计")
-    @ApiOperation(value = "超速报警-处理统计", notes = "传入AlarmvehPage ", position = 9)
+    @ApiOperation(value = "超速报警-处理统计", notes = "传入AlarmvehPage ", position = 11)
     public R chaosu(@RequestBody AlarmvehPage alarmvehPage) {
         AlarmvehPage alarmvehPage1 = iAlarmvehdailyreportService.chaosu(alarmvehPage);
         return R.data(alarmvehPage1);
@@ -489,21 +488,21 @@ public class AlarmInfoController {
 
     @PostMapping("/pilao")
 	@ApiLog("疲劳报警-处理统计")
-    @ApiOperation(value = "疲劳报警-处理统计", notes = "传入AlarmvehPage", position = 10)
+    @ApiOperation(value = "疲劳报警-处理统计", notes = "传入AlarmvehPage", position = 12)
     public R pilao(@RequestBody AlarmvehPage alarmvehPage) {
         return R.data(iAlarmvehdailyreportService.pilao(alarmvehPage));
     }
 
     @PostMapping("/zhudonganquan")
 	@ApiLog("主动安全-处理统计")
-    @ApiOperation(value = "主动安全-处理统计", notes = "传入AlarmvehPage ", position = 11)
+    @ApiOperation(value = "主动安全-处理统计", notes = "传入AlarmvehPage ", position = 13)
     public R zhudonganquan(@RequestBody AlarmvehPage alarmvehPage) {
         return R.data(iAlarmvehdailyreportService.zhudonganquan(alarmvehPage));
     }
 
     @PostMapping("/licheng")
 	@ApiLog("里程-日行驶")
-    @ApiOperation(value = "里程-日行驶", notes = "传入AlarmvehPage ", position = 12)
+    @ApiOperation(value = "里程-日行驶", notes = "传入AlarmvehPage ", position = 14)
     public R licheng(@RequestBody VehdailyreportPage vehdailyreportPage) {
         return R.data(iVehdailyreportService.selectall(vehdailyreportPage));
     }
@@ -519,7 +518,7 @@ public class AlarmInfoController {
 	 */
 	@PostMapping("/insertShenshu")
 	@ApiLog("新增-申述记录")
-	@ApiOperation(value = "Add-新增申述记录", notes = "传入alarmResult", position = 7)
+	@ApiOperation(value = "Add-新增申述记录", notes = "传入alarmResult", position = 15)
 	public R insertShenshu(@ApiParam(value = "ids串", required = true) String ids, @ApiParam(value = "报警类型", required = true) String alarmType, @ApiParam(value = "处理形式", required = true) String chulixingshi, @ApiParam(value = "处理描述") String chulimiaoshu, @ApiParam(value = "附件") String fujian,
 						 BladeUser bladeUser,String deptId) {
 //		Dept dept = sysClient.selectByJGBM("机构", bladeUser.getRoleId());
@@ -583,50 +582,51 @@ public class AlarmInfoController {
 		}
 		return R.fail(code, msg);
 	}
+
 	@GetMapping("/alarmDay")
 	@ApiLog("gps今日报警")
-	@ApiOperation(value = "gps-今日报警", notes = "传入 company 企业名称 AlarmType 报警类型", position = 12)
+	@ApiOperation(value = "gps-今日报警", notes = "传入 company 企业名称 AlarmType 报警类型", position = 16)
 	public R licheng(@ApiParam(value = "企业名称", required = true)  @RequestParam String company,@ApiParam(value = "报警类型", required = true)  @RequestParam String AlarmType) {
 		List<AlarmsummaryCutofftimeVO> alarmDays = cutofftimeService.alarmDay(company, AlarmType);
 		return R.data(alarmDays);
 	}
+
 	@GetMapping("/zhudongDay")
 	@ApiLog("主动防御报警")
-	@ApiOperation(value = "主动防御-报警", notes = "传入 company 企业名称 AlarmType 报警类型", position = 12)
+	@ApiOperation(value = "主动防御-报警", notes = "传入 company 企业名称 AlarmType 报警类型", position = 17)
 	public R zhudongDay(@ApiParam(value = "企业名称", required = true)  @RequestParam String company,@ApiParam(value = "报警类型", required = true)  @RequestParam String AlarmType){
 		List<DriverbehaviorVO> zhudongDay = driverbehaviorService.zhudongDay(company, AlarmType);
-
 		return  R.data(zhudongDay);
 	}
+
 	@GetMapping("/alarmweichuli")
 	@ApiLog("未处理报警")
-	@ApiOperation(value = "未处理-报警", notes = "传入 company 企业名称", position = 12)
-	public R zhudongDay(@ApiParam(value = "企业名称", required = true)  @RequestParam String company){
-
-		List<AlarmWeichuliType> weichulitongji = alarmhandleresultService.weichulitongji(company);
-				if(weichulitongji==null || weichulitongji.size()==0){
-					return  R.data("");
-				}
+	@ApiOperation(value = "未处理-报警", notes = "传入 company 企业名称", position = 18)
+	public R zhudongDay(@ApiParam(value = "企业名称", required = true)  @RequestParam Integer deptId){
+		List<AlarmWeichuliType> weichulitongji = alarmhandleresultService.weichulitongji(deptId);
+		if(weichulitongji==null || weichulitongji.size()==0){
+			return  R.data("");
+		}
 		return  R.data(weichulitongji);
 	}
 
     @PostMapping("/listMG")
     @ApiLog("分页查询-GPS报警倒查MG")
-    @ApiOperation(value = "分页查询-GPS报警MG", notes = "传入AlarmPage", position = 1)
+    @ApiOperation(value = "分页查询-GPS报警MG", notes = "传入AlarmPage", position = 19)
     public R<AlarmPage<AlarmsummaryCutofftimeMG>> listMG(@RequestBody AlarmPage alarmPage) {
         AlarmPage pages = cutofftimeService.selectAlarmMGPage(alarmPage);
         return R.data(pages);
     }
 	@PostMapping("/driverAlarmListMG")
 	@ApiLog("分页查询-驾驶员行为报警倒查MG")
-	@ApiOperation(value = "分页查询-驾驶员行为报警MG", notes = "传入DriverAlarmPage", position = 3)
+	@ApiOperation(value = "分页查询-驾驶员行为报警MG", notes = "传入DriverAlarmPage", position = 20)
 	public R<DriverAlarmPage<DriverbehaviorMG>> driverAlarmLisMG(@RequestBody DriverAlarmPage driverAlarmPage) {
 		DriverAlarmPage pages = driverbehaviorService.selectdriverbehaviorPage(driverAlarmPage);
 		return R.data(pages);
 	}
 	@PostMapping("/AlarmTimeData")
 	@ApiLog("报警信息接口-时间段报警信息")
-	@ApiOperation(value = "报警信息-时间段报警信息", notes = "传入DriverAlarmPage", position = 3)
+	@ApiOperation(value = "报警信息-时间段报警信息", notes = "传入DriverAlarmPage", position = 21)
 	public R alarmTimeData(@RequestBody AlarmTimePage alarmTimePage) {
 		Map<String,Object> map=new HashMap<>();
 		//车辆报警
@@ -652,6 +652,33 @@ public class AlarmInfoController {
 		return  R.data(map);
 	}
 
+	@PostMapping(value = "/UpdateStatementProcessRate")
+	@ApiLog("企业报告-更新报告处理率")
+	@ApiOperation(value = "企业报告-更新报告处理率", notes = "传入相关参数（beginTime,endTime,company,property）",position = 22)
+	public R UpdateStatementProcessRate(String beginTime,String endTime,String company,String property) {
+		R rs = new R();
+		List<AlarmsummaryCutofftimeVO> alarmsummaryVO = cutofftimeService.selectAlarmLv(beginTime, endTime, company);
+		if(alarmsummaryVO.size() > 0) {
+			for (int i = 0;i < alarmsummaryVO.size();i++){
+				String processRate = alarmsummaryVO.get(i).getChulilv();
+				if(alarmsummaryVO.get(i).getBaojingcishu() == 0){
+					processRate = "100%";
+				}
+				String deptId = alarmsummaryVO.get(i).getDeptId();
+				String countdate = alarmsummaryVO.get(i).getDateShow();
+				boolean is = cutofftimeService.updateBaoBiaoMuLu(processRate,deptId,property,countdate);
+				if (is == true){
+					rs.setSuccess(true);
+					rs.setCode(200);
+					rs.setMsg("更新"+beginTime+"至"+endTime+"处理率成功");
+				}
+			}
+		}else{
+			rs.setMsg("无该企业数据");
+			return rs;
+		}
+		return rs;
+	}
 
 
 }

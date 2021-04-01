@@ -47,9 +47,9 @@ public class AlarmdangerousServiceImpl extends ServiceImpl<AlarmdangerousMapper,
 	private AlarmdangerousMapper alarmdangerousMapper;
 
 	@Override
-	public Map<String, Object> yanzhongCount(String beginTime, String endTime, String company) {
+	public Map<String, Object> yanzhongCount(String beginTime, String endTime, Integer deptId) {
 		//gps严重报警
-		List<AlarmWeichuliType> alarm = alarmdangerousMapper.GpsCount(beginTime, endTime, company);
+		List<AlarmWeichuliType> alarm = alarmdangerousMapper.GpsCount(beginTime, endTime, deptId);
 		//判断类型
 		int index = 0; //记录 不在线 无数据报警总数
 		Iterator<AlarmWeichuliType> it = alarm.iterator();
@@ -85,7 +85,7 @@ public class AlarmdangerousServiceImpl extends ServiceImpl<AlarmdangerousMapper,
 
 		}
 		//主动防御严重报警
-		List<AlarmWeichuliType> driver = alarmdangerousMapper.zhudongCount(beginTime, endTime, company);
+		List<AlarmWeichuliType> driver = alarmdangerousMapper.zhudongCount(beginTime, endTime, deptId);
 		AlarmDangerZhudongCount driverlist=new AlarmDangerZhudongCount();
 		for(AlarmWeichuliType a:driver){
 			String alarmtype=a.getAlarmType();

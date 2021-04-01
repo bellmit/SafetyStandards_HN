@@ -77,7 +77,7 @@ public interface IMubanService extends IService<Muban> {
 
 	/**
 	 *初始化安标基础资料模板配置同步
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/7/20 17:18
 	 * @param deptId
 	 * @return: org.springblade.core.tool.api.R

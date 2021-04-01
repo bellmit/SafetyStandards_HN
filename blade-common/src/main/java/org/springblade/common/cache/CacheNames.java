@@ -18,7 +18,7 @@ package org.springblade.common.cache;
 /**
  * 缓存名
  *
- * @author Chill
+ * @author hyp
  */
 public interface CacheNames {
 

@@ -25,7 +25,7 @@ import org.springblade.system.vo.RoleMenuVO;
 /**
  * 包装类,返回视图层所需的字段
  *
- * @author Chill
+ * @author hyp
  */
 @AllArgsConstructor
 public class RoleMenuWrapper extends BaseEntityWrapper<RoleMenu, RoleMenuVO> {

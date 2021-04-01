@@ -6,7 +6,7 @@ import java.net.*;
 /**
  * 接口调用工具类
  *
- * @author elvis.he
+ * @author hyp
  */
 public class InterfaceUtil {
 

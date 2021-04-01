@@ -22,7 +22,7 @@ import org.springblade.alarm.page.NotlocatePage;
 /**
  * 24小时不定位 服务类
  *
- * @author elvis.he
+ * @author hyp
  * @since 2019-05-11
  */
 public interface INotlocatedetailService extends IService<Notlocatedetail> {

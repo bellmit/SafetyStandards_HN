@@ -23,7 +23,7 @@ import org.springblade.anbiao.yingjijiuyuan.vo.YingjiyanlianVO;
 /**
  * 应急演练 服务类
  *
- * @author elvis.he
+ * @author hyp
  * @since 2019-04-28
  */
 public interface IYingjiyanlianService extends IService<Yingjiyanlian> {
@@ -48,7 +48,7 @@ public interface IYingjiyanlianService extends IService<Yingjiyanlian> {
      * 自定义 假删除
      *
      * @param id
-     * @author :elvis.he
+     * @author :hyp
      */
     boolean deleleYingjiyanlian(String id);
 }

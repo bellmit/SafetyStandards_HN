@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * 车辆 Mapper 接口
  *
- * @author :elvis.he
+ * @author :hyp
  */
 public interface VehicleMapper extends BaseMapper<Vehicle> {
 
@@ -156,5 +156,27 @@ public interface VehicleMapper extends BaseMapper<Vehicle> {
 	 */
 	List<VehicleGDSTJ> selectGDSMXVehiclePage(VehiclePage vehiclePage);
 	int	selectGDSMXVehicleTotal(VehiclePage vehiclePage);
+
+	/**
+	 * 根据企业ID获取当前企业所有车辆信息
+	 * @param deptId
+	 * @return
+	 */
+	List<Vehicle> vehileList(@Param("deptId") Integer deptId);
+
+	/**
+	 * 根据车辆ID修正车辆终端ID
+	 * @param zongduanid
+	 * @param caozuoren
+	 * @param caozuorenid
+	 * @param id
+	 * @return
+	 */
+	boolean updateVehicleZongDuanId(@Param("zongduanid") String zongduanid,
+									@Param("caozuoren") String caozuoren,
+									@Param("caozuorenid") String caozuorenid,
+									@Param("id") String id
+	);
+
 
 }

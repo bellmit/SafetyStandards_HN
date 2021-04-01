@@ -63,4 +63,19 @@ public interface JiaShiYuanMapper extends BaseMapper<JiaShiYuan> {
 	 */
 	List<JiaShiYuanVO> selectJVList(JiaShiYuanPage jiaShiYuanPage);
 	int selectJVTotal(JiaShiYuanPage jiaShiYuanPage);
+
+	/**
+	 * 根据企业ID获取驾驶员列表
+	 * @param deptId
+	 * @return
+	 */
+	List<JiaShiYuan> jiaShiYuanList(String deptId);
+
+	/**
+	 * 导入驾驶员基本信息
+	 * @param jiaShiYuan
+	 * @return
+	 */
+	boolean insertSelective(JiaShiYuan jiaShiYuan);
+
 }

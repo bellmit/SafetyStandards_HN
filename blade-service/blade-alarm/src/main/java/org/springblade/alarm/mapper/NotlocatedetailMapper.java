@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * Mapper 接口
  *
- * @author elvis.he
+ * @author hyp
  * @since 2019-05-11
  */
 public interface NotlocatedetailMapper extends BaseMapper<Notlocatedetail> {

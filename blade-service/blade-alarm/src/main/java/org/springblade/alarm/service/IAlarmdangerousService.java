@@ -33,7 +33,7 @@ import java.util.Map;
  */
 public interface IAlarmdangerousService extends IService<Alarmdangerous> {
 
-	Map<String,Object>  yanzhongCount( String beginTime,String endTime, String company);
+	Map<String,Object>  yanzhongCount( String beginTime,String endTime, Integer deptId);
 
 	/**
 	 * gps严重 车牌 报警 次数

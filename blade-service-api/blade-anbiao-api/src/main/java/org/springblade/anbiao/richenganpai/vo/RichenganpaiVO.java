@@ -43,13 +43,13 @@ public class RichenganpaiVO extends Richenganpai {
 	 * 剩余天数
 	 */
 	@ApiModelProperty(value = "剩余天数")
-	private  Integer shenyutianshu;
+	private Integer shenyutianshu=0;
 
 
 	/**
 	 * 超期天数
 	 */
 	@ApiModelProperty(value = "超期天数")
-	private  Integer chaoqitianshu;
+	private Integer chaoqitianshu=0;
 
 }

@@ -29,7 +29,7 @@ import java.util.Date;
 /**
  * 用户服务Feign实现类
  *
- * @author Chill
+ * @author hyp
  */
 @ApiIgnore
 @RestController

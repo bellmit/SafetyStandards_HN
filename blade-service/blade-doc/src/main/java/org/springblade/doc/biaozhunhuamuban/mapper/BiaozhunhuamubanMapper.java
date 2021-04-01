@@ -17,6 +17,7 @@ package org.springblade.doc.biaozhunhuamuban.mapper;
 
 import org.springblade.doc.biaozhunhuamuban.entity.BiaoZhunHua;
 import org.springblade.doc.biaozhunhuamuban.entity.Biaozhunhuamuban;
+import org.springblade.doc.biaozhunhuamuban.entity.BiaozhunhuamubanList;
 import org.springblade.doc.biaozhunhuamuban.page.BiaozhunhuamubanPage;
 import org.springblade.doc.biaozhunhuamuban.vo.BiaozhunhuamubanVO;
 import com.baomidou.mybatisplus.annotation.SqlParser;
@@ -216,5 +217,41 @@ public interface BiaozhunhuamubanMapper extends BaseMapper<Biaozhunhuamuban> {
 	boolean deleteSafetyProductionFile(@Param("caozuorenid") Integer caozuorenid,@Param("caozuoren") String caozuoren
 		,@Param("deptId") Integer deptId);
 
+	/**
+	 * 根据文件ID更新标准化文件相应数据（如分值、描述信息、报警等级等）
+	 * @param biaozhunhuamuban
+	 * @return
+	 */
+	boolean updateBiaozhunhuamuban(Biaozhunhuamuban biaozhunhuamuban);
+
+	/**
+	 * 根据企业ID获取相应标准化文件列表数据
+	 * @param deptId
+	 * @return
+	 */
+	@SqlParser(filter=true)
+//	List<BiaozhunhuamubanList> listTree(@Param("deptId") Integer deptId,@Param("fileProperty") Integer fileProperty,@Param("Id") Integer Id);
+	List<BiaozhunhuamubanList> listTree(@Param("deptId") Integer deptId, @Param("fileProperty") Integer fileProperty, @Param("Id") Integer Id, @Param("parentId") Integer parentId);
+	/**
+	 * 根据企业ID、标准化文件类型获取自评总分
+	 * @param deptId
+	 * @param fileProperty
+	 * @return
+	 */
+	BiaozhunhuamubanList getTreeScores(@Param("deptId") Integer deptId, @Param("fileProperty") Integer fileProperty);
+
+	/**
+	 * 根据企业ID获取安全标准化文件树
+	 * @param deptId
+	 * @return
+	 */
+	List<BiaozhunhuamubanVO> getListTree(@Param("deptId") String deptId, @Param("fileProperty") Integer fileProperty);
+
+	/**
+	 * 根据企业ID查询企业标准化文件类型
+	 * @param deptId
+	 * @return
+	 */
+	BiaozhunhuamubanVO getByDeptId(@Param("deptId") String deptId);
 
 }

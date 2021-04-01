@@ -51,7 +51,7 @@ public interface IPostMenuService extends IService<PostMenu> {
 
     /**
      *根据postIds获取所有postmenu
-     * @author: th
+     * @author: hyp
      * @date: 2019/10/24 16:26
      * @param postIds
      * @param type

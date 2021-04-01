@@ -21,6 +21,138 @@
         <result column="isdelete" property="isdelete"/>
     </resultMap>
 
+    <insert id="insertSelective" parameterType="org.springblade.anbiao.cheliangguanli.entity.Cheliangbaoxian" >
+        insert into anbiao_cheliangbaoxian
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+
+            <if test="id != null">
+                id,
+            </if>
+
+            <if test="deptId != null">
+                dept_id,
+            </if>
+
+            <if test="caozuoren != null">
+                caozuoren,
+            </if>
+
+            <if test="caozuorenid != null">
+                caozuorenid,
+            </if>
+
+            <if test="caozuoshijian != null">
+                caozuoshijian,
+            </if>
+
+            <if test="zibianhao != null">
+                zibianhao,
+            </if>
+
+            <if test="cheliangid != null">
+                cheliangid,
+            </if>
+
+            <if test="zhaopian != null">
+                zhaopian,
+            </if>
+
+            <if test="dengjiren != null">
+                dengjiren,
+            </if>
+
+            <if test="beibaoxianren != null">
+                beibaoxianren,
+            </if>
+
+            <if test="dengjishijian != null">
+                dengjishijian,
+            </if>
+
+            <if test="beizhu != null">
+                beizhu,
+            </if>
+
+            <if test="fujian != null">
+                fujian,
+            </if>
+
+            <if test="isdelete != null">
+                isdelete,
+            </if>
+
+            <if test="jiluren != null">
+                jiluren
+            </if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+
+            <if test="deptId != null">
+                #{deptId},
+            </if>
+
+            <if test="caozuoren != null">
+                #{caozuoren},
+            </if>
+
+            <if test="caozuorenid != null">
+                #{caozuorenid},
+            </if>
+
+            <if test="caozuoshijian != null">
+                #{caozuoshijian},
+            </if>
+
+            <if test="zibianhao != null">
+                #{zibianhao},
+            </if>
+
+            <if test="cheliangid != null">
+                #{cheliangid},
+            </if>
+
+            <if test="zhaopian != null">
+                #{zhaopian},
+            </if>
+
+            <if test="dengjiren != null">
+                #{dengjiren},
+            </if>
+
+
+            <if test="beibaoxianren != null">
+                #{beibaoxianren},
+            </if>
+
+            <if test="dengjishijian != null">
+                #{dengjishijian},
+            </if>
+
+            <if test="beizhu != null">
+                #{beizhu},
+            </if>
+
+            <if test="fujian != null">
+                #{fujian},
+            </if>
+
+            <if test="isdelete != null">
+                #{isdelete},
+            </if>
+
+            <if test="jiluren != null">
+                #{jiluren}
+            </if>
+
+
+
+        </trim>
+    </insert>
+
 
     <select id="selectCheliangbaoxianPage" resultMap="cheliangbaoxianResultMap">
         select * from anbiao_cheliangbaoxian where is_deleted = 0
@@ -32,14 +164,55 @@
 
     <sql id="tableSql">
         SELECT
-        a.*, b.dept_name as deptName, c.cheliangpaizhao as cheliangpaizhao, c.chepaiyanse as chepaiyanse
+            a.id,
+            a.dept_id as deptId,
+            b.dept_name as deptName,
+            a.caozuoren as baoxiancaozuoren,
+            a.caozuorenid as baoxiancaozuorenid,
+            a.caozuoshijian as baoxiancaozuoshijian,
+            a.zibianhao,
+            a.cheliangid,
+            a.zhaopian,
+            c.cheliangpaizhao as cheliangpaizhao,
+            c.chepaiyanse as chepaiyanse,
+            c.shiyongxingzhi,
+            a.createtime as baoxiancreatetime,
+            a.jiluren,
+            a.dengjiren,
+            a.beibaoxianren,
+            a.dengjishijian,
+            c.tuishishijian,
+            d.id as mingxiid,
+            d.toubaogongsi,
+            d.baoxiandanhao,
+            d.toubaoleixing,
+            d.goumaixiangmu,
+            d.goumaijine,
+            d.baofei,
+            d.qibaoshijian,
+            d.zhongbaoshijian,
+            d.chudanshijian,
+            d.lingquren,
+            d.lingqushijian,
+            d.zhengbenjieshouren,
+            d.zhengbenjiaojieshijian,
+            d.fapiaojiaojieshijian,
+            d.fapiaojieshouren,
+            d.beizhu as mingxibeizhu,
+            d.fujian as mingxifujian,
+            d.caozuoren as mingxicaozuoren,
+            d.caozuorenid as mingxicaozuorenid,
+            d.caozuoshijian as mingxicaozuoshijian,
+            d.isdelete as mingxiisdelete,
+            d.baoxianid,
+            d.createtime as mingxicreatetime
         FROM
-        anbiao_cheliangbaoxian a
-        inner join  (
-        <include refid="org.springblade.anbiao.guanlijigouherenyuan.mapper.OrganizationsMapper.getByDeptId"/>
-        ) b
-        on a.dept_id = b.id and a.isdelete = 0 and  b.is_deleted = 0
-        INNER JOIN anbiao_vehicle c on a.cheliangid = c.id
+            anbiao_cheliangbaoxian a
+            left join anbiao_baoxianxinxi d on a.id = d.baoxianid
+            inner join  (
+                <include refid="org.springblade.anbiao.guanlijigouherenyuan.mapper.OrganizationsMapper.getByDeptId"/>
+            ) b on a.dept_id = b.id and a.isdelete = 0 and  b.is_deleted = 0
+            INNER JOIN anbiao_vehicle c on a.cheliangid = c.id
 
         <if test="ids !=null and ids != ''and ids == '1'.toString()">
             and a.id in (
@@ -56,7 +229,7 @@
     <sql id="orderSql">
         <!-- 默认排序规则 -->
         <if test="orderColumn == null or orderColumn == ''">
-            order by caozuoshijian
+            order by baoxiancaozuoshijian
         </if>
         <if test="orderColumn != null and orderColumn != ''">
             order by ${orderColumn}

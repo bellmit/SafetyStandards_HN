@@ -21,7 +21,7 @@ import org.springblade.system.entity.RoleMenu;
 /**
  * 服务类
  *
- * @author Chill
+ * @author hyp
  */
 public interface IRoleMenuService extends IService<RoleMenu> {
 

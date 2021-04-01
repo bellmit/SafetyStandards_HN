@@ -28,7 +28,7 @@ import java.time.LocalDateTime;
 /**
  * 24小时不在线 实体类
  *
- * @author elvis.he
+ * @author hyp
  * @since 2019-05-11
  */
 @Data

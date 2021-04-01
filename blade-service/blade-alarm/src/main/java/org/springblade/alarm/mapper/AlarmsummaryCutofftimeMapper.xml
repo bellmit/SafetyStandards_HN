@@ -115,7 +115,7 @@
         a.plateNumber,
         a.plateNumber as plate,
         a.color,
-        a.company,
+        dept.dept_name as company,
         a.OperatType,
         a.EndSpeed,
         ROUND(ifnull(a.Distance,0)/1000,3) as Distance,
@@ -162,6 +162,7 @@
         IFNULL(convert((a.Distance/1000)/(a.KeepTime/3600),decimal(10,2)),0) as pingjunsudu
         FROM
         baobiao_alarmsummary_cutofftime AS a
+        left join anbiao_vehicle v on a.VehId = v.id
         <if test="deptId != 1 ">
             INNER JOIN ( SELECT DISTINCT
             xiaji.id,
@@ -174,10 +175,11 @@
             WHERE xiaji.tree_code LIKE CONCAT(shangji.tree_code,'%')
             AND xiaji.is_deleted = 0 AND xiaji.extend_type='机构'
             and shangji.id=#{deptId}
-            ) dept on a.company=dept.dept_name
+            ) dept on v.dept_id = dept.id
         </if>
         left JOIN baobiao_alarmhandleresult AS b ON a.AlarmReportID = b.baojingid  and ifnull(b.is_deleted,0) = 0
         where 1=1
+            and v.dept_id = dept.id
         <!-- 根据推送时间查询报警数据 -->
         <if test=" beginTime != null and beginTime != '' ">
             and cutoffTime &gt;= CONCAT( '${beginTime}', ' 00:00:00')
@@ -194,10 +196,10 @@
 
         <choose>
             <when test=" jigouName != null and jigouName != '' ">
-                and a.company like CONCAT(#{jigouName},'%')
+                and dept.dept_name like CONCAT(#{jigouName},'%')
             </when>
             <otherwise>
-                and a.company = #{deptName}
+                and dept.dept_name = #{deptName}
             </otherwise>
         </choose>
         <if test="chaosubi != null  ">
@@ -422,15 +424,26 @@
             t.*
         from (
             SELECT
+                b.chulizhuangtai,
                 b.chulixingshi,
                 b.chulimiaoshu,
+                b.chulirenid,
                 b.chuliren,
                 b.chulishijian,
                 b.fujian,
+                b.beizhu,
                 b.shensushenhebiaoshi,
                 b.shensushenheren,
                 b.shensushenheshijian,
-                b.shensushenheyijian
+                b.shensushenheyijian,
+                b.remark,
+                b.twicechulixingshi,
+                b.twicechulimiaoshu,
+                b.twicefujian,
+                b.twicechuliren,
+                b.twicechulishijian,
+                b.twicechulirenid,
+                b.endresult
             FROM
                 baobiao_alarmsummary_cutofftime AS a
                 left JOIN baobiao_alarmhandleresult AS b ON a.AlarmReportID = b.baojingid
@@ -702,6 +715,106 @@
                          AND cheliangpaizhao NOT LIKE '%挂'
 				         GROUP BY shiyongxingzhi
     </select>
+
+    <!--根据企业ID、报警时间区间获取该企业的报警处理率-->
+    <select id="selectAlarmLv" resultType="org.springblade.alarm.vo.AlarmsummaryCutofftimeVO">
+        select
+            a.id as deptId,
+            a.dept_name as company,
+            a.date as dateShow,
+            a.baojingcishu,
+            case
+                when IFNULL(baojingclcishu,0) = 0 or IFNULL(baojingcishu,0) = 0 then '0.00%'
+                when ROUND((baojingclcishu*1.0/baojingcishu)*100,2) = 100 then '100%'
+                else concat(ROUND((baojingclcishu*1.0/baojingcishu)*100,2),'%')
+            end as chulilv
+        from(
+            select
+                a.id,
+                a.dept_name,
+                t1.date,
+                ifnull(chaosu,0)+ifnull(pilao,0)+ifnull(yejian,0)+ifnull(wushuju,0)+ifnull(budingwei,0)
+                +ifnull(pilaoshipin,0)+ifnull(chouyan,0)+ifnull(dadianhua,0)+ifnull(fenshen,0) as 'baojingcishu',
+                ifnull(chaosucl,0)+ifnull(pilaocl,0)+ifnull(yejiancl,0)+ifnull(wushujucl,0)+ifnull(budingweicl,0)
+                +ifnull(pilaoshipincl,0)+ifnull(chouyancl,0)+ifnull(dadianhuacl,0)+ifnull(fenshencl,0) as 'baojingclcishu'
+            from
+                blade_dept a
+            left join(
+                select
+                    a.company,
+                    LEFT(a.CutoffTime,10) as date,
+                    COUNT(case when a.alarmType='超速报警' then 1 else null end) as chaosu,
+                    COUNT(case when a.alarmType='疲劳驾驶报警' then 1 else null end) as pilao,
+                    COUNT(case when a.alarmType='夜间行驶报警' then 1 else null end) as yejian,
+                    COUNT(case when a.alarmType='停驶违规报警' then 1 else null end) as tingshi,
+                    COUNT(case when a.alarmType='无数据报警' then 1 else null end) as wushuju,
+                    COUNT(case when a.alarmType='不定位报警' then 1 else null end) as budingwei,
+                    COUNT(case when a.alarmType='超速报警' and `status` = 1 then 1 else null end) as yanzhongchaosu1,
+                    COUNT(case when a.alarmType='超速报警' and `status` = 2 then 1 else null end) as yanzhongchaosu2,
+                    COUNT(case when a.alarmType='超速报警' and `status` = 3 then 1 else null end) as yanzhongchaosu3,
+                    COUNT(case when a.alarmType='疲劳驾驶报警' and `status` > 0 then 1 else null end) as yanzhongpilao,
+                    COUNT(case when a.alarmType='超速报警' and b.id is not null and b.chulizhuangtai=1 then 1 else null end) as chaosucl,
+                    COUNT(case when a.alarmType='疲劳驾驶报警' and b.id is not null and b.chulizhuangtai=1 then 1 else null end) as pilaocl,
+                    COUNT(case when a.alarmType='夜间行驶报警' and b.id is not null and b.chulizhuangtai=1 then 1 else null end) as yejiancl,
+                    COUNT(case when a.alarmType='停驶违规报警' and b.id is not null and b.chulizhuangtai=1 then 1 else null end) as tingshicl,
+                    COUNT(case when a.alarmType='无数据报警' and b.id is not null and b.chulizhuangtai=1 then 1 else null end) as wushujucl,
+                    COUNT(case when a.alarmType='不定位报警' and b.id is not null and b.chulizhuangtai=1 then 1 else null end) as budingweicl,
+                    COUNT(case when a.alarmType='超速报警' and `status` = 1 and b.id is not null and b.chulizhuangtai=1 then 1 else null end) as yanzhongchaosu1cl,
+                    COUNT(case when a.alarmType='超速报警' and `status` = 2 and b.id is not null and b.chulizhuangtai=1 then 1 else null end) as yanzhongchaosu2cl,
+                    COUNT(case when a.alarmType='超速报警' and `status` = 3 and b.id is not null and b.chulizhuangtai=1 then 1 else null end) as yanzhongchaosu3cl,
+                    COUNT(case when a.alarmType='疲劳驾驶报警' and `status` > 0 and b.id is not null and b.chulizhuangtai=1 then 1 else null end) as yanzhongpilaocl
+                from
+                    baobiao_alarmsummary_cutofftime a
+                LEFT JOIN baobiao_alarmhandleresult b on a.AlarmReportID = b.baojingid
+                    and (a.AlarmType=b.baojingleixing or b.baojingleixing = '异常车辆报警')
+                    and ifnull(b.is_deleted,0)=0
+                where 1 = 1
+                and Passed = 100
+                and a.AnalyzeMode = 1
+                and a.cutoffTime &gt;= CONCAT(#{beginTime},' 00:00:00')
+                and a.cutoffTime &lt; CONCAT(#{endTime},' 23:59:59')
+                and a.company = #{deptName}
+                group by
+                    a.company,
+                    LEFT(a.CutoffTime,10)
+                )t1 on a.dept_name = t1.company
+            left join (
+                select
+                    a.company,
+                    LEFT(a.GpsTime,10) as date,
+                    COUNT(case when a.alarmType='分神驾驶报警' then 1 else null end) as fenshen,
+                    COUNT(case when a.alarmType='生理疲劳报警' then 1 else null end) as pilaoshipin,
+                    COUNT(case when a.alarmType='抽烟报警' then 1 else null end) as chouyan,
+                    COUNT(case when a.alarmType='接打电话报警' then 1 else null end) as dadianhua,
+                    COUNT(case when a.alarmType='分神驾驶报警' and b.id is not null and b.chulizhuangtai=1 then 1 else null end) as fenshencl,
+                    COUNT(case when a.alarmType='生理疲劳报警' and b.id is not null and b.chulizhuangtai=1 then 1 else null end) as pilaoshipincl,
+                    COUNT(case when a.alarmType='抽烟报警' and b.id is not null and b.chulizhuangtai=1 then 1 else null end) as chouyancl,
+                    COUNT(case when a.alarmType='接打电话报警' and b.id is not null and b.chulizhuangtai=1 then 1 else null end) as dadianhuacl
+                from
+                    baobiao_driverbehavior a
+                LEFT JOIN baobiao_alarmhandleresult b on a.id = b.baojingid and a.AlarmType=b.baojingleixing
+                    and ifnull(b.is_deleted,0)=0
+                where 1 = 1 and a.StateEx = '核定报警'
+                    and a.GpsTime &gt;= CONCAT(#{beginTime},' 00:00:00')
+                    and a.GpsTime &lt; CONCAT(#{endTime},' 23:59:59')
+                    and a.company = #{deptName}
+                group by
+                    a.company,
+                    LEFT(a.GpsTime,10)
+                )t2 on a.dept_name = t2.company and t1.date = t2.date
+            where a.extend_type = '机构' and a.is_deleted = 0
+                and a.dept_name = #{deptName}
+            )a
+    </select>
+
+    <!--更新报表处理率 property 文件属性（1日报、2周报、3月报、4年报）-->
+    <update id="updateBaoBiaoMuLu">
+        update baobiao_baobiaomulu
+            set processRate = #{processRate},last_preview_time = now()
+        where dept_id = #{deptId}
+            and property = #{property}
+            and countdate >= #{countdate}
+    </update>
 
 
 </mapper>

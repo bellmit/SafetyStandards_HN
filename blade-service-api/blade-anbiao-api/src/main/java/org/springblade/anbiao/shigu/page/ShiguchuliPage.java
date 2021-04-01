@@ -11,8 +11,8 @@ import org.springblade.common.BasePage;
  * Program: SafetyStandards
  *
  * @description: ShiguchuliPage
- * @author: elvis.he
- * @create: 2019-04-29 09:00
+ * @author: hyp
+ * @create2021-04-29 09:00
  **/
 @Data
 @EqualsAndHashCode(callSuper = true)

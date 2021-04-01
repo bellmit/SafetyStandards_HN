@@ -23,10 +23,10 @@ import javax.validation.Valid;
 import java.util.List;
 
 /**
- * @author :elvis.he
+ * @author :hyp
  * @program : SafetyStandards
  * @description: GuanlizhiduController
- * @create : 2019-04-24 15:50
+ * @create 2021-04-24 15:50
  */
 @RestController
 @RequestMapping("/anbiao/guanlizhidu")
@@ -127,8 +127,8 @@ public class GuanlizhiduController {
      * @Description: 根据岗位id获取管理制度配置模块数据
      * @Param: [postId]
      * @return: org.springblade.core.tool.api.R<java.util.List < org.springblade.anbiao.falvfagui.entity.GuanlizhiduMap>>
-     * @Author: elvis.he
-     * @date : 2019-04-28
+     * @Author: hyp
+     * @date 2021-04-28
      */
     @GetMapping("/listMap")
 	@ApiLog("获取管理制度配置-企业管理制度")

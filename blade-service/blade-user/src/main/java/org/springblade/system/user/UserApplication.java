@@ -23,7 +23,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 /**
  * 用户启动器
  *
- * @author Chill
+ * @author hyp
  */
 @SpringCloudApplication
 @EnableFeignClients(AppConstant.BASE_PACKAGES)

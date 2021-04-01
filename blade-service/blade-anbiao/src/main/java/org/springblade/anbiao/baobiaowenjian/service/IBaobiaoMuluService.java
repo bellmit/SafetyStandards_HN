@@ -23,15 +23,15 @@ import org.springblade.anbiao.baobiaowenjian.vo.BaobiaoMuluVO;
 /**
  *  服务类
  *
- * @author elvis.he
+ * @author hyp
  * @since 2019-05-16
  */
 public interface IBaobiaoMuluService extends IService<BaobiaoMulu> {
 
 	/**
 	 *根据文件性质查询报告列表数据
-	 * @author : elvis.he
-	 * @since : 2019-05-18 11:04
+	 * @author : hyp
+	 * @since 2021-05-18 11:04
 	 * @param : baobiaoWenjianPage
 	 * @return:
 	 */

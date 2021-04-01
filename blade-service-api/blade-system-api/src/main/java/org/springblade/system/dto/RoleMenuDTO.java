@@ -22,7 +22,7 @@ import org.springblade.system.entity.RoleMenu;
 /**
  * 数据传输对象实体类
  *
- * @author Chill
+ * @author hyp
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

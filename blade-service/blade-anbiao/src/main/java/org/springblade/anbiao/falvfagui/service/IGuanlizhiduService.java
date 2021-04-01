@@ -7,7 +7,7 @@ import org.springblade.anbiao.falvfagui.vo.GuanlizhiduVO;
 
 /**
  * 管理制度自定义 接口
- * @author :elvis.he
+ * @author :hyp
  * */
 public interface IGuanlizhiduService extends IService<Guanlizhidu> {
 
@@ -28,7 +28,7 @@ public interface IGuanlizhiduService extends IService<Guanlizhidu> {
     /**
      * 自定义 假删除
      * @param  id
-     * @author :elvis.he
+     * @author :hyp
      * */
     boolean deleleGuanlizhidu(String id);
 

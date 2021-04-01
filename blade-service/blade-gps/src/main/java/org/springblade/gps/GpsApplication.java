@@ -22,7 +22,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 /**
  * gps数据模块服务启动器
  *
- * @author elvis.he
+ * @author hyp
  */
 @SpringCloudApplication
 @EnableFeignClients(AppConstant.BASE_PACKAGES)

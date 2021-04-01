@@ -9,7 +9,7 @@ import java.io.Serializable;
  * @program: SafetyStandards
  * @description:
  * @author: hyp
- * @create: 2019-05-17 10:24
+ * @create2021-05-17 10:24
  **/
 @Data
 public class FileObj implements Serializable {

@@ -60,8 +60,8 @@ public class FileParse {
 
 	/**
 	 *将模板中的doc文件转换成docx
-	 * @author: th
-	 * @CreateDate: 2019-05-15 0:51
+	 * @author: hyp
+	 * @CreateDate2021-05-15 0:51
 	 * @param list
 	 * @return: java.util.List<org.springblade.anbiao.Biaozhunhuamuban>
 	 */
@@ -92,7 +92,7 @@ public class FileParse {
 
 	/**
 	 *获取存入数据的路径
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/5/20 16:56
 	 * @param path 物理路径
 	 * @return: java.lang.String
@@ -103,7 +103,7 @@ public class FileParse {
 
 	/**
 	 *获取物理路径path
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/5/20 16:57
 	 * @param insertPath 存入路径
 	 * @return: java.lang.String
@@ -114,7 +114,7 @@ public class FileParse {
 
 	/**
 	 *物理路径转url
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/5/20 16:58
 	 * @param path
 	 * @return: java.lang.String
@@ -125,7 +125,7 @@ public class FileParse {
 
 	/**
 	 *入库路径转换为url
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/5/20 17:48
 	 * @param insertPath
 	 * @return: java.lang.Object
@@ -250,8 +250,8 @@ public class FileParse {
 
 	/**
 	 *批量生成正式文件，pdf，图片
-	 * @author: th
-	 * @CreateDate: 2019-05-15 20:07
+	 * @author: hyp
+	 * @CreateDate2021-05-15 20:07
 	 * @param list
 	 * @param deptName
 	 * @return: java.util.List<org.springblade.anbiao.Biaozhunhuawenjian>
@@ -318,8 +318,8 @@ public class FileParse {
 
 	/**
 	 *批量生成正式文件，pdf，图片
-	 * @author: th
-	 * @CreateDate: 2019-05-15 20:07
+	 * @author: hyp
+	 * @CreateDate2021-05-15 20:07
 	 * @param muban
 	 * @param map
 	 * @return: java.util.List<org.springblade.anbiao.Biaozhunhuawenjian>
@@ -377,7 +377,7 @@ public class FileParse {
 
 	/**
 	 *企业文件生成对应文件
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/7/5 13:04
 	 * @param parent
 	 * @return: void
@@ -417,7 +417,7 @@ public class FileParse {
 
 	/**
 	 *生产对应ABCD文档
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/8/2 12:12
 	 * @param parent
 	 * @return: void
@@ -459,7 +459,7 @@ public class FileParse {
 
 	/**
 	 *生产对应ABCD图片文档
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/8/2 12:12
 	 * @param map
 	 * @param parent
@@ -513,7 +513,7 @@ public class FileParse {
 
 	/**
 	 *标准化文件模板数据解析成企业数据
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/9/3 10:55
 	 * @param mubanList
 	 * @return: java.util.List<org.springblade.doc.biaozhunhuamuban.vo.BiaozhunhuamubanVO>

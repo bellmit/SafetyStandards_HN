@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * 事故报告调查处理-事故报告 Mapper 接口
  *
- * @author elvis.he
+ * @author hyp
  * @since 2019-04-28
  */
 public interface ShigubaogaoMapper extends BaseMapper<Shigubaogao> {

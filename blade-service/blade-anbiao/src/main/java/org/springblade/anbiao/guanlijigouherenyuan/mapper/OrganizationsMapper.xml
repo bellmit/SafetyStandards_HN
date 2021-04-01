@@ -71,8 +71,10 @@
     <update id="updateDel" parameterType="java.lang.String">
         UPDATE anbiao_organization SET isdelete = 1 where id = #{id}
     </update>
+
     <sql id="getByDeptId">
-        SELECT DISTINCT
+        SELECT
+            DISTINCT
             xiaji.id,
             xiaji.parent_id,
             xiaji.dept_name,
@@ -80,14 +82,12 @@
         FROM
             blade_dept shangji,
             blade_dept xiaji
-            WHERE xiaji.tree_code LIKE CONCAT(shangji.tree_code,'%')
+        WHERE xiaji.tree_code LIKE CONCAT(shangji.tree_code,'%')
             AND xiaji.is_deleted = 0 AND xiaji.extend_type='机构'
-            <if test="deptId != null">
-                and shangji.id=#{deptId}
-            </if>
-
+        <if test="deptId != null">
+            and shangji.id=#{deptId}
+        </if>
     </sql>
-
 
     <sql id="tableSql">
         SELECT
@@ -185,4 +185,364 @@
         where 1=1
             and a.renyuanid = #{Id}
     </select>
+
+    <select id="getZFQY" resultType="org.springblade.anbiao.guanlijigouherenyuan.vo.OrganizationsVO">
+        select
+            DISTINCT
+            *
+        from(
+            SELECT
+                ifnull(a.qiyeid,'') AS qiyeid,
+                ifnull(a.qiyemingcheng,'') AS qiyemingcheng,
+                ifnull(a.jigouleixing,'') AS jigouleixing,
+                ifnull(a.province,'') AS province,
+                ifnull(a.city,'') AS city,
+                ifnull(a.country,'') AS country,
+                ifnull(a.yunguanmingcheng,'') AS yunguanmingcheng,
+                ifnull(a.yunguanid,'') AS yunguanid,
+                ifnull(a.areaname,'') AS areaname
+            FROM(
+                SELECT
+                    DISTINCT
+                    b.dept_id AS qiyeid,
+                    b.dept_name AS qiyemingcheng,
+                    b.jigouleixing AS jigouleixing,
+                    b.province AS province,
+                    b.city AS city,
+                    b.country AS country,
+                    CASE
+                        WHEN ifnull(b.country, '') != '' THEN
+                        (
+                        SELECT
+                            dept_name
+                        FROM
+                            anbiao_organization
+                        WHERE dept_id = b.country
+                        )
+                    WHEN ifnull(b.country, '') = '' THEN
+                    (
+                    SELECT
+                    dept_name
+                    FROM
+                    anbiao_organization
+                    WHERE dept_id = b.city
+                    )
+                    ELSE
+                    (
+                    SELECT
+                    dept_name
+                    FROM
+                    anbiao_organization
+                    WHERE dept_id = b.province
+                    )
+                    END AS yunguanmingcheng,
+                    CASE
+                    WHEN ifnull(b.country, '') != '' THEN
+                    (
+                    SELECT
+                    dept_id
+                    FROM
+                    anbiao_organization
+                    WHERE dept_id = b.country
+                    )
+                    WHEN ifnull(b.country, '') = '' THEN
+                    (
+                    SELECT
+                    dept_id
+                    FROM
+                    anbiao_organization
+                    WHERE dept_id = b.city
+                    )
+                    ELSE
+                    (
+                    SELECT
+                    dept_id
+                    FROM
+                    anbiao_organization
+                    WHERE dept_id = b.province
+                    )
+                    END AS yunguanid,
+                    CASE
+                    WHEN ifnull(b.country, '') != '' THEN
+                    (
+                    SELECT
+                    country
+                    FROM
+                    anbiao_organization
+                    WHERE dept_id = b.country
+                    )
+                    WHEN ifnull(b.country, '') = '' THEN
+                    (
+                    SELECT
+                    city
+                    FROM
+                    anbiao_organization
+                    WHERE dept_id = b.city
+                    )
+                    ELSE
+                    (
+                    SELECT
+                    province
+                    FROM
+                    anbiao_organization
+                    WHERE dept_id = b.province
+                    )
+                    END AS areaname
+                FROM(
+                    SELECT
+                        a.id AS dept_id,
+                        a.parent_id AS parent_id,
+                        a.dept_name AS dept_name,
+                        a.tree_code AS tree_code,
+                        b.province AS province,
+                        b.city AS city,
+                        b.country AS country
+                    FROM
+                        blade.blade_dept a
+                    JOIN blade.anbiao_organization b
+                    WHERE a.id = b.dept_id
+                        AND b.jigouleixing IN ('xianZF', 'shiZF', 'shengZF')
+                        AND b.isdelete = 0
+                    ) a
+                JOIN (
+                    SELECT
+                        dept_id,
+                        dept_name,
+                        jigouleixing,
+                        province,
+                        city,
+                        country
+                    FROM
+                        anbiao_organization
+                    WHERE 1 = 1
+                        AND jigouleixing IN ('qiye', 'geti')
+                        AND isdelete = 0
+                        ) b ON a.dept_id IN (
+                        b.province,
+                        b.city,
+                        b.country
+                    )
+                WHERE 1 = 1
+                    AND (b.province IS NOT NULL)
+                ) a
+            WHERE (ifnull(a.areaname, '') != '')
+        union
+            select
+                b.id,b.dept_name,b.jigouleixing,
+                case
+                    when IFNULL(b.province,'') = '' and IFNULL(b.city,'') = '' and IFNULL(b.country,'') != '' then(
+                    select parent_id from blade_dept where id =(select parent_id from blade_dept where id = b.country)
+                    )
+                    when IFNULL(b.province,'') = '' and IFNULL(b.city,'') != '' then(
+                    select parent_id from blade_dept where id = b.city
+                    ) else b.province
+                end as province,
+                case
+                    when IFNULL(b.city,'') = '' and IFNULL(b.country,'') != '' then(
+                        select parent_id from blade_dept where id =(select parent_id from blade_dept where id = b.country)
+                    ) else b.city
+                end as city,
+                b.country,
+                CASE
+                    WHEN ifnull(b.country, '') != '' THEN
+                    (
+                    SELECT
+                        dept_name
+                    FROM
+                        anbiao_organization
+                    WHERE dept_id = b.country
+                    )
+                    WHEN ifnull(b.country, '') = '' and ifnull(b.city, '') != '' THEN
+                    (
+                    SELECT
+                    dept_name
+                    FROM
+                    anbiao_organization
+                    WHERE dept_id = b.city
+                    )
+                    ELSE
+                    (
+                    SELECT
+                    dept_name
+                    FROM
+                    anbiao_organization
+                    WHERE dept_id = b.province
+                    )
+                    END AS yunguanmingcheng,
+                    CASE
+                    WHEN ifnull(b.country, '') != '' THEN
+                    (
+                    SELECT
+                    dept_id
+                    FROM
+                    anbiao_organization
+                    WHERE dept_id = b.country
+                    )
+                    WHEN ifnull(b.country, '') = '' and ifnull(b.city, '') != '' THEN
+                    (
+                    SELECT
+                    dept_id
+                    FROM
+                    anbiao_organization
+                    WHERE dept_id = b.city
+                    )
+                    ELSE
+                    (
+                    SELECT
+                    dept_id
+                    FROM
+                    anbiao_organization
+                    WHERE dept_id = b.province
+                    )
+                    END AS yunguanid,
+                    b.areaname
+                from(
+                    select
+                    b.id,b.dept_name,b.jigouleixing,
+                    case when IFNULL(b.province,'') != '' and b.province like CONCAT('%','省','%') then (
+                    select dept_id from anbiao_organization where dept_id = b.id and b.jigouleixing = 'shengZF' )
+                    end as province,
+                    case when IFNULL(b.city,'') != '' and b.city like CONCAT('%','市','%') then (
+                    select dept_id from anbiao_organization where dept_id = b.id and b.jigouleixing = 'shiZF' )
+                    end as city,
+                    case when IFNULL(b.country,'') != '' and b.country like CONCAT('%','县','%') or b.country like CONCAT('%','区','%') or b.country like CONCAT('%','市','%') then (
+                    select dept_id from anbiao_organization where dept_id = b.id and b.jigouleixing = 'xianZF' )
+                    end as country,
+                    case when IFNULL(b.areaname,'') = '' and IFNULL(b.country,'') != '' then b.country
+                    when IFNULL(b.areaname,'') = '' and IFNULL(b.city,'') != '' and IFNULL(b.country,'') = '' then b.city
+                    when IFNULL(b.areaname,'') = '' and IFNULL(b.province,'') != '' and IFNULL(b.city,'') = '' then b.province
+                    end as areaname
+                    from
+                    anbiao_organization a,
+                    (
+                    select
+                    a.id,a.dept_name,b.jigouleixing,province,city,country,a.dept_name as yunguanmingcheng,a.parent_id as yunguanid,
+                    CASE
+                    WHEN ifnull(b.country, '') != '' THEN
+                    (
+                    SELECT
+                    country
+                    FROM
+                    anbiao_organization
+                    WHERE dept_id = b.country
+                    )
+                    WHEN ifnull(b.country, '') = '' THEN
+                    (
+                    SELECT
+                    city
+                    FROM
+                    anbiao_organization
+                    WHERE dept_id = b.city
+                    )
+                    ELSE
+                    (
+                    SELECT
+                    province
+                    FROM
+                    anbiao_organization
+                    WHERE dept_id = b.province
+                    )
+                    END AS areaname
+                    from
+                    blade_dept a,anbiao_organization b
+                    where a.id = b.dept_id
+                    and jigouleixing in('xianZF','shiZF','shengZF')
+                    and b.isdelete = 0
+                    and IFNULL(b.province,'') != ''
+                )b
+                where a.dept_id = b.id
+            )b
+        )a
+        ORDER BY areaname asc
+    </select>
+
+    <select id="getZFQYOrderById" resultType="org.springblade.anbiao.guanlijigouherenyuan.vo.OrganizationsVO">
+        select * from anbiao_zhengfu_qiye
+    </select>
+
+    <insert id="insertSelective" parameterType="org.springblade.anbiao.guanlijigouherenyuan.vo.OrganizationsVO" >
+        insert into anbiao_zhengfu_qiye
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="qiyeid != null">
+                qiyeid,
+            </if>
+
+            <if test="qiyemingcheng != null">
+                qiyemingcheng,
+            </if>
+
+            <if test="jigouleixing != null">
+                jigouleixing,
+            </if>
+
+            <if test="province != null">
+                province,
+            </if>
+
+            <if test="city != null">
+                city,
+            </if>
+
+            <if test="country != null">
+                country,
+            </if>
+
+            <if test="yunguanmingcheng != null">
+                yunguanmingcheng,
+            </if>
+
+            <if test="yunguanid != null">
+                yunguanid,
+            </if>
+
+            <if test="areaname != null">
+                areaname
+            </if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+
+            <if test="qiyeid != null">
+                #{qiyeid},
+            </if>
+
+            <if test="qiyemingcheng != null">
+                #{qiyemingcheng},
+            </if>
+
+            <if test="jigouleixing != null">
+                #{jigouleixing},
+            </if>
+
+            <if test="province != null">
+                #{province},
+            </if>
+
+            <if test="city != null">
+                #{city},
+            </if>
+
+            <if test="country != null">
+                #{country},
+            </if>
+
+            <if test="yunguanmingcheng != null">
+                #{yunguanmingcheng},
+            </if>
+
+            <if test="yunguanid != null">
+                #{yunguanid},
+            </if>
+
+            <if test="areaname != null">
+                #{areaname}
+            </if>
+
+        </trim>
+    </insert>
+
+
 </mapper>

@@ -137,8 +137,8 @@ public class YingjiduiwuController {
      * @Description: 根据单位id获取应急队伍配置模块数据
      * @Param: [postId]
      * @return: org.springblade.core.tool.api.R<java.util.List>
-     * @Author: elvis.he
-     * @Date: 2019-04-28
+     * @Author: hyp
+     * @Date2021-04-28
      */
     @GetMapping("/listMap")
 	@ApiLog("获取应急队伍配置-应急队伍")

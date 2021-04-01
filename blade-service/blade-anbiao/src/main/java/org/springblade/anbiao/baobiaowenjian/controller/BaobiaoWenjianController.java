@@ -77,6 +77,12 @@ public class BaobiaoWenjianController extends BladeController {
             countdate = DateScopeUtil.getFirstDayOfMonth(year, month);
             baobiaoWenjianPage.setCountDate(countdate);
         }
+		//排序条件
+		if(baobiaoWenjianPage.getOrderColumns()==null){
+			baobiaoWenjianPage.setOrderColumn("countenddate");
+		}else{
+			baobiaoWenjianPage.setOrderColumn(baobiaoWenjianPage.getOrderColumns());
+		}
         BaobiaoWenjianPage<BaobiaoMuluVO> list = baobiaoMuluService.selectBaogaoPage(baobiaoWenjianPage);
         return R.data(list);
     }

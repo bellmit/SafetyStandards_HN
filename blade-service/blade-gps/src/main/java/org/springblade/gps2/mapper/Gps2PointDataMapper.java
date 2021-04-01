@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * gps点位数据 Mapper 接口
  *
- * @author elvis.he
+ * @author hyp
  * @since 2019-05-17
  */
 public interface Gps2PointDataMapper extends BaseMapper<T> {

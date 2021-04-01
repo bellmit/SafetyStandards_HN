@@ -35,7 +35,7 @@ import java.util.List;
 /**
  * 系统服务Feign实现类
  *
- * @author Chill
+ * @author hyp
  */
 @ApiIgnore
 @RestController

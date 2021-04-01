@@ -27,7 +27,7 @@ import java.util.List;
 /**
  * 服务类
  *
- * @author Chill
+ * @author hyp
  */
 public interface IMenuService extends IService<Menu> {
 

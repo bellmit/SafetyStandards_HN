@@ -79,8 +79,14 @@ public class Biaozhunhuamuban implements Serializable {
 	 */
 	@ApiModelProperty(value = "所在层级")
 	private String tier;
+
+	@ApiModelProperty(value = "操作人ID")
 	private Integer caozuorenid;
+
+	@ApiModelProperty(value = "操作人")
 	private String caozuoren;
+
+	@ApiModelProperty(value = "操作时间")
 	private String caozuoshijian;
 
 	@ApiModelProperty(value = "是否删除")
@@ -95,7 +101,6 @@ public class Biaozhunhuamuban implements Serializable {
 
 	@ApiModelProperty(value = "文件所属人id")
 	private Integer fileSuoshurenId;
-
 
 	@ApiModelProperty(value = "文档编号")
 	private String documentNumber;
@@ -112,8 +117,16 @@ public class Biaozhunhuamuban implements Serializable {
 	@ApiModelProperty(value = "累计访问次数")
 	private Integer cumulativeVisits;
 
-
 	@ApiModelProperty(value = "最后访问时间")
 	private String lastPreviewTime;
+
+	@ApiModelProperty(value = "上传文件信息提示")
+	private String remark;
+
+	@ApiModelProperty(value = "分值")
+	private Integer score;
+
+	@ApiModelProperty(value = "星级")
+	private Integer starlevel;
 
 }

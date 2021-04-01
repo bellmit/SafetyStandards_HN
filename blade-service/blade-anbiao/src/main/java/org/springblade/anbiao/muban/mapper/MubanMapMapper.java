@@ -37,7 +37,7 @@ public interface MubanMapMapper {
 
 	/**
 	 *查询配置
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/7/23 11:16
 	 * @param deptId
 	 * @param table
@@ -48,7 +48,7 @@ public interface MubanMapMapper {
 
 	/**
 	 *批量插入mubanMap
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/7/23 12:25
 	 * @param mubanMapList
 	 * @return: int
@@ -57,7 +57,7 @@ public interface MubanMapMapper {
 
 	/**
 	 *清空
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/7/23 12:25
 	 * @param
 	 * @return: int

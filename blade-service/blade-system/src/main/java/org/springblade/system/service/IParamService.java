@@ -23,7 +23,7 @@ import org.springblade.system.vo.ParamVO;
 /**
  * 服务类
  *
- * @author Chill
+ * @author hyp
  */
 public interface IParamService extends BaseService<Param> {
 

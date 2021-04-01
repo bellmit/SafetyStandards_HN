@@ -45,4 +45,12 @@ public interface ICheliangbaoxianService extends IService<Cheliangbaoxian> {
 	 * @return
 	 */
 	CheliangbaoxianPage<CheliangbaoxianVO> selectPageList(CheliangbaoxianPage Page);
+
+	/**
+	 * 新增保险信息
+	 * @param cheliangbaoxian
+	 * @return
+	 */
+	boolean insertSelective(Cheliangbaoxian cheliangbaoxian);
+
 }

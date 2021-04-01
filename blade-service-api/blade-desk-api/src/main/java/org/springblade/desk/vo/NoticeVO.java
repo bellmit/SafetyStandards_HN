@@ -8,7 +8,7 @@ import org.springblade.desk.entity.Notice;
 /**
  * 通知公告视图类
  *
- * @author Chill
+ * @author hyp
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

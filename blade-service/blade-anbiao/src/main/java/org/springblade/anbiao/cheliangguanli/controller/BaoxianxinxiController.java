@@ -76,8 +76,13 @@ public class BaoxianxinxiController extends BladeController {
 	@ApiLog("新增-保险信息")
 	@ApiOperation(value = "新增-保险信息", notes = "传入baoxianxinxi", position = 3)
 	public R insert(@RequestBody Baoxianxinxi baoxianxinxi,BladeUser user) {
-		baoxianxinxi.setCaozuoren(user.getUserName());
-		baoxianxinxi.setCaozuorenid(user.getUserId());
+		if(user == null){
+			baoxianxinxi.setCaozuoren("管理员");
+			baoxianxinxi.setCaozuorenid(1);
+		}else{
+			baoxianxinxi.setCaozuoren(user.getUserName());
+			baoxianxinxi.setCaozuorenid(user.getUserId());
+		}
 		baoxianxinxi.setCaozuoshijian(DateUtil.now());
 		baoxianxinxi.setCreatetime(DateUtil.now());
 		if("".equals(baoxianxinxi.getQibaoshijian())){
@@ -107,8 +112,14 @@ public class BaoxianxinxiController extends BladeController {
 	@ApiLog("修改-保险信息")
 	@ApiOperation(value = "修改-保险信息", notes = "传入baoxianxinxi", position = 4)
 	public R update(@RequestBody Baoxianxinxi baoxianxinxi,BladeUser user) {
-		baoxianxinxi.setCaozuoren(user.getUserName());
-		baoxianxinxi.setCaozuorenid(user.getUserId());
+
+		if(user == null){
+			baoxianxinxi.setCaozuoren("管理员");
+			baoxianxinxi.setCaozuorenid(1);
+		}else{
+			baoxianxinxi.setCaozuoren(user.getUserName());
+			baoxianxinxi.setCaozuorenid(user.getUserId());
+		}
 		baoxianxinxi.setCaozuoshijian(DateUtil.now());
 		if("".equals(baoxianxinxi.getCreatetime())){
 			baoxianxinxi.setCreatetime(DateUtil.now());

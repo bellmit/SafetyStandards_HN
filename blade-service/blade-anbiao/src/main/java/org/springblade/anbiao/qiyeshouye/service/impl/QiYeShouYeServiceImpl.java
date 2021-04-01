@@ -9,8 +9,10 @@ package org.springblade.anbiao.qiyeshouye.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.AllArgsConstructor;
-import org.springblade.anbiao.qiyeshouye.entity.QiYeShouYe;
+import org.apache.ibatis.annotations.Param;
+import org.springblade.anbiao.qiyeshouye.entity.*;
 import org.springblade.anbiao.qiyeshouye.mapper.QiYeShouYeMapper;
+import org.springblade.anbiao.qiyeshouye.page.QiYeTpvehdataPage;
 import org.springblade.anbiao.qiyeshouye.service.IQiYeShouYeService;
 import org.springframework.stereotype.Service;
 
@@ -81,4 +83,55 @@ public class QiYeShouYeServiceImpl extends ServiceImpl<QiYeShouYeMapper, QiYeSho
 		qiYeShouYeList.setSevenList(qiYeShouYes);
 		return qiYeShouYeList;
 	}
+
+	@Override
+	public List<QiYeYunWeiShouYe> selectOperational(String deptId) {
+		return qiYeShouYeMapper.selectOperational(deptId);
+	}
+
+	@Override
+	public QiYeYunWeiShouYe selectMarkRemind(String deptId) {
+		return qiYeShouYeMapper.selectMarkRemind(deptId);
+	}
+
+	@Override
+	public QiYeYunWeiShouYe selectQiYeCount() {
+		return qiYeShouYeMapper.selectQiYeCount();
+	}
+
+	@Override
+	public QiYeYunWeiShouYe selectABQiYeCount() {
+		return qiYeShouYeMapper.selectABQiYeCount();
+	}
+
+	@Override
+	public List<QiYeAnBiao> selectScheduleReminders(String deptId, String dateTime) {
+		return qiYeShouYeMapper.selectScheduleReminders(deptId, dateTime);
+	}
+
+	@Override
+	public List<QiYeAnBiaoMuLu> selectQiYeAnBiaoMuLu(String deptId) {
+		return qiYeShouYeMapper.selectQiYeAnBiaoMuLu(deptId);
+	}
+
+	@Override
+	public QiYeAnBiaoPeriodRate selectPeriodControlRates(String deptId) {
+		return qiYeShouYeMapper.selectPeriodControlRates(deptId);
+	}
+
+	@Override
+	public List<QiYeAnBiaoSafetyTips> selectSafetyTips(String deptId) {
+		return qiYeShouYeMapper.selectSafetyTips(deptId);
+	}
+
+	@Override
+	public QiYeAnBiaoSafetyTips selectSafetyTipsZNum(String deptId, Integer xiangId) {
+		return qiYeShouYeMapper.selectSafetyTipsZNum(deptId, xiangId);
+	}
+
+	@Override
+	public QiYeAnBiaoSafetyTips selectSafetyTipsNum(String deptId, Integer xiangId) {
+		return qiYeShouYeMapper.selectSafetyTipsNum(deptId, xiangId);
+	}
+
 }

@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * 管理制度 Mapper 接口
  *
- * @author:elvis.he
+ * @author:hyp
  */
 public interface GuanlizhiduMapper extends BaseMapper<Guanlizhidu> {
 

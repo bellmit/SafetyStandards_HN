@@ -28,7 +28,7 @@ import java.io.Serializable;
 /**
  * 实体类
  *
- * @author Chill
+ * @author hyp
  */
 @Data
 @TableName("blade_role")

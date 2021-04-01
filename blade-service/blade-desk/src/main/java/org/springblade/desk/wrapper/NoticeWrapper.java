@@ -26,7 +26,7 @@ import org.springblade.system.feign.IDictClient;
 /**
  * Notice包装类,返回视图层所需的字段
  *
- * @author Chill
+ * @author hyp
  */
 @AllArgsConstructor
 public class NoticeWrapper extends BaseEntityWrapper<Notice, NoticeVO> {

@@ -34,4 +34,14 @@ public class OrganizationsVO extends Organizations {
 	 */
 	@ApiModelProperty(value = "单位名称")
 	private String deptName;
+
+	@ApiModelProperty(value = "运管名称")
+	private String yunguanmingcheng;
+
+	@ApiModelProperty(value = "运管ID")
+	private String yunguanid;
+
+	@ApiModelProperty(value = "地区名称")
+	private String areaname;
+
 }

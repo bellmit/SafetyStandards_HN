@@ -15,15 +15,6 @@
  */
 package org.springblade.doc.biaozhunhuamuban.controller;
 
-import org.springblade.doc.biaozhunhuamuban.entity.Biaozhunhuamuban;
-import org.springblade.doc.biaozhunhuamuban.entity.FileParse;
-import org.springblade.doc.biaozhunhuamuban.entity.Template;
-import org.springblade.doc.biaozhunhuamuban.page.BiaozhunhuamubanPage;
-import org.springblade.doc.biaozhunhuamuban.service.IBiaozhunhuamubanService;
-import org.springblade.doc.biaozhunhuamuban.service.IBiaozhunhuawenjianService;
-import org.springblade.doc.biaozhunhuamuban.service.ITemplateService;
-import org.springblade.doc.biaozhunhuamuban.vo.BiaozhunhuamubanVO;
-import org.springblade.doc.biaozhunhuamuban.vo.BiaozhunhuawenjianVO;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
@@ -39,10 +30,18 @@ import org.springblade.core.log.annotation.ApiLog;
 import org.springblade.core.secure.BladeUser;
 import org.springblade.core.tool.api.R;
 import org.springblade.core.tool.utils.BeanUtil;
-
+import org.springblade.doc.biaozhunhuamuban.entity.Biaozhunhuamuban;
+import org.springblade.doc.biaozhunhuamuban.entity.BiaozhunhuamubanList;
+import org.springblade.doc.biaozhunhuamuban.entity.FileParse;
+import org.springblade.doc.biaozhunhuamuban.entity.Template;
+import org.springblade.doc.biaozhunhuamuban.page.BiaozhunhuamubanPage;
+import org.springblade.doc.biaozhunhuamuban.service.IBiaozhunhuamubanService;
+import org.springblade.doc.biaozhunhuamuban.service.IBiaozhunhuawenjianService;
+import org.springblade.doc.biaozhunhuamuban.vo.BiaozhunhuamubanVO;
+import org.springblade.doc.biaozhunhuamuban.vo.BiaozhunhuawenjianVO;
 import org.springblade.doc.safetyproductionfile.entity.SafetyProductionFile;
-import org.springblade.doc.safetyproductionfile.to.SafetyProductionFileTO;
 import org.springblade.doc.safetyproductionfile.service.ISafetyProductionFileService;
+import org.springblade.doc.safetyproductionfile.to.SafetyProductionFileTO;
 import org.springblade.system.entity.Dept;
 import org.springblade.system.feign.ISysClient;
 import org.springframework.web.bind.annotation.*;
@@ -60,9 +59,6 @@ import java.util.List;
 
 /**
  * 控制器
- *
- * @author th
- * @since 2019-05-04
  */
 @RestController
 @Slf4j
@@ -72,9 +68,8 @@ import java.util.List;
 public class BiaozhunhuamubanController extends BladeController  {
 
 	private IBiaozhunhuamubanService biaozhunhuamubanService;
-	private ISafetyProductionFileService safetyProductionFileService;
 
-	private ITemplateService templateService;
+	private ISafetyProductionFileService safetyProductionFileService;
 
 	private IBiaozhunhuawenjianService iBiaozhunhuawenjianService;
 
@@ -107,8 +102,8 @@ public class BiaozhunhuamubanController extends BladeController  {
 
 	/**
 	 *企业上传标准化文件模板（会先同步到母模板）
-	 * @author: th
-	 * @CreateDate: 2019-05-08 10:40
+	 * @author: hyp
+	 * @CreateDate2021-05-08 10:40
 	 * @param file 文件
 	 * @param template 模板信息
 	 * @param user
@@ -279,6 +274,7 @@ public class BiaozhunhuamubanController extends BladeController  {
 				vo.setType("文件");
 				vo.setFileNum(item.getCumulativeVisits());
 				vo.setLastPreviewTime(item.getLastPreviewTime());
+				vo.setRemark(item.getLastPreviewTime());
 				list.add(vo);
 			});
 		}
@@ -314,8 +310,8 @@ public class BiaozhunhuamubanController extends BladeController  {
 	}
 	/**
 	 *新增目录
-	 * @author: th
-	 * @CreateDate: 2019-05-08 17:21
+	 * @author: hyp
+	 * @CreateDate2021-05-08 17:21
 	 * @param id
 	 * @param fileName
 	 * @param user
@@ -370,8 +366,8 @@ public class BiaozhunhuamubanController extends BladeController  {
 
 	/**
 	 *新增模板文件
-	 * @author: th
-	 * @CreateDate: 2019-05-09 19:32
+	 * @author: hyp
+	 * @CreateDate2021-05-09 19:32
 	 * @param id
 	 * @param file
 	 * @param user
@@ -467,8 +463,8 @@ public class BiaozhunhuamubanController extends BladeController  {
 
 	/**
 	 *标准化模板文件替换
-	 * @author: th
-	 * @CreateDate: 2019-05-09 21:29
+	 * @author: hyp
+	 * @CreateDate2021-05-09 21:29
 	 * @param id
 	 * @param file
 	 * @param user
@@ -561,8 +557,8 @@ public class BiaozhunhuamubanController extends BladeController  {
 
 	/**
 	 *删除节点
-	 * @author: th
-	 * @CreateDate: 2019-05-15 21:36
+	 * @author: hyp
+	 * @CreateDate2021-05-15 21:36
 	 * @param id
 	 * @return: org.springblade.core.tool.api.R
 	 */
@@ -621,8 +617,8 @@ public class BiaozhunhuamubanController extends BladeController  {
 
 	/**
 	 *修改标准化节点文件性质
-	 * @author: th
-	 * @CreateDate: 2019-05-15 17:24
+	 * @author: hyp
+	 * @CreateDate2021-05-15 17:24
 	 * @param id
 	 * @param fileProperty
 	 * @return: org.springblade.core.tool.api.R
@@ -642,7 +638,7 @@ public class BiaozhunhuamubanController extends BladeController  {
 
 	/**
 	 *修改文件所属人
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/5/19 14:51
 	 * @param id
 	 * @param fileSuoshurenId
@@ -745,7 +741,7 @@ public class BiaozhunhuamubanController extends BladeController  {
 
 	/**
 	 *根据文件所属人与文件性质预览对应图片
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/5/19 14:51
 	 * @param fileProperty
 	 * @return: org.springblade.core.tool.api.R<org.springblade.anbiao.BiaozhunhuawenjianVO>
@@ -785,7 +781,7 @@ public class BiaozhunhuamubanController extends BladeController  {
 
 	/**
 	 *模板文件下载
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/5/19 2:04
 	 * @param id
 	 * @return: java.lang.String
@@ -876,7 +872,7 @@ public class BiaozhunhuamubanController extends BladeController  {
 	/**
 	 *
 	 *文件对应图片预览
-	 * @CreateDate: 2019-05-12 15:08
+	 * @CreateDate2021-05-12 15:08
 	 * @param id
 	 * @return: org.springblade.core.tool.api.R<org.springblade.anbiao.BiaozhunhuawenjianVO
 	 */
@@ -922,26 +918,21 @@ public class BiaozhunhuamubanController extends BladeController  {
 			}
 			List<String> list = new ArrayList<String>();
 			String path = vo.getPath();
+
+			String pic ="";
+			File file =null;
+			File[] files;
+
 			if(vo.getIsEdit()==0){
 				path = vo.getMubanPath();
+				pic = StrUtil.replace(StrUtil.replace(fileParse.getPath(path),FilePathConstant.SUBTEMPLATE_PATH,FilePathConstant.SUBTEMPLATE_IMG_PATH),".docx","");
+				//pic = pic+"\\"+vo.getName().substring(0, vo.getName().indexOf("."));
+			}else{
+				path = vo.getPath();
+				pic = StrUtil.replace(StrUtil.replace(fileParse.getPath(path),FilePathConstant.SUBTEMPLATE_PATH,FilePathConstant.SUBTEMPLATE_IMG_PATH),".docx","");
 			}
-			System.out.println(path);
-			System.out.println(fileParse.getPath(path));
-			String pic ="";
-			pic = StrUtil.replace(StrUtil.replace(fileParse.getPath(path),FilePathConstant.SUBTEMPLATE_PATH,FilePathConstant.SUBTEMPLATE_IMG_PATH),".docx","");
-			if (vo.getDeptId() != 1 ){
-				pic = pic+"\\"+vo.getName().substring(0, vo.getName().indexOf("."));
-			}
-			File file =null;
 			file = new File(pic);
-			File[] files;
 			files =file.listFiles();
-
-			if(files == null){
-				String picName = pic+"\\"+vo.getName().substring(0, vo.getName().indexOf("."));
-				file = new File(picName);
-				files =file.listFiles();
-			}
 			for(int i = 0;i < files.length;i++){
 				if (files[i].isFile()) {
 					try{
@@ -951,14 +942,29 @@ public class BiaozhunhuamubanController extends BladeController  {
 					}
 				}
 			}
-			vo.setImgList(list);
+			if(list.size() <1 ){
+				pic = pic+"\\"+vo.getName().substring(0, vo.getName().indexOf("."));
+
+				file = new File(pic);
+				files =file.listFiles();
+				for(int i = 0;i < files.length;i++){
+					if (files[i].isFile()) {
+						try{
+							list.add(fileParse.pathToUrl(files[i].getPath()));
+						}catch (Exception e){
+							e.printStackTrace();
+						}
+					}
+				}
+				vo.setImgList(list);
+			}else{
+				vo.setImgList(list);
+			}
 			int i  = biaozhunhuamubanService.updatePreviewRecordById(id);
 			return R.data(vo);
 		}
 
 	}
-
-
 
 	/*@PostMapping("/filePathInsert")
 	@ApiIgnore()
@@ -974,13 +980,10 @@ public class BiaozhunhuamubanController extends BladeController  {
 		biaozhunhuamubanService.saveBatch(list);
 	}*/
 
-
-
-
 	/**
 	 *根据文件性质查询文件列表数据
-	 * @author: th
-	 * @CreateDate: 2019-05-11 18:44
+	 * @author: hyp
+	 * @CreateDate2021-05-11 18:44
 	 * @param biaozhunhuamubanPage
 	 * @return: org.springblade.core.tool.api.R<java.util.List<org.springblade.anbiao.Biaozhunhuamuban>>
 	 */
@@ -1069,8 +1072,8 @@ public class BiaozhunhuamubanController extends BladeController  {
 	}
 
 	@GetMapping("/cancelSafetyBind")
-	@ApiLog("安全标准化文件-安全生产完档取消绑定")
-	@ApiOperation(value = "安全标准化文件-安全生产完档取消绑定", notes = "传入节点id", position = 1)
+	@ApiLog("安全标准化文件-安全生产文档取消绑定")
+	@ApiOperation(value = "安全标准化文件-安全生产文档取消绑定", notes = "传入节点id", position = 1)
 	@ApiImplicitParam(name = "id", value = "节点id", required = true)
 	public R cancelSafetyBind(@RequestParam  Integer id) {
 		biaozhunhuamubanService.deleteBind(id);
@@ -1112,7 +1115,7 @@ public class BiaozhunhuamubanController extends BladeController  {
 	}
 
 	@GetMapping("/deleteSafetyProductionFile")
-	@ApiLog("安全标准化文件-根据企业ID删除标准化文档件")
+	@ApiLog("安全标准化文件-根据企业ID删除标准化文档")
 	@ApiOperation(value = "安全标准化文件-安全生产完档取消绑定", notes = "传入节点id", position = 16)
 	@ApiImplicitParams({
 		@ApiImplicitParam(name = "deptId", value = "企业ID", required = true),
@@ -1123,6 +1126,104 @@ public class BiaozhunhuamubanController extends BladeController  {
 		biaozhunhuamubanService.deleteSafetyProductionFile(caozuorenid, caozuoren, deptId);
 		return R.success("删除成功");
 	}
+
+	@PostMapping("/updateBiaozhunhuamuban")
+	@ApiLog("编辑-根据文件ID设置标准化文件相应数据（分值、星级、描述提示信息等）")
+	@ApiOperation(value = "编辑-根据文件ID设置标准化文件相应数据（分值、星级、描述提示信息等）", notes = "传入biaozhunhuamuban、user", position = 2)
+	public R updateBiaozhunhuamuban(@RequestBody String ids,Biaozhunhuamuban biaozhunhuamuban,BladeUser user) {
+		R rs = new R();
+		boolean j = false;
+
+		String formatStr2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+		String[] idsss = ids.split(",");
+		//去除素组中重复的数组
+		List<String> listid = new ArrayList<String>();
+		for (int i=0; i<idsss.length; i++) {
+			if(!listid.contains(idsss[i])) {
+				listid.add(idsss[i]);
+			}
+		}
+		//返回一个包含所有对象的指定类型的数组
+		String[]  idss= listid.toArray(new String[1]);
+		for(int i = 0;i< idss.length;i++) {
+			biaozhunhuamuban.setCaozuoshijian(formatStr2);
+			if (user == null) {
+				biaozhunhuamuban.setCaozuoren("管理员");
+				biaozhunhuamuban.setCaozuorenid(1);
+			} else {
+				biaozhunhuamuban.setCaozuorenid(user.getUserId());
+				biaozhunhuamuban.setCaozuoren(user.getUserName());
+			}
+			biaozhunhuamuban.setId(Integer.parseInt(idss[i]));
+			 j = biaozhunhuamubanService.updateBiaozhunhuamuban(biaozhunhuamuban);
+		}
+
+		if( j == true ){
+			rs.setCode(200);
+			rs.setSuccess(true);
+			rs.setMsg("编辑数据成功");
+		}else{
+			rs.setCode(500);
+			rs.setSuccess(false);
+			rs.setMsg("编辑数据失败");
+		}
+		return rs;
+	}
+
+	/**
+	 * 获取目录树形列表(当前岗位人员所拥有权限)
+	 */
+	@GetMapping("/listTree")
+	@ApiLog("安全标准化文件-查询-获取目录树形列表")
+	@ApiOperation(value = "查询-获取目录树形列表", notes = "获取目录树形列表(当前岗位人员所拥有权限),传入deptId", position = 1)
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "deptId", value = "单位id", required = true),
+		@ApiImplicitParam(name = "fileProperty", value = "文件性质", required = true),
+		@ApiImplicitParam(name = "Id", value = "文件ID", required = false)
+	})
+	public R<List<BiaozhunhuamubanList>> listTree(@RequestParam Integer deptId, Integer fileProperty,Integer Id) {
+		List<BiaozhunhuamubanList> list;
+		list= biaozhunhuamubanService.listTree(deptId,fileProperty,Id,null);
+		if (list.size() < 1){
+			list= biaozhunhuamubanService.listTree(deptId,fileProperty,null,Id);
+		}else{
+			BiaozhunhuamubanList biaozhunhuamuban = biaozhunhuamubanService.getTreeScores(deptId, fileProperty);
+			if(biaozhunhuamuban == null || biaozhunhuamuban.getTotalpoints().equals("0")){
+				list.get(0).setTotalpoints(0);
+			}else{
+				for(int i = 0;i<list.size();i++){
+					list.get(i).setTotalpoints(biaozhunhuamuban.getTotalpoints());
+				}
+			}
+		}
+		return R.data(list);
+	}
+
+	/**
+	 * 权限树形结构(安标16项)
+	 */
+	@GetMapping("/getListTree")
+	@ApiLog("运维端-安全标准化文件-权限-tree")
+	@ApiOperation(value = "运维端-安全标准化文件-权限-tree", notes = "传入deptId", position = 1)
+	@ApiImplicitParams({@ApiImplicitParam(name = "deptId", value = "企业ID", required = true)})
+	public R<List<BiaozhunhuamubanVO>> getListTree(String deptId) {
+		R rs = new R();
+		BiaozhunhuamubanVO biaozhunhuamubanVO = biaozhunhuamubanService.getByDeptId(deptId);
+		List<BiaozhunhuamubanVO> list = null;
+		if(biaozhunhuamubanVO != null){
+			list= biaozhunhuamubanService.getListTree(deptId,biaozhunhuamubanVO.getYunyingleixing());
+			rs.setData(list);
+			rs.setSuccess(true);
+			rs.setCode(200);
+		}else{
+			rs.setSuccess(false);
+			rs.setCode(500);
+			rs.setMsg("暂无数据");
+		}
+		return rs;
+	}
+
+
 
 }
 

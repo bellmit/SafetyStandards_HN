@@ -18,13 +18,14 @@ package org.springblade.desk.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.springblade.desk.entity.Notice;
+import org.springblade.desk.page.NoticePage;
 
 import java.util.List;
 
 /**
  * Mapper 接口
  *
- * @author Chill
+ * @author hyp
  * @since 2018-09-29
  */
 public interface NoticeMapper extends BaseMapper<Notice> {
@@ -37,11 +38,17 @@ public interface NoticeMapper extends BaseMapper<Notice> {
 	List<Notice> topList(Integer number);
 
 	/**
-	 * 自定义分页
-	 * @param page
-	 * @param notice
+	 * 获取当天通知公告
 	 * @return
 	 */
-	List<Notice> selectNoticePage(IPage page, Notice notice);
+	List<Notice> selectNoticePage();
+
+	/**
+	 * 获取所有通知公告
+	 * @param noticePage
+	 * @return
+	 */
+	List<Notice> selectGetAll(NoticePage noticePage);
+	int selectGetAllTotal(NoticePage noticePage);
 
 }

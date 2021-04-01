@@ -43,7 +43,7 @@ public interface SafetyProductionFileMapper extends BaseMapper<SafetyProductionF
 
 	/**
 	 *查询企业文件最大id
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/5/28 16:54
 	 * @param
 	 * @return: java.lang.Integer
@@ -52,7 +52,7 @@ public interface SafetyProductionFileMapper extends BaseMapper<SafetyProductionF
 
 	/**
 	 *查询同级文件最大排序号
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/5/28 16:57
 	 * @param id
 	 * @return: java.lang.Integer
@@ -61,7 +61,7 @@ public interface SafetyProductionFileMapper extends BaseMapper<SafetyProductionF
 
 	/**
 	 *目录树
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/5/30 9:38
 	 * @param deptId
 	 * @param parentId
@@ -71,7 +71,7 @@ public interface SafetyProductionFileMapper extends BaseMapper<SafetyProductionF
 
 	/**
 	 *查询下级节点
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/5/30 9:38
 	 * @param parentId
 	 * @return: java.util.List<org.springblade.anbiao.SafetyProductionFile>
@@ -80,7 +80,7 @@ public interface SafetyProductionFileMapper extends BaseMapper<SafetyProductionF
 
 	/**
 	 *修改文件编号
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/5/30 17:24
 	 * @param id
 	 * @param documentNumber
@@ -90,7 +90,7 @@ public interface SafetyProductionFileMapper extends BaseMapper<SafetyProductionF
 
 	/**
 	 *修改文件排序号
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/5/30 17:29
 	 * @param id
 	 * @param sort
@@ -100,7 +100,7 @@ public interface SafetyProductionFileMapper extends BaseMapper<SafetyProductionF
 
 	/**
 	 *获取盒子树-前二级
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/7/31 12:32
 	 * @param deptId
 	 * @return: java.util.List<org.springblade.doc.safetyproductionfile.vo.SafetyProductionFileVO>
@@ -109,7 +109,7 @@ public interface SafetyProductionFileMapper extends BaseMapper<SafetyProductionF
 
 	/**
 	 *更新访问记录
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/8/12 23:09
 	 * @param id
 	 * @return: int
@@ -118,7 +118,7 @@ public interface SafetyProductionFileMapper extends BaseMapper<SafetyProductionF
 
 	/**
 	 *获取模板数据
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/9/6 12:49
 	 * @param
 	 * @return: java.util.List<org.springblade.doc.safetyproductionfile.entity.SafetyProductionFile>
@@ -127,7 +127,7 @@ public interface SafetyProductionFileMapper extends BaseMapper<SafetyProductionF
 
 	/**
 	 *查询机构下的管理文档数量
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/10/28 16:50
 	 * @param id
 	 * @return: int
@@ -136,7 +136,7 @@ public interface SafetyProductionFileMapper extends BaseMapper<SafetyProductionF
 
    /**
     *查询标准化文件id绑定的安全生产文档
-    * @author: th
+    * @author: hyp
     * @date: 2019/11/12 22:11
     * @param id
     * @return: org.springblade.doc.safetyproductionfile.entity.SafetyProductionFile
@@ -145,7 +145,7 @@ public interface SafetyProductionFileMapper extends BaseMapper<SafetyProductionF
 
    /**
     *根据绑定id查询安全生产文档
-    * @author: th
+    * @author: hyp
     * @date: 2019/11/12 23:50
     * @param id
     * @return: org.springblade.doc.safetyproductionfile.entity.SafetyProductionFile
@@ -154,7 +154,7 @@ public interface SafetyProductionFileMapper extends BaseMapper<SafetyProductionF
 
 	/**
 	 *获取绑定树
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/11/13 0:45
 	 * @param deptId
 	 * @param parentId

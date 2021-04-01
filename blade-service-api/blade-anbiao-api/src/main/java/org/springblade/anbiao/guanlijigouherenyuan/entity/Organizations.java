@@ -273,4 +273,10 @@ public class Organizations implements Serializable {
 	@ApiModelProperty(value = "所属地市")
 	private String area;
 
+	@ApiModelProperty(value = "企业ID")
+	private String qiyeid;
+
+	@ApiModelProperty(value = "企业名称")
+	private String qiyemingcheng;
+
 }

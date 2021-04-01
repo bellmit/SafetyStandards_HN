@@ -26,7 +26,7 @@ import java.time.LocalDateTime;
 /**
  * 视图实体类
  *
- * @author elvis.he
+ * @author hyp
  * @since 2019-05-12
  */
 @Data
@@ -116,5 +116,17 @@ public class AlarmsummaryCutofftimeVO extends AlarmsummaryCutofftime {
 
 	@ApiModelProperty(value = "最终处理结果")
 	private String endresult;
+
+	@ApiModelProperty(value = "处理率")
+	private String chulilv;
+
+	@ApiModelProperty(value = "日期")
+	private String dateShow;
+
+	@ApiModelProperty(value = "企业ID")
+	private String deptId;
+
+	@ApiModelProperty(value = "报警总数")
+	private Integer baojingcishu;
 
 }

@@ -50,8 +50,8 @@ public interface IQiyewenjianService extends IService<Qiyewenjian> {
 
 	/**
 	 *企业文件树形结构
-	 * @author: th
-	 * @CreateDate: 2019-05-29 23:16
+	 * @author: hyp
+	 * @CreateDate2021-05-29 23:16
 	 * @param deptId
 	 * @param parentId
 	 * @return: java.util.List<org.springblade.anbiao.QiyewenjianVO>
@@ -60,7 +60,7 @@ public interface IQiyewenjianService extends IService<Qiyewenjian> {
 
 	/**
 	 *查询是否存在下级节点
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/5/30 9:37
 	 * @param id
 	 * @return: java.util.List<org.springblade.anbiao.Qiyewenjian>
@@ -69,7 +69,7 @@ public interface IQiyewenjianService extends IService<Qiyewenjian> {
 
 	/**
 	 *修改文件编号
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/5/30 17:23
 	 * @param id
 	 * @param documentNumber
@@ -87,7 +87,7 @@ public interface IQiyewenjianService extends IService<Qiyewenjian> {
 
 	/**
 	 *修改访问记录
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/8/13 10:56
 	 * @param id
 	 * @return: int

@@ -16,13 +16,11 @@
 package org.springblade.anbiao.qiyeshouye.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.springblade.anbiao.qiyeshouye.entity.QiYeInOutAreaTongJi;
-import org.springblade.anbiao.qiyeshouye.entity.QiYeOffLineTongJi;
-import org.springblade.anbiao.qiyeshouye.entity.QiYeRiYunXingTongJi;
-import org.springblade.anbiao.qiyeshouye.entity.QiYeTongJi;
+import org.springblade.anbiao.qiyeshouye.entity.*;
 import org.springblade.anbiao.qiyeshouye.page.QiYeInOutAreaPage;
 import org.springblade.anbiao.qiyeshouye.page.QiYeOffLineTongJiPage;
 import org.springblade.anbiao.qiyeshouye.page.QiYeTongJiPage;
+import org.springblade.anbiao.qiyeshouye.page.QiYeTpvehdataPage;
 
 import java.util.List;
 
@@ -73,5 +71,13 @@ public interface QiYeTongJiMapper extends BaseMapper<QiYeTongJi> {
 	 */
 	List<QiYeInOutAreaTongJi> selectGetInOutAreaTJ(QiYeInOutAreaPage qiYeInOutAreaPage);
 	int selectGetInOutAreaTJTotal(QiYeInOutAreaPage qiYeInOutAreaPage);
+
+	/**
+	 * 企业在线车辆详情
+	 * @param qiYeTpvehdataPage
+	 * @return
+	 */
+	List<QiYeTpvehdataTongJi> selecttpvehdataTJ(QiYeTpvehdataPage qiYeTpvehdataPage);
+	int	selectGettpvehdataTJTotal(QiYeTpvehdataPage qiYeTpvehdataPage);
 
 }

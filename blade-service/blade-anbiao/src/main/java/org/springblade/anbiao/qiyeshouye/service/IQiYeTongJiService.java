@@ -8,13 +8,11 @@
 package org.springblade.anbiao.qiyeshouye.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import org.springblade.anbiao.qiyeshouye.entity.QiYeInOutAreaTongJi;
-import org.springblade.anbiao.qiyeshouye.entity.QiYeOffLineTongJi;
-import org.springblade.anbiao.qiyeshouye.entity.QiYeRiYunXingTongJi;
-import org.springblade.anbiao.qiyeshouye.entity.QiYeTongJi;
+import org.springblade.anbiao.qiyeshouye.entity.*;
 import org.springblade.anbiao.qiyeshouye.page.QiYeInOutAreaPage;
 import org.springblade.anbiao.qiyeshouye.page.QiYeOffLineTongJiPage;
 import org.springblade.anbiao.qiyeshouye.page.QiYeTongJiPage;
+import org.springblade.anbiao.qiyeshouye.page.QiYeTpvehdataPage;
 
 import java.util.List;
 
@@ -60,5 +58,13 @@ public interface IQiYeTongJiService extends IService<QiYeTongJi> {
 	 * @return
 	 */
 	QiYeInOutAreaPage<QiYeInOutAreaTongJi> selectGetInOutAreaTJ(QiYeInOutAreaPage qiYeInOutAreaPage);
+
+	/**
+	 * 企业在线车辆详情
+	 * @param qiYeTpvehdataPage
+	 * @return
+	 */
+	QiYeTpvehdataPage<QiYeTpvehdataTongJi> selecttpvehdataTJ(QiYeTpvehdataPage qiYeTpvehdataPage);
+
 
 }

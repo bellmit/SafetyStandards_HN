@@ -24,7 +24,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 /**
  * 项目启动
  *
- * @author Chill
+ * @author hyp
  */
 @EnableHystrix
 @EnableScheduling

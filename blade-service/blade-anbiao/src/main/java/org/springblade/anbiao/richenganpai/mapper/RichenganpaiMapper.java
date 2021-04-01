@@ -19,8 +19,11 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import feign.Param;
 import org.springblade.anbiao.richenganpai.entity.Richenganpai;
+import org.springblade.anbiao.richenganpai.page.RiChengAnPaiPage;
 import org.springblade.anbiao.richenganpai.vo.RichengIndexVo;
 import org.springblade.anbiao.richenganpai.vo.RichenganpaiVO;
+import org.springblade.system.user.entity.User;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -43,43 +46,77 @@ public interface RichenganpaiMapper extends BaseMapper<Richenganpai> {
 
 	/**
 	 *查询日程首页数据
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/6/6 10:21
 	 * @param deptId
 	 * @param userId
 	 * @param date
-	 * @return: java.util.List<org.springblade.anbiao.richenganpai.vo.RichengIndexVo>
 	 */
 	List<RichengIndexVo> selectRichengIndex(@Param("deptId") Integer deptId, @Param("userId")Integer userId, @Param("date")String date);
 
 	/**
 	 *获取日程代办事项
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/6/6 13:56
-	 * @param deptId
-	 * @param date
-	 * @param userId
-	 * @return: java.util.List<org.springblade.anbiao.richenganpai.vo.RichenganpaiVO>
 	 */
-	List<RichenganpaiVO> getByDate(Integer deptId, String date, Integer userId);
+	List<RichenganpaiVO> selectByDate(RiChengAnPaiPage riChengAnPaiPage);
+	int selectByDateTotal(RiChengAnPaiPage riChengAnPaiPage);
 
 	/**
 	 *获取超期日程
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/6/6 15:11
-	 * @param deptId
-	 * @param userId
-	 * @return: java.util.List<org.springblade.anbiao.richenganpai.vo.RichenganpaiVO>
 	 */
-	List<RichenganpaiVO> getChaoqiByDate(Integer deptId, Integer userId);
+	List<RichenganpaiVO> selectChaoQiByDate(RiChengAnPaiPage riChengAnPaiPage);
+	int selectChaoQiByDateTotal(RiChengAnPaiPage riChengAnPaiPage);
 
 	/**
 	 *获取安排的日程
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/6/21 11:20
-	 * @param deptId
-	 * @param userId
-	 * @return: java.util.List<org.springblade.anbiao.richenganpai.vo.RichenganpaiVO>
 	 */
-	List<RichenganpaiVO> getAnpaiByUser(Integer deptId, Integer userId);
+	List<RichenganpaiVO> selectAnpaiByUser(RiChengAnPaiPage riChengAnPaiPage);
+	int selectAnpaiByUserTotal(RiChengAnPaiPage riChengAnPaiPage);
+
+	/**
+	 * 新增日程待办
+	 * @param richenganpaiVO
+	 * @return
+	 */
+	boolean insertSelective(Richenganpai richenganpaiVO);
+
+	/**
+	 * 根据ID修改日程待办相应信息
+	 * @param richenganpaiVO
+	 * @return
+	 */
+	boolean updateSelective(Richenganpai richenganpaiVO);
+
+	/**
+	 * 根据ID查询日程待办详情
+	 * @param Id
+	 * @return
+	 */
+	Richenganpai selectByIds(String Id);
+
+	/**
+	 * 删除日程待办
+	 * @param updateTime
+	 * @param updateUser
+	 * @param updateUserId
+	 * @param Id
+	 * @return
+	 */
+	boolean deleteBind(@RequestParam("updateTime") String updateTime,
+					   @RequestParam("updateUser") String updateUser,
+					   @RequestParam("updateUserId") Integer updateUserId,
+					   @RequestParam("Id") Integer Id);
+
+	/**
+	 * 根据用户id获取数据
+	 * @param id
+	 * @return
+	 */
+	User getUserById(Integer id);
+
 }

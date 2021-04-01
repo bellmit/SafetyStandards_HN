@@ -40,7 +40,7 @@ import java.util.List;
 /**
  * 事故报告调查处理-事故报告 控制器
  *
- * @author elvis.he
+ * @author hyp
  * @since 2019-04-28
  */
 @RestController
@@ -140,8 +140,8 @@ public class ShigubaogaoController {
      * @Description: 根据单位id获取事故报告配置模块数据
      * @Param: [postId]
      * @return: org.springblade.core.tool.api.R<java.util.List < org.springblade.anbiao.shigu.vo.ShigubaogaoMap>>
-     * @Author: elvis.he
-     * @Date: 2019-04-28
+     * @Author: hyp
+     * @Date2021-04-28
      */
     @GetMapping("/listMap")
 	@ApiLog("获取事故报告配置-事故报告")

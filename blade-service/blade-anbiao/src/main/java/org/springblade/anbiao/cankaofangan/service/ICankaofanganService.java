@@ -41,7 +41,7 @@ public interface ICankaofanganService extends IService<Cankaofangan> {
 
 	/**
 	 *根据任务类型获取参考方案
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/6/14 16:49
 	 * @param renwuleixing
 	 * @return: org.springblade.anbiao.cankaofangan.entity.Cankaofangan

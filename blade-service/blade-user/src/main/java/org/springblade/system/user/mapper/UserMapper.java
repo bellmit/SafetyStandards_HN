@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * Mapper 接口
  *
- * @author Chill
+ * @author hyp
  */
 public interface UserMapper extends BaseMapper<User> {
 
@@ -187,4 +187,27 @@ public interface UserMapper extends BaseMapper<User> {
 	 * @return
 	 */
 	User selectByName(String account);
+
+	/**
+	 * 禁用、启用、删除用户账号信息
+	 * @param updateUser
+	 * @param updateTime
+	 * @param isDeleted
+	 * @param idss
+	 * @return
+	 */
+	boolean updateUserStatus(@RequestParam("updateUser") Integer updateUser,
+							 @RequestParam("updateTime") String updateTime,
+							 @RequestParam("isDeleted") Integer isDeleted,
+							 @RequestParam("idss") String[] idss);
+
+	/**
+	 * 根据企业ID查询所属下级所有的账号
+	 * @param deptId
+	 * @return
+	 */
+	List<User> selectNameById(String deptId);
+
+
+
 }

@@ -55,4 +55,19 @@ public interface IJiaShiYuanService extends IService<JiaShiYuan> {
 	 * @return
 	 */
 	JiaShiYuanPage<JiaShiYuanVO> selectJVList(JiaShiYuanPage jiaShiYuanPage);
+
+	/**
+	 * 根据企业ID获取驾驶员列表
+	 * @param deptId
+	 * @return
+	 */
+	List<JiaShiYuan> jiaShiYuanList(String deptId);
+
+	/**
+	 * 导入驾驶员基本信息
+	 * @param jiaShiYuan
+	 * @return
+	 */
+	boolean insertSelective(JiaShiYuan jiaShiYuan);
+
 }

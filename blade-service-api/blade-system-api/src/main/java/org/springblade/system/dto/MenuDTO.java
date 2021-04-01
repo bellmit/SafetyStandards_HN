@@ -22,7 +22,7 @@ import java.io.Serializable;
 /**
  * 数据传输对象实体类
  *
- * @author Chill
+ * @author hyp
  */
 @Data
 public class MenuDTO implements Serializable {

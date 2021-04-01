@@ -49,7 +49,7 @@ import java.util.Map;
 /**
  * 驾驶员行为报警 服务实现类
  *
- * @author elvis.he
+ * @author hyp
  * @since 2019-05-12
  */
 @Service
@@ -69,47 +69,108 @@ public class DriverbehaviorServiceImpl extends ServiceImpl<DriverbehaviorMapper,
 			}
 			List<DriverbehaviorVO> list=driverbehaviorMapper.selectAlarmPage(driverAlarmPage);
 			list.forEach(item->{
-				if(item.getRemark()==null){
-					item.setShensuzhuangtai("未申诉");
-					item.setChulizhuangtai("未处理");
-					item.setChulimiaoshu("");
-					item.setChulixingshi("");
-				}else if(item.getRemark()==1){
-					EnmuAlarm.ChuliJieguo byValue = EnmuAlarm.ChuliJieguo.getByValue(Integer.valueOf(item.getChulizhuangtai()));
-					item.setChulizhuangtai(byValue.desc);
-					item.setShensuzhuangtai("未申诉");
-				}else if(item.getRemark() == 0 && item.getShensushenhebiaoshi() == 0){
-					EnmuAlarm.ShensuJieguo byValue = EnmuAlarm.ShensuJieguo.getByValue(Integer.valueOf(4));
-					item.setShensuzhuangtai(byValue.desc);
-					item.setChulizhuangtai("未处理");
-					item.setShensumiaoshu(item.getChulimiaoshu());
-					item.setShensuxingshi(item.getChulixingshi());
-					item.setChulimiaoshu("");
-					item.setChulixingshi("");
-				}else if(item.getRemark() == 0 && item.getShensushenhebiaoshi() == 1){
-					EnmuAlarm.ShensuJieguo byValue = EnmuAlarm.ShensuJieguo.getByValue(Integer.valueOf(5));
-					item.setShensuzhuangtai(byValue.desc);
-					item.setChulizhuangtai("未处理");
-					item.setShensumiaoshu(item.getChulimiaoshu());
-					item.setShensuxingshi(item.getChulixingshi());
-					item.setChulimiaoshu("");
-					item.setChulixingshi("");
-				}else if(item.getRemark() == 0 && item.getShensushenhebiaoshi() == 2){
-					EnmuAlarm.ShensuJieguo byValue = EnmuAlarm.ShensuJieguo.getByValue(Integer.valueOf(6));
-					item.setShensuzhuangtai(byValue.desc);
-					item.setChulizhuangtai("未处理");
-					item.setShensumiaoshu(item.getChulimiaoshu());
-					item.setShensuxingshi(item.getChulixingshi());
-					item.setChulimiaoshu("");
-					item.setChulixingshi("");
+				if(StringUtils.isBlank(item.getEndresult())){
+					if(item.getRemark()==null){
+						item.setShensuzhuangtai("未申诉");
+						item.setChulizhuangtai("未处理");
+						item.setChulimiaoshu("");
+						item.setChulixingshi("");
+					}else if(item.getRemark()==1){
+						EnmuAlarm.ChuliJieguo byValue = EnmuAlarm.ChuliJieguo.getByValue(Integer.valueOf(item.getChulizhuangtai()));
+						item.setChulizhuangtai(byValue.desc);
+						item.setShensuzhuangtai("未申诉");
+					}else if(item.getRemark() == 0 && item.getShensushenhebiaoshi() == 0){
+						EnmuAlarm.ShensuJieguo byValue = EnmuAlarm.ShensuJieguo.getByValue(Integer.valueOf(4));
+						item.setShensuzhuangtai(byValue.desc);
+						item.setChulizhuangtai("未处理");
+						item.setShensumiaoshu(item.getChulimiaoshu());
+						item.setShensuxingshi(item.getChulixingshi());
+						item.setChulimiaoshu("");
+						item.setChulixingshi("");
+					}else if(item.getRemark() == 0 && item.getShensushenhebiaoshi() == 1){
+						EnmuAlarm.ShensuJieguo byValue = EnmuAlarm.ShensuJieguo.getByValue(Integer.valueOf(5));
+						item.setShensuzhuangtai(byValue.desc);
+						item.setChulizhuangtai("未处理");
+						item.setShensumiaoshu(item.getChulimiaoshu());
+						item.setShensuxingshi(item.getChulixingshi());
+						item.setChulimiaoshu("");
+						item.setChulixingshi("");
+					}else if(item.getRemark() == 0 && item.getShensushenhebiaoshi() == 2){
+						EnmuAlarm.ShensuJieguo byValue = EnmuAlarm.ShensuJieguo.getByValue(Integer.valueOf(6));
+						item.setShensuzhuangtai(byValue.desc);
+						item.setChulizhuangtai("未处理");
+						item.setShensumiaoshu(item.getChulimiaoshu());
+						item.setShensuxingshi(item.getChulixingshi());
+						item.setChulimiaoshu("");
+						item.setChulixingshi("");
+					}else{
+						EnmuAlarm.ShensuJieguo byValue = EnmuAlarm.ShensuJieguo.getByValue(Integer.valueOf(item.getChulizhuangtai()));
+						item.setShensuzhuangtai(byValue.desc);
+						item.setChulizhuangtai("未处理");
+						item.setShensumiaoshu(item.getChulimiaoshu());
+						item.setShensuxingshi(item.getChulixingshi());
+						item.setChulimiaoshu("");
+						item.setChulixingshi("");
+					}
 				}else{
-					EnmuAlarm.ShensuJieguo byValue = EnmuAlarm.ShensuJieguo.getByValue(Integer.valueOf(item.getChulizhuangtai()));
-					item.setShensuzhuangtai(byValue.desc);
-					item.setChulizhuangtai("未处理");
-					item.setShensumiaoshu(item.getChulimiaoshu());
-					item.setShensuxingshi(item.getChulixingshi());
-					item.setChulimiaoshu("");
-					item.setChulixingshi("");
+					if(item.getRemark()==null){
+						item.setShensuzhuangtai("未申诉");
+						item.setChulizhuangtai("未处理");
+						item.setChulimiaoshu("");
+						item.setChulixingshi("");
+					}else if(item.getEndresult().equals("1")){
+						EnmuAlarm.ChuliJieguo byValue = EnmuAlarm.ChuliJieguo.getByValue(Integer.valueOf(1));
+						EnmuAlarm.ShensuJieguo ssbyValue = null;
+						if(item.getRemark() == 0 && item.getShensushenhebiaoshi() == 0){
+							ssbyValue = EnmuAlarm.ShensuJieguo.getByValue(Integer.valueOf(4));
+							item.setShensuzhuangtai(ssbyValue.desc);
+						}else if(item.getRemark() == 0 && item.getShensushenhebiaoshi() == 1){
+							ssbyValue = EnmuAlarm.ShensuJieguo.getByValue(Integer.valueOf(5));
+							item.setShensuzhuangtai(ssbyValue.desc);
+						}else if(item.getRemark() == 0 && item.getShensushenhebiaoshi() == 2){
+							ssbyValue = EnmuAlarm.ShensuJieguo.getByValue(Integer.valueOf(6));
+							item.setShensuzhuangtai(ssbyValue.desc);
+						}else{
+							item.setShensuzhuangtai("未申诉");
+						}
+						item.setChulizhuangtai(byValue.desc);
+					}else if(item.getRemark()==1){
+						EnmuAlarm.ChuliJieguo byValue = EnmuAlarm.ChuliJieguo.getByValue(Integer.valueOf(item.getChulizhuangtai()));
+						item.setChulizhuangtai(byValue.desc);
+						item.setShensuzhuangtai("未申诉");
+					}else if(item.getRemark() == 0 && item.getShensushenhebiaoshi() == 0){
+						EnmuAlarm.ShensuJieguo byValue = EnmuAlarm.ShensuJieguo.getByValue(Integer.valueOf(4));
+						item.setShensuzhuangtai(byValue.desc);
+						item.setChulizhuangtai("未处理");
+						item.setShensumiaoshu(item.getChulimiaoshu());
+						item.setShensuxingshi(item.getChulixingshi());
+						item.setChulimiaoshu("");
+						item.setChulixingshi("");
+					}else if(item.getRemark() == 0 && item.getShensushenhebiaoshi() == 1){
+						EnmuAlarm.ShensuJieguo byValue = EnmuAlarm.ShensuJieguo.getByValue(Integer.valueOf(5));
+						item.setShensuzhuangtai(byValue.desc);
+						item.setChulizhuangtai("未处理");
+						item.setShensumiaoshu(item.getChulimiaoshu());
+						item.setShensuxingshi(item.getChulixingshi());
+						item.setChulimiaoshu("");
+						item.setChulixingshi("");
+					}else if(item.getRemark() == 0 && item.getShensushenhebiaoshi() == 2){
+						EnmuAlarm.ShensuJieguo byValue = EnmuAlarm.ShensuJieguo.getByValue(Integer.valueOf(6));
+						item.setShensuzhuangtai(byValue.desc);
+						item.setChulizhuangtai("未处理");
+						item.setShensumiaoshu(item.getChulimiaoshu());
+						item.setShensuxingshi(item.getChulixingshi());
+						item.setChulimiaoshu("");
+						item.setChulixingshi("");
+					}else{
+						EnmuAlarm.ShensuJieguo byValue = EnmuAlarm.ShensuJieguo.getByValue(Integer.valueOf(item.getChulizhuangtai()));
+						item.setShensuzhuangtai(byValue.desc);
+						item.setChulizhuangtai("未处理");
+						item.setShensumiaoshu(item.getChulimiaoshu());
+						item.setShensuxingshi(item.getChulixingshi());
+						item.setChulimiaoshu("");
+						item.setChulixingshi("");
+					}
 				}
 
 				if(StringUtils.isBlank(item.getRoadName())){
@@ -139,47 +200,108 @@ public class DriverbehaviorServiceImpl extends ServiceImpl<DriverbehaviorMapper,
             driverAlarmPage.setOffsetNo(offsetNo);
             List<DriverbehaviorVO> list = driverbehaviorMapper.selectAlarmPage(driverAlarmPage);
 			list.forEach(item->{
-				if(item.getRemark()==null){
-					item.setShensuzhuangtai("未申诉");
-					item.setChulizhuangtai("未处理");
-					item.setChulimiaoshu("");
-					item.setChulixingshi("");
-				}else if(item.getRemark()==1){
-					EnmuAlarm.ChuliJieguo byValue = EnmuAlarm.ChuliJieguo.getByValue(Integer.valueOf(item.getChulizhuangtai()));
-					item.setChulizhuangtai(byValue.desc);
-					item.setShensuzhuangtai("未申诉");
-				}else if(item.getRemark() == 0 && item.getShensushenhebiaoshi() == 0){
-					EnmuAlarm.ShensuJieguo byValue = EnmuAlarm.ShensuJieguo.getByValue(Integer.valueOf(4));
-					item.setShensuzhuangtai(byValue.desc);
-					item.setChulizhuangtai("未处理");
-					item.setShensumiaoshu(item.getChulimiaoshu());
-					item.setShensuxingshi(item.getChulixingshi());
-					item.setChulimiaoshu("");
-					item.setChulixingshi("");
-				}else if(item.getRemark() == 0 && item.getShensushenhebiaoshi() == 1){
-					EnmuAlarm.ShensuJieguo byValue = EnmuAlarm.ShensuJieguo.getByValue(Integer.valueOf(5));
-					item.setShensuzhuangtai(byValue.desc);
-					item.setChulizhuangtai("未处理");
-					item.setShensumiaoshu(item.getChulimiaoshu());
-					item.setShensuxingshi(item.getChulixingshi());
-					item.setChulimiaoshu("");
-					item.setChulixingshi("");
-				}else if(item.getRemark() == 0 && item.getShensushenhebiaoshi() == 2){
-					EnmuAlarm.ShensuJieguo byValue = EnmuAlarm.ShensuJieguo.getByValue(Integer.valueOf(6));
-					item.setShensuzhuangtai(byValue.desc);
-					item.setChulizhuangtai("未处理");
-					item.setShensumiaoshu(item.getChulimiaoshu());
-					item.setShensuxingshi(item.getChulixingshi());
-					item.setChulimiaoshu("");
-					item.setChulixingshi("");
+				if(StringUtils.isBlank(item.getEndresult())){
+					if(item.getRemark()==null){
+						item.setShensuzhuangtai("未申诉");
+						item.setChulizhuangtai("未处理");
+						item.setChulimiaoshu("");
+						item.setChulixingshi("");
+					}else if(item.getRemark()==1){
+						EnmuAlarm.ChuliJieguo byValue = EnmuAlarm.ChuliJieguo.getByValue(Integer.valueOf(item.getChulizhuangtai()));
+						item.setChulizhuangtai(byValue.desc);
+						item.setShensuzhuangtai("未申诉");
+					}else if(item.getRemark() == 0 && item.getShensushenhebiaoshi() == 0){
+						EnmuAlarm.ShensuJieguo byValue = EnmuAlarm.ShensuJieguo.getByValue(Integer.valueOf(4));
+						item.setShensuzhuangtai(byValue.desc);
+						item.setChulizhuangtai("未处理");
+						item.setShensumiaoshu(item.getChulimiaoshu());
+						item.setShensuxingshi(item.getChulixingshi());
+						item.setChulimiaoshu("");
+						item.setChulixingshi("");
+					}else if(item.getRemark() == 0 && item.getShensushenhebiaoshi() == 1){
+						EnmuAlarm.ShensuJieguo byValue = EnmuAlarm.ShensuJieguo.getByValue(Integer.valueOf(5));
+						item.setShensuzhuangtai(byValue.desc);
+						item.setChulizhuangtai("未处理");
+						item.setShensumiaoshu(item.getChulimiaoshu());
+						item.setShensuxingshi(item.getChulixingshi());
+						item.setChulimiaoshu("");
+						item.setChulixingshi("");
+					}else if(item.getRemark() == 0 && item.getShensushenhebiaoshi() == 2){
+						EnmuAlarm.ShensuJieguo byValue = EnmuAlarm.ShensuJieguo.getByValue(Integer.valueOf(6));
+						item.setShensuzhuangtai(byValue.desc);
+						item.setChulizhuangtai("未处理");
+						item.setShensumiaoshu(item.getChulimiaoshu());
+						item.setShensuxingshi(item.getChulixingshi());
+						item.setChulimiaoshu("");
+						item.setChulixingshi("");
+					}else{
+						EnmuAlarm.ShensuJieguo byValue = EnmuAlarm.ShensuJieguo.getByValue(Integer.valueOf(item.getChulizhuangtai()));
+						item.setShensuzhuangtai(byValue.desc);
+						item.setChulizhuangtai("未处理");
+						item.setShensumiaoshu(item.getChulimiaoshu());
+						item.setShensuxingshi(item.getChulixingshi());
+						item.setChulimiaoshu("");
+						item.setChulixingshi("");
+					}
 				}else{
-					EnmuAlarm.ShensuJieguo byValue = EnmuAlarm.ShensuJieguo.getByValue(Integer.valueOf(item.getChulizhuangtai()));
-					item.setShensuzhuangtai(byValue.desc);
-					item.setChulizhuangtai("未处理");
-					item.setShensumiaoshu(item.getChulimiaoshu());
-					item.setShensuxingshi(item.getChulixingshi());
-					item.setChulimiaoshu("");
-					item.setChulixingshi("");
+					if(item.getRemark()==null){
+						item.setShensuzhuangtai("未申诉");
+						item.setChulizhuangtai("未处理");
+						item.setChulimiaoshu("");
+						item.setChulixingshi("");
+					}else if(item.getEndresult().equals("1")){
+						EnmuAlarm.ChuliJieguo byValue = EnmuAlarm.ChuliJieguo.getByValue(Integer.valueOf(1));
+						EnmuAlarm.ShensuJieguo ssbyValue = null;
+						if(item.getRemark() == 0 && item.getShensushenhebiaoshi() == 0){
+							ssbyValue = EnmuAlarm.ShensuJieguo.getByValue(Integer.valueOf(4));
+							item.setShensuzhuangtai(ssbyValue.desc);
+						}else if(item.getRemark() == 0 && item.getShensushenhebiaoshi() == 1){
+							ssbyValue = EnmuAlarm.ShensuJieguo.getByValue(Integer.valueOf(5));
+							item.setShensuzhuangtai(ssbyValue.desc);
+						}else if(item.getRemark() == 0 && item.getShensushenhebiaoshi() == 2){
+							ssbyValue = EnmuAlarm.ShensuJieguo.getByValue(Integer.valueOf(6));
+							item.setShensuzhuangtai(ssbyValue.desc);
+						}else{
+							item.setShensuzhuangtai("未申诉");
+						}
+						item.setChulizhuangtai(byValue.desc);
+					}else if(item.getRemark()==1){
+						EnmuAlarm.ChuliJieguo byValue = EnmuAlarm.ChuliJieguo.getByValue(Integer.valueOf(item.getChulizhuangtai()));
+						item.setChulizhuangtai(byValue.desc);
+						item.setShensuzhuangtai("未申诉");
+					}else if(item.getRemark() == 0 && item.getShensushenhebiaoshi() == 0){
+						EnmuAlarm.ShensuJieguo byValue = EnmuAlarm.ShensuJieguo.getByValue(Integer.valueOf(4));
+						item.setShensuzhuangtai(byValue.desc);
+						item.setChulizhuangtai("未处理");
+						item.setShensumiaoshu(item.getChulimiaoshu());
+						item.setShensuxingshi(item.getChulixingshi());
+						item.setChulimiaoshu("");
+						item.setChulixingshi("");
+					}else if(item.getRemark() == 0 && item.getShensushenhebiaoshi() == 1){
+						EnmuAlarm.ShensuJieguo byValue = EnmuAlarm.ShensuJieguo.getByValue(Integer.valueOf(5));
+						item.setShensuzhuangtai(byValue.desc);
+						item.setChulizhuangtai("未处理");
+						item.setShensumiaoshu(item.getChulimiaoshu());
+						item.setShensuxingshi(item.getChulixingshi());
+						item.setChulimiaoshu("");
+						item.setChulixingshi("");
+					}else if(item.getRemark() == 0 && item.getShensushenhebiaoshi() == 2){
+						EnmuAlarm.ShensuJieguo byValue = EnmuAlarm.ShensuJieguo.getByValue(Integer.valueOf(6));
+						item.setShensuzhuangtai(byValue.desc);
+						item.setChulizhuangtai("未处理");
+						item.setShensumiaoshu(item.getChulimiaoshu());
+						item.setShensuxingshi(item.getChulixingshi());
+						item.setChulimiaoshu("");
+						item.setChulixingshi("");
+					}else{
+						EnmuAlarm.ShensuJieguo byValue = EnmuAlarm.ShensuJieguo.getByValue(Integer.valueOf(item.getChulizhuangtai()));
+						item.setShensuzhuangtai(byValue.desc);
+						item.setChulizhuangtai("未处理");
+						item.setShensumiaoshu(item.getChulimiaoshu());
+						item.setShensuxingshi(item.getChulixingshi());
+						item.setChulimiaoshu("");
+						item.setChulixingshi("");
+					}
 				}
 
 				if(StringUtils.isBlank(item.getRoadName())){

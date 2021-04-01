@@ -15,6 +15,10 @@
     <resultMap id="InOutAreaResultMap" type="org.springblade.anbiao.qiyeshouye.entity.QiYeInOutAreaTongJi">
     </resultMap>
 
+    <resultMap id="TpvehdataResultMap" type="org.springblade.anbiao.qiyeshouye.entity.QiYeTpvehdataTongJi">
+    </resultMap>
+
+
     <!-- 查询报警统计汇总列表 -->
     <sql id="tableSql">
         select
@@ -283,7 +287,7 @@
 
     <!-- 查询报警统计汇总列表 -->
     <sql id="tableRYXSql">
-        select
+        <!--select
             a.cid as deptId,
             a.company,
             concat(#{beginTime},'至',#{endTime}) as date,
@@ -361,13 +365,43 @@
                 )sta on sta.vehicleid = veh.id
             where 1=1
             group by veh.dept_id
-        )b on a.cid = b.dept_id
+        )b on a.cid = b.dept_id-->
+
+        select
+            cid,
+            company,
+            date,
+            IFNULL(replace(ltrim(replace(vehiclecount,'0',' ')),' ','0'),0) as vehicleCount,
+            IFNULL(UpLineCount,0) as onlineCount,
+            IFNULL((vehiclecount-UpLineCount),0) as offlineCount,
+            case when IFNULL(vehiclecount,0) = 0 or IFNULL(UpLineCount,0) = 0 then '0.00%'
+                else concat(ROUND((UpLineCount*1.0/vehiclecount)*100,2),'%')
+            end as onlineRate,
+            IFNULL(locateVehicleCount,0) as locateCount,
+            case when IFNULL(vehiclecount,0) = 0 or IFNULL(locateVehicleCount,0) = 0 then '0.00%'
+                else concat(ROUND((locateVehicleCount*1.0/vehiclecount)*100,2),'%')
+            end as locaterate,
+            case when ifnull(DriftPositionRate,'') = '' then '100.00%'
+                else concat(ROUND(DriftPositionRate*100,2),'%')
+            end as DriftPositionRate,
+            case when ifnull(IntactPositionRate,'') = '' then '100.00%'
+                else concat(ROUND(IntactPositionRate,2),'%')
+            end as IntactPositionRate,
+            case when ifnull(QualifiedPositionRate,'') = '' then '100.00%'
+                else concat(ROUND(QualifiedPositionRate,2),'%')
+            end as QualifiedPositionRate
+        from
+            baobiao_alarmdailyreport
+        where 1=1
+            and date &gt;= CONCAT( #{beginTime},' 00:00:00')
+            and date &lt;= CONCAT( #{endTime},' 23:59:59')
+            and cid = #{deptId}
     </sql>
 
     <sql id="orderRYXSql">
         <!-- 默认排序规则 -->
         <if test="orderColumn == null or orderColumn == ''">
-            order by company desc
+            order by date desc
         </if>
         <if test="orderColumn != null and orderColumn != ''">
             order by ${orderColumn}
@@ -644,6 +678,75 @@
         <include refid="tableInOutAreaSql"/>
         )d where 1 = 1
         <include refid="queryInOutAreaSql"/>
+    </select>
+
+
+    <!-- 查询企业在线车辆详情列表 -->
+    <sql id="tabletpvehdataSql">
+        select * from tpvehdata
+        where 1=1
+            and DeptID = #{deptId}
+            and LastLocateTime &gt;= CONCAT( #{beginTime},' 00:00:00')
+            and LastLocateTime &lt;= CONCAT( #{endTime},' 23:59:59')
+    </sql>
+
+    <sql id="ordertpvehdataSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by LastLocateTime desc
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order == 0">
+            asc
+        </if>
+    </sql>
+
+    <sql id="querytpvehdataSql">
+
+        <if test="cheliangpaizhao != null and cheliangpaizhao != ''">
+            and VeNumber like '%${cheliangpaizhao}%'
+        </if>
+
+        <if test="Alarm == '1' ">
+            and Alarm = 1
+        </if>
+
+    </sql>
+
+    <select timeout="600" id="selecttpvehdataTJ" resultMap="TpvehdataResultMap"
+            parameterType="org.springblade.anbiao.qiyeshouye.page.QiYeTpvehdataPage">
+        <if test="size == 0">
+            select * from (
+            <include refid="tabletpvehdataSql"/>
+            )b
+            where 1=1
+            <include refid="querytpvehdataSql"/>
+            <include refid="ordertpvehdataSql"/>
+            limit ${total}
+        </if>
+        <if test="current != 0">
+            select * from (
+            <include refid="tabletpvehdataSql"/>
+            )b
+            where 1=1
+            <include refid="querytpvehdataSql"/>
+            <include refid="ordertpvehdataSql"/>
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <select timeout="90" id="selectGettpvehdataTJTotal"
+            parameterType="org.springblade.anbiao.qiyeshouye.page.QiYeTpvehdataPage"
+            resultType="int">
+        select COUNT(1) from (
+        <include refid="tabletpvehdataSql"/>
+        )d where 1 = 1
+        <include refid="querytpvehdataSql"/>
     </select>
 
 </mapper>

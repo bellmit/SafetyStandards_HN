@@ -37,7 +37,7 @@ import java.util.List;
 /**
  * 异常处理配置类
  *
- * @author Chill
+ * @author hyp
  */
 @Configuration
 @EnableConfigurationProperties({ServerProperties.class, ResourceProperties.class})

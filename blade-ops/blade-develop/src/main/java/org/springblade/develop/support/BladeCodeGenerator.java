@@ -41,7 +41,7 @@ import java.util.*;
 /**
  * 代码生成器配置类
  *
- * @author Chill
+ * @author hyp
  */
 @Data
 @Slf4j

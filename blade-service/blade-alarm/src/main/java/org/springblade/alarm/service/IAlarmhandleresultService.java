@@ -26,7 +26,7 @@ import java.util.Map;
 /**
  *  服务类
  *
- * @author elvis.he
+ * @author hyp
  * @since 2019-05-12
  */
 public interface IAlarmhandleresultService extends IService<Alarmhandleresult> {
@@ -52,7 +52,7 @@ public interface IAlarmhandleresultService extends IService<Alarmhandleresult> {
 
 	/**
 	 *根据ids和单位id查询报警数量
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/9/20 14:50
 	 * @param idss
 	 * @param deptName
@@ -62,7 +62,7 @@ public interface IAlarmhandleresultService extends IService<Alarmhandleresult> {
 	/**
 	  * 未处理报警处理
 	 */
-	List<AlarmWeichuliType>  weichulitongji(String company);
+	List<AlarmWeichuliType>  weichulitongji(Integer deptId);
 	/**
 	 * 根据企业 cutoffTime时间更新处理率
 	 */

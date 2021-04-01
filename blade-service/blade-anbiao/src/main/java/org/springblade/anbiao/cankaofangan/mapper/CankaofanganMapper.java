@@ -41,7 +41,7 @@ public interface CankaofanganMapper extends BaseMapper<Cankaofangan> {
 
 	/**
 	 *根据任务类型获取参考方案
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/6/14 16:51
 	 * @param renwuleixing
 	 * @return: org.springblade.anbiao.cankaofangan.entity.Cankaofangan

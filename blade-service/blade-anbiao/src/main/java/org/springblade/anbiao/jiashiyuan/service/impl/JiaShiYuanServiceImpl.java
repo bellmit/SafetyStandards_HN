@@ -123,4 +123,14 @@ public class JiaShiYuanServiceImpl extends ServiceImpl<JiaShiYuanMapper, JiaShiY
 		return jiaShiYuanPage;
 	}
 
+	@Override
+	public List<JiaShiYuan> jiaShiYuanList(String deptId) {
+		return jiaShiYuanMapper.jiaShiYuanList(deptId);
+	}
+
+	@Override
+	public boolean insertSelective(JiaShiYuan jiaShiYuan) {
+		return jiaShiYuanMapper.insertSelective(jiaShiYuan);
+	}
+
 }

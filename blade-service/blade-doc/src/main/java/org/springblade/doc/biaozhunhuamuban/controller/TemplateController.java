@@ -61,8 +61,8 @@ public class TemplateController extends BladeController {
 
 	/**
 	 *上传标准化母模板文件
-	 * @author: th
-	 * @CreateDate: 2019-05-08 10:56
+	 * @author: hyp
+	 * @CreateDate2021-05-08 10:56
 	 * @param file
 	 * @param template
 	 * @param user
@@ -109,7 +109,7 @@ public class TemplateController extends BladeController {
 
 
 	/**
-	* 新增 
+	* 新增
 	*/
 	@PostMapping("/save")
 	@ApiOperation(value = "新增", notes = "传入template", position = 4)
@@ -118,7 +118,7 @@ public class TemplateController extends BladeController {
 	}
 
 	/**
-	* 修改 
+	* 修改
 	*/
 	@PostMapping("/update")
 	@ApiOperation(value = "修改", notes = "传入template", position = 5)
@@ -127,7 +127,7 @@ public class TemplateController extends BladeController {
 	}
 
 	/**
-	* 新增或修改 
+	* 新增或修改
 	*/
 	@PostMapping("/submit")
 	@ApiOperation(value = "新增或修改", notes = "传入template", position = 6)
@@ -135,9 +135,9 @@ public class TemplateController extends BladeController {
 		return R.status(templateService.saveOrUpdate(template));
 	}
 
-	
+
 	/**
-	* 删除 
+	* 删除
 	*/
 	@PostMapping("/remove")
 	@ApiOperation(value = "删除", notes = "传入ids", position = 7)

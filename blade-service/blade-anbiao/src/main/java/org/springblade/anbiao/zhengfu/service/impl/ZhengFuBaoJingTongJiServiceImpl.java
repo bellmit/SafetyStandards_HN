@@ -10,16 +10,12 @@ import org.springblade.anbiao.zhengfu.entity.*;
 import org.springblade.anbiao.zhengfu.mapper.ZhengFuBaoJingTongJiMapper;
 import org.springblade.anbiao.zhengfu.page.ZhengFuBaoJingTongJiJieSuanPage;
 import org.springblade.anbiao.zhengfu.service.IZhengFuBaoJingTongJiService;
-import org.springblade.common.enumconstant.EnmuAlarm;
 import org.springblade.common.tool.GpsToBaiduUtil;
 import org.springblade.common.tool.LatLotForLocation;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * @author 呵呵哒
@@ -49,25 +45,24 @@ public class ZhengFuBaoJingTongJiServiceImpl extends ServiceImpl<ZhengFuBaoJingT
 	public List<ZhengFuBaoJingTongJi> selectGetZFBaoJingYear_XiaJi(String xiaJiDeptId) {
 		return zhengFuBaoJingTongJiMapper.selectGetZFBaoJingYear_XiaJi(xiaJiDeptId);
 	}
-
 	@Override
-	public ZhengFuBaoJingTongJi selectGetZFBaoJingMonth(String deptId) {
-		return zhengFuBaoJingTongJiMapper.selectGetZFBaoJingMonth(deptId);
+	public ZhengFuBaoJingTongJi selectGetZFBaoJingMonth(String deptId,String date) {
+		return zhengFuBaoJingTongJiMapper.selectGetZFBaoJingMonth(deptId,date);
 	}
 
 	@Override
-	public List<ZhengFuBaoJingTongJi> selectGetZFBaoJingMonth_XiaJi(String xiaJiDeptId) {
-		return zhengFuBaoJingTongJiMapper.selectGetZFBaoJingMonth_XiaJi(xiaJiDeptId);
+	public List<ZhengFuBaoJingTongJi> selectGetZFBaoJingMonth_XiaJi(String xiaJiDeptId,String date) {
+		return zhengFuBaoJingTongJiMapper.selectGetZFBaoJingMonth_XiaJi(xiaJiDeptId, date);
 	}
 
 	@Override
-	public List<ZhengFuBaoJingTongJi> selectGetZFBaoJingQuShi(String deptId) {
-		return zhengFuBaoJingTongJiMapper.selectGetZFBaoJingQuShi(deptId);
+	public List<ZhengFuBaoJingTongJi> selectGetZFBaoJingQuShi(String deptId, String firstDate, String endDate) {
+		return zhengFuBaoJingTongJiMapper.selectGetZFBaoJingQuShi(deptId,firstDate,endDate);
 	}
 
 	@Override
-	public List<ZhengFuBaoJingTongJi> selectGetZFBaoJingQuShi_XiaJi(String xiaJiDeptId) {
-		return zhengFuBaoJingTongJiMapper.selectGetZFBaoJingQuShi_XiaJi(xiaJiDeptId);
+	public List<ZhengFuBaoJingTongJi> selectGetZFBaoJingQuShi_XiaJi(String xiaJiDeptId, String firstDate, String endDate) {
+		return zhengFuBaoJingTongJiMapper.selectGetZFBaoJingQuShi_XiaJi(xiaJiDeptId,firstDate,endDate);
 	}
 
 	@Override
@@ -98,11 +93,13 @@ public class ZhengFuBaoJingTongJiServiceImpl extends ServiceImpl<ZhengFuBaoJingT
 			if(zhengFuBaoJingTongJiJieSuanPage.getTotal()==0){
 				zhengFuBaoJingTongJiJieSuanPage.setTotal(total);
 			}
-
-			List<ZhengFuBaoJingTongJiJieSuan> zhengFuBaoJingTongJiList = zhengFuBaoJingTongJiMapper.selectGetBJTJ(zhengFuBaoJingTongJiJieSuanPage);
-			zhengFuBaoJingTongJiJieSuanPage.setRecords(zhengFuBaoJingTongJiList);
-			return zhengFuBaoJingTongJiJieSuanPage;
-
+			if(zhengFuBaoJingTongJiJieSuanPage.getTotal()==0){
+				return zhengFuBaoJingTongJiJieSuanPage;
+			}else {
+				List<ZhengFuBaoJingTongJiJieSuan> zhengFuBaoJingTongJiList = zhengFuBaoJingTongJiMapper.selectGetBJTJ(zhengFuBaoJingTongJiJieSuanPage);
+				zhengFuBaoJingTongJiJieSuanPage.setRecords(zhengFuBaoJingTongJiList);
+				return zhengFuBaoJingTongJiJieSuanPage;
+			}
 		}
 		Integer pagetotal = 0;
 		if (total > 0) {
@@ -174,9 +171,13 @@ public class ZhengFuBaoJingTongJiServiceImpl extends ServiceImpl<ZhengFuBaoJingT
 			if(zhengFuBaoJingTongJiJieSuanPage.getTotal()==0){
 				zhengFuBaoJingTongJiJieSuanPage.setTotal(total);
 			}
-			List<ZhengFuBaoJingTongJiLv> zhengFuBaoJingTongJiList = zhengFuBaoJingTongJiMapper.selectGetQYLvTJ(zhengFuBaoJingTongJiJieSuanPage);
-			zhengFuBaoJingTongJiJieSuanPage.setRecords(zhengFuBaoJingTongJiList);
-			return zhengFuBaoJingTongJiJieSuanPage;
+			if(zhengFuBaoJingTongJiJieSuanPage.getTotal()==0){
+				return zhengFuBaoJingTongJiJieSuanPage;
+			}else {
+				List<ZhengFuBaoJingTongJiLv> zhengFuBaoJingTongJiList = zhengFuBaoJingTongJiMapper.selectGetQYLvTJ(zhengFuBaoJingTongJiJieSuanPage);
+				zhengFuBaoJingTongJiJieSuanPage.setRecords(zhengFuBaoJingTongJiList);
+				return zhengFuBaoJingTongJiJieSuanPage;
+			}
 		}
 		Integer pagetotal = 0;
 		if (total > 0) {
@@ -397,11 +398,13 @@ public class ZhengFuBaoJingTongJiServiceImpl extends ServiceImpl<ZhengFuBaoJingT
 			if(zhengFuBaoJingTongJiJieSuanPage.getTotal()==0){
 				zhengFuBaoJingTongJiJieSuanPage.setTotal(total);
 			}
-
-			List<ZhengFuBaoJingVehicle> zhengFuBaoJingTongJiList = zhengFuBaoJingTongJiMapper.selectGetVehicleMXTJ(zhengFuBaoJingTongJiJieSuanPage);
-			zhengFuBaoJingTongJiJieSuanPage.setRecords(zhengFuBaoJingTongJiList);
-			return zhengFuBaoJingTongJiJieSuanPage;
-
+			if(zhengFuBaoJingTongJiJieSuanPage.getTotal()==0){
+				return zhengFuBaoJingTongJiJieSuanPage;
+			}else {
+				List<ZhengFuBaoJingVehicle> zhengFuBaoJingTongJiList = zhengFuBaoJingTongJiMapper.selectGetVehicleMXTJ(zhengFuBaoJingTongJiJieSuanPage);
+				zhengFuBaoJingTongJiJieSuanPage.setRecords(zhengFuBaoJingTongJiList);
+				return zhengFuBaoJingTongJiJieSuanPage;
+			}
 		}
 		Integer pagetotal = 0;
 		if (total > 0) {
@@ -517,13 +520,27 @@ public class ZhengFuBaoJingTongJiServiceImpl extends ServiceImpl<ZhengFuBaoJingT
 	@Override
 	public ZhengFuBaoJingTongJiJieSuanPage selectGetDQTJPMTJ(ZhengFuBaoJingTongJiJieSuanPage zhengFuBaoJingTongJiJieSuanPage) {
 		Integer total = zhengFuBaoJingTongJiMapper.selectDQTJPMTotal(zhengFuBaoJingTongJiJieSuanPage);
+
+		List<ZhengFuBaoJingTongJiJieSuan> organizationList;
 		if(zhengFuBaoJingTongJiJieSuanPage.getSize()==0){
 			if(zhengFuBaoJingTongJiJieSuanPage.getTotal()==0){
 				zhengFuBaoJingTongJiJieSuanPage.setTotal(total);
 			}
-			List<ZhengFuBaoJingTongJiJieSuan> organizationList = zhengFuBaoJingTongJiMapper.selectGetDQTJPMTJ(zhengFuBaoJingTongJiJieSuanPage);
-			zhengFuBaoJingTongJiJieSuanPage.setRecords(organizationList);
-			return zhengFuBaoJingTongJiJieSuanPage;
+			if(zhengFuBaoJingTongJiJieSuanPage.getTotal()==0){
+				return zhengFuBaoJingTongJiJieSuanPage;
+			}else {
+				organizationList = zhengFuBaoJingTongJiMapper.selectGetDQTJPMTJ(zhengFuBaoJingTongJiJieSuanPage);
+//			for (int i = 0;i<organizationList.size();i++){
+//				List<ZhengFuBaoJingTongJiJieSuan> zhengFuBaoJingTongJiJieSuans = zhengFuBaoJingTongJiMapper.seletGetVehicleCount(zhengFuBaoJingTongJiJieSuanPage);
+//				for(int j = 0;j<=i;j++){
+//					if(zhengFuBaoJingTongJiJieSuans.get(j).getZhengfuid().equals(organizationList.get(i).getZhengfuid())){
+//						organizationList.get(i).setCheliangshu(zhengFuBaoJingTongJiJieSuans.get(j).getCheliangshu());
+//					}
+//				}
+//			}
+				zhengFuBaoJingTongJiJieSuanPage.setRecords(organizationList);
+				return zhengFuBaoJingTongJiJieSuanPage;
+			}
 		}
 		Integer pagetotal = 0;
 		if (total > 0) {
@@ -541,7 +558,15 @@ public class ZhengFuBaoJingTongJiServiceImpl extends ServiceImpl<ZhengFuBaoJingT
 			}
 			zhengFuBaoJingTongJiJieSuanPage.setTotal(total);
 			zhengFuBaoJingTongJiJieSuanPage.setOffsetNo(offsetNo);
-			List<ZhengFuBaoJingTongJiJieSuan> organizationList = zhengFuBaoJingTongJiMapper.selectGetDQTJPMTJ(zhengFuBaoJingTongJiJieSuanPage);
+			organizationList = zhengFuBaoJingTongJiMapper.selectGetDQTJPMTJ(zhengFuBaoJingTongJiJieSuanPage);
+//			for (int i = 0;i<organizationList.size();i++){
+//				List<ZhengFuBaoJingTongJiJieSuan> zhengFuBaoJingTongJiJieSuans = zhengFuBaoJingTongJiMapper.seletGetVehicleCount(zhengFuBaoJingTongJiJieSuanPage);
+//				for(int j = 0;j<=i;j++){
+//					if(zhengFuBaoJingTongJiJieSuans.get(j).getZhengfuid().equals(organizationList.get(i).getZhengfuid())){
+//						organizationList.get(i).setCheliangshu(zhengFuBaoJingTongJiJieSuans.get(j).getCheliangshu());
+//					}
+//				}
+//			}
 			zhengFuBaoJingTongJiJieSuanPage.setRecords(organizationList);
 		}
 		return zhengFuBaoJingTongJiJieSuanPage;
@@ -592,9 +617,13 @@ public class ZhengFuBaoJingTongJiServiceImpl extends ServiceImpl<ZhengFuBaoJingT
 			if(zhengFuBaoJingTongJiJieSuanPage.getTotal()==0){
 				zhengFuBaoJingTongJiJieSuanPage.setTotal(total);
 			}
-			List<ZhengFuRiYunXingTongJi> organizationList = zhengFuBaoJingTongJiMapper.selectGetCLRYXTJ(zhengFuBaoJingTongJiJieSuanPage);
-			zhengFuBaoJingTongJiJieSuanPage.setRecords(organizationList);
-			return zhengFuBaoJingTongJiJieSuanPage;
+			if(zhengFuBaoJingTongJiJieSuanPage.getTotal()==0){
+				return zhengFuBaoJingTongJiJieSuanPage;
+			}else {
+				List<ZhengFuRiYunXingTongJi> organizationList = zhengFuBaoJingTongJiMapper.selectGetCLRYXTJ(zhengFuBaoJingTongJiJieSuanPage);
+				zhengFuBaoJingTongJiJieSuanPage.setRecords(organizationList);
+				return zhengFuBaoJingTongJiJieSuanPage;
+			}
 		}
 		Integer pagetotal = 0;
 		if (total > 0) {
@@ -616,6 +645,48 @@ public class ZhengFuBaoJingTongJiServiceImpl extends ServiceImpl<ZhengFuBaoJingT
 			zhengFuBaoJingTongJiJieSuanPage.setRecords(organizationList);
 		}
 		return zhengFuBaoJingTongJiJieSuanPage;
+	}
+
+	@Override
+	public ZhengFuBaoJingTongJiJieSuanPage<ZhengFuRiYunXingTongJi> selectGetQYRYXTJ(ZhengFuBaoJingTongJiJieSuanPage zhengFuBaoJingTongJiJieSuanPage) {
+		Integer total = zhengFuBaoJingTongJiMapper.selectQYRYXTJTotal(zhengFuBaoJingTongJiJieSuanPage);
+		if(zhengFuBaoJingTongJiJieSuanPage.getSize()==0){
+			if(zhengFuBaoJingTongJiJieSuanPage.getTotal()==0){
+				zhengFuBaoJingTongJiJieSuanPage.setTotal(total);
+			}
+			if(zhengFuBaoJingTongJiJieSuanPage.getTotal()==0){
+				return zhengFuBaoJingTongJiJieSuanPage;
+			}else {
+				List<ZhengFuRiYunXingTongJi> zhengFuRiYunXingTongJiList = zhengFuBaoJingTongJiMapper.selectGetQYRYXTJ(zhengFuBaoJingTongJiJieSuanPage);
+				zhengFuBaoJingTongJiJieSuanPage.setRecords(zhengFuRiYunXingTongJiList);
+				return zhengFuBaoJingTongJiJieSuanPage;
+			}
+		}
+		Integer pagetotal = 0;
+		if (total > 0) {
+			if(total%zhengFuBaoJingTongJiJieSuanPage.getSize()==0){
+				pagetotal = total / zhengFuBaoJingTongJiJieSuanPage.getSize();
+			}else {
+				pagetotal = total / zhengFuBaoJingTongJiJieSuanPage.getSize() + 1;
+			}
+		}
+		if (pagetotal >= zhengFuBaoJingTongJiJieSuanPage.getCurrent()) {
+			zhengFuBaoJingTongJiJieSuanPage.setPageTotal(pagetotal);
+			Integer offsetNo = 0;
+			if (zhengFuBaoJingTongJiJieSuanPage.getCurrent() > 1) {
+				offsetNo = zhengFuBaoJingTongJiJieSuanPage.getSize() * (zhengFuBaoJingTongJiJieSuanPage.getCurrent() - 1);
+			}
+			zhengFuBaoJingTongJiJieSuanPage.setTotal(total);
+			zhengFuBaoJingTongJiJieSuanPage.setOffsetNo(offsetNo);
+			List<ZhengFuRiYunXingTongJi> zhengFuRiYunXingTongJiList = zhengFuBaoJingTongJiMapper.selectGetQYRYXTJ(zhengFuBaoJingTongJiJieSuanPage);
+			zhengFuBaoJingTongJiJieSuanPage.setRecords(zhengFuRiYunXingTongJiList);
+		}
+		return zhengFuBaoJingTongJiJieSuanPage;
+	}
+
+	@Override
+	public List<ZhengFuBaoJingTongJiJieSuan> seletGetVehicleCount(ZhengFuBaoJingTongJiJieSuanPage zhengFuBaoJingTongJiJieSuanPage) {
+		return zhengFuBaoJingTongJiMapper.seletGetVehicleCount(zhengFuBaoJingTongJiJieSuanPage);
 	}
 
 }

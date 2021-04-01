@@ -20,9 +20,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springblade.anbiao.richenganpai.entity.Richenganpai;
 import org.springblade.anbiao.richenganpai.mapper.RichenganpaiMapper;
+import org.springblade.anbiao.richenganpai.page.RiChengAnPaiPage;
 import org.springblade.anbiao.richenganpai.service.IRichenganpaiService;
 import org.springblade.anbiao.richenganpai.vo.RichengIndexVo;
 import org.springblade.anbiao.richenganpai.vo.RichenganpaiVO;
+import org.springblade.system.user.entity.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -50,18 +52,140 @@ public class RichenganpaiServiceImpl extends ServiceImpl<RichenganpaiMapper, Ric
 	}
 
 	@Override
-	public List<RichenganpaiVO> getByDate(Integer deptId, String date, Integer userId) {
-		return mapper.getByDate(deptId,date,userId);
+	public RiChengAnPaiPage<RichenganpaiVO> selectByDate(RiChengAnPaiPage riChengAnPaiPage) {
+		Integer total = mapper.selectByDateTotal(riChengAnPaiPage);
+		if(riChengAnPaiPage.getSize()==0){
+			if(riChengAnPaiPage.getTotal()==0){
+				riChengAnPaiPage.setTotal(total);
+			}
+			if(riChengAnPaiPage.getTotal()==0){
+				return riChengAnPaiPage;
+			}else{
+				List<RichenganpaiVO> richenganpaiVOList = mapper.selectByDate(riChengAnPaiPage);
+				riChengAnPaiPage.setRecords(richenganpaiVOList);
+				return riChengAnPaiPage;
+			}
+		}
+		Integer pagetotal = 0;
+		if (total > 0) {
+			if(total%riChengAnPaiPage.getSize()==0){
+				pagetotal = total / riChengAnPaiPage.getSize();
+			}else {
+				pagetotal = total / riChengAnPaiPage.getSize() + 1;
+			}
+		}
+		if (pagetotal >= riChengAnPaiPage.getCurrent()) {
+			riChengAnPaiPage.setPageTotal(pagetotal);
+			Integer offsetNo = 0;
+			if (riChengAnPaiPage.getCurrent() > 1) {
+				offsetNo = riChengAnPaiPage.getSize() * (riChengAnPaiPage.getCurrent() - 1);
+			}
+			riChengAnPaiPage.setTotal(total);
+			riChengAnPaiPage.setOffsetNo(offsetNo);
+			List<RichenganpaiVO> richenganpaiVOList = mapper.selectByDate(riChengAnPaiPage);
+			riChengAnPaiPage.setRecords(richenganpaiVOList);
+		}
+		return riChengAnPaiPage;
 	}
 
 	@Override
-	public List<RichenganpaiVO> getChaoqiByDate(Integer deptId, Integer userId) {
-		return mapper.getChaoqiByDate(deptId,userId);
+	public RiChengAnPaiPage<RichenganpaiVO> selectChaoQiByDate(RiChengAnPaiPage riChengAnPaiPage) {
+		Integer total = mapper.selectChaoQiByDateTotal(riChengAnPaiPage);
+		if(riChengAnPaiPage.getSize()==0){
+			if(riChengAnPaiPage.getTotal()==0){
+				riChengAnPaiPage.setTotal(total);
+			}
+			if(riChengAnPaiPage.getTotal()==0){
+				return riChengAnPaiPage;
+			}else{
+				List<RichenganpaiVO> richenganpaiVOList = mapper.selectChaoQiByDate(riChengAnPaiPage);
+				riChengAnPaiPage.setRecords(richenganpaiVOList);
+				return riChengAnPaiPage;
+			}
+		}
+		Integer pagetotal = 0;
+		if (total > 0) {
+			if(total%riChengAnPaiPage.getSize()==0){
+				pagetotal = total / riChengAnPaiPage.getSize();
+			}else {
+				pagetotal = total / riChengAnPaiPage.getSize() + 1;
+			}
+		}
+		if (pagetotal >= riChengAnPaiPage.getCurrent()) {
+			riChengAnPaiPage.setPageTotal(pagetotal);
+			Integer offsetNo = 0;
+			if (riChengAnPaiPage.getCurrent() > 1) {
+				offsetNo = riChengAnPaiPage.getSize() * (riChengAnPaiPage.getCurrent() - 1);
+			}
+			riChengAnPaiPage.setTotal(total);
+			riChengAnPaiPage.setOffsetNo(offsetNo);
+			List<RichenganpaiVO> richenganpaiVOList = mapper.selectChaoQiByDate(riChengAnPaiPage);
+			riChengAnPaiPage.setRecords(richenganpaiVOList);
+		}
+		return riChengAnPaiPage;
 	}
 
 	@Override
-	public List<RichenganpaiVO> getAnpaiByUser(Integer deptId, Integer userId) {
-		return mapper.getAnpaiByUser(deptId,userId);
+	public RiChengAnPaiPage<RichenganpaiVO> selectAnpaiByUser(RiChengAnPaiPage riChengAnPaiPage) {
+		Integer total = mapper.selectAnpaiByUserTotal(riChengAnPaiPage);
+		if(riChengAnPaiPage.getSize()==0){
+			if(riChengAnPaiPage.getTotal()==0){
+				riChengAnPaiPage.setTotal(total);
+			}
+
+			if(riChengAnPaiPage.getTotal()==0){
+				return riChengAnPaiPage;
+			}else{
+				List<RichenganpaiVO> richenganpaiVOList = mapper.selectAnpaiByUser(riChengAnPaiPage);
+				riChengAnPaiPage.setRecords(richenganpaiVOList);
+				return riChengAnPaiPage;
+			}
+		}
+		Integer pagetotal = 0;
+		if (total > 0) {
+			if(total%riChengAnPaiPage.getSize()==0){
+				pagetotal = total / riChengAnPaiPage.getSize();
+			}else {
+				pagetotal = total / riChengAnPaiPage.getSize() + 1;
+			}
+		}
+		if (pagetotal >= riChengAnPaiPage.getCurrent()) {
+			riChengAnPaiPage.setPageTotal(pagetotal);
+			Integer offsetNo = 0;
+			if (riChengAnPaiPage.getCurrent() > 1) {
+				offsetNo = riChengAnPaiPage.getSize() * (riChengAnPaiPage.getCurrent() - 1);
+			}
+			riChengAnPaiPage.setTotal(total);
+			riChengAnPaiPage.setOffsetNo(offsetNo);
+			List<RichenganpaiVO> richenganpaiVOList = mapper.selectAnpaiByUser(riChengAnPaiPage);
+			riChengAnPaiPage.setRecords(richenganpaiVOList);
+		}
+		return riChengAnPaiPage;
+	}
+
+	@Override
+	public boolean insertSelective(Richenganpai richenganpaiVO) {
+		return mapper.insertSelective(richenganpaiVO);
+	}
+
+	@Override
+	public boolean updateSelective(Richenganpai richenganpaiVO) {
+		return mapper.updateSelective(richenganpaiVO);
+	}
+
+	@Override
+	public Richenganpai selectByIds(String Id) {
+		return mapper.selectByIds(Id);
+	}
+
+	@Override
+	public boolean deleteBind(String updateTime, String updateUser, Integer updateUserId, Integer Id) {
+		return mapper.deleteBind(updateTime, updateUser, updateUserId, Id);
+	}
+
+	@Override
+	public User getUserById(Integer id) {
+		return mapper.getUserById(id);
 	}
 
 }

@@ -18,6 +18,7 @@ package org.springblade.doc.biaozhunhuamuban.service;
 import feign.Param;
 import org.springblade.doc.biaozhunhuamuban.entity.BiaoZhunHua;
 import org.springblade.doc.biaozhunhuamuban.entity.Biaozhunhuamuban;
+import org.springblade.doc.biaozhunhuamuban.entity.BiaozhunhuamubanList;
 import org.springblade.doc.biaozhunhuamuban.page.BiaozhunhuamubanPage;
 import org.springblade.doc.biaozhunhuamuban.vo.BiaozhunhuamubanVO;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -26,16 +27,12 @@ import java.util.List;
 
 /**
  *  服务类
- *
- * @author th
- * @since 2019-05-04
+ * @since 2020-09-04
  */
 public interface IBiaozhunhuamubanService extends IService<Biaozhunhuamuban> {
 
 
 	/** 获取目录树形结构
-	  * @Author th
-	  * @CreateDate 2019-05-05 12:46
 	  * @param deptId
 	  * @return java.util.List<org.springblade.anbiao.BiaozhunhuamubanVO>
 	  **/
@@ -57,8 +54,6 @@ public interface IBiaozhunhuamubanService extends IService<Biaozhunhuamuban> {
 
 	/**
 	 *查询标准化目录最大id
-	 * @author: th
-	 * @CreateDate: 2019-05-06 12:51
 	 * @param
 	 * @return: java.lang.Integer
 	 */
@@ -66,8 +61,6 @@ public interface IBiaozhunhuamubanService extends IService<Biaozhunhuamuban> {
 
 	/**
 	 *根据parentId查询下级节点
-	 * @author: th
-	 * @CreateDate: 2019-05-08 18:23
 	 * @param parentId
 	 * @return: java.util.List<org.springblade.anbiao.Biaozhunhuamuban>
 	 */
@@ -75,8 +68,6 @@ public interface IBiaozhunhuamubanService extends IService<Biaozhunhuamuban> {
 
 	/**
 	 *查询下级节点最大sort
-	 * @author: th
-	 * @CreateDate: 2019-05-09 19:25
 	 * @param id
 	 * @return: java.lang.Integer
 	 */
@@ -84,8 +75,6 @@ public interface IBiaozhunhuamubanService extends IService<Biaozhunhuamuban> {
 
 	/**
 	 *根据文件性质查询目录
-	 * @author: th
-	 * @CreateDate: 2019-05-10 23:49
 	 * @param deptId
 	 * @param fileProperty
 	 * @return: java.util.List<org.springblade.anbiao.BiaozhunhuamubanVO>
@@ -95,8 +84,6 @@ public interface IBiaozhunhuamubanService extends IService<Biaozhunhuamuban> {
 
 	/**
 	 *根据文件性质查询文件列表数据
-	 * @author: th
-	 * @CreateDate: 2019-05-11 18:44
 	 * @param biaozhunhuamubanPage
 	 * @return: java.util.List<org.springblade.anbiao.Biaozhunhuamuban>
 	 */
@@ -104,8 +91,6 @@ public interface IBiaozhunhuamubanService extends IService<Biaozhunhuamuban> {
 
 	/**
 	 *修改文件性质
-	 * @author: th
-	 * @CreateDate: 2019-05-15 17:13
 	 * @param id
 	 * @param fileProperty
 	 * @return: boolean
@@ -114,8 +99,6 @@ public interface IBiaozhunhuamubanService extends IService<Biaozhunhuamuban> {
 
 	/**
 	 *修改文件所属人
-	 * @author: th
-	 * @date: 2019/5/19 14:23
 	 * @param id
 	 * @param fileSuoshurenId
 	 * @return: boolean
@@ -124,7 +107,7 @@ public interface IBiaozhunhuamubanService extends IService<Biaozhunhuamuban> {
 
 	/**
 	 *根据id修改文档编号
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/5/27 9:56
 	 * @param id
 	 * @param documentNumber
@@ -135,8 +118,6 @@ public interface IBiaozhunhuamubanService extends IService<Biaozhunhuamuban> {
 
 	/**
 	 *根据模板文件id实现两文件排序号对调,实现文件排序上下移动
-	 * @author: th
-	 * @date: 2019/5/27 15:47
 	 * @param originId
 	 * @param targetId
 	 * @return: boolean
@@ -153,8 +134,6 @@ public interface IBiaozhunhuamubanService extends IService<Biaozhunhuamuban> {
 
 	/**
 	 *文件重命名
-	 * @author: th
-	 * @date: 2019/6/19 17:09
 	 * @param id
 	 * @param name
 	 * @return: boolean
@@ -163,8 +142,6 @@ public interface IBiaozhunhuamubanService extends IService<Biaozhunhuamuban> {
 
 	/**
 	 *更新记录
-	 * @author: th
-	 * @date: 2019/8/12 23:38
 	 * @param id
 	 * @return: int
 	 */
@@ -172,10 +149,7 @@ public interface IBiaozhunhuamubanService extends IService<Biaozhunhuamuban> {
 
 	/**
 	 *获取模板树
-	 * @author: th
-	 * @date: 2019/9/3 10:45
 	 * @param
-	 * @return: java.util.List<org.springblade.doc.biaozhunhuamuban.vo.BiaozhunhuamubanVO>
 	 */
 	List<BiaozhunhuamubanVO> getMubanTree(Integer yunyingleixing,Integer isOnlyDir);
 
@@ -188,8 +162,6 @@ public interface IBiaozhunhuamubanService extends IService<Biaozhunhuamuban> {
 
     /**
      *插入标准化文件与安全生产文档绑定关系
-     * @author: th
-     * @date: 2019/11/12 21:48
      * @param id
      * @param split
      * @return: void
@@ -198,8 +170,6 @@ public interface IBiaozhunhuamubanService extends IService<Biaozhunhuamuban> {
 
     /**
      *取消绑定
-     * @author: th
-     * @date: 2019/11/12 22:52
      * @param id
      * @return: void
      */
@@ -241,6 +211,40 @@ public interface IBiaozhunhuamubanService extends IService<Biaozhunhuamuban> {
 	boolean deleteSafetyProductionFile(@Param("caozuorenid") Integer caozuorenid,@Param("caozuoren") String caozuoren
 		,@Param("deptId") Integer deptId);
 
+	/**
+	 * 根据文件ID更新标准化文件相应数据（如分值、描述信息、报警等级等）
+	 * @param biaozhunhuamuban
+	 * @return
+	 */
+	boolean updateBiaozhunhuamuban(Biaozhunhuamuban biaozhunhuamuban);
 
+	/**
+	 * 根据企业ID获取相应标准化文件列表数据
+	 * @param deptId
+	 * @return
+	 */
+//	List<BiaozhunhuamubanList> listTree(@Param("deptId") Integer deptId,@Param("fileProperty") Integer fileProperty,@Param("Id") Integer Id);
+	List<BiaozhunhuamubanList> listTree(@Param("deptId") Integer deptId, @Param("fileProperty") Integer fileProperty, @Param("Id") Integer Id, @Param("parentId") Integer parentId);
+	/**
+	 * 根据企业ID、标准化文件类型获取自评总分
+	 * @param deptId
+	 * @param fileProperty
+	 * @return
+	 */
+	BiaozhunhuamubanList getTreeScores(@Param("deptId") Integer deptId, @Param("fileProperty") Integer fileProperty);
+
+	/**
+	 * 根据企业ID获取安全标准化文件树
+	 * @param deptId
+	 * @return
+	 */
+	List<BiaozhunhuamubanVO> getListTree(@Param("deptId") String deptId, @Param("fileProperty") Integer fileProperty);
+
+	/**
+	 * 根据企业ID查询企业标准化文件类型
+	 * @param deptId
+	 * @return
+	 */
+	BiaozhunhuamubanVO getByDeptId(@Param("deptId") String deptId);
 
 }

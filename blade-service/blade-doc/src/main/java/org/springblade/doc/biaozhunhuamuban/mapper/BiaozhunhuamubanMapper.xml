@@ -24,11 +24,14 @@
         <result column="muban_path" property="mubanPath"/>
         <result column="cumulative_visits" property="cumulativeVisits"/>
         <result column="last_preview_time" property="lastPreviewTime"/>
+        <result column="remark" property="remark"/>
     </resultMap>
 
     <resultMap id="BiaoZhunHuaResultMap" type="org.springblade.doc.biaozhunhuamuban.entity.BiaoZhunHua">
     </resultMap>
 
+    <resultMap id="BiaozhunhuamubanListResultMap" type="org.springblade.doc.biaozhunhuamuban.entity.BiaozhunhuamubanList">
+    </resultMap>
 
     <resultMap id="biaozhunhuamubanResultVoMap" type="org.springblade.doc.biaozhunhuamuban.vo.BiaozhunhuamubanVO">
         <id column="id" property="id"/>
@@ -160,7 +163,16 @@
             b.levelNumber,
             anbiao.file_suoshuren_id,
             anbiao.cumulative_visits,
-            anbiao.last_preview_time
+            anbiao.last_preview_time,
+            anbiao.remark,
+            anbiao.starlevel,
+            anbiao.score,
+            case
+                when IFNULL(anbiao.score,'') != '' and COUNT(t.tier) > 0 then anbiao.score
+                when IFNULL(anbiao.score,'') != '' and COUNT(t.tier) = 0 then '0'
+                else ''
+            end as nowscores,
+            anbiao.yunyingleixing
         FROM
             anbiao_biaozhunhuamuban anbiao
 --             查询文件数
@@ -364,7 +376,10 @@
             document_number,
             directory_name,
             muban_path,
-            yunyingleixing
+            yunyingleixing,
+            remark,
+            score,
+            starlevel
         FROM
             anbiao_biaozhunhuamuban
         WHERE
@@ -611,6 +626,197 @@
         set is_deleted=1,caozuoshijian=now(),caozuorenid=#{caozuorenid},caozuoren=#{caozuoren}
         where dept_id=#{deptId}
     </delete>
+
+    <!-- 根据文件ID更新标准化文件相应数据 -->
+    <update id="updateBiaozhunhuamuban" parameterType="org.springblade.doc.biaozhunhuamuban.entity.Biaozhunhuamuban" >
+        update anbiao_biaozhunhuamuban
+        <set>
+            <if test="remark != null">
+                remark = #{remark},
+            </if>
+
+            <if test="score != null">
+                score = #{score},
+            </if>
+
+            <if test="starlevel != null">
+                starlevel = #{starlevel},
+            </if>
+
+            <if test="caozuorenid != null">
+                caozuorenid = #{caozuorenid},
+            </if>
+
+            <if test="caozuoren != null">
+                caozuoren = #{caozuoren},
+            </if>
+
+            <if test="caozuoshijian != null">
+                caozuoshijian = #{caozuoshijian}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="listTree" resultMap="BiaozhunhuamubanListResultMap">
+        select
+            case when IFNULL(a.parentName,'') = '' and IFNULL(a.erparentName,'') != '' then (
+            select name from anbiao_biaozhunhuamuban where id = a.ids and (LENGTH(a.tier) &gt; 10)
+            ) else a.parentName end as parentName,
+            case when IFNULL(a.erparentName,'') = '' and IFNULL(a.parentName,'') != '' then a.name else a.erparentName end as erparentName,
+            a.id,
+            a.parent_id,
+            a.dept_id,
+            a.sort,
+            a.tier,
+            a.`NAME`,
+            a.yunyingleixing,
+            a.remark,
+            a.starlevel,
+            a.score,
+            a.nowscores
+        from(
+            SELECT
+                DISTINCT
+                MAX((
+                select name from anbiao_biaozhunhuamuban where id = anbiao.parent_id and (LENGTH(tier) &lt; 10)
+                )) as parentName,
+                MAX((
+                select name from anbiao_biaozhunhuamuban where id = anbiao.parent_id and (LENGTH(tier) &gt; 10)
+                )) as erparentName,
+                anbiao.id,
+                MAX(ab.parent_id) as ids,
+                MAX(anbiao.parent_id) as parent_id,
+                MAX(anbiao.dept_id) as dept_id,
+                MAX(anbiao.sort) as sort,
+                MAX(anbiao.tier) as tier,
+                anbiao.NAME,
+                MAX(anbiao.yunyingleixing) as yunyingleixing,
+                IFNULL(MAX(anbiao.remark),'') as remark,
+                IFNULL(MAX(anbiao.starlevel),0) as starlevel,
+            <if test="Id == null or Id == '' ">
+                IFNULL(MAX(anbiao.score),0) as score,
+                case
+                    when IFNULL(anbiao.score,'') != '' and COUNT(t.tier) &gt; 0 then anbiao.score
+                    when IFNULL(anbiao.score,'') != '' and COUNT(t.tier) = 0 then '0'
+                    else ''
+                end as nowscores
+            </if>
+            <if test="Id != null and Id != '' ">
+                case
+                    when IFNULL(MAX(anbiao.score),0) = 0 then (select SUM(score) from anbiao_biaozhunhuamuban where parent_id = anbiao.id)
+                    else MAX(anbiao.score)
+                end as score,
+                case
+                    when IFNULL(anbiao.score,'') != '' and COUNT(t.tier) &gt; 0 then MAX(t.score)
+                    when IFNULL(anbiao.score,'') != '' and COUNT(t.tier) = 0 then '0'
+                    when IFNULL(MAX(t.score),'') != '' then sum(t.score)
+                    else '0'
+                end as nowscores
+            </if>
+            FROM
+                anbiao_biaozhunhuamuban anbiao
+            LEFT JOIN anbiao_biaozhunhuamuban ab on ab.id = anbiao.parent_id
+            LEFT JOIN (
+                SELECT DISTINCT tier,score FROM anbiao_biaozhunhuamuban
+                WHERE type = '文件' and is_deleted=0 and dept_id = #{deptId}
+            ) t ON t.tier LIKE concat(anbiao.tier, '-%')
+        WHERE anbiao.dept_id = #{deptId}
+            AND anbiao.is_deleted = 0
+            AND ab.is_deleted = 0
+            AND anbiao.type = '文件夹'
+            AND ab.type = '文件夹'
+            AND anbiao.yunyingleixing = #{fileProperty}
+        <if test=" deptId == 1 ">
+            AND ab.parent_id != 3840
+            AND anbiao.parent_id != 3840
+        </if>
+
+        <if test="Id != null and Id != '' ">
+            AND anbiao.parent_id = #{Id}
+        </if>
+
+        <if test="Id == null or Id == '' ">
+            AND anbiao.parent_id != 0
+            AND ab.parent_id != 0
+        </if>
+
+        <if test="parentId != null and parentId != '' ">
+            AND anbiao.id = #{parentId}
+        </if>
+        GROUP BY
+        anbiao.id
+        )a
+        ORDER BY a.tier
+    </select>
+
+    <select id="getTreeScores" resultMap="BiaozhunhuamubanListResultMap">
+        select
+            ifnull(SUM(nowscores),0) as totalpoints
+        from(
+            SELECT
+                anbiao.id,
+                case
+                    when IFNULL(anbiao.score,'') != '' and COUNT(t.tier) &gt; 0 then anbiao.score
+                    when IFNULL(anbiao.score,'') != '' and COUNT(t.tier) = 0 then '0'
+                    else ''
+                end as nowscores
+            FROM
+                anbiao_biaozhunhuamuban anbiao
+            LEFT JOIN (
+                SELECT DISTINCT tier FROM anbiao_biaozhunhuamuban
+                WHERE type = '文件'
+                    and is_deleted=0
+                    and yunyingleixing = #{fileProperty}
+                    and dept_id = #{deptId}
+            ) t ON t.tier LIKE concat(anbiao.tier, '-%')
+            WHERE anbiao.dept_id = #{deptId}
+                AND anbiao.is_deleted = 0
+                AND anbiao.yunyingleixing = #{fileProperty}
+            GROUP BY
+                id,
+                anbiao.parent_id,
+                anbiao.dept_id,
+                anbiao. NAME,
+                anbiao.type,
+                anbiao.path,
+                anbiao.sort,
+                anbiao.caozuorenid,
+                anbiao.caozuoren,
+                anbiao.caozuoshijian,
+                anbiao.file_property
+            )a
+    </select>
+
+    <select id="getListTree" resultMap="biaozhunhuamubanResultVoMap">
+        select
+            id,
+            parent_id,
+            dept_id,
+            name,
+            tier
+        from
+            anbiao_biaozhunhuamuban
+        where 1=1
+            and type = '文件夹'
+        <if test="fileProperty == 3 ">
+            and parent_id != 0
+        </if>
+            and is_deleted = 0
+            and dept_id=#{deptId}
+        ORDER BY tier asc
+    </select>
+
+    <select id="getByDeptId" resultMap="biaozhunhuamubanResultVoMap">
+        select
+            DISTINCT
+            yunyingleixing
+        from
+            anbiao_biaozhunhuamuban
+        where 1=1
+            and is_deleted = 0
+            and dept_id= #{deptId}
+    </select>
 
 
 </mapper>

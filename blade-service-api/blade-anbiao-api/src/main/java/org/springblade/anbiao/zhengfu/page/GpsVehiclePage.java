@@ -33,6 +33,9 @@ public class GpsVehiclePage<T> extends BasePage<T> {
 	@ApiModelProperty(value = "车辆状态（1:全部;2:监控车辆;3:停用;4:在用;）")
 	private Integer zhuangtai;
 
+	@ApiModelProperty(value = "使用性质")
+	private String shiyongxingzhi;
+
 	@ApiModelProperty(value = "第几页(从1开始)")
 	private Integer page;
 

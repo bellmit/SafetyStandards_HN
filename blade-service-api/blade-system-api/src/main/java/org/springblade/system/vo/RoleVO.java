@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * 视图实体类
  *
- * @author Chill
+ * @author hyp
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

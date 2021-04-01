@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -48,6 +47,100 @@ public class GpsVehicleController {
 
 	private ISysClient iSysClient;
 
+//	@GetMapping(value = "/getVehicleList")
+//	@ApiLog("政府-获取统计车辆数据")
+//	@ApiOperation(value = "政府-获取统计车辆数据", notes = "传入相关参数",position = 1)
+//	public R getVehicleList(@ApiParam(value = "企业ID", required = true) @RequestParam String dept,
+//							@ApiParam(value = "在线状态（1:全部;2:上线;3:未上线;）") @RequestParam int zaixian,
+//							@ApiParam(value = "车辆状态（1:全部;2:监控车辆;3:停用;4:在用;）", required = false) @RequestParam int zhuangtai,
+//							@ApiParam(value = "第几页(从1开始)", required = false) @RequestParam int page,
+//							@ApiParam(value = "每页条数", required = false) @RequestParam int pagesize,
+//							@ApiParam(value = "车辆牌照", required = false) @RequestParam String cph,
+//							@ApiParam(value = "企业名称", required = false) @RequestParam String deptname) throws IOException {
+//		GpsVehiclePage gpsVehiclePage = new GpsVehiclePage();
+//		List<ZhengFuOrganization> zhengFuOrganizations = null;
+//		Organization jb = iOrganizationService.selectGetZFJB(dept);
+//		if(!StringUtils.isBlank(jb.getProvince()) && StringUtils.isBlank(jb.getCity())){
+//			zhengFuOrganizations = iOrganizationService.selectGetZF(dept,null,null,null);
+//		}
+//
+//		if(!StringUtils.isBlank(jb.getCity()) && StringUtils.isBlank(jb.getCountry())){
+//			zhengFuOrganizations = iOrganizationService.selectGetZF(null,dept,null,null);
+//		}
+//
+//		if(!StringUtils.isBlank(jb.getCountry())){
+//			zhengFuOrganizations = iOrganizationService.selectGetZF(null,null,dept,null);
+//		}
+//
+//		if(zhengFuOrganizations.size() < 1){
+//			R r = new R();
+//			String[] aa = new String[0];
+//			r.setData(aa);
+//			r.setCode(200);
+//			r.setMsg("获取成功");
+//			return r;
+//		}else {
+//			String deptId = "";
+//			String deptIds = "";
+//			String deptIds_name = "";
+//			if(StringUtils.isBlank(deptname.trim())) {
+//				for (int i = 0; i < zhengFuOrganizations.size(); i++) {
+//					if(zhengFuOrganizations.get(i).getJigouleixing().equals("qiye")){
+//						deptIds = zhengFuOrganizations.get(i).getQiyeid();
+//						deptId += deptIds+ ',';
+//					}
+//				}
+//			}else{
+//				List<Dept> depts = iSysClient.getByName(deptname.trim());
+//				for(int j=0; j<depts.size(); j++){
+//					deptIds_name = depts.get(j).getId().toString();
+//					for (int i = 0; i < zhengFuOrganizations.size(); i++) {
+//						deptIds = zhengFuOrganizations.get(i).getQiyeid();
+//						if(deptIds.contains(deptIds_name)){
+//							deptId += deptIds+ ',';
+//							System.out.println(deptId);
+//						}else{
+//							deptId += "";
+//						}
+//					}
+////					if(depts.size() < 2){
+////						deptId += deptIds;
+////					}else{
+////						deptId += deptIds+ ',';
+////					}
+//				}
+//			}
+//			gpsVehiclePage.setDept(deptId);
+//			gpsVehiclePage.setZaixian(zaixian);
+//			gpsVehiclePage.setZhuangtai(zhuangtai);
+//			gpsVehiclePage.setCph(cph.trim());
+//			gpsVehiclePage.setPage(page);
+//			gpsVehiclePage.setPagesize(pagesize);
+//			String url = "";
+//			if (page < 1 && pagesize < 1) {
+//				url = fileServer.getGpsVehiclePath() + "/GetList?dept=" + gpsVehiclePage.getDept() + "&zaixian=" + gpsVehiclePage.getZaixian() + "&zhuangtai=" + gpsVehiclePage.getZhuangtai();
+//			} else {
+//				url = fileServer.getGpsVehiclePath() + "/GetList?dept=" + gpsVehiclePage.getDept() + "&zaixian=" + gpsVehiclePage.getZaixian() + "&zhuangtai=" + gpsVehiclePage.getZhuangtai() + "&page=" + gpsVehiclePage.getPage() + "&size=" + gpsVehiclePage.getPagesize();
+//			}
+//
+//			if(!StringUtils.isBlank(gpsVehiclePage.getCph())){
+//				url = fileServer.getGpsVehiclePath() + "/GetList?dept=" + gpsVehiclePage.getDept() + "&zaixian=" + gpsVehiclePage.getZaixian() + "&zhuangtai=" + gpsVehiclePage.getZhuangtai() + "&page=" + gpsVehiclePage.getPage() + "&size=" + gpsVehiclePage.getPagesize()+ "&cph=" + gpsVehiclePage.getCph();
+//			}
+//
+//			if(!StringUtils.isBlank(gpsVehiclePage.getDeptname())){
+//				url = fileServer.getGpsVehiclePath() + "/GetList?dept=" + gpsVehiclePage.getDept() + "&zaixian=" + gpsVehiclePage.getZaixian() + "&zhuangtai=" + gpsVehiclePage.getZhuangtai() + "&page=" + gpsVehiclePage.getPage() + "&size=" + gpsVehiclePage.getPagesize();
+//			}
+//
+//			if(!StringUtils.isBlank(gpsVehiclePage.getCph()) && !StringUtils.isBlank(gpsVehiclePage.getDeptname())){
+//				url = fileServer.getGpsVehiclePath() + "/GetList?dept=" + gpsVehiclePage.getDept() + "&zaixian=" + gpsVehiclePage.getZaixian() + "&zhuangtai=" + gpsVehiclePage.getZhuangtai() + "&page=" + gpsVehiclePage.getPage() + "&size=" + gpsVehiclePage.getPagesize()+ "&cph=" + gpsVehiclePage.getCph();
+//			}
+//
+//			String jsonstr = InterfaceUtil.getUrlData(url.replace(" ", "%20"));
+//			JSONObject jsonArrays = JSONArray.parseObject(jsonstr);
+//			return R.data(jsonArrays);
+//		}
+//	}
+
 	@GetMapping(value = "/getVehicleList")
 	@ApiLog("政府-获取统计车辆数据")
 	@ApiOperation(value = "政府-获取统计车辆数据", notes = "传入相关参数",position = 1)
@@ -57,6 +150,7 @@ public class GpsVehicleController {
 							@ApiParam(value = "第几页(从1开始)", required = false) @RequestParam int page,
 							@ApiParam(value = "每页条数", required = false) @RequestParam int pagesize,
 							@ApiParam(value = "车辆牌照", required = false) @RequestParam String cph,
+							@ApiParam(value = "使用性质", required = false) @RequestParam String shiyongxingzhi,
 							@ApiParam(value = "企业名称", required = false) @RequestParam String deptname) throws IOException {
 		GpsVehiclePage gpsVehiclePage = new GpsVehiclePage();
 		List<ZhengFuOrganization> zhengFuOrganizations = null;
@@ -117,6 +211,7 @@ public class GpsVehicleController {
 			gpsVehiclePage.setCph(cph.trim());
 			gpsVehiclePage.setPage(page);
 			gpsVehiclePage.setPagesize(pagesize);
+			gpsVehiclePage.setShiyongxingzhi(shiyongxingzhi);
 			String url = "";
 			if (page < 1 && pagesize < 1) {
 				url = fileServer.getGpsVehiclePath() + "/GetList?dept=" + gpsVehiclePage.getDept() + "&zaixian=" + gpsVehiclePage.getZaixian() + "&zhuangtai=" + gpsVehiclePage.getZhuangtai();
@@ -132,8 +227,24 @@ public class GpsVehicleController {
 				url = fileServer.getGpsVehiclePath() + "/GetList?dept=" + gpsVehiclePage.getDept() + "&zaixian=" + gpsVehiclePage.getZaixian() + "&zhuangtai=" + gpsVehiclePage.getZhuangtai() + "&page=" + gpsVehiclePage.getPage() + "&size=" + gpsVehiclePage.getPagesize();
 			}
 
+			if(!StringUtils.isBlank(gpsVehiclePage.getShiyongxingzhi())){
+				url = fileServer.getGpsVehiclePath() + "/GetList?dept=" + gpsVehiclePage.getDept() + "&zaixian=" + gpsVehiclePage.getZaixian() + "&zhuangtai=" + gpsVehiclePage.getZhuangtai() + "&page=" + gpsVehiclePage.getPage() + "&size=" + gpsVehiclePage.getPagesize() + "&shiyongxingzhi=" + gpsVehiclePage.getShiyongxingzhi();
+			}
+
 			if(!StringUtils.isBlank(gpsVehiclePage.getCph()) && !StringUtils.isBlank(gpsVehiclePage.getDeptname())){
 				url = fileServer.getGpsVehiclePath() + "/GetList?dept=" + gpsVehiclePage.getDept() + "&zaixian=" + gpsVehiclePage.getZaixian() + "&zhuangtai=" + gpsVehiclePage.getZhuangtai() + "&page=" + gpsVehiclePage.getPage() + "&size=" + gpsVehiclePage.getPagesize()+ "&cph=" + gpsVehiclePage.getCph();
+			}
+
+			if(!StringUtils.isBlank(gpsVehiclePage.getCph()) && !StringUtils.isBlank(gpsVehiclePage.getShiyongxingzhi())){
+				url = fileServer.getGpsVehiclePath() + "/GetList?dept=" + gpsVehiclePage.getDept() + "&zaixian=" + gpsVehiclePage.getZaixian() + "&zhuangtai=" + gpsVehiclePage.getZhuangtai() + "&page=" + gpsVehiclePage.getPage() + "&size=" + gpsVehiclePage.getPagesize()+ "&cph=" + gpsVehiclePage.getCph()+ "&shiyongxingzhi=" + gpsVehiclePage.getShiyongxingzhi();
+			}
+
+			if(!StringUtils.isBlank(gpsVehiclePage.getShiyongxingzhi()) && !StringUtils.isBlank(gpsVehiclePage.getDeptname())){
+				url = fileServer.getGpsVehiclePath() + "/GetList?dept=" + gpsVehiclePage.getDept() + "&zaixian=" + gpsVehiclePage.getZaixian() + "&zhuangtai=" + gpsVehiclePage.getZhuangtai() + "&page=" + gpsVehiclePage.getPage() + "&size=" + "&shiyongxingzhi=" + gpsVehiclePage.getShiyongxingzhi();
+			}
+
+			if(!StringUtils.isBlank(gpsVehiclePage.getCph()) && !StringUtils.isBlank(gpsVehiclePage.getDeptname()) && !StringUtils.isBlank(gpsVehiclePage.getShiyongxingzhi())){
+				url = fileServer.getGpsVehiclePath() + "/GetList?dept=" + gpsVehiclePage.getDept() + "&zaixian=" + gpsVehiclePage.getZaixian() + "&zhuangtai=" + gpsVehiclePage.getZhuangtai() + "&page=" + gpsVehiclePage.getPage() + "&size=" + gpsVehiclePage.getPagesize()+ "&cph=" + gpsVehiclePage.getCph() + "&shiyongxingzhi=" + gpsVehiclePage.getShiyongxingzhi();
 			}
 
 			String jsonstr = InterfaceUtil.getUrlData(url.replace(" ", "%20"));
@@ -141,6 +252,7 @@ public class GpsVehicleController {
 			return R.data(jsonArrays);
 		}
 	}
+
 
 
 	@GetMapping(value = "/getQYVehicleList")

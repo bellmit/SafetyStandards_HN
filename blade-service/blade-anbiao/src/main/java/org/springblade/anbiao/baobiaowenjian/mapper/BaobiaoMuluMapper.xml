@@ -43,37 +43,37 @@
 
     <sql id="tableSql">
         SELECT
-        a.id,
-        a.dept_id as deptId,
-        d.dept_name as deptName,
-        a.name,
-        a.type,
-        a.path,
-        a.property,
-        a.caozuorenid,
-        a.caozuoren,
-        a.caozuoshijian,
-        a.processRate,
-        a.createtime,
-        DATE_FORMAT(a.createtime,'%Y-%m-%d') as createtimeshow,
-        case when a.property=1 then DATE_FORMAT(a.countdate,'%Y-%m-%d')
-        else CONCAT(DATE_FORMAT(a.countdate,'%Y/%m/%d'),' - ',DATE_FORMAT(a.countenddate,'%Y/%m/%d')) end as countdate,
-        c.baojingcishu,
-        c.chaosu,
-        c.pilao,
-        c.yejian,
-        (c.budingwei+c.wushuju) as yichang,
-        c.chouyan,
-        c.dadianhua,
-        c.pilaoshipin,
-        c.fenshen,
-        a.cumulative_visits,
-        a.last_preview_time,
-        a.is_deleted as isDeleted
+            distinct
+            a.id,
+            a.dept_id as deptId,
+            d.dept_name as deptName,
+            a.name,
+            a.type,
+            a.path,
+            a.property,
+            a.caozuorenid,
+            a.caozuoren,
+            a.caozuoshijian,
+            a.processRate,
+            a.createtime,
+            DATE_FORMAT(a.createtime,'%Y-%m-%d') as createtimeshow,
+            a.countenddate,
+            CONCAT(DATE_FORMAT(a.countdate,'%Y/%m/%d'),' - ',DATE_FORMAT(a.countenddate,'%Y/%m/%d')) as countdate,
+            c.baojingcishu,
+            c.chaosu,
+            c.pilao,
+            c.yejian,
+            (c.budingwei+c.wushuju) as yichang,
+            c.chouyan,
+            c.dadianhua,
+            c.pilaoshipin,
+            c.fenshen,
+            a.cumulative_visits,
+            a.last_preview_time,
+            a.is_deleted as isDeleted
         FROM
-        baobiao_baobiaomulu AS a
-        inner join blade_dept AS d
-        on a.dept_id = d.id
+            baobiao_baobiaomulu AS a
+            inner join blade_dept AS d on a.dept_id = d.id
         <if test="deptId != null">
             and a.dept_id = #{deptId}
         </if>
@@ -84,23 +84,42 @@
                 and a.countDate &lt;= #{countDate}
             </if>
             <if test="property != 1">
-                and a.countDate &lt;= #{countDate} and year(a.countDate)=year(#{countDate})
-            </if>
+                and a.countDate &lt;= #{countDate}
         </if>
-        LEFT JOIN baobiao_alarmdailyreport c
-        on d.dept_name = c.company
-        and a.countdate = c.date
-        WHERE ifnull(a.is_deleted,0)=0
-            /*and ifnull(a.fileType,0)=0*/
-    </sql>
+    </if>
+    LEFT JOIN baobiao_alarmdailyreport c
+    on d.dept_name = c.company
+    and a.countdate = c.date
+    WHERE ifnull(a.is_deleted,0)=0 and ifnull(d.is_deleted,0)=0
+    /*and ifnull(a.fileType,0)=0*/
+</sql>
 
-    <select id="selectBaogaoPage" parameterType="org.springblade.anbiao.baobiaowenjian.page.BaobiaoWenjianPage"
-            resultMap="baseResultMap">
-        <if test="size == 0">
-            select * from (
-            <include refid="tableSql"/>
-            order  by  ${orderColumn} desc
-            )b
+<sql id="querySql">
+</sql>
+
+<sql id="orderSql">
+    <!-- 默认排序规则 -->
+    <if test="orderColumn == null or orderColumn == ''">
+        order by countenddate desc
+    </if>
+    <if test="orderColumn != null and orderColumn != ''">
+        order by ${orderColumn}
+    </if>
+    <if test="orderColumn != null and orderColumn != '' and order != 0">
+        desc
+    </if>
+</sql>
+
+<select id="selectBaogaoPage" parameterType="org.springblade.anbiao.baobiaowenjian.page.BaobiaoWenjianPage"
+        resultMap="baseResultMap">
+<if test="size == 0">
+    select * from (
+        <include refid="tableSql"/>
+        order by ${orderColumn} desc
+        )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
             limit ${total}
         </if>
         <if test="current != 0">
@@ -108,6 +127,9 @@
             <include refid="tableSql"/>
             order  by  ${orderColumn} desc
             )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
             limit ${offsetNo},${size}
         </if>
     </select>

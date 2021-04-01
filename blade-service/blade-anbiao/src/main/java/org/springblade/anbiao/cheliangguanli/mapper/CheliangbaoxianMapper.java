@@ -54,4 +54,15 @@ public interface CheliangbaoxianMapper extends BaseMapper<Cheliangbaoxian> {
 	int selectTotal(CheliangbaoxianPage Page);
 
 	CheliangbaoxianVO selectByIds(String id);
+
+	/**
+	 * 新增保险信息
+	 * @param cheliangbaoxian
+	 * @return
+	 */
+	boolean insertSelective(Cheliangbaoxian cheliangbaoxian);
+
+
+
+
 }

@@ -23,7 +23,7 @@ import org.springblade.anbiao.falvfagui.entity.Guanlizhidu;
 /**
  * 视图实体类
  *
- * @author elvis.he
+ * @author hyp
  * @since 2019-04-24
  */
 @Data

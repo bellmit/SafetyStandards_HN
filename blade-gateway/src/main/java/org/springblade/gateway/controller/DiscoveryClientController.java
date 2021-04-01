@@ -30,7 +30,7 @@ import java.util.Map;
 /**
  * 服务发现控制器
  *
- * @author Chill
+ * @author hyp
  */
 @Slf4j
 @RestController

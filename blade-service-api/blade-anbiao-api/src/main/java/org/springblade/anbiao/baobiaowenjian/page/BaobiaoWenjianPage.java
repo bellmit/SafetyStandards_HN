@@ -9,8 +9,8 @@ import org.springblade.common.BasePage;
 /**
  * @program: SafetyStandards
  * @description: 报表目录对象
- * @author: elvis.he
- * @create: 2019-05-16
+ * @author: hyp
+ * @create2021-05-16
  **/
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -30,4 +30,6 @@ public class BaobiaoWenjianPage<T> extends BasePage<T> {
     @ApiModelProperty(value = "报表属性（1日报、2周报、3月报、4年报）", required = true)
     private Integer property;
 
+	@ApiModelProperty(value = "排序字段")
+	private String orderColumns;
 }

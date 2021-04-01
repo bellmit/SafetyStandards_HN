@@ -17,6 +17,7 @@ import org.springblade.anbiao.zhengfu.service.IZhengFuShouYeNewService;
 import org.springblade.anbiao.zhengfu.service.IZhengFuShouYeService;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -47,9 +48,10 @@ public class ZhengFuShouYeNewServiceImpl extends ServiceImpl<ZhengFuShouYeNewMap
 	}
 
 	@Override
-	public List<ZhengFuShouYeNew> selectGetThree(String deptId, String xiaJiDeptId, int year, String areaName) {
-		return zhengFuShouYeNewMapper.selectGetThree(deptId, xiaJiDeptId, year, areaName);
+	public List<ZhengFuShouYeNew> selectGetThree(String deptId, String xiaJiDeptId, int year, String firstDate, String endDate, String areaName) {
+		return zhengFuShouYeNewMapper.selectGetThree(deptId, xiaJiDeptId, year, firstDate, endDate, areaName);
 	}
+
 
 	@Override
 	public List<ZhengFuShouYeNew> selectGetFour(String deptId, String xiaJiDeptId, int year, int month, String date) {

@@ -30,7 +30,7 @@ import java.util.Map;
 /**
  *  数据中心Mapper 接口
  *
- * @author elvis.he
+ * @author hyp
  * @since 2019-05-12
  */
 public interface DataCenterMapper  {
@@ -65,7 +65,7 @@ public interface DataCenterMapper  {
 
 	/**
 	 *报警处理统计
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/11/7 0:20
 	 * @param company
 	 * @return: java.util.List<java.util.Map<java.lang.String,java.lang.Object>>

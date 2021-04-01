@@ -23,7 +23,7 @@ import org.springblade.anbiao.shigu.vo.ShiguchuliVO;
 /**
  * 事故报告调查处理-事故处理 服务类
  *
- * @author elvis.he
+ * @author hyp
  * @since 2019-04-29
  */
 public interface IShiguchuliService extends IService<Shiguchuli> {
@@ -48,7 +48,7 @@ public interface IShiguchuliService extends IService<Shiguchuli> {
      * 自定义 假删除
      *
      * @param id
-     * @author :elvis.he
+     * @author :hyp
      */
     boolean deleleShiguchuli(String id);
 

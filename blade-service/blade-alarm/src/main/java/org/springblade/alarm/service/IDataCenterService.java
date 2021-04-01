@@ -31,7 +31,7 @@ import java.util.Map;
 
 /**
  *数据中心
- * @author: th
+ * @author: hyp
  * @date: 2019/11/6 20:23
  * @return:
  */
@@ -63,7 +63,7 @@ public interface IDataCenterService {
 
 	/**
 	 *报警处理统计
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/11/7 0:20
 	 * @param company
 	 * @return: java.util.List<java.util.Map<java.lang.String,java.lang.Object>>

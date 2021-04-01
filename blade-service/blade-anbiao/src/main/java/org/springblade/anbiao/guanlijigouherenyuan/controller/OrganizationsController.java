@@ -161,64 +161,71 @@ public class OrganizationsController extends BladeController {
 	public R<Dept> insert(@RequestBody Organizations organization,BladeUser user) {
 		int i=iSysClient.selectByName(organization.getDeptName());
 		Dept obj=new Dept();
+		Dept j = iSysClient.getDeptByName(organization.getDeptName());
 		R r = new R();
-		if(i>0){
+		if(j !=null && !StringUtils.isBlank(j.getDeptName())){
 			r.setMsg("该机构已存在");
 			r.setCode(500);
 			r.setData("");
 		}else{
-			String str="1";
-			//登录页
-			if(StringUtil.isNotBlank(organization.getLoginPhoto())){
-				fileUploadClient.updateCorrelation(organization.getLoginPhoto(),str);
+			if(i>0){
+				r.setMsg("该机构已存在");
+				r.setCode(500);
+				r.setData("");
+			}else{
+				String str="1";
+				//登录页
+				if(StringUtil.isNotBlank(organization.getLoginPhoto())){
+					fileUploadClient.updateCorrelation(organization.getLoginPhoto(),str);
+				}
+				//首页
+				if(StringUtil.isNotBlank(organization.getHomePhoto())){
+					fileUploadClient.updateCorrelation(organization.getHomePhoto(),str);
+				}
+				//简介页
+				if(StringUtil.isNotBlank(organization.getProfilePhoto())){
+					fileUploadClient.updateCorrelation(organization.getProfilePhoto(),str);
+				}
+				//logo
+				if(StringUtil.isNotBlank(organization.getLogoPhoto())){
+					fileUploadClient.updateCorrelation(organization.getLogoPhoto(),str);
+				}
+				//logo
+				if(StringUtil.isNotBlank(organization.getLogoRizhi())){
+					fileUploadClient.updateCorrelation(organization.getLogoRizhi(),str);
+				}
+				if(StringUtil.isNotBlank(organization.getLoginPhotoApp())){
+					fileUploadClient.updateCorrelation(organization.getLoginPhotoApp(),str);
+				}
+				if(StringUtil.isNotBlank(organization.getHomePhotoApp())){
+					fileUploadClient.updateCorrelation(organization.getHomePhotoApp(),str);
+				}
+				if(StringUtil.isNotBlank(organization.getProfilePhotoApp())){
+					fileUploadClient.updateCorrelation(organization.getProfilePhotoApp(),str);
+				}
+				organization.setCaozuoren(user.getUserName());
+				organization.setCaozuorenid(user.getUserId());
+				organization.setCaozuoshijian(DateUtil.now());
+				organization.setCreatetime(DateUtil.now());
+				//执行机构表新增
+				Dept dept=new Dept();
+				String treeCode=iSysClient.selectByTreeCode(organization.getParentId()).getTreeCode();
+				dept.setTreeCode(treeCode);
+				dept.setId(iSysClient.selectMaxId()+1);
+				dept.setExtendType("机构");
+				dept.setParentId(Integer.parseInt(organization.getParentId()));
+				dept.setDeptName(organization.getDeptName());
+				dept.setFullName(organization.getDeptName());
+				boolean flag=iSysClient.insertDept(dept);
+				organization.setDeptId(dept.getId().toString());
+				organizationService.saveOrUpdate(organization);
+				if(flag==true){
+					obj=iSysClient.selectById(dept.getId().toString());
+				}
+				r.setMsg("操作成功");
+				r.setCode(200);
+				r.setData(obj);
 			}
-			//首页
-			if(StringUtil.isNotBlank(organization.getHomePhoto())){
-				fileUploadClient.updateCorrelation(organization.getHomePhoto(),str);
-			}
-			//简介页
-			if(StringUtil.isNotBlank(organization.getProfilePhoto())){
-				fileUploadClient.updateCorrelation(organization.getProfilePhoto(),str);
-			}
-			//logo
-			if(StringUtil.isNotBlank(organization.getLogoPhoto())){
-				fileUploadClient.updateCorrelation(organization.getLogoPhoto(),str);
-			}
-			//logo
-			if(StringUtil.isNotBlank(organization.getLogoRizhi())){
-				fileUploadClient.updateCorrelation(organization.getLogoRizhi(),str);
-			}
-			if(StringUtil.isNotBlank(organization.getLoginPhotoApp())){
-				fileUploadClient.updateCorrelation(organization.getLoginPhotoApp(),str);
-			}
-			if(StringUtil.isNotBlank(organization.getHomePhotoApp())){
-				fileUploadClient.updateCorrelation(organization.getHomePhotoApp(),str);
-			}
-			if(StringUtil.isNotBlank(organization.getProfilePhotoApp())){
-				fileUploadClient.updateCorrelation(organization.getProfilePhotoApp(),str);
-			}
-			organization.setCaozuoren(user.getUserName());
-			organization.setCaozuorenid(user.getUserId());
-			organization.setCaozuoshijian(DateUtil.now());
-			organization.setCreatetime(DateUtil.now());
-			//执行机构表新增
-			Dept dept=new Dept();
-			String treeCode=iSysClient.selectByTreeCode(organization.getParentId()).getTreeCode();
-			dept.setTreeCode(treeCode);
-			dept.setId(iSysClient.selectMaxId()+1);
-			dept.setExtendType("机构");
-			dept.setParentId(Integer.parseInt(organization.getParentId()));
-			dept.setDeptName(organization.getDeptName());
-			dept.setFullName(organization.getDeptName());
-			boolean flag=iSysClient.insertDept(dept);
-			organization.setDeptId(dept.getId().toString());
-			organizationService.saveOrUpdate(organization);
-			if(flag==true){
-				obj=iSysClient.selectById(dept.getId().toString());
-			}
-			r.setMsg("操作成功");
-			r.setCode(200);
-			r.setData(obj);
 		}
 		return r;
 	}

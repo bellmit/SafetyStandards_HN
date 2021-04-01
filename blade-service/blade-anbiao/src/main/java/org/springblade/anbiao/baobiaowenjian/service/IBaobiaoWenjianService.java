@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * 服务类
  *
- * @author elvis.he
+ * @author hyp
  * @since 2019-05-16
  */
 public interface IBaobiaoWenjianService extends IService<BaobiaoWenjian> {
@@ -33,9 +33,9 @@ public interface IBaobiaoWenjianService extends IService<BaobiaoWenjian> {
      * 根据文件性质查询文件列表数据
      *
      * @param : baobiaoWenjianPage
-     * @author : elvis.he
+     * @author : hyp
      * @return:
-     * @since : 2019-05-18 11:00
+     * @since 2021-05-18 11:00
      */
     List<BaobiaoWenjianVO> fujianList(Integer id);
 

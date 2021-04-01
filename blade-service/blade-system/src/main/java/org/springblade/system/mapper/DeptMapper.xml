@@ -116,6 +116,26 @@
 		)a,blade_dept b where a.TREE_CODE=b.TREE_CODE
     </select>
 
+    <select id="selectByJGQY" resultMap="deptResultMap">
+  	select
+  	    b.*
+  	FROM (
+        select
+            max(shangji.TREE_CODE) TREE_CODE
+        from
+            blade_dept shangji,
+            blade_dept xiaji,
+            anbiao_organization c
+        WHERE
+            xiaji.TREE_CODE LIKE CONCAT(shangji.tree_code,'%')
+            and shangji.EXTEND_TYPE= #{param1}
+            and shangji.id = c.dept_id
+			and xiaji.id= #{param2}
+            and c.jigouleixing in('qiye','geti','qita','sheng','shi','xian','fenzu')
+        )a,blade_dept b
+    where a.TREE_CODE=b.TREE_CODE
+    </select>
+
     <insert id="insertDept" parameterType="org.springblade.system.entity.Dept">
     insert  into  blade_dept(id,parent_id,dept_name,full_name,sort,remark,tree_code,extend_type)
      values (#{id},#{parentId},#{deptName},#{fullName},#{sort},#{remark},#{treeCode},#{extendType})
@@ -250,6 +270,33 @@
         <if test="param2 != null and param2 > 0">
             and parent_id = #{param2}
         </if>
+    </select>
+
+    <select id="QiYeList"  resultMap="deptResultMap">
+        select
+            DISTINCT
+            a.id,
+            a.dept_name
+        from(
+            SELECT
+                DISTINCT
+                xiaji.id,
+                xiaji.parent_id,
+                xiaji.dept_name,
+                xiaji.is_deleted
+            FROM
+                blade_dept shangji,
+                blade_dept xiaji
+            WHERE xiaji.tree_code LIKE CONCAT(shangji.tree_code,'%')
+                AND xiaji.is_deleted = 0 AND xiaji.extend_type='机构'
+                AND xiaji.is_deleted = 0 AND xiaji.extend_type='机构'
+                AND shangji.id= #{deptId}
+                )a
+            INNER JOIN(
+                select dept_id from anbiao_organization
+                where isdelete = 0 and jigouleixing in ('qiye','geti')
+            )b on a.id = b.dept_id
+            ORDER BY a.dept_name asc
     </select>
 
 </mapper>

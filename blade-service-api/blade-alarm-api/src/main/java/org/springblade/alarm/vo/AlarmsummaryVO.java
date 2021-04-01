@@ -23,7 +23,7 @@ import org.springblade.alarm.entity.Alarmsummary;
 /**
  * 视图实体类
  *
- * @author elvis.he
+ * @author hyp
  * @since 2019-05-12
  */
 @Data

@@ -22,7 +22,7 @@ import org.springblade.system.entity.Tenant;
 /**
  * 服务类
  *
- * @author Chill
+ * @author hyp
  */
 public interface ITenantService extends BaseService<Tenant> {
 

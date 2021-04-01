@@ -245,6 +245,10 @@
             AND caozuoshijian &gt;= #{caozuoshijian}
         </if>
 
+        <if test="caozuoshijian !=null and caozuoshijian != ''">
+            AND caozuoshijian &gt;= #{caozuoshijian}
+        </if>
+
         <if test="deptName !=null and deptName != ''">
             AND deptName like CONCAT('%',#{deptName},'%')
         </if>
@@ -257,8 +261,8 @@
             AND cheliangpaizhao LIKE '%挂%'
         </if>
 
-        <if test="cheliangleixing !=null and cheliangleixing != ''and cheliangleixing == '2'.toString()">
-            AND cheliangpaizhao NOT LIKE '%挂%'
+        <if test="shiyongxingzhi !=null and shiyongxingzhi != '' ">
+            AND shiyongxingzhi = #{shiyongxingzhi}
         </if>
 
         <if test="cheliangzhuangtai !=null and cheliangzhuangtai != '' and cheliangzhuangtai == '0'.toString() ">
@@ -372,6 +376,8 @@
     </select>
 
     <select id="selectVehicleAll" resultMap="GPSVehicleResultMap" parameterType="java.lang.String" >
+       select *
+       from(
         select
         <if test="caozuoshijian !=null and caozuoshijian != ''">
             CASE
@@ -380,7 +386,9 @@
             WHEN ifnull(a.is_deleted,1) = 1 THEN '删除'
             END cheliangzhuangtai,
         </if>
-        a.dept_id as deptId,b.dept_name as deptName,a.simnum,a.zongduanxinghao,a.caozuoshijian,a.createtime,a.id,
+        a.dept_id as deptId,b.dept_name as deptName,a.simnum,a.zongduanxinghao,
+        case when ifnull(a.caozuoshijian,'') = '' then a.createtime else a.caozuoshijian end as caozuoshijian,
+        a.createtime,a.id,
         a.cheliangpaizhao,a.chepaiyanse,a.shiyongxingzhi,a.zongduanid
         from anbiao_vehicle a
         inner join blade_dept b on a.dept_id = b.id
@@ -388,7 +396,6 @@
         <if test="caozuoshijian !=null and caozuoshijian != '' ">
             and (a.createtime &gt; #{caozuoshijian} or a.caozuoshijian &gt; #{caozuoshijian})
             and ifnull(a.cheliangzhuangtai,0) != 2
-            order by a.caozuoshijian asc
         </if>
 
         <if test=" caozuoshijian ==null or caozuoshijian == '' ">
@@ -396,6 +403,7 @@
             and ifnull(a.cheliangzhuangtai,0) = 0
             and ifnull(a.is_deleted,0) = 0
         </if>
+        ) a order by a.caozuoshijian asc
     </select>
 
     <select id="selectByYYS" resultMap="GPSVehicleResultMap" parameterType="java.lang.String" >
@@ -802,6 +810,33 @@
         where 1 = 1
         <include refid="queryGDSMXSql" />
     </select>
+
+    <select id="vehileList" resultType="org.springblade.anbiao.cheliangguanli.entity.Vehicle">
+        SELECT
+	        cheliangpaizhao,
+            chepaiyanse,
+            shiyongxingzhi,
+            id,
+            CASE
+                WHEN cheliangzhuangtai=0 and ifnull(is_deleted,0) = 0 THEN '在用'
+                WHEN cheliangzhuangtai=1 and ifnull(is_deleted,0) = 0 THEN '停用'
+                WHEN ifnull(is_deleted,1) = 1 THEN '删除'
+            END cheliangzhuangtai
+        FROM
+	        anbiao_vehicle
+        WHERE 1=1
+            AND is_deleted=0
+            AND ifnull(cheliangzhuangtai,0) != 2
+            AND dept_id= #{deptId}
+    </select>
+
+    <!-- 修改车辆终端ID -->
+    <update id="updateVehicleZongDuanId" parameterType="java.lang.String" >
+         update anbiao_vehicle set zongduanid = #{zongduanid}, caozuoshijian = NOW(),caozuoren=#{caozuoren},caozuorenid=#{caozuorenid}
+        WHERE id = #{id}
+  </update>
+
+
 
 
 </mapper>

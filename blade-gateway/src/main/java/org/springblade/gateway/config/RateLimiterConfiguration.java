@@ -24,7 +24,7 @@ import reactor.core.publisher.Mono;
 /**
  * 路由限流配置
  *
- * @author Chill
+ * @author hyp
  */
 @Configuration
 public class RateLimiterConfiguration {

@@ -48,7 +48,7 @@ public interface IYingjiduiwuService extends IService<Yingjiduiwu> {
      * 自定义 假删除
      *
      * @param id
-     * @author :elvis.he
+     * @author :hyp
      */
     boolean deleleYingjiduiwu(String id);
 

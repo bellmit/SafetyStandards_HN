@@ -29,7 +29,7 @@ import java.util.Map;
 /**
  *  Mapper 接口
  *
- * @author elvis.he
+ * @author hyp
  * @since 2019-05-12
  */
 public interface AlarmhandleresultMapper extends BaseMapper<Alarmhandleresult> {
@@ -56,7 +56,7 @@ public interface AlarmhandleresultMapper extends BaseMapper<Alarmhandleresult> {
 
 	/**
 	 *根据ids和单位id查询报警数量
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/9/20 14:51
 	 * @param idss
 	 * @param deptName
@@ -66,7 +66,7 @@ public interface AlarmhandleresultMapper extends BaseMapper<Alarmhandleresult> {
 	/**
 	 * 查询当日未处理的gps报警统计
 	 */
-	List<AlarmWeichuliType>  gpsweichuli(@Param("company") String company, @Param("date") String date);
+	List<AlarmWeichuliType>  gpsweichuli(@Param("deptId") Integer deptId, @Param("date") String date);
 
 	/**
 	 * 查询当天未处理的主动安全报警统计
@@ -74,7 +74,7 @@ public interface AlarmhandleresultMapper extends BaseMapper<Alarmhandleresult> {
 	 * @param date
 	 * @return
 	 */
-	List<AlarmWeichuliType> zhudonganquanweichuli(@Param("company") String company,@Param("date") String date);
+	List<AlarmWeichuliType> zhudonganquanweichuli(@Param("deptId") Integer deptId,@Param("date") String date);
 	/**
 	 * 查询日报的id
 	 */

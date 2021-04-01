@@ -77,4 +77,9 @@ public class CheliangbaoxianServiceImpl extends ServiceImpl<CheliangbaoxianMappe
 		}
 	}
 
+	@Override
+	public boolean insertSelective(Cheliangbaoxian cheliangbaoxian) {
+		return mapper.insertSelective(cheliangbaoxian);
+	}
+
 }

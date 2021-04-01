@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * 应急救援-应急队伍-队伍成员 Mapper 接口
  *
- * @author elvis.he
+ * @author hyp
  * @since 2019-04-29
  */
 public interface YingjiduiwuChengyuanMapper extends BaseMapper<YingjiduiwuChengyuan> {

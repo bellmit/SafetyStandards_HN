@@ -20,6 +20,7 @@ import lombok.AllArgsConstructor;
 import org.springblade.core.tool.node.ForestNodeMerger;
 import org.springblade.doc.biaozhunhuamuban.entity.BiaoZhunHua;
 import org.springblade.doc.biaozhunhuamuban.entity.Biaozhunhuamuban;
+import org.springblade.doc.biaozhunhuamuban.entity.BiaozhunhuamubanList;
 import org.springblade.doc.biaozhunhuamuban.mapper.BiaozhunhuamubanMapper;
 import org.springblade.doc.biaozhunhuamuban.page.BiaozhunhuamubanPage;
 import org.springblade.doc.biaozhunhuamuban.service.IBiaozhunhuamubanService;
@@ -30,9 +31,8 @@ import java.util.List;
 
 /**
  *  服务实现类
- *
- * @author th
- * @since 2019-05-04
+ * @author 呵呵哒
+ * @since 2020-09-04
  */
 @Service
 @AllArgsConstructor
@@ -193,6 +193,32 @@ public class BiaozhunhuamubanServiceImpl extends ServiceImpl<BiaozhunhuamubanMap
 	@Override
 	public boolean deleteSafetyProductionFile(Integer caozuorenid, String caozuoren, Integer deptId) {
 		return Mapper.deleteSafetyProductionFile(caozuorenid, caozuoren, deptId);
+	}
+
+	@Override
+	public boolean updateBiaozhunhuamuban(Biaozhunhuamuban biaozhunhuamuban) {
+		return false;
+	}
+
+	@Override
+	public List<BiaozhunhuamubanList> listTree(Integer deptId, Integer fileProperty, Integer Id, Integer parentId) {
+//		return ForestNodeMerger.merge(Mapper.listTree(deptId,fileProperty,Id,parentId));
+		return Mapper.listTree(deptId, fileProperty, Id, parentId);
+	}
+
+	@Override
+	public BiaozhunhuamubanList getTreeScores(Integer deptId, Integer fileProperty) {
+		return Mapper.getTreeScores(deptId, fileProperty);
+	}
+
+	@Override
+	public List<BiaozhunhuamubanVO> getListTree(String deptId, Integer fileProperty) {
+		return ForestNodeMerger.merge(Mapper.getListTree(deptId,fileProperty));
+	}
+
+	@Override
+	public BiaozhunhuamubanVO getByDeptId(String deptId) {
+		return Mapper.getByDeptId(deptId);
 	}
 
 

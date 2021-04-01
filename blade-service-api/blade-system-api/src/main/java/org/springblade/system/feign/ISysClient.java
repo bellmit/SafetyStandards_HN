@@ -32,7 +32,7 @@ import java.util.List;
 /**
  * Feign接口类
  *
- * @author Chill
+ * @author hyp
  */
 @FeignClient(
 	value = AppConstant.APPLICATION_SYSTEM_NAME,
@@ -192,7 +192,7 @@ public interface ISysClient {
 
 	/**
 	 *获取下级deptid
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/10/28 13:51
 	 * @param deptId
 	 * @return: java.util.List<java.lang.Integer>

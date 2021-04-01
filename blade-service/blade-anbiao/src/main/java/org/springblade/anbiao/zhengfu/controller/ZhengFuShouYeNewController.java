@@ -19,6 +19,7 @@ import org.springblade.anbiao.zhengfu.entity.ZhengFuShouYeNew;
 import org.springblade.anbiao.zhengfu.service.IOrganizationService;
 import org.springblade.anbiao.zhengfu.service.IZhengFuShouYeNewService;
 import org.springblade.common.configurationBean.FileServer;
+import org.springblade.common.tool.DateUtils;
 import org.springblade.common.tool.InterfaceUtil;
 import org.springblade.core.log.annotation.ApiLog;
 import org.springblade.core.tool.api.R;
@@ -27,6 +28,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -180,6 +183,13 @@ public class ZhengFuShouYeNewController {
 		int dom = cal.get(Calendar.DAY_OF_MONTH);
 		//一年的第几天
 		int doy = cal.get(Calendar.DAY_OF_YEAR);
+
+		//获取前一天的日期
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(new Date());
+		calendar.add(Calendar.DAY_OF_MONTH, -1);
+		String date = DateUtil.format(calendar.getTime(), "MM");
+		month = Integer.parseInt(date);
 		ZhengFuShouYeNew zhengFuShouYeNew = null;
 		List<ZhengFuShouYeNew> zhengFuShouYeNews = null;
 		if(type == 1){
@@ -234,6 +244,12 @@ public class ZhengFuShouYeNewController {
 		int day = cal.get(Calendar.DATE);
 		//月份
 		int month = cal.get(Calendar.MONTH) + 1;
+		//6月之前的日期
+		Date now = new Date();
+		DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		//System.out.println("当前日期：" + DateUtils.stepMonth(now, -6));
+		String month_now = DATE_FORMAT.format(DateUtils.stepMonth(now,1));
+		String month_six = DATE_FORMAT.format(DateUtils.stepMonth(now, -6));
 		//年份
 		int year = cal.get(Calendar.YEAR);
 		List<ZhengFuShouYeNew> zhengFuShouYeNew = null;
@@ -241,9 +257,9 @@ public class ZhengFuShouYeNewController {
 			if(!StringUtils.isBlank(deptId)){
 				Organization organization2 = iOrganizationService.selectGetGangWei(deptId);
 				if( !StringUtils.isBlank(organization2.getCountry()) ){
-					zhengFuShouYeNew = iZhengFuShouYeService.selectGetThree(deptId,null,year,null);
+					zhengFuShouYeNew = iZhengFuShouYeService.selectGetThree(deptId,null,year,month_six,month_now,null);
 				}else{
-					zhengFuShouYeNew = iZhengFuShouYeService.selectGetThree(deptId,null,year,null);
+					zhengFuShouYeNew = iZhengFuShouYeService.selectGetThree(deptId,null,year,month_six,month_now,null);
 				}
 			}else{
 				rs.setCode(500);
@@ -251,7 +267,7 @@ public class ZhengFuShouYeNewController {
 			}
 		}else{
 			if(!StringUtils.isBlank(deptId)) {
-				zhengFuShouYeNew = iZhengFuShouYeService.selectGetThree(deptId, null, year, null);
+				zhengFuShouYeNew = iZhengFuShouYeService.selectGetThree(deptId, null, year,month_six,month_now, null);
 			}else{
 				rs.setCode(500);
 				rs.setMsg("传入deptId");

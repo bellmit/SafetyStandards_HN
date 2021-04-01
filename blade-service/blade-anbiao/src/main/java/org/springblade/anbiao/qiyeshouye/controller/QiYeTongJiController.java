@@ -10,13 +10,11 @@ package org.springblade.anbiao.qiyeshouye.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
-import org.springblade.anbiao.qiyeshouye.entity.QiYeInOutAreaTongJi;
-import org.springblade.anbiao.qiyeshouye.entity.QiYeOffLineTongJi;
-import org.springblade.anbiao.qiyeshouye.entity.QiYeRiYunXingTongJi;
-import org.springblade.anbiao.qiyeshouye.entity.QiYeTongJi;
+import org.springblade.anbiao.qiyeshouye.entity.*;
 import org.springblade.anbiao.qiyeshouye.page.QiYeInOutAreaPage;
 import org.springblade.anbiao.qiyeshouye.page.QiYeOffLineTongJiPage;
 import org.springblade.anbiao.qiyeshouye.page.QiYeTongJiPage;
+import org.springblade.anbiao.qiyeshouye.page.QiYeTpvehdataPage;
 import org.springblade.anbiao.qiyeshouye.service.IQiYeTongJiService;
 import org.springblade.core.log.annotation.ApiLog;
 import org.springblade.core.tool.api.R;
@@ -76,7 +74,7 @@ public class QiYeTongJiController {
 		//排序条件
 		////默认报警总数降序
 		if(qiYeTongJiPage.getOrderColumns()==null){
-			qiYeTongJiPage.setOrderColumn("company");
+			qiYeTongJiPage.setOrderColumn("");
 		}else{
 			qiYeTongJiPage.setOrderColumn(qiYeTongJiPage.getOrderColumns());
 		}
@@ -111,6 +109,21 @@ public class QiYeTongJiController {
 			qiYeInOutAreaPage.setOrderColumn(qiYeInOutAreaPage.getOrderColumns());
 		}
 		QiYeInOutAreaPage<QiYeInOutAreaTongJi> pages = iQiYeTongJiService.selectGetInOutAreaTJ(qiYeInOutAreaPage);
+		return R.data(pages);
+	}
+
+	@PostMapping(value = "/getTpvehdataTJ")
+	@ApiLog("企业-在线车辆详情")
+	@ApiOperation(value = "企业-在线车辆详情", notes = "传入qiYeTpvehdataPage",position = 7)
+	public R<QiYeTpvehdataPage<QiYeTpvehdataTongJi>> getTpvehdataTJ(@RequestBody QiYeTpvehdataPage qiYeTpvehdataPage) {
+		//排序条件
+		////默认定位时间降序
+		if(qiYeTpvehdataPage.getOrderColumns()==null){
+			qiYeTpvehdataPage.setOrderColumn("LastLocateTime");
+		}else{
+			qiYeTpvehdataPage.setOrderColumn(qiYeTpvehdataPage.getOrderColumns());
+		}
+		QiYeTpvehdataPage<QiYeTpvehdataTongJi> pages = iQiYeTongJiService.selecttpvehdataTJ(qiYeTpvehdataPage);
 		return R.data(pages);
 	}
 

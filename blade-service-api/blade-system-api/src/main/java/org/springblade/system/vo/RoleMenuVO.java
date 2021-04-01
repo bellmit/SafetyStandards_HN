@@ -23,7 +23,7 @@ import org.springblade.system.entity.RoleMenu;
 /**
  * 视图实体类
  *
- * @author Chill
+ * @author hyp
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

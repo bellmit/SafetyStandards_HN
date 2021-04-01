@@ -23,7 +23,7 @@ import org.springblade.anbiao.anquanmubiao.vo.FangzhenmubiaoVO;
 /**
  * 安全工作方针与目标 服务类
  *
- * @author elvis.he
+ * @author hyp
  * @since 2019-04-28
  */
 public interface IFangzhenmubiaoService extends IService<Fangzhenmubiao> {
@@ -48,7 +48,7 @@ public interface IFangzhenmubiaoService extends IService<Fangzhenmubiao> {
      * 自定义 假删除
      *
      * @param id
-     * @author :elvis.he
+     * @author :hyp
      */
     boolean deleleFangzhenmubiao(String id);
 

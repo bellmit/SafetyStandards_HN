@@ -60,7 +60,8 @@
         a.alarmGuid,
         a.icardsign,
         ROUND(ifnull(a.Distance,0)/1000,3) as distance
-        FROM baobiao_driverbehavior AS a
+        FROM
+            baobiao_driverbehavior AS a
         <if test="deptId != 1 ">
         INNER JOIN ( SELECT DISTINCT
             xiaji.id,
@@ -73,7 +74,7 @@
             WHERE xiaji.tree_code LIKE CONCAT(shangji.tree_code,'%')
             AND xiaji.is_deleted = 0 AND xiaji.extend_type='机构'
             and shangji.id=#{deptId}
-        ) dept on a.company=dept.dept_name
+        ) dept on a.cid=dept.id
         </if>
         left JOIN baobiao_alarmhandleresult AS b ON a.id = b.baojingid and ifnull(b.is_deleted,0) = 0
         where 1=1
@@ -278,15 +279,26 @@
             t.*
         from (
             SELECT
+                b.chulizhuangtai,
                 b.chulixingshi,
                 b.chulimiaoshu,
+                b.chulirenid,
                 b.chuliren,
                 b.chulishijian,
                 b.fujian,
+                b.beizhu,
                 b.shensushenhebiaoshi,
                 b.shensushenheren,
                 b.shensushenheshijian,
-                b.shensushenheyijian
+                b.shensushenheyijian,
+                b.remark,
+                b.twicechulixingshi,
+                b.twicechulimiaoshu,
+                b.twicefujian,
+                b.twicechuliren,
+                b.twicechulishijian,
+                b.twicechulirenid,
+                b.endresult
             FROM
                 baobiao_driverbehavior AS a
                 left JOIN baobiao_alarmhandleresult AS b ON a.id = b.baojingid

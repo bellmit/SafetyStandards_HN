@@ -28,7 +28,7 @@ import java.time.LocalDateTime;
 /**
  * 实体类
  *
- * @author elvis.he
+ * @author hyp
  * @since 2019-05-16
  */
 @Data
@@ -95,6 +95,9 @@ public class BaobiaoMulu implements Serializable {
      */
     @ApiModelProperty(value = "监控日期（日报:年-月-日，其它：年/月/日 - 年/月/日")
     private String countdate;
+
+	@ApiModelProperty(value = "监控日期（日报:年-月-日，其它：年/月/日 - 年/月/日")
+	private String countdateShow;
 
     @ApiModelProperty(value = "创建时间")
     private LocalDateTime createtime;

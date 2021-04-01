@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * 24小时不在线 Mapper 接口
  *
- * @author elvis.he
+ * @author hyp
  * @since 2019-05-11
  */
 public interface OfflinedetailMapper extends BaseMapper<Offlinedetail> {

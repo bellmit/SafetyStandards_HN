@@ -42,7 +42,7 @@ public interface QiyewenjianMapper extends BaseMapper<Qiyewenjian> {
 
 	/**
 	 *查询企业文件最大id
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/5/28 16:54
 	 * @param
 	 * @return: java.lang.Integer
@@ -51,7 +51,7 @@ public interface QiyewenjianMapper extends BaseMapper<Qiyewenjian> {
 
 	/**
 	 *查询同级文件最大排序号
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/5/28 16:57
 	 * @param id
 	 * @return: java.lang.Integer
@@ -60,7 +60,7 @@ public interface QiyewenjianMapper extends BaseMapper<Qiyewenjian> {
 
 	/**
 	 *目录树
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/5/30 9:38
 	 * @param deptId
 	 * @param parentId
@@ -70,7 +70,7 @@ public interface QiyewenjianMapper extends BaseMapper<Qiyewenjian> {
 
 	/**
 	 *查询下级节点
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/5/30 9:38
 	 * @param parentId
 	 * @return: java.util.List<org.springblade.anbiao.Qiyewenjian>
@@ -79,7 +79,7 @@ public interface QiyewenjianMapper extends BaseMapper<Qiyewenjian> {
 
 	/**
 	 *修改文件编号
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/5/30 17:24
 	 * @param id
 	 * @param documentNumber
@@ -89,7 +89,7 @@ public interface QiyewenjianMapper extends BaseMapper<Qiyewenjian> {
 
 	/**
 	 *修改文件排序号
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/5/30 17:29
 	 * @param id
 	 * @param sort
@@ -99,7 +99,7 @@ public interface QiyewenjianMapper extends BaseMapper<Qiyewenjian> {
 
 	/**
 	 *修改记录
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/8/13 10:56
 	 * @param id
 	 * @return: int

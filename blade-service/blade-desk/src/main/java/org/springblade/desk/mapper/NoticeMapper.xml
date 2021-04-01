@@ -14,6 +14,8 @@
         <result column="release_time" property="releaseTime"/>
         <result column="title" property="title"/>
         <result column="content" property="content"/>
+        <result column="tenant_code" property="tenantCode"/>
+        <result column="category" property="category"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -33,7 +35,136 @@
     </select>
 
     <select id="selectNoticePage" resultMap="noticeResultMap">
-        select * from blade_notice where title like concat('%', #{notice.title}, '%') and is_deleted = 0
+        select
+            b.*
+        from(
+            SELECT
+                DISTINCT
+                xiaji.id,
+                xiaji.parent_id,
+                xiaji.dept_name,
+                xiaji.is_deleted
+            FROM
+                blade_dept shangji,
+                blade_dept xiaji
+            WHERE xiaji.tree_code LIKE CONCAT(shangji.tree_code,'%')
+                AND xiaji.is_deleted = 0
+                AND xiaji.extend_type='机构'
+                AND shangji.id = 1
+            )a
+        inner join(
+            select
+                id,tenant_code,title,category,release_time,content,create_user,create_time,update_user,update_time,
+                case
+                    when IFNULL(status,0) = 0 then '待发布'
+                    when IFNULL(status,0) = 1 then '已发布'
+                    else '已过期'
+                end as statusShow
+            from
+                blade_notice
+            where is_deleted = 0
+                and left(release_time,10) = left(NOW(),10)
+        )b on a.id = b.tenant_code
     </select>
+
+    <!-- 查询通知公告列表 -->
+    <sql id="tableSql">
+        select
+            b.*
+        from(
+            SELECT
+                DISTINCT
+                xiaji.id,
+                xiaji.parent_id,
+                xiaji.dept_name,
+                xiaji.is_deleted
+            FROM
+                blade_dept shangji,
+                blade_dept xiaji
+            WHERE xiaji.tree_code LIKE CONCAT(shangji.tree_code,'%')
+                AND xiaji.is_deleted = 0
+                AND xiaji.extend_type='机构'
+                AND shangji.id = #{deptId}
+            )a
+        inner join(
+            select
+                id,tenant_code,title,category,release_time,content,create_user,create_time,update_user,update_time,
+                case
+                    when IFNULL(status,0) = 0 then '待发布'
+                    when IFNULL(status,0) = 1 then '已发布'
+                    else '已过期'
+                end as statusShow
+            from
+                blade_notice
+            where is_deleted = 0
+                and left(release_time,10) &gt;= left(#{beginTime},10)
+                and left(release_time,10) &lt; left(#{endTime},10)
+            )b on a.id = b.tenant_code
+        where 1=1
+    </sql>
+
+    <sql id="orderSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by release_time desc
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order == 0">
+            asc
+        </if>
+    </sql>
+
+    <sql id="querySql">
+
+        <if test="title != null and title != ''">
+            and title = '%${title}%'
+        </if>
+
+        <if test="category != null and category != ''">
+            and category like '%${category}%'
+        </if>
+
+        <if test="status != null and status != ''">
+            and status like '%${status}%'
+        </if>
+
+    </sql>
+
+    <select timeout="600" id="selectGetAll" resultMap="noticeResultMap"
+            parameterType="org.springblade.desk.page.NoticePage">
+        <if test="size == 0">
+            select * from (
+            <include refid="tableSql"/>
+            )b
+            where 1=1
+            <include refid="querySql"/>
+            <include refid="orderSql"/>
+            limit ${total}
+        </if>
+        <if test="current != 0">
+            select * from (
+            <include refid="tableSql"/>
+            )b
+            where 1=1
+            <include refid="querySql"/>
+            <include refid="orderSql"/>
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <select timeout="90" id="selectGetAllTotal"
+            parameterType="org.springblade.desk.page.NoticePage"
+            resultType="int">
+        select COUNT(1) from (
+        <include refid="tableSql"/>
+        )d where 1 = 1
+        <include refid="querySql"/>
+    </select>
+
 
 </mapper>

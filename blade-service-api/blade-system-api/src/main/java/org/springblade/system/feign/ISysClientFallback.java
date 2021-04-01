@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * Feign失败配置
  *
- * @author Chill
+ * @author hyp
  */
 @Component
 public class ISysClientFallback implements ISysClient {

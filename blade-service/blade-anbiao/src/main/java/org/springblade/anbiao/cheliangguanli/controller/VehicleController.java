@@ -45,7 +45,7 @@ import java.util.Map;
  * @author :hyp
  * @program : SafetyStandards
  * @description: VehicleController
- * @create : 2019-04-22 17:50
+ * @create 2021-04-22 17:50
  */
 @RestController
 @RequestMapping("/anbiao/vehicle")
@@ -66,20 +66,22 @@ public class VehicleController {
     public R<VehiclePage<VehicleVO>> list(@RequestBody VehiclePage vehiclepage) {
 		vehiclepage.setCheliangleixing("2");
         VehiclePage<VehicleVO> pages = vehicleService.selectVehiclePage(vehiclepage);
-//		for (int i = 0; i <list.size() ; i++) {
-//			//车辆照片
-//			if(StrUtil.isNotEmpty(list.get(i).getCheliangzhaopian())){
-//				list.get(i).setCheliangzhaopian(fileUploadClient.getUrl(list.get(i).getCheliangzhaopian()));
-//			}
-//			//燃料消耗附件
-//			if(StrUtil.isNotEmpty(list.get(i).getRanliaoxiaohaofujian())){
-//				list.get(i).setRanliaoxiaohaofujian(fileUploadClient.getUrl(list.get(i).getRanliaoxiaohaofujian()));
-//			}
-//			//行驶证附件
-//			if(StrUtil.isNotEmpty(list.get(i).getXingshifujian())){
-//				list.get(i).setXingshifujian(fileUploadClient.getUrl(list.get(i).getXingshifujian()));
-//			}
-//		}
+		List<VehicleVO>  list=pages.getRecords();
+		for (int i = 0; i <list.size() ; i++) {
+			//车辆照片
+			if(StrUtil.isNotEmpty(list.get(i).getCheliangzhaopian())){
+				list.get(i).setCheliangzhaopian(fileUploadClient.getUrl(list.get(i).getCheliangzhaopian()));
+			}
+
+			//燃料消耗附件
+			if(StrUtil.isNotEmpty(list.get(i).getRanliaoxiaohaofujian())){
+				list.get(i).setRanliaoxiaohaofujian(fileUploadClient.getUrl(list.get(i).getRanliaoxiaohaofujian()));
+			}
+			//行驶证附件
+			if(StrUtil.isNotEmpty(list.get(i).getXingshifujian())){
+				list.get(i).setXingshifujian(fileUploadClient.getUrl(list.get(i).getXingshifujian()));
+			}
+		}
         return R.data(pages);
     }
 
@@ -180,10 +182,20 @@ public class VehicleController {
 	@ApiLog("新增-车辆资料管理")
     @ApiOperation(value = "新增-车辆资料管理", notes = "传入Vehicle", position = 3)
     public R insert(@RequestBody Vehicle vehicle,BladeUser user) {
-		VehicleVO vehicleVO = vehicleService.selectCPYS(vehicle.getCheliangpaizhao(),vehicle.getChepaiyanse());
+		R r = new R();
+    	VehicleVO vehicleVO = vehicleService.selectCPYS(vehicle.getCheliangpaizhao(),vehicle.getChepaiyanse());
 		if(vehicleVO!=null){
-			return R.fail("该车已存在");
+			r.setMsg(vehicleVO.getCheliangpaizhao()+"该车已存在");
+			r.setCode(500);
+			return r;
 		}
+		VehicleVO vehicleVO1 = vehicleService.selectByZongDuan(vehicle.getZongduanid());
+		if(vehicleVO1 !=null ){
+			r.setMsg(vehicleVO1.getZongduanid()+"该终端ID已存在");
+			r.setCode(500);
+			return r;
+		}
+
 		vehicle.setCaozuoren(user.getUserName());
 		vehicle.setCaozuorenid(user.getUserId());
 		vehicle.setCaozuoshijian(LocalDateTime.now());
@@ -219,13 +231,35 @@ public class VehicleController {
 		if(StringUtil.isNotBlank(vehicle.getCheliangzhaopian())){
 			fileUploadClient.updateCorrelation(vehicle.getCheliangzhaopian(),str);
 		}
-        return R.status(vehicleService.save(vehicle));
+		boolean i = vehicleService.save(vehicle);
+		if(i==true){
+			r.setMsg("新增成功");
+			r.setCode(200);
+		}else{
+			r.setMsg("新增失败");
+			r.setCode(500);
+		}
+        return r;
     }
 
     @PostMapping("/update")
 	@ApiLog("修改-车辆资料管理")
     @ApiOperation(value = "修改-车辆资料管理", notes = "传入Vehicle", position = 4)
     public R update(@RequestBody Vehicle vehicle,BladeUser user) {
+		R r = new R();
+		VehicleVO vehicleVO = vehicleService.selectCPYS(vehicle.getCheliangpaizhao(),vehicle.getChepaiyanse());
+//		if(vehicleVO!=null){
+//			r.setMsg(vehicleVO.getCheliangpaizhao()+"该车已存在");
+//			r.setCode(500);
+//			return r;
+//		}
+//		VehicleVO vehicleVO1 = vehicleService.selectByZongDuan(vehicle.getZongduanid());
+//		if(vehicleVO1 !=null ){
+//			r.setMsg(vehicleVO1.getZongduanid()+"该终端ID已存在");
+//			r.setCode(500);
+//			return r;
+//		}
+
 		vehicle.setCaozuoren(user.getUserName());
 		vehicle.setCaozuorenid(user.getUserId());
 		vehicle.setCaozuoshijian(LocalDateTime.now());
@@ -258,7 +292,15 @@ public class VehicleController {
 			String yys = StringEscapeUtils.unescapeHtml(StringEscapeUtils.unescapeHtml(vehicle.getYunyingshang()));
 			vehicle.setYunyingshang(yys);
 		}
-        return R.status(vehicleService.updateById(vehicle));
+		boolean i = vehicleService.updateById(vehicle);
+		if(i==true){
+			r.setMsg("编辑成功");
+			r.setCode(200);
+		}else{
+			r.setMsg("编辑失败");
+			r.setCode(500);
+		}
+		return r;
     }
 
 	@PostMapping("/del")
@@ -430,8 +472,8 @@ public class VehicleController {
      * @Description: 根据岗位id获取车辆配置模块数据
      * @Param: [deptId]
      * @return: org.springblade.core.tool.api.R<java.util.List>
-     * @Author: elvis.he
-     * @date : 2019-04-28
+     * @Author: hyp
+     * @date 2021-04-28
      */
     @GetMapping("/listMap")
 	@ApiLog("获取车辆配置-车辆资料管理")
@@ -821,15 +863,27 @@ public class VehicleController {
 					}
 					for(Vehicle item : vehicles){
 						if(item.getCheliangpaizhao().equals(cheliangpaiz) && item.getChepaiyanse().equals(chepaiyanse)){
+							vehicle.setImportUrl("icon_cha.png");
+							errorStr+=cheliangpaiz+"车牌号重复；";
+							vehicle.setMsg(cheliangpaiz+"车牌号重复；");
 							bb++;
 						}
 					}
-					if(bb>0){
-						vehicle.setImportUrl("icon_cha.png");
-						errorStr+=cheliangpaiz+"车牌号重复；";
-						vehicle.setMsg(cheliangpaiz+"车牌号重复；");
-						bb++;
-					}
+//					if(bb>0){
+//						vehicle.setImportUrl("icon_cha.png");
+//						errorStr+=cheliangpaiz+"车牌号重复；";
+//						vehicle.setMsg(cheliangpaiz+"车牌号重复；");
+//						bb++;
+//					}
+
+					vehicle.setShiyongxingzhi(String.valueOf(a.get("使用性质")).trim());
+					vehicle.setXinghao(String.valueOf(a.get("车辆类型")).trim());
+					vehicle.setChangpai(String.valueOf(a.get("厂牌")).trim());
+					vehicle.setChejiahao(String.valueOf(a.get("车架号")).trim());
+					vehicle.setYunyingshangmingcheng(String.valueOf(a.get("运营商名称")).trim());
+					String yys = StringEscapeUtils.unescapeHtml(StringEscapeUtils.unescapeHtml(String.valueOf(a.get("4G视频地址")).trim()));
+					vehicle.setYunyingshang(yys);
+					vehicle.setChezhu(String.valueOf(a.get("车主")).trim());
 
 					String zongduanid = String.valueOf(a.get("终端编号")).trim();
 					VehicleVO vehicleVO1 = vehicleService.selectByZongDuan(zongduanid);
@@ -916,12 +970,12 @@ public class VehicleController {
 					bb++;
 				}
 
-				if(user == null){
-					errorStr+="用户对象为空！";
-					vehicle.setImportUrl("icon_cha.png");
-				}else{
-					vehicle.setImportUrl("icon_gou.png");
-				}
+//				if(user == null){
+//					errorStr+="用户对象为空！";
+//					vehicle.setImportUrl("icon_cha.png");
+//				}else{
+//					vehicle.setImportUrl("icon_gou.png");
+//				}
 				vehicles.add(vehicle);
 			}
 			if(bb>0){
@@ -1197,7 +1251,35 @@ public class VehicleController {
 		return R.data(pages);
 	}
 
+	@GetMapping("/getByIdVehicleList")
+	@ApiLog("根据企业ID获取相应车辆信息")
+	@ApiOperation(value = "根据企业ID获取相应车辆信息", notes = "传入deptId", position = 2)
+	public R<List<Vehicle>> getByIdVehicleList(Integer deptId) {
+		List<Vehicle> detail = vehicleService.vehileList(deptId);
+		return R.data(detail);
+	}
 
-
-
+	@PostMapping("/updateVehicleZongDuanId")
+	@ApiLog("车辆资料管理-编辑车辆终端编号")
+	@ApiOperation(value = "车辆资料管理-编辑车辆终端编号", notes = "传入车辆id,新终端ID", position = 19)
+	public R updateVehicleZongDuanId(@RequestParam String id,String newzongduanid,String username,String userid) {
+		R r = new R();
+		VehicleVO vehicleVO1 = vehicleService.selectByZongDuan(newzongduanid);
+		if(vehicleVO1 !=null ){
+			r.setMsg(vehicleVO1.getZongduanid()+"该终端ID已存在");
+			r.setCode(500);
+			return r;
+		}
+		boolean ss = vehicleService.updateVehicleZongDuanId(newzongduanid,username,userid,id);
+		if (ss){
+			r.setMsg("编辑成功");
+			r.setCode(200);
+			r.setSuccess(true);
+		}else{
+			r.setMsg("编辑失败");
+			r.setCode(500);
+			r.setSuccess(false);
+		}
+		return r;
+	}
 }

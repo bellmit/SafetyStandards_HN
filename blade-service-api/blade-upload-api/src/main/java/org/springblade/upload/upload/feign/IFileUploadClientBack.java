@@ -9,7 +9,7 @@ import java.util.List;
  * @program: SpringBlade
  * @description: FileUploadClientBack
  * @author: hyp
- * @create: 2019-04-19 17:46
+ * @create2021-04-19 17:46
  **/
 @Component
 public class IFileUploadClientBack implements IFileUploadClient {

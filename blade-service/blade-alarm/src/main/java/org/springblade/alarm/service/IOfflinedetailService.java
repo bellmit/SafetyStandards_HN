@@ -22,7 +22,7 @@ import org.springblade.alarm.page.OfflinePage;
 /**
  *  24小时不在线 服务类
  *
- * @author elvis.he
+ * @author hyp
  * @since 2019-05-11
  */
 public interface IOfflinedetailService extends IService<Offlinedetail> {

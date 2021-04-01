@@ -10,7 +10,7 @@ import org.springblade.common.BasePage;
  * @program: SafetyStandards
  * @description: 标准模板对象
  * @author: jx
- * @create: 2019-04-25 19:18
+ * @create2021-04-25 19:18
  **/
 @Data
 @EqualsAndHashCode(callSuper = true)

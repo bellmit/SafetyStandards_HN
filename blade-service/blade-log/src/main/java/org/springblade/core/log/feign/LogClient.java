@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * 日志服务Feign实现类
  *
- * @author Chill
+ * @author hyp
  */
 @RestController
 @AllArgsConstructor

@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * Mapper 接口
  *
- * @author Chill
+ * @author hyp
  */
 public interface DictMapper extends BaseMapper<Dict> {
 

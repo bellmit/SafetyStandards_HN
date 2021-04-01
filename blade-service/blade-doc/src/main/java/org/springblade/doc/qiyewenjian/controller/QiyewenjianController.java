@@ -59,7 +59,7 @@ public class QiyewenjianController extends BladeController {
 
 	/**
 	 *添加目录
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/5/30 13:50
 	 * @param id
 	 * @param fileName
@@ -109,7 +109,7 @@ public class QiyewenjianController extends BladeController {
 
 	/**
 	 *添加文件
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/5/30 13:50
 	 * @param id
 	 * @param file
@@ -189,7 +189,7 @@ public class QiyewenjianController extends BladeController {
 
 	/**
 	 *文件替换
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/5/30 13:50
 	 * @param id
 	 * @param file
@@ -261,7 +261,7 @@ public class QiyewenjianController extends BladeController {
 
 	/**
 	 *删除节点
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/5/30 13:51
 	 * @param id
 	 * @return: org.springblade.core.tool.api.R
@@ -294,7 +294,7 @@ public class QiyewenjianController extends BladeController {
 
 	/**
 	 *目录树
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/5/30 13:51
 	 * @param deptId
 	 * @param parentId
@@ -312,7 +312,7 @@ public class QiyewenjianController extends BladeController {
 
 	/**
 	 *图片预览
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/5/30 13:51
 	 * @param id
 	 * @return: org.springblade.core.tool.api.R<org.springblade.anbiao.QiyewenjianVO>
@@ -349,7 +349,7 @@ public class QiyewenjianController extends BladeController {
 
 	/**
 	 *下载文件
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/5/30 17:18
 	 * @param response
 	 * @param id
@@ -400,5 +400,5 @@ public class QiyewenjianController extends BladeController {
 
 
 
-	
+
 }

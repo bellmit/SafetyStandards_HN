@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * Mapper 接口
  *
- * @author elvis.he
+ * @author hyp
  * @since 2019-05-16
  */
 public interface BaobiaoWenjianMapper extends BaseMapper<BaobiaoWenjian> {
@@ -40,9 +40,9 @@ public interface BaobiaoWenjianMapper extends BaseMapper<BaobiaoWenjian> {
      * 根据文件性质查询文件列表数据
      *
      * @param : id
-     * @author : elvis.he
+     * @author : hyp
      * @return:
-     * @since : 2019-05-18 11:00
+     * @since 2021-05-18 11:00
      */
     List<BaobiaoWenjianVO> fujianList(Integer id);
 

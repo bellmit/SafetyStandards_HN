@@ -34,7 +34,7 @@ import java.util.List;
 /**
  * gps点位数据 服务实现类
  *
- * @author elvis.he
+ * @author hyp
  * @since 2019-05-17
  */
 @Service

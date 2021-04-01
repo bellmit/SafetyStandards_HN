@@ -22,7 +22,7 @@ import java.util.List;
 /**
  *  应急预案-修订完善记录 Mapper 接口
  *
- * @author elvis.he
+ * @author hyp
  * @since 2019-04-25
  */
 public interface YuanxiudingMapper extends BaseMapper<Yuanxiuding> {

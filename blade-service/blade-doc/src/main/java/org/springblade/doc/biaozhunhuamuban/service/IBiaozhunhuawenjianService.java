@@ -43,8 +43,8 @@ public interface IBiaozhunhuawenjianService extends IService<Biaozhunhuawenjian>
 
 	/**
 	 *逻辑删除文件
-	 * @author: th
-	 * @CreateDate: 2019-05-15 21:10
+	 * @author: hyp
+	 * @CreateDate2021-05-15 21:10
 	 * @param mubanId
 	 * @return: int
 	 */
@@ -52,8 +52,8 @@ public interface IBiaozhunhuawenjianService extends IService<Biaozhunhuawenjian>
 
 	/**
 	 *根据模板id查询文件路径
-	 * @author: th
-	 * @CreateDate: 2019-05-15 21:17
+	 * @author: hyp
+	 * @CreateDate2021-05-15 21:17
 	 * @param mubanId
 	 * @return: java.util.List<org.springblade.anbiao.Biaozhunhuawenjian>
 	 */
@@ -61,7 +61,7 @@ public interface IBiaozhunhuawenjianService extends IService<Biaozhunhuawenjian>
 
 	/**
 	 *根据文件所属人查询文件路径
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/5/19 14:40
 	 * @param fileProperty
 	 * @param fileSuoshurenId
@@ -71,7 +71,7 @@ public interface IBiaozhunhuawenjianService extends IService<Biaozhunhuawenjian>
 
 	/**
 	 *更新记录
-	 * @author: th
+	 * @author: hyp
 	 * @date: 2019/8/13 11:04
 	 * @param id
 	 * @return: int

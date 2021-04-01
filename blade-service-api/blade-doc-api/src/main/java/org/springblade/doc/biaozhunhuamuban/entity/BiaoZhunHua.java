@@ -80,5 +80,8 @@ public class BiaoZhunHua implements Serializable {
 	@ApiModelProperty(value = "文件类型")
 	private String leixing;
 
+	@ApiModelProperty(value = "ID")
+	private Integer id;
+
 
 }

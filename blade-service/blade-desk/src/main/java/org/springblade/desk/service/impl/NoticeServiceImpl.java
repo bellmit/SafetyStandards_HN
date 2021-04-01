@@ -15,25 +15,63 @@
  */
 package org.springblade.desk.service.impl;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.springblade.core.mp.base.BaseServiceImpl;
-import org.springblade.desk.mapper.NoticeMapper;
 import org.springblade.desk.entity.Notice;
+import org.springblade.desk.mapper.NoticeMapper;
+import org.springblade.desk.page.NoticePage;
 import org.springblade.desk.service.INoticeService;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * 服务实现类
  *
- * @author Chill
- * @since 2018-09-29
+ * @author hyp
+ * @since 2020-12-29
  */
 @Service
 public class NoticeServiceImpl extends BaseServiceImpl<NoticeMapper, Notice> implements INoticeService {
 
+	private NoticeMapper noticeMapper;
+
 	@Override
-	public IPage<Notice> selectNoticePage(IPage<Notice> page, Notice notice) {
-		return page.setRecords(baseMapper.selectNoticePage(page, notice));
+	public List<Notice> selectNoticePage() {
+		return noticeMapper.selectNoticePage();
+	}
+
+	@Override
+	public NoticePage<Notice> selectGetAll(NoticePage noticePage) {
+		Integer total = noticeMapper.selectGetAllTotal(noticePage);
+		if(noticePage.getSize()==0){
+			if(noticePage.getTotal()==0){
+				noticePage.setTotal(total);
+			}
+
+			List<Notice> zhengFuBaoJingTongJiList = noticeMapper.selectGetAll(noticePage);
+			noticePage.setRecords(zhengFuBaoJingTongJiList);
+			return noticePage;
+		}
+		Integer pagetotal = 0;
+		if (total > 0) {
+			if(total%noticePage.getSize()==0){
+				pagetotal = total / noticePage.getSize();
+			}else {
+				pagetotal = total / noticePage.getSize() + 1;
+			}
+		}
+		if (pagetotal >= noticePage.getCurrent()) {
+			noticePage.setPageTotal(pagetotal);
+			Integer offsetNo = 0;
+			if (noticePage.getCurrent() > 1) {
+				offsetNo = noticePage.getSize() * (noticePage.getCurrent() - 1);
+			}
+			noticePage.setTotal(total);
+			noticePage.setOffsetNo(offsetNo);
+			List<Notice> zhengFuBaoJingTongJiList = noticeMapper.selectGetAll(noticePage);
+			noticePage.setRecords(zhengFuBaoJingTongJiList);
+		}
+		return noticePage;
 	}
 
 }
