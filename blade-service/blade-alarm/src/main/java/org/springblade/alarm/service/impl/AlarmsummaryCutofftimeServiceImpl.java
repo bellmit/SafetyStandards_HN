@@ -485,8 +485,8 @@ public class AlarmsummaryCutofftimeServiceImpl extends ServiceImpl<AlarmsummaryC
 	}
 
 	@Override
-	public boolean updateBaoBiaoMuLu(String processRate, String deptId, String property, String countdate) {
-		return cutofftimeMapper.updateBaoBiaoMuLu(processRate, deptId, property, countdate);
+	public boolean updateBaoBiaoMuLu(String processRate, String deptId, String property, String countdate,String countenddate) {
+		return cutofftimeMapper.updateBaoBiaoMuLu(processRate, deptId, property, countdate,countenddate);
 	}
 
 	@Override

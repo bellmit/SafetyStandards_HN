@@ -59,4 +59,11 @@ public interface DepartmentpostMapper extends BaseMapper<Departmentpost> {
 	 */
 	boolean updateByPostId(Departmentpost Departmentpost);
 
+	/**
+	 * 新增岗位信息
+	 * @param departmentpost
+	 * @return
+	 */
+	boolean insertSelective(Departmentpost departmentpost);
+
 }

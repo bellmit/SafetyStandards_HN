@@ -2135,47 +2135,6 @@ ORDER BY danchebaojingbi desc
                 ifnull(sum(b.fenshencl),0) as fenshencl,
                 ifnull(sum(b.pilaoshipincl),0)+ifnull(sum(b.dadianhuacl),0)+ifnull(sum(b.chouyancl),0)+ifnull(sum(b.fenshencl),0) as dmsbaojingclzongshu
             from(
-<!--                select-->
-<!--                    DISTINCT-->
-<!--                    b.dept_id as qiyeid,-->
-<!--                    b.dept_name as qiyemingcheng,-->
-<!--                    b.jigouleixing,-->
-<!--                    b.province,-->
-<!--                    b.city,-->
-<!--                    b.country,-->
-<!--                    a.dept_name as zhengfuname,-->
-<!--                    a.dept_id as zhengfuid,-->
-<!--                    case-->
-<!--                        when IFNULL(a.country,'') != '' then a.country-->
-<!--                        when IFNULL(a.city,'') != '' and IFNULL(a.country,'') = '' then a.city-->
-<!--                        when IFNULL(a.province,'') != '' and IFNULL(a.city,'') = '' and IFNULL(a.country,'') = '' then a.province-->
-<!--                    end as areaname-->
-<!--                from (-->
-<!--                    select-->
-<!--                        a.id as dept_id,a.parent_id,a.dept_name,tree_code,province,city,country-->
-<!--                    from-->
-<!--                        blade_dept a,anbiao_organization b-->
-<!--                    where a.id = b.dept_id-->
-<!--                        and jigouleixing in('xianZF','shiZF','shengZF')-->
-<!--                        and b.isdelete = 0-->
-<!--                    <if test=" (deptId != null and deptId != '') and ( xiaJiDeptId == null or xiaJiDeptId == '' ) ">-->
-<!--                        and (a.parent_id = #{deptId} or a.id = #{deptId})-->
-<!--                    </if>-->
-<!--                    <if test="xiaJiDeptId != null and xiaJiDeptId != '' ">-->
-<!--                        and a.id = #{xiaJiDeptId}-->
-<!--                    </if>-->
-<!--                    )a-->
-<!--                inner join(-->
-<!--                    select-->
-<!--                        dept_id,dept_name,jigouleixing,province,city,country-->
-<!--                    from-->
-<!--                        anbiao_organization-->
-<!--                    where 1=1-->
-<!--                        and jigouleixing in ('qiye','geti')-->
-<!--                        and isdelete = 0-->
-<!--                    )b on a.dept_id in(b.province,b.city,b.country)-->
-<!--                where 1=1-->
-<!--                    and b.province is not null-->
                 select
                     qiyeid,qiyemingcheng,yunguanmingcheng as zhengfuname,yunguanid as zhengfuid,areaname
                 from anbiao_zhengfu_qiye
@@ -2221,9 +2180,20 @@ ORDER BY danchebaojingbi desc
                     COUNT(DISTINCT VehicleId) as baojingcheliangshu
                 from
                     statisticcensus
-                where 1=1
-                    and date &gt;= CONCAT(#{begintime},' 00:00:00')
+                where date &gt;= CONCAT(#{begintime},' 00:00:00')
                     and date &lt; CONCAT(#{endtime},' 23:59:59')
+                    and cid in(
+                        select
+                            qiyeid
+                        from anbiao_zhengfu_qiye
+                        where 1=1 and jigouleixing in ('qiye','geti')
+                        <if test=" (deptId != null and deptId != '') and ( xiaJiDeptId == null or xiaJiDeptId == '' ) ">
+                            and (city = #{deptId} or province = #{deptId})
+                        </if>
+                        <if test="xiaJiDeptId != null and xiaJiDeptId != '' ">
+                            and country = #{xiaJiDeptId}
+                        </if>
+                        )
                     and IFNULL(IFNULL(AlarmCount,0)+IFNULL(dsm,0),0) &gt; 0
                 GROUP BY
                     cid
@@ -3098,47 +3068,6 @@ ORDER BY danchebaojingbi desc
                 else ROUND(IFNULL(sum(b.baojingcishu),0)*1.0/IFNULL(sum(b.baojingcheliangshu),0),2)
             end as danchebaojingbi
         from(
-<!--            select-->
-<!--                DISTINCT-->
-<!--                b.dept_id as qiyeid,-->
-<!--                b.dept_name as qiyemingcheng,-->
-<!--                b.jigouleixing,-->
-<!--                b.province,-->
-<!--                b.city,-->
-<!--                b.country,-->
-<!--                a.dept_name as zhengfuname,-->
-<!--                a.dept_id as zhengfuid,-->
-<!--                case-->
-<!--                    when IFNULL(a.country,'') != '' then a.country-->
-<!--                    when IFNULL(a.city,'') != '' and IFNULL(a.country,'') = '' then a.city-->
-<!--                    when IFNULL(a.province,'') != '' and IFNULL(a.city,'') = '' and IFNULL(a.country,'') = '' then a.province-->
-<!--                end as areaname-->
-<!--            from (-->
-<!--                select-->
-<!--                    a.id as dept_id,a.parent_id,a.dept_name,tree_code,province,city,country-->
-<!--                from-->
-<!--                    blade_dept a,anbiao_organization b-->
-<!--                where a.id = b.dept_id-->
-<!--                    and jigouleixing in('xianZF','shiZF','shengZF')-->
-<!--                    and b.isdelete = 0-->
-<!--                <if test=" (deptId != null and deptId != '') and ( xiaJiDeptId == null or xiaJiDeptId == '' ) ">-->
-<!--                    and (a.parent_id = #{deptId} or a.id = #{deptId})-->
-<!--                </if>-->
-<!--                <if test="xiaJiDeptId != null and xiaJiDeptId != '' ">-->
-<!--                    and a.id = #{xiaJiDeptId}-->
-<!--                </if>-->
-<!--                )a-->
-<!--            inner join(-->
-<!--                select-->
-<!--                    dept_id,dept_name,jigouleixing,province,city,country-->
-<!--                from-->
-<!--                    anbiao_organization-->
-<!--                where 1=1-->
-<!--                    and jigouleixing in ('qiye','geti')-->
-<!--                    and isdelete = 0-->
-<!--                )b on a.dept_id in(b.province,b.city,b.country)-->
-<!--            where 1=1-->
-<!--                and b.province is not null-->
             select
                 qiyeid,qiyemingcheng,yunguanmingcheng as zhengfuname,yunguanid as zhengfuid,areaname
             from anbiao_zhengfu_qiye
@@ -3184,9 +3113,21 @@ ORDER BY danchebaojingbi desc
                     COUNT(DISTINCT VehicleId) as baojingcheliangshu
                 from
                     statisticcensus
-                where 1=1
-                    and date &gt;= CONCAT(#{begintime},' 00:00:00')
+                    where date &gt;= CONCAT(#{begintime},' 00:00:00')
                     and date &lt; CONCAT(#{endtime},' 23:59:59')
+                    and cid in(
+                        select
+                            qiyeid
+                        from anbiao_zhengfu_qiye
+                        where 1=1
+                            and jigouleixing in ('qiye','geti')
+                        <if test=" (deptId != null and deptId != '') and ( xiaJiDeptId == null or xiaJiDeptId == '' ) ">
+                            and (city = #{deptId} or province = #{deptId})
+                        </if>
+                        <if test="xiaJiDeptId != null and xiaJiDeptId != '' ">
+                            and country = #{xiaJiDeptId}
+                        </if>
+                        )
                     and IFNULL(IFNULL(AlarmCount,0)+IFNULL(dsm,0),0) &gt; 0
                 GROUP BY
                     cid
@@ -3254,253 +3195,116 @@ ORDER BY danchebaojingbi desc
 
 
     <sql id="CLTJPMSql">
-<!--        select-->
-<!--            DISTINCT-->
-<!--            a.areaname,-->
-<!--            a.zhengfuname,-->
-<!--            a.zhengfuid,-->
-<!--            a.qiyeid as deptId,-->
-<!--            a.qiyemingcheng as deptName,-->
-<!--            CONCAT(#{begintime},'至',#{endtime}) as date,-->
-<!--            b.cheliangpaizhao,-->
-<!--            b.chepaiyanse,-->
-<!--            b.shiyongxingzhi,-->
-<!--            SUM(IFNULL(baojingcishu,0))+SUM(IFNULL(zhudongbaojingcishu,0)) as baojingzongshu,-->
-<!--            ifnull(sum(b.pilaoshipincl),0)+ifnull(sum(b.dadianhuacl),0)+ifnull(sum(b.chouyancl),0)+ifnull(sum(b.fenshencl),0)+-->
-<!--            ifnull(sum(b.chaosucl),0)+ifnull(sum(b.pilaocl),0)+ifnull(sum(b.yejiancl),0)+ifnull(sum(b.buzaixiancl),0)+ifnull(sum(b.budingweicl),0) as baojingclcishu,-->
-<!--            ifnull(sum(b.chaosu),0) as gpschaosu,-->
-<!--            ifnull(sum(b.pilao),0) as gpspilao,-->
-<!--            ifnull(sum(b.yejian),0) as gpsyejian,-->
-<!--            ifnull(sum(b.buzaixian),0)+ifnull(sum(b.budingwei),0) as gpsyichang,-->
-<!--            ifnull(sum(b.chaosu),0)+ifnull(sum(b.pilao),0)+ifnull(sum(b.yejian),0)+ifnull(sum(b.buzaixian),0)+ifnull(sum(b.budingwei),0) as gpsbaojingzongshu,-->
-<!--            ifnull(sum(b.pilaoshipin),0) as dmspilao,-->
-<!--            ifnull(sum(b.dadianhua),0) as dmsjiedadianhua,-->
-<!--            ifnull(sum(b.chouyan),0) as dmschouyan,-->
-<!--            ifnull(sum(b.fenshen),0) as dmsfenshen,-->
-<!--            ifnull(sum(b.pilaoshipin),0)+ifnull(sum(b.dadianhua),0)+ifnull(sum(b.chouyan),0)+ifnull(sum(b.fenshen),0)	dmsbaojingzongshu,-->
-<!--            ifnull(sum(b.chaosucl),0) as chaosucl,-->
-<!--            ifnull(sum(b.pilaocl),0) as pilaocl,-->
-<!--            ifnull(sum(b.yejiancl),0) as yejiancl,-->
-<!--            ifnull(sum(b.buzaixiancl),0)+ifnull(sum(b.budingweicl),0) as yichangcl,-->
-<!--            ifnull(sum(b.chaosucl),0)+ifnull(sum(b.pilaocl),0)+ifnull(sum(b.yejiancl),0)+ifnull(sum(b.buzaixiancl),0)+ifnull(sum(b.budingweicl),0) as gpsbaojingclzongshu,-->
-<!--            ifnull(sum(b.pilaoshipincl),0) as pilaoshipincl,-->
-<!--            ifnull(sum(b.dadianhuacl),0) as dadianhuacl,-->
-<!--            ifnull(sum(b.chouyancl),0) as chouyancl,-->
-<!--            ifnull(sum(b.fenshencl),0) as fenshencl,-->
-<!--            ifnull(sum(b.pilaoshipincl),0)+ifnull(sum(b.dadianhuacl),0)+ifnull(sum(b.chouyancl),0)+ifnull(sum(b.fenshencl),0) as dmsbaojingclzongshu-->
-<!--        from(-->
-<!--            select-->
-<!--            DISTINCT-->
-<!--            b.dept_id as qiyeid,-->
-<!--            b.dept_name as qiyemingcheng,-->
-<!--            b.jigouleixing,-->
-<!--            b.province,-->
-<!--            b.city,-->
-<!--            b.country,-->
-<!--            a.dept_name as zhengfuname,-->
-<!--            a.dept_id as zhengfuid,-->
-<!--            case-->
-<!--            when IFNULL(a.country,'') != '' then a.country-->
-<!--            when IFNULL(a.city,'') != '' and IFNULL(a.country,'') = '' then a.city-->
-<!--            when IFNULL(a.province,'') != '' and IFNULL(a.city,'') = '' and IFNULL(a.country,'') = '' then a.province-->
-<!--            end as areaname-->
-<!--            from (-->
-<!--            select-->
-<!--            a.id as dept_id,a.parent_id,a.dept_name,tree_code,province,city,country-->
-<!--            from-->
-<!--            blade_dept a,anbiao_organization b-->
-<!--            where a.id = b.dept_id-->
-<!--            and jigouleixing in('xianZF','shiZF','shengZF')-->
-<!--            and b.isdelete = 0-->
-<!--        <if test=" (deptId != null and deptId != '') and ( xiaJiDeptId == null or xiaJiDeptId == '' ) ">-->
-<!--            and a.parent_id = #{deptId}-->
-<!--        </if>-->
-<!--        <if test="xiaJiDeptId != null and xiaJiDeptId != '' ">-->
-<!--            and a.id = #{xiaJiDeptId}-->
-<!--        </if>-->
-<!--            )a-->
-<!--            inner join(-->
-<!--            select-->
-<!--            dept_id,dept_name,jigouleixing,province,city,country-->
-<!--            from-->
-<!--            anbiao_organization-->
-<!--            where 1=1-->
-<!--            and jigouleixing in ('qiye','geti')-->
-<!--            and isdelete = 0-->
-<!--            )b on a.dept_id in(b.province,b.city,b.country)-->
-<!--            where 1=1-->
-<!--            and b.province is not null-->
-<!--            )a-->
-<!--            right join(-->
-<!--            select * from baobiao_alarmvehdailyreport-->
-<!--            where 1=1-->
-<!--            and date &gt;= #{begintime}-->
-<!--            and date &lt;= #{endtime}-->
-<!--        <if test="deptName != null and deptName != '' ">-->
-<!--            and company like '%${deptName}%'-->
-<!--        </if>-->
-
-<!--        <if test="cheliangpaizhao != null and cheliangpaizhao != '' ">-->
-<!--            and cheliangpaizhao like '%${cheliangpaizhao}%'-->
-<!--        </if>-->
-
-<!--        <if test="shiyongxingzhi != null and shiyongxingzhi != '' ">-->
-<!--            and shiyongxingzhi like '%${shiyongxingzhi}%'-->
-<!--        </if>-->
-<!--            )b on a.qiyemingcheng = b.company-->
-<!--            where 1=1-->
-<!--                and ifnull(qiyemingcheng,'') != ''-->
-<!--                and ifnull(cheliangpaizhao,'') != ''-->
-<!--            GROUP BY-->
-<!--            a.areaname,-->
-<!--            a.zhengfuname,-->
-<!--            a.zhengfuid,-->
-<!--            a.qiyeid,-->
-<!--            a.qiyemingcheng,-->
-<!--            b.cheliangpaizhao,-->
-<!--            b.chepaiyanse,-->
-<!--            b.shiyongxingzhi-->
-
         select
-        DISTINCT
-        a.areaname,
-        a.zhengfuname,
-        a.zhengfuid,
-        a.qiyeid as deptId,
-        a.qiyemingcheng as deptName,
-        CONCAT(#{begintime},'至',#{endtime}) as date,
-        b.cheliangpaizhao,
-        b.chepaiyanse,
-        b.shiyongxingzhi,
-        ifnull(sum(b.baojingcishu),0) as baojingzongshu,
-        ifnull(sum(b.baojingclcishu),0) as baojingclcishu,
-        ifnull(sum(b.chaosu),0) as gpschaosu,
-        ifnull(sum(b.pilao),0) as gpspilao,
-        ifnull(sum(b.yejian),0) as gpsyejian,
-        ifnull(sum(b.wushuju),0)+ifnull(sum(b.budingwei),0) as gpsyichang,
-        ifnull(sum(b.chaosu),0)+ifnull(sum(b.pilao),0)+ifnull(sum(b.yejian),0)+ifnull(sum(b.wushuju),0)+ifnull(sum(b.budingwei),0) as gpsbaojingzongshu,
-        ifnull(sum(b.pilaoshipin),0) as dmspilao,
-        ifnull(sum(b.dadianhua),0) as dmsjiedadianhua,
-        ifnull(sum(b.chouyan),0) as dmschouyan,
-        ifnull(sum(b.fenshen),0) as dmsfenshen,
-        ifnull(sum(b.pilaoshipin),0)+ifnull(sum(b.dadianhua),0)+ifnull(sum(b.chouyan),0)+ifnull(sum(b.fenshen),0)	dmsbaojingzongshu,
-        ifnull(sum(b.chaosucl),0) as chaosucl,
-        ifnull(sum(b.pilaocl),0) as pilaocl,
-        ifnull(sum(b.yejiancl),0) as yejiancl,
-        ifnull(sum(b.wushujucl),0)+ifnull(sum(b.budingweicl),0) as yichangcl,
-        ifnull(sum(b.chaosucl),0)+ifnull(sum(b.pilaocl),0)+ifnull(sum(b.yejiancl),0)+ifnull(sum(b.wushujucl),0)+ifnull(sum(b.budingweicl),0) as gpsbaojingclzongshu,
-        ifnull(sum(b.pilaoshipincl),0) as pilaoshipincl,
-        ifnull(sum(b.dadianhuacl),0) as dadianhuacl,
-        ifnull(sum(b.chouyancl),0) as chouyancl,
-        ifnull(sum(b.fenshencl),0) as fenshencl,
-        ifnull(sum(b.pilaoshipincl),0)+ifnull(sum(b.dadianhuacl),0)+ifnull(sum(b.chouyancl),0)+ifnull(sum(b.fenshencl),0) as dmsbaojingclzongshu
+            DISTINCT
+            a.areaname,
+            a.zhengfuname,
+            a.zhengfuid,
+            a.qiyeid as deptId,
+            a.qiyemingcheng as deptName,
+            CONCAT(#{begintime},'至',#{endtime}) as date,
+            b.cheliangpaizhao,
+            b.chepaiyanse,
+            b.shiyongxingzhi,
+            ifnull(sum(b.baojingcishu),0) as baojingzongshu,
+            ifnull(sum(b.baojingclcishu),0) as baojingclcishu,
+            ifnull(sum(b.chaosu),0) as gpschaosu,
+            ifnull(sum(b.pilao),0) as gpspilao,
+            ifnull(sum(b.yejian),0) as gpsyejian,
+            ifnull(sum(b.wushuju),0)+ifnull(sum(b.budingwei),0) as gpsyichang,
+            ifnull(sum(b.chaosu),0)+ifnull(sum(b.pilao),0)+ifnull(sum(b.yejian),0)+ifnull(sum(b.wushuju),0)+ifnull(sum(b.budingwei),0) as gpsbaojingzongshu,
+            ifnull(sum(b.pilaoshipin),0) as dmspilao,
+            ifnull(sum(b.dadianhua),0) as dmsjiedadianhua,
+            ifnull(sum(b.chouyan),0) as dmschouyan,
+            ifnull(sum(b.fenshen),0) as dmsfenshen,
+            ifnull(sum(b.pilaoshipin),0)+ifnull(sum(b.dadianhua),0)+ifnull(sum(b.chouyan),0)+ifnull(sum(b.fenshen),0)	dmsbaojingzongshu,
+            ifnull(sum(b.chaosucl),0) as chaosucl,
+            ifnull(sum(b.pilaocl),0) as pilaocl,
+            ifnull(sum(b.yejiancl),0) as yejiancl,
+            ifnull(sum(b.wushujucl),0)+ifnull(sum(b.budingweicl),0) as yichangcl,
+            ifnull(sum(b.chaosucl),0)+ifnull(sum(b.pilaocl),0)+ifnull(sum(b.yejiancl),0)+ifnull(sum(b.wushujucl),0)+ifnull(sum(b.budingweicl),0) as gpsbaojingclzongshu,
+            ifnull(sum(b.pilaoshipincl),0) as pilaoshipincl,
+            ifnull(sum(b.dadianhuacl),0) as dadianhuacl,
+            ifnull(sum(b.chouyancl),0) as chouyancl,
+            ifnull(sum(b.fenshencl),0) as fenshencl,
+            ifnull(sum(b.pilaoshipincl),0)+ifnull(sum(b.dadianhuacl),0)+ifnull(sum(b.chouyancl),0)+ifnull(sum(b.fenshencl),0) as dmsbaojingclzongshu
         from(
-<!--        select-->
-<!--        DISTINCT-->
-<!--        b.dept_id as qiyeid,-->
-<!--        b.dept_name as qiyemingcheng,-->
-<!--        b.jigouleixing,-->
-<!--        b.province,-->
-<!--        b.city,-->
-<!--        b.country,-->
-<!--        a.dept_name as zhengfuname,-->
-<!--        a.dept_id as zhengfuid,-->
-<!--        case-->
-<!--        when IFNULL(a.country,'') != '' then a.country-->
-<!--        when IFNULL(a.city,'') != '' and IFNULL(a.country,'') = '' then a.city-->
-<!--        when IFNULL(a.province,'') != '' and IFNULL(a.city,'') = '' and IFNULL(a.country,'') = '' then a.province-->
-<!--        end as areaname-->
-<!--        from (-->
-<!--        select-->
-<!--        a.id as dept_id,a.parent_id,a.dept_name,tree_code,province,city,country-->
-<!--        from-->
-<!--        blade_dept a,anbiao_organization b-->
-<!--        where a.id = b.dept_id-->
-<!--        and jigouleixing in('xianZF','shiZF','shengZF')-->
-<!--        and b.isdelete = 0-->
-<!--    <if test=" (deptId != null and deptId != '') and ( xiaJiDeptId == null or xiaJiDeptId == '' ) ">-->
-<!--        and (a.parent_id = #{deptId} or a.id = #{deptId})-->
-<!--    </if>-->
-<!--    <if test="xiaJiDeptId != null and xiaJiDeptId != '' ">-->
-<!--        and a.id = #{xiaJiDeptId}-->
-<!--    </if>-->
-<!--        )a-->
-<!--        inner join(-->
-<!--        select-->
-<!--        dept_id,dept_name,jigouleixing,province,city,country-->
-<!--        from-->
-<!--        anbiao_organization-->
-<!--        where 1=1-->
-<!--        and jigouleixing in ('qiye','geti')-->
-<!--        and isdelete = 0-->
-<!--        )b on a.dept_id in(b.province,b.city,b.country)-->
-<!--        where 1=1-->
-<!--        and b.province is not null-->
-        select
-            qiyeid,qiyemingcheng,yunguanmingcheng as zhengfuname,yunguanid as zhengfuid,areaname
-        from anbiao_zhengfu_qiye
-        where 1=1 and jigouleixing in ('qiye','geti')
+            select
+                qiyeid,qiyemingcheng,yunguanmingcheng as zhengfuname,yunguanid as zhengfuid,areaname
+            from anbiao_zhengfu_qiye
+            where 1=1 and jigouleixing in ('qiye','geti')
             <if test=" (deptId != null and deptId != '') and ( xiaJiDeptId == null or xiaJiDeptId == '' ) ">
                 and (city = #{deptId} or province = #{deptId})
             </if>
             <if test="xiaJiDeptId != null and xiaJiDeptId != '' ">
                 and country = #{xiaJiDeptId}
             </if>
-        )a
+            )a
         LEFT JOIN(
-        select
-        cid,
-        dept_name,
-        cheliangpaizhao,
-        chepaiyanse,
-        shiyongxingzhi,
-        OverSpeedAlarmCount chaosu,
-        FatigueDrivingAlarmCount pilao,
-        ProhibitDrivingAlarmCount yejian,
-        NoPositionAlarmCount wushuju,
-        NoLocateAlarmCount budingwei,
-        SafeAlarmFatigueCount pilaoshipin,
-        SafeAlarmPhoneCount dadianhua,
-        SafeAlarmSmokeCount chouyan,
-        SafeAlarmDistractionCount fenshen,
-        IFNULL(AlarmCount,0)+IFNULL(dsm,0) baojingcishu,
-        OverSpeedAlarmDisposeCount chaosucl,
-        FatigueDrivingAlarmDisposeCount pilaocl,
-        ProhibitDrivingAlarmDisposeCount yejiancl,
-        NoPositionAlarmDisposeCount wushujucl,
-        NoLocateAlarmDisposeCount budingweicl,
-        SafeAlarmFatigueDisposeCount pilaoshipincl,
-        SafeAlarmPhoneDisposeCount dadianhuacl,
-        SafeAlarmSmokeDisposeCount chouyancl,
-        SafeAlarmDistractionDisposeCount fenshencl,
-        AlarmDisposeCount baojingclcishu
-        from
-        statisticcensus
-        where 1=1
-            and date &gt;= #{begintime}
-            and date &lt;= #{endtime}
-        <if test="cheliangpaizhao != null and cheliangpaizhao != '' ">
-            and cheliangpaizhao like '%${cheliangpaizhao}%'
-        </if>
+            select
+                cid,
+                dept_name,
+                cheliangpaizhao,
+                chepaiyanse,
+                shiyongxingzhi,
+                OverSpeedAlarmCount chaosu,
+                FatigueDrivingAlarmCount pilao,
+                ProhibitDrivingAlarmCount yejian,
+                NoPositionAlarmCount wushuju,
+                NoLocateAlarmCount budingwei,
+                SafeAlarmFatigueCount pilaoshipin,
+                SafeAlarmPhoneCount dadianhua,
+                SafeAlarmSmokeCount chouyan,
+                SafeAlarmDistractionCount fenshen,
+                IFNULL(AlarmCount,0)+IFNULL(dsm,0) baojingcishu,
+                OverSpeedAlarmDisposeCount chaosucl,
+                FatigueDrivingAlarmDisposeCount pilaocl,
+                ProhibitDrivingAlarmDisposeCount yejiancl,
+                NoPositionAlarmDisposeCount wushujucl,
+                NoLocateAlarmDisposeCount budingweicl,
+                SafeAlarmFatigueDisposeCount pilaoshipincl,
+                SafeAlarmPhoneDisposeCount dadianhuacl,
+                SafeAlarmSmokeDisposeCount chouyancl,
+                SafeAlarmDistractionDisposeCount fenshencl,
+                AlarmDisposeCount baojingclcishu
+            from
+                statisticcensus
+            where date &gt;= #{begintime}
+                and date &lt;= #{endtime}
+                and cid in(
+                    select
+                        qiyeid
+                    from anbiao_zhengfu_qiye
+                    where 1=1 and jigouleixing in ('qiye','geti')
+                    <if test=" (deptId != null and deptId != '') and ( xiaJiDeptId == null or xiaJiDeptId == '' ) ">
+                        and (city = #{deptId} or province = #{deptId})
+                    </if>
+                    <if test="xiaJiDeptId != null and xiaJiDeptId != '' ">
+                        and country = #{xiaJiDeptId}
+                    </if>
+                    )
+            <if test="cheliangpaizhao != null and cheliangpaizhao != '' ">
+                and cheliangpaizhao like '%${cheliangpaizhao}%'
+            </if>
 
-        <if test="shiyongxingzhi != null and shiyongxingzhi != '' ">
-            and shiyongxingzhi like '%${shiyongxingzhi}%'
-        </if>
-        )b on b.cid = a.qiyeid
+            <if test="shiyongxingzhi != null and shiyongxingzhi != '' ">
+                and shiyongxingzhi like '%${shiyongxingzhi}%'
+            </if>
+            )b on b.cid = a.qiyeid
         where 1=1
             and IFNULL(b.cheliangpaizhao,'') != ''
         <if test="deptName != null and deptName != '' ">
             and a.qiyemingcheng like CONCAT('%',#{deptName},'%')
         </if>
         GROUP BY
-        a.areaname,
-        a.zhengfuname,
-        a.zhengfuid,
-        a.qiyeid,
-        a.qiyemingcheng,
-        b.cheliangpaizhao,
-        b.chepaiyanse,
-        b.shiyongxingzhi
+            a.areaname,
+            a.zhengfuname,
+            a.zhengfuid,
+            a.qiyeid,
+            a.qiyemingcheng,
+            b.cheliangpaizhao,
+            b.chepaiyanse,
+            b.shiyongxingzhi
     </sql>
 
     <sql id="orderCLTJPMSql">

@@ -886,16 +886,24 @@ public class VehicleController {
 					vehicle.setChezhu(String.valueOf(a.get("车主")).trim());
 
 					String zongduanid = String.valueOf(a.get("终端编号")).trim();
-					VehicleVO vehicleVO1 = vehicleService.selectByZongDuan(zongduanid);
-					if(vehicleVO1!=null){
+					if(zongduanid.length() != 12){
 						vehicle.setImportUrl("icon_cha.png");
-						errorStr+=zongduanid+"该终端ID已存在;";
+						errorStr += zongduanid + "该终端号不是12位;";
 						vehicle.setZongduanid(zongduanid);
-						vehicle.setMsg(zongduanid+"该终端ID已存在;");
+						vehicle.setMsg(zongduanid + "该终端号不是12位;");
 						bb++;
-					}else{
-						vehicle.setImportUrl("icon_gou.png");
-						vehicle.setZongduanid(zongduanid);
+					}else {
+						VehicleVO vehicleVO1 = vehicleService.selectByZongDuan(zongduanid);
+						if (vehicleVO1 != null) {
+							vehicle.setImportUrl("icon_cha.png");
+							errorStr += zongduanid + "该终端ID已存在;";
+							vehicle.setZongduanid(zongduanid);
+							vehicle.setMsg(zongduanid + "该终端ID已存在;");
+							bb++;
+						} else {
+							vehicle.setImportUrl("icon_gou.png");
+							vehicle.setZongduanid(zongduanid);
+						}
 					}
 
 					if(StringUtils.isBlank(String.valueOf(a.get("驾驶员")))){
@@ -1282,4 +1290,357 @@ public class VehicleController {
 		}
 		return r;
 	}
+
+	/**
+	 * 更新车辆信息--验证
+	 * @author: elvis
+	 * @date: 2020/06/19 10:23
+	 * @update: 黄亚平 更新车辆信息
+	 * @param
+	 */
+	@PostMapping("vehicleUpdateImport")
+	@ApiLog("更新车辆信息-验证")
+	@ApiOperation(value = "更新车辆信息-验证", notes = "file", position = 20)
+	public R vehicleUpdateImport(@RequestParam(value = "file") MultipartFile file){
+
+		R rs = new R();
+		ExcelReader reader = null;
+		try {
+			reader = ExcelUtil.getReader(file.getInputStream());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		//时间默认格式
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		//验证数据成功条数
+		int aa=0;
+		//验证数据错误条数
+		int bb=0;
+		//全局变量，只要一条数据不对，就为false
+		boolean isDataValidity=true;
+		//错误信息
+		String errorStr="";
+
+		List<Map<String,Object>> readAll = reader.readAll();
+		if(readAll.size()>5000){
+			errorStr+="导入数据超过5000条，无法导入！";
+			rs.setMsg(errorStr);
+			rs.setCode(400);
+			return rs;
+		}
+
+		List<Vehicle> vehicles=new ArrayList<Vehicle>();
+			for(Map<String,Object> a:readAll){
+				aa++;
+				Vehicle vehicle=new Vehicle();
+				Dept dept;
+				String deptname =  String.valueOf(a.get("机构名称")).trim();
+				if(StringUtils.isBlank(deptname)){
+					vehicle.setMsg("所属单位不能为空;");
+					vehicle.setImportUrl("icon_cha.png");
+					bb++;
+				}
+				dept = iSysClient.getDeptByName(deptname.trim());
+				if (dept != null){
+					vehicle.setDeptId(Integer.valueOf(dept.getId()));
+					vehicle.setDeptName(deptname);
+					vehicle.setImportUrl("icon_gou.png");
+
+					String cheliangpaiz=String.valueOf(a.get("车辆牌照")).trim();
+					if(StringUtils.isBlank(cheliangpaiz)){
+						vehicle.setMsg("车辆牌照不能为空;");
+						vehicle.setImportUrl("icon_cha.png");
+						bb++;
+					}else{
+						if(isCarnumberNO(cheliangpaiz) == false){
+							vehicle.setMsg("辆牌照格式不正确;");
+							errorStr+=cheliangpaiz+"辆牌照格式不正确;";
+							vehicle.setImportUrl("icon_cha.png");
+							bb++;
+						}else{
+							vehicle.setImportUrl("icon_gou.png");
+						}
+					}
+					String chepaiyanse=String.valueOf(a.get("车牌颜色")).trim();
+					if(StringUtils.isBlank(chepaiyanse)){
+						vehicle.setMsg("车牌颜色不能为空;");
+						errorStr+="车牌颜色不能为空;";
+						vehicle.setImportUrl("icon_cha.png");
+						bb++;
+					}else{
+						VehicleVO vehicleVO = vehicleService.selectVehicleColor(chepaiyanse);
+						if (vehicleVO == null || vehicleVO.getChepaiyanse() == null) {
+							vehicle.setMsg("车牌颜色输入错误;");
+							errorStr+="车牌颜色输入错误;";
+							vehicle.setImportUrl("icon_cha.png");
+							bb++;
+						}else{
+							vehicle.setImportUrl("icon_gou.png");
+						}
+					}
+					vehicle.setCheliangpaizhao(cheliangpaiz);
+					vehicle.setChepaiyanse(chepaiyanse);
+					VehicleVO vehicleVO = vehicleService.selectCPYS(cheliangpaiz,chepaiyanse);
+					if(vehicleVO == null ){
+						vehicle.setImportUrl("icon_cha.png");
+						errorStr+=cheliangpaiz+"该车不存在;";
+						vehicle.setMsg(cheliangpaiz+"该车不存在;");
+						bb++;
+					}else{
+						vehicle.setImportUrl("icon_gou.png");
+					}
+					for(Vehicle item : vehicles){
+						if(item.getCheliangpaizhao().equals(cheliangpaiz) && item.getChepaiyanse().equals(chepaiyanse)){
+							vehicle.setImportUrl("icon_cha.png");
+							errorStr+=cheliangpaiz+"车牌号重复；";
+							vehicle.setMsg(cheliangpaiz+"车牌号重复；");
+							bb++;
+						}
+					}
+					vehicle.setShiyongxingzhi(String.valueOf(a.get("使用性质")).trim());
+					vehicle.setXinghao(String.valueOf(a.get("车辆类型")).trim());
+					vehicle.setChangpai(String.valueOf(a.get("厂牌")).trim());
+					vehicle.setChejiahao(String.valueOf(a.get("车架号")).trim());
+					vehicle.setYunyingshangmingcheng(String.valueOf(a.get("运营商名称")).trim());
+					String yys = StringEscapeUtils.unescapeHtml(StringEscapeUtils.unescapeHtml(String.valueOf(a.get("4G视频地址")).trim()));
+					vehicle.setYunyingshang(yys);
+					vehicle.setChezhu(String.valueOf(a.get("车主")).trim());
+					String zongduanid = String.valueOf(a.get("终端编号")).trim();
+					VehicleVO vehicleVO1 = vehicleService.selectByZongDuan(zongduanid);
+					if(StringUtils.isNotBlank(vehicleVO1.getZongduanid())){
+						vehicle.setImportUrl("icon_cha.png");
+						errorStr+=zongduanid+"该终端ID已存在;";
+						vehicle.setZongduanid(zongduanid);
+						vehicle.setMsg(zongduanid+"该终端ID已存在;");
+						bb++;
+					}else{
+						vehicle.setImportUrl("icon_gou.png");
+						vehicle.setZongduanid(zongduanid);
+					}
+
+					if(StringUtils.isBlank(String.valueOf(a.get("驾驶员")))){
+						vehicle.setJiashiyuanxingming("");
+					}else{
+						vehicle.setJiashiyuanxingming(String.valueOf(a.get("驾驶员")).trim());
+					}
+
+					if(StringUtils.isBlank(String.valueOf(a.get("押运员")))){
+						vehicle.setYayunyuanxingming("");
+					}else{
+						vehicle.setYayunyuanxingming(String.valueOf(a.get("押运员")).trim());
+					}
+
+					if(StringUtils.isBlank(String.valueOf(a.get("车主")))){
+						vehicle.setChezhu("");
+					}else{
+						vehicle.setChezhu(String.valueOf(a.get("车主")).trim());
+					}
+
+					String phone = String.valueOf(a.get("驾驶员电话"));
+					if(!StringUtils.isBlank(phone) && !phone.equals("null")){
+						if(CheckPhoneUtil.isPhoneOrTel(phone) == false){
+							vehicle.setMsg("驾驶员电话格式不正确;");
+							errorStr+=phone+"驾驶员电话格式不正确;";
+							vehicle.setImportUrl("icon_cha.png");
+							vehicle.setJiashiyuandianhua(String.valueOf(a.get("驾驶员电话")).trim());
+							bb++;
+						}else{
+							vehicle.setImportUrl("icon_gou.png");
+							vehicle.setJiashiyuandianhua(String.valueOf(a.get("驾驶员电话")).trim());
+						}
+					}else{
+						vehicle.setJiashiyuandianhua(String.valueOf(a.get("驾驶员电话")).trim());
+					}
+
+					String yyphone = String.valueOf(a.get("押运员电话"));
+					if(!StringUtils.isBlank(yyphone) && !yyphone.equals("null")){
+						if(CheckPhoneUtil.isPhoneOrTel(yyphone) == false){
+							vehicle.setMsg("押运员电话格式不正确;");
+							errorStr+=yyphone+"押运员电话格式不正确;";
+							vehicle.setImportUrl("icon_cha.png");
+							vehicle.setYayunyuandianhua(String.valueOf(a.get("押运员电话")).trim());
+							bb++;
+						}else{
+							vehicle.setImportUrl("icon_gou.png");
+							vehicle.setYayunyuandianhua(String.valueOf(a.get("押运员电话")).trim());
+						}
+					}else{
+						vehicle.setYayunyuandianhua(String.valueOf(a.get("押运员电话")).trim());
+					}
+
+					String czphone = String.valueOf(a.get("车主电话"));
+					if(!StringUtils.isBlank(czphone) && !czphone.equals("null")){
+						if(CheckPhoneUtil.isPhoneOrTel(czphone) == false){
+							vehicle.setMsg("车主电话格式不正确;");
+							errorStr+=czphone+"车主电话格式不正确;";
+							vehicle.setImportUrl("icon_cha.png");
+							vehicle.setChezhudianhua(String.valueOf(a.get("车主电话")).trim());
+							bb++;
+						}else{
+							vehicle.setImportUrl("icon_gou.png");
+							vehicle.setChezhudianhua(String.valueOf(a.get("车主电话")).trim());
+						}
+					}else{
+						vehicle.setChezhudianhua(String.valueOf(a.get("车主电话")).trim());
+					}
+				}else{
+					vehicle.setMsg(deptname+"机构不存在;");
+					errorStr+=deptname+"机构不存在;";
+					vehicle.setImportUrl("icon_cha.png");
+					bb++;
+				}
+				vehicles.add(vehicle);
+			}
+		if(bb>0){
+			rs.setMsg(errorStr);
+			rs.setCode(500);
+			rs.setSuccess(false);
+			rs.setData(vehicles);
+			return rs;
+		}else{
+			rs.setCode(200);
+			rs.setMsg("数据验证成功");
+			rs.setData(vehicles);
+			rs.setSuccess(true);
+			return rs;
+		}
+	}
+
+	/**
+	 * 更新车辆信息--确认导入
+	 * @author: hyp
+	 * @date: 2021/04/09 21:23
+	 */
+	@PostMapping("vehicleUpdateImportOk")
+	@ApiLog("更新车辆信息-确认导入")
+	@ApiOperation(value = "更新车辆信息-确认导入", notes = "vehicles", position = 21)
+	public R vehicleUpdateImportOk(@RequestParam(value = "vehicles") String vehicles,BladeUser user,@RequestParam Integer userId,@RequestParam String userName){
+		System.out.println("vehicles:"+vehicles);
+		JSONArray json = JSONUtil.parseArray(vehicles);
+		List<Map<String,Object>> lists = (List)json;
+		R rs = new R();
+		//时间默认格式
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		//验证数据成功条数
+		int aa=0;
+		//验证数据错误条数
+		int bb=0;
+		//全局变量，只要一条数据不对，就为false
+		boolean isDataValidity=true;
+		//错误信息
+		String errorStr="";
+
+		if(lists.size()>5000){
+			errorStr+="导入数据超过5000条，无法导入！";
+			rs.setMsg(errorStr);
+			rs.setCode(400);
+			return rs;
+		}
+
+		List<Vehicle> vehlist=new ArrayList<Vehicle>();
+		for(Map<String,Object> a:lists){
+			aa++;
+			Vehicle vehicle=new Vehicle();
+			Dept dept;
+			String id=IdUtil.simpleUUID();
+			vehicle.setId(id);
+			String deptname =  String.valueOf(a.get("机构名称"));
+			dept = iSysClient.getDeptByName(deptname);
+			vehicle.setDeptId(Integer.valueOf(dept.getId()));
+			vehicle.setCheliangpaizhao(String.valueOf(a.get("车辆牌照")));
+			vehicle.setChepaiyanse(String.valueOf(a.get("车牌颜色")));
+			if(StringUtils.isBlank((String) a.get("使用性质"))){
+				vehicle.setShiyongxingzhi("");
+			}else{
+				vehicle.setShiyongxingzhi(String.valueOf(a.get("使用性质")).trim());
+			}
+
+			if(StringUtils.isBlank(String.valueOf(a.get("车辆类型")))){
+				vehicle.setXinghao("");
+			}else{
+				vehicle.setXinghao(String.valueOf(a.get("车辆类型")).trim());
+			}
+
+			if(StringUtils.isBlank(String.valueOf(a.get("厂牌")))){
+				vehicle.setChangpai("");
+			}else{
+				vehicle.setChangpai(String.valueOf(a.get("厂牌")).trim());
+			}
+
+			if(StringUtils.isBlank(String.valueOf(a.get("车架号")))){
+				vehicle.setChejiahao("");
+			}else{
+				vehicle.setChejiahao(String.valueOf(a.get("车架号")).trim());
+			}
+
+			if(StringUtils.isBlank(String.valueOf(a.get("4G视频地址")))){
+				vehicle.setYunyingshang("");
+			}else{
+				String yys = StringEscapeUtils.unescapeHtml(StringEscapeUtils.unescapeHtml(String.valueOf(a.get("4G视频地址")).trim()));
+				vehicle.setYunyingshang(yys);
+			}
+
+			if(StringUtils.isBlank(String.valueOf(a.get("运营商名称")).trim())){
+				vehicle.setYunyingshangmingcheng("");
+			}else{
+				vehicle.setYunyingshangmingcheng(String.valueOf(a.get("运营商名称")).trim());
+			}
+
+			if(StringUtils.isBlank(String.valueOf(a.get("终端编号")))){
+				vehicle.setZongduanid("");
+			}else{
+				vehicle.setZongduanid(String.valueOf(a.get("终端编号")).trim());
+			}
+			if(StringUtils.isBlank(String.valueOf(a.get("驾驶员")))){
+				vehicle.setJiashiyuanxingming("");
+			}else{
+				vehicle.setJiashiyuanxingming(String.valueOf(a.get("驾驶员")).trim());
+			}
+			if(StringUtils.isNotBlank(String.valueOf(a.get("驾驶员电话")))){
+				vehicle.setJiashiyuandianhua(String.valueOf(a.get("驾驶员电话")).trim());
+			}
+			if(StringUtils.isBlank(String.valueOf(a.get("押运员")))){
+				vehicle.setYayunyuanxingming("");
+			}else{
+				vehicle.setYayunyuanxingming(String.valueOf(a.get("押运员")).trim());
+			}
+			if(StringUtils.isNotBlank(String.valueOf(a.get("押运员电话")))){
+				vehicle.setYayunyuandianhua(String.valueOf(a.get("押运员电话")).trim());
+			}
+			if(StringUtils.isBlank(String.valueOf(a.get("车主")))){
+				vehicle.setChezhu("");
+			}else{
+				vehicle.setChezhu(String.valueOf(a.get("车主")).trim());
+			}
+			if(StringUtils.isNotBlank(String.valueOf(a.get("车主电话")))){
+				vehicle.setChezhudianhua(String.valueOf(a.get("车主电话")).trim());
+			}
+			vehicle.setCreatetime(LocalDateTime.now());
+			vehicle.setCaozuoshijian(LocalDateTime.now());
+			if(user != null){
+				vehicle.setCaozuoren(user.getUserName());
+				vehicle.setCaozuorenid(user.getUserId());
+			}else{
+				vehicle.setCaozuoren(userName);
+				vehicle.setCaozuorenid(userId);
+			}
+			vehicle.setCheliangzhuangtai("0");
+			vehlist.add(vehicle);
+			isDataValidity = vehicleService.updateSelective(vehicle);
+		}
+		if(isDataValidity == true){
+			rs.setCode(200);
+			rs.setMsg("数据更新导入成功");
+			rs.setData(vehicles);
+			return rs;
+		}else{
+			rs.setCode(500);
+			rs.setMsg("数据更新导入失败");
+			rs.setData(vehicles);
+			return rs;
+		}
+
+	}
+
+
 }

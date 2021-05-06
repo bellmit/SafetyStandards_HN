@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.anbiao.cheliangguanli.mapper.BaoYangWeiXiuMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="baoxianxinxiResultMap" type="org.springblade.anbiao.cheliangguanli.entity.BaoYangWeiXiu">
+        <id column="id" property="id"/>
+        <result column="dept_Id" property="deptId"/>
+        <result column="driver_Id" property="driverId"/>
+        <result column="vehicle_Id" property="vehicleId"/>
+        <result column="maintain_Dict_Id" property="maintainDictId"/>
+        <result column="expected_Completion" property="expectedCompletion"/>
+        <result column="send_Date" property="sendDate"/>
+        <result column="actual_Completion_Date" property="actualCompletionDate"/>
+        <result column="in_Range_Mileage" property="inRangeMileage"/>
+        <result column="in_The_Oil" property="inTheOil"/>
+        <result column="next_Maintenance_Mileage" property="nextMaintenanceMileage"/>
+        <result column="next_Maintenance_Date" property="nextMaintenanceDate"/>
+        <result column="maintenance_Dept_Name" property="maintenanceDeptName"/>
+        <result column="fujian" property="fujian"/>
+        <result column="send_Repair_Person_Id" property="sendRepairPersonId"/>
+        <result column="pick_Up_Vehicle_Driver_Id" property="pickUpVehicleDriverId"/>
+        <result column="pick_Up_Vehicle_Date" property="pickUpVehicleDate"/>
+        <result column="caozuorenid" property="caozuorenid"/>
+        <result column="caozuoren" property="caozuoren"/>
+        <result column="caozuoshijian" property="caozuoshijian"/>
+        <result column="is_Deleted" property="isDeleted"/>
+        <result column="remark" property="remark"/>
+        <result column="subtotal_Of_Warranty_Items" property="subtotalOfWarrantyItems"/>
+        <result column="subtotal_Of_Material_Quantity" property="subtotalOfMaterialQuantity"/>
+        <result column="material_Subtotal" property="materialSubtotal"/>
+        <result column="createtime" property="createtime"/>
+        <result column="createperson" property="createperson"/>
+        <result column="createid" property="createid"/>
+    </resultMap>
+
+
+    <select id="selectBaoxianxinxiPage" resultMap="baoxianxinxiResultMap">
+        select * from anbiao_cheliang_baoyangweixiu where is_deleted = 0
+    </select>
+
+    <update id="updateDel" parameterType="java.lang.String">
+        UPDATE anbiao_cheliang_baoyangweixiu SET isdelete = 1 where id = #{id}
+    </update>
+
+    <sql id="tableSql">
+        INNER JOIN (
+        <include refid="org.springblade.anbiao.guanlijigouherenyuan.mapper.OrganizationsMapper.getByDeptId"/>
+        ) c on b.dept_id = c.id
+    </sql>
+
+    <sql id="querySql">
+        <if test="baoxianid !=null and baoxianid != ''">
+            AND baoxianid = #{baoxianid}
+        </if>
+    </sql>
+
+    <sql id="orderSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by caozuoshijian
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+    </sql>
+
+    <select id="selectPageList" parameterType="org.springblade.anbiao.cheliangguanli.page.BaoxianxinxiPage" resultType="org.springblade.anbiao.cheliangguanli.vo.BaoYangWeiXiuVO">
+        <if test="size == 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${total}
+        </if>
+        <if test="current != 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <select id="selectTotal" parameterType="org.springblade.anbiao.cheliangguanli.page.BaoxianxinxiPage" resultType="int">
+        select COUNT(1) from (
+        <include refid="tableSql" />
+        )d
+        where 1 = 1
+        <include refid="querySql" />
+    </select>
+
+    <select id="selectByIds" parameterType="java.lang.String" resultType="org.springblade.anbiao.cheliangguanli.vo.BaoYangWeiXiuVO">
+        SELECT
+        a.*
+        FROM
+        anbiao_cheliang_baoyangweixiu a
+        WHERE 1=1 and ifnull(a.isdelete ,0) = 0 and a.id=#{id}
+    </select>
+
+</mapper>

@@ -134,4 +134,9 @@ public class QiYeShouYeServiceImpl extends ServiceImpl<QiYeShouYeMapper, QiYeSho
 		return qiYeShouYeMapper.selectSafetyTipsNum(deptId, xiangId);
 	}
 
+	@Override
+	public int selectGetByIdOnDeptId(String deptId) {
+		return qiYeShouYeMapper.selectGetByIdOnDeptId(deptId);
+	}
+
 }

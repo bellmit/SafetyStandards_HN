@@ -127,5 +127,10 @@ public class PersonnelServiceImpl extends ServiceImpl<PersonnelMapper, Personnel
 		return mapper.selectAnBiaoLogin(name,password);
 	}
 
+	@Override
+	public boolean insertSelective(Personnel personnel) {
+		return mapper.insertSelective(personnel);
+	}
+
 
 }

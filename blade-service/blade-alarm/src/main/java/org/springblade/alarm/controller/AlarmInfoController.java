@@ -38,6 +38,8 @@ import org.springblade.upload.upload.feign.IFileUploadClient;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -657,6 +659,10 @@ public class AlarmInfoController {
 	@ApiOperation(value = "企业报告-更新报告处理率", notes = "传入相关参数（beginTime,endTime,company,property）",position = 22)
 	public R UpdateStatementProcessRate(String beginTime,String endTime,String company,String property) {
 		R rs = new R();
+
+		DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+		beginTime = DATE_FORMAT.format(beginTime);
+		endTime = DATE_FORMAT.format(endTime);
 		List<AlarmsummaryCutofftimeVO> alarmsummaryVO = cutofftimeService.selectAlarmLv(beginTime, endTime, company);
 		if(alarmsummaryVO.size() > 0) {
 			for (int i = 0;i < alarmsummaryVO.size();i++){
@@ -665,8 +671,8 @@ public class AlarmInfoController {
 					processRate = "100%";
 				}
 				String deptId = alarmsummaryVO.get(i).getDeptId();
-				String countdate = alarmsummaryVO.get(i).getDateShow();
-				boolean is = cutofftimeService.updateBaoBiaoMuLu(processRate,deptId,property,countdate);
+//				String countdate = alarmsummaryVO.get(i).getDateShow();
+				boolean is = cutofftimeService.updateBaoBiaoMuLu(processRate,deptId,property,beginTime,endTime);
 				if (is == true){
 					rs.setSuccess(true);
 					rs.setCode(200);

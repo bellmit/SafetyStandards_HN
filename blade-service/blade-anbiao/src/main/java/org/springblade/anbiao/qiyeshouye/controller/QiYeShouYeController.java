@@ -110,22 +110,33 @@ public class QiYeShouYeController {
 	@ApiOperation(value = "企业端-安全达标(超过88%的平台企业)",position = 7)
 	public R selectControlRates(@ApiParam(value = "企业ID", required = true) @RequestParam String deptId) throws IOException {
 		R r = new R();
-		QiYeYunWeiShouYe q = iQiYeShouYeService.selectQiYeCount();
-		QiYeYunWeiShouYe w = iQiYeShouYeService.selectABQiYeCount();
-		QiYeYunWeiShouYe e = iQiYeShouYeService.selectMarkRemind(deptId);
-		QiYeYunWeiShouYe qiYreYunWeiShouYe = new QiYeYunWeiShouYe();
-		if(e == null){
-			r.setMsg("暂无数据");
-			r.setCode(500);
-		}else{
+		QiYeYunWeiShouYe qiYeYunWeiShouYe = new QiYeYunWeiShouYe();
+		int sss = iQiYeShouYeService.selectGetByIdOnDeptId(deptId);
+		if(sss > 0 ) {
+			QiYeYunWeiShouYe q = iQiYeShouYeService.selectQiYeCount();
+			QiYeYunWeiShouYe w = iQiYeShouYeService.selectABQiYeCount();
+			QiYeYunWeiShouYe e = iQiYeShouYeService.selectMarkRemind(deptId);
+			QiYeYunWeiShouYe qiYreYunWeiShouYe = new QiYeYunWeiShouYe();
+			if (e == null) {
+				r.setMsg("暂无数据");
+				r.setCode(500);
+			} else {
 //			String.format("%.2f", x1)
-			String Rates = String.format("%.2f", (((q.getQiyeshu()-w.getAnbiaoqiyeshu())*1.0)/q.getQiyeshu())*100)+"%";
-			qiYreYunWeiShouYe.setTotalpointsrate(Rates);
-			qiYreYunWeiShouYe.setTotalpoints(e.getTotalpoints());
-			qiYreYunWeiShouYe.setTotalscore(1000);
-			r.setData(qiYreYunWeiShouYe);
-			r.setMsg("获取成功");
-			r.setSuccess(true);
+				String Rates = String.format("%.2f", (((q.getQiyeshu() - w.getAnbiaoqiyeshu()) * 1.0) / q.getQiyeshu()) * 100) + "%";
+				qiYreYunWeiShouYe.setTotalpointsrate(Rates);
+				qiYreYunWeiShouYe.setTotalpoints(e.getTotalpoints());
+				qiYreYunWeiShouYe.setTotalscore(1000);
+				r.setData(qiYreYunWeiShouYe);
+				r.setMsg("获取成功");
+				r.setSuccess(true);
+				r.setCode(200);
+			}
+		}else{
+			qiYeYunWeiShouYe.setTotalpointsrate("0.00%");
+			qiYeYunWeiShouYe.setTotalpoints(0);
+			qiYeYunWeiShouYe.setTotalscore(1000);
+			r.setMsg("该企业未生成安全标准化文件");
+			r.setData(qiYeYunWeiShouYe);
 			r.setCode(200);
 		}
 		return r;
@@ -173,14 +184,27 @@ public class QiYeShouYeController {
 	@ApiOperation(value = "企业端-安全达标-安标周期评分达标率)",position = 10)
 	public R selectPeriodControlRates(@ApiParam(value = "企业ID", required = true) @RequestParam String deptId) throws IOException {
 		R r = new R();
-		QiYeAnBiaoPeriodRate anBiaoMuLuList = iQiYeShouYeService.selectPeriodControlRates(deptId);
-		if(anBiaoMuLuList == null){
-			r.setMsg("暂无数据");
-			r.setCode(500);
+		QiYeAnBiaoPeriodRate qiYeAnBiaoPeriodRate = new QiYeAnBiaoPeriodRate();
+		int sss = iQiYeShouYeService.selectGetByIdOnDeptId(deptId);
+		if(sss > 0 ){
+			QiYeAnBiaoPeriodRate anBiaoMuLuList = iQiYeShouYeService.selectPeriodControlRates(deptId);
+			if(anBiaoMuLuList == null){
+				r.setMsg("暂无数据");
+				r.setCode(500);
+			}else{
+				r.setData(anBiaoMuLuList);
+				r.setMsg("获取成功");
+				r.setSuccess(true);
+				r.setCode(200);
+			}
 		}else{
-			r.setData(anBiaoMuLuList);
-			r.setMsg("获取成功");
-			r.setSuccess(true);
+			qiYeAnBiaoPeriodRate.setMaxxiangshu(0);
+			qiYeAnBiaoPeriodRate.setMaxdabiaoxiangshu(0);
+			qiYeAnBiaoPeriodRate.setMindabiaoxiangshu(0);
+			qiYeAnBiaoPeriodRate.setMinxiangshu(0);
+			qiYeAnBiaoPeriodRate.setDabiaolv("0.00%");
+			r.setMsg("该企业未生成安全标准化文件");
+			r.setData(qiYeAnBiaoPeriodRate);
 			r.setCode(200);
 		}
 		return r;
@@ -203,6 +227,7 @@ public class QiYeShouYeController {
 				QiYeAnBiaoSafetyTips num = iQiYeShouYeService.selectSafetyTipsNum(deptId,qiYeAnBiaoSafetyTips.get(i).getIds());
 				String name = qiYeAnBiaoSafetyTips.get(i).getName();
 				as.setName(name);
+				as.setTier(num.getTier());
 				as.setMinxingnum(znum.getMinxingnum());
 				as.setNotdabiaonum(num.getNotdabiaonum());
 				as.setIds(qiYeAnBiaoSafetyTips.get(i).getIds());

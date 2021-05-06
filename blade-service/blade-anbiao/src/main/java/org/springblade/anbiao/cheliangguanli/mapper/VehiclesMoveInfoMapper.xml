@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.anbiao.cheliangguanli.mapper.VehiclesMoveInfoMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="vehicleVOResultMap" type="org.springblade.anbiao.cheliangguanli.entity.VehiclesMoveInfo">
+        <id column="id" property="id"/>
+    </resultMap>
+
+    <insert id="insertSelective" parameterType="org.springblade.anbiao.cheliangguanli.entity.VehiclesMoveInfo" >
+        insert into anbiao_vehicles_move_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+
+            <if test="vehId != null">
+                vehId,
+            </if>
+
+            <if test="outOfDeptId != null">
+                outOfDeptId,
+            </if>
+
+            <if test="inOfDeptId != null">
+                inOfDeptId,
+            </if>
+
+            <if test="updateTime != null">
+                updateTime,
+            </if>
+
+            <if test="updateUserId != null">
+                updateUserId,
+            </if>
+
+            <if test="updateUser != null">
+                updateUser,
+            </if>
+
+            <if test="fuJian != null">
+                fuJian,
+            </if>
+
+            <if test="remark != null">
+                remark
+            </if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+
+            <if test="vehId != null">
+                #{vehId},
+            </if>
+
+            <if test="outOfDeptId != null">
+                #{outOfDeptId},
+            </if>
+
+            <if test="inOfDeptId != null">
+                #{inOfDeptId},
+            </if>
+
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+
+            <if test="updateUserId != null">
+                #{updateUserId},
+            </if>
+
+            <if test="updateUser != null">
+                #{updateUser},
+            </if>
+
+            <if test="fuJian != null">
+                #{fuJian},
+            </if>
+
+            <if test="remark != null">
+                #{remark}
+            </if>
+        </trim>
+    </insert>
+
+    <sql id="tableSql">
+        SELECT
+            c.id,
+            c.vehId,
+            a.cheliangpaizhao,
+            a.chepaiyanse,
+            (
+             select dept_name from blade_dept
+             where id = c.outOfDeptId
+            ) as outOfDeptName,
+            (
+             select dept_name from blade_dept
+             where id = c.inOfDeptId
+            ) as inOfDeptName,
+            c.updateTime,
+            c.updateUserId,
+            c.updateUser,
+            ifnull(c.fujian,'') as fujian,
+            ifnull(c.remark,'') as remark
+        FROM
+            anbiao_vehicles_move_info c
+            inner join anbiao_vehicle a on c.vehId = a.id
+            inner join  (
+                <include refid="org.springblade.anbiao.guanlijigouherenyuan.mapper.OrganizationsMapper.getByDeptId"/>
+            ) b on a.dept_id = b.id
+        WHERE 1=1
+            and ifnull(a.is_deleted,0) = 0
+
+    </sql>
+
+    <sql id="querySql">
+
+        <if test="cheliangpaizhao !=null and cheliangpaizhao != ''">
+            AND cheliangpaizhao like CONCAT('%',#{cheliangpaizhao},'%')
+        </if>
+
+        <if test="caozuoshijian !=null and caozuoshijian != ''">
+            AND updateTime &gt;= #{caozuoshijian}
+        </if>
+
+    </sql>
+
+    <sql id="orderSql">
+        <!-- 默认排序规则 -->
+        <if test="orderColumn == null or orderColumn == ''">
+            order by cheliangpaizhao
+        </if>
+        <if test="orderColumn != null and orderColumn != ''">
+            order by ${orderColumn}
+        </if>
+        <if test="orderColumn != null and orderColumn != '' and order != 0">
+            desc
+        </if>
+
+    </sql>
+
+    <select id="selectVehiclePage" resultMap="vehicleVOResultMap"
+            parameterType="org.springblade.anbiao.cheliangguanli.page.VehiclePage" resultType="org.springblade.anbiao.cheliangguanli.vo.VehicleVO">
+        <if test="size == 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${total}
+        </if>
+        <if test="current != 0" >
+            select * from (
+            <include refid="tableSql" />
+            )b
+            where 1=1
+            <include refid="querySql" />
+            <include refid="orderSql" />
+            limit ${offsetNo},${size}
+        </if>
+    </select>
+
+    <select id="selectVehicleTotal"
+            parameterType="org.springblade.anbiao.cheliangguanli.page.VehiclePage"
+            resultType="int">
+        select COUNT(1) from (
+        <include refid="tableSql" />
+        )d
+        where 1 = 1
+        <include refid="querySql" />
+    </select>
+</mapper>

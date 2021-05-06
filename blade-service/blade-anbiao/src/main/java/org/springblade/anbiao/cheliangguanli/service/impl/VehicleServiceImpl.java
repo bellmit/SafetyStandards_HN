@@ -143,6 +143,11 @@ public class VehicleServiceImpl extends ServiceImpl<VehicleMapper, Vehicle> impl
 	}
 
 	@Override
+	public boolean updateSelective(Vehicle vehicle) {
+		return vehicleMapper.updateSelective(vehicle);
+	}
+
+	@Override
 	public VehicleVO selectByZongDuan(String id) {
 		return vehicleMapper.selectByZongDuan(id);
 	}

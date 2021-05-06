@@ -100,8 +100,14 @@ public class DepartmentpostController extends BladeController {
 			departmentpost.setAnquanzhize("<P>     1、认真贯彻执行法律法规及有关安全生产的规章制度，并加以贯彻落实</P>");
 		}
 
-		departmentpost.setCaozuoren(user.getUserName());
-		departmentpost.setCaozuorenid(user.getUserId());
+		if(user == null ){
+			departmentpost.setCaozuoren("XFZLHYP");
+			departmentpost.setCaozuorenid(1);
+		}else{
+			departmentpost.setCaozuoren(user.getUserName());
+			departmentpost.setCaozuorenid(user.getUserId());
+		}
+		departmentpost.setCreatetime(DateUtil.now());
 		departmentpost.setCaozuoshijian(DateUtil.now());
 		departmentpost.setCreatetime(DateUtil.now());
 		departmentpost.setDeptId(dept.getId());
@@ -119,7 +125,8 @@ public class DepartmentpostController extends BladeController {
 
 		Dept obj=new Dept();
 		if(flag==true){
-			departmentpostService.saveOrUpdate(departmentpost);
+//			departmentpostService.saveOrUpdate(departmentpost);
+			departmentpostService.insertSelective(departmentpost);
 			obj=iSysClient.selectById(dept.getId().toString());
 		}
 		String msg="操作成功";
@@ -140,9 +147,14 @@ public class DepartmentpostController extends BladeController {
 		dept.setSort(1);
 		boolean flag=iSysClient.updateDept(dept);
 		//修改基础信息
+		if(user == null ){
+			departmentpost.setCaozuoren("XFZLHYP");
+			departmentpost.setCaozuorenid(1);
+		}else{
+			departmentpost.setCaozuoren(user.getUserName());
+			departmentpost.setCaozuorenid(user.getUserId());
+		}
 		departmentpost.setDeptId(dept.getId());
-		departmentpost.setCaozuoren(user.getUserName());
-		departmentpost.setCaozuorenid(user.getUserId());
 		departmentpost.setCaozuoshijian(DateUtil.now());
 		Dept obj=new Dept();
 		if(flag==true){

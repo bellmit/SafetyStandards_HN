@@ -635,15 +635,15 @@
             and cheliangpaizhao like '%${cheliangpaizhao}%'
         </if>
 
-        <if test="deptName != null ">
+        <if test="deptName != null and deptName != '' ">
             and deptName like '%${deptName}%'
         </if>
 
-        <if test="areaName != null ">
+        <if test="areaName != null and areaName != '' ">
             and areaName like '%${areaName}%'
         </if>
 
-        <if test="keepTime != null ">
+        <if test="keepTime != null and keepTime != '' ">
             and KeepTime/60 &gt;= ${keepTime}
         </if>
 
@@ -683,17 +683,23 @@
 
     <!-- 查询企业在线车辆详情列表 -->
     <sql id="tabletpvehdataSql">
-        select * from tpvehdata
+        select
+            b.dept_name as DeptName,
+            a.*
+        from
+            tpvehdata a
+        inner join(
+        <include refid="org.springblade.anbiao.guanlijigouherenyuan.mapper.OrganizationsMapper.getByDeptId"/>
+            )b on a.DeptID = b.id
         where 1=1
-            and DeptID = #{deptId}
-            and LastLocateTime &gt;= CONCAT( #{beginTime},' 00:00:00')
-            and LastLocateTime &lt;= CONCAT( #{endTime},' 23:59:59')
+            and Systime &gt;= CONCAT( #{beginTime},' 00:00:00')
+            and Systime &lt;= CONCAT( #{endTime},' 23:59:59')
     </sql>
 
     <sql id="ordertpvehdataSql">
         <!-- 默认排序规则 -->
         <if test="orderColumn == null or orderColumn == ''">
-            order by LastLocateTime desc
+            order by Systime desc
         </if>
         <if test="orderColumn != null and orderColumn != ''">
             order by ${orderColumn}
@@ -712,8 +718,20 @@
             and VeNumber like '%${cheliangpaizhao}%'
         </if>
 
-        <if test="Alarm == '1' ">
-            and Alarm = 1
+        <if test=" alarmShow == '报警' ">
+            and ifnull(Alarm,0) = 1
+        </if>
+
+        <if test=" alarmShow == '未报警' ">
+            and ifnull(Alarm,0) = 0
+        </if>
+
+        <if test=" locateShow == '定位' ">
+            and ifnull(Locate,0) = 1
+        </if>
+
+        <if test=" locateShow == '不定位' ">
+            and ifnull(Locate,0) = 0
         </if>
 
     </sql>

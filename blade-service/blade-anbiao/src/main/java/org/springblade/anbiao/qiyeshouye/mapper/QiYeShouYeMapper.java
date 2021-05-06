@@ -97,6 +97,13 @@ public interface QiYeShouYeMapper extends BaseMapper<QiYeShouYe> {
 	List<QiYeAnBiaoMuLu> selectQiYeAnBiaoMuLu(@Param("deptId") String deptId);
 
 	/**
+	 * 查询企业是否有生成安全标准化
+	 * @param deptId
+	 * @return
+	 */
+	int selectGetByIdOnDeptId(@Param("deptId") String deptId);
+
+	/**
 	 * 安标周期评分达标率
 	 * @param deptId
 	 * @return

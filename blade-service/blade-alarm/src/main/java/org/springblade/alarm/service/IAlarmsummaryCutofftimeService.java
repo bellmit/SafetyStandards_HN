@@ -100,7 +100,8 @@ public interface IAlarmsummaryCutofftimeService extends IService<AlarmsummaryCut
 	boolean updateBaoBiaoMuLu(@Param("processRate") String processRate,
 							  @Param("deptId")String deptId,
 							  @Param("property") String property,
-							  @Param("countdate") String countdate);
+							  @Param("countdate") String countdate,
+							  @Param("countenddate") String countenddate);
 
 
 }

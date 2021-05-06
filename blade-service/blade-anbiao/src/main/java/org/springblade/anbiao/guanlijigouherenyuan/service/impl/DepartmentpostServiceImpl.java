@@ -70,4 +70,9 @@ public class DepartmentpostServiceImpl extends ServiceImpl<DepartmentpostMapper,
 	public boolean updateByPostId(Departmentpost Departmentpost) {
 		return departmentpostMapper.updateByPostId(Departmentpost);
 	}
+
+	@Override
+	public boolean insertSelective(Departmentpost Departmentpost) {
+		return departmentpostMapper.insertSelective(Departmentpost);
+	}
 }

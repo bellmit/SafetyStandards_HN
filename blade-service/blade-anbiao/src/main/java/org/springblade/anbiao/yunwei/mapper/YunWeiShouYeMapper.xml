@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.anbiao.yunwei.mapper.YunWeiShouYeMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="ResultMap" type="org.springblade.anbiao.yunwei.entity.YunWeiShouYe">
+    </resultMap>
+
+    <select id="selectAllCount" resultType="org.springblade.anbiao.yunwei.entity.YunWeiShouYe">
+        select
+        IFNULL(SUM(b.shu),0) as vehicleNum,
+        IFNULL(SUM(c.shu),0) as qiyeNum,
+        IFNULL(SUM(d.shu),0) as jiashiyuanNum,
+        IFNULL(SUM(e.shu),0) as vehicleZNum,
+        IFNULL(SUM(f.shu),0) as qiyeZNum,
+        IFNULL(SUM(g.shu),0) as jiashiyuanZNum,
+        IFNULL(SUM(h.shu),0) as biaozhunhuaNum,
+        IFNULL(SUM(i.shu),0) as weibangdingAreaNum
+        from(
+        SELECT
+        DISTINCT
+        xiaji.id,
+        xiaji.parent_id,
+        xiaji.dept_name,
+        xiaji.is_deleted
+        FROM
+        blade_dept shangji,
+        blade_dept xiaji
+        WHERE xiaji.tree_code LIKE CONCAT(shangji.tree_code,'%')
+        AND xiaji.is_deleted = 0
+        AND xiaji.extend_type='机构'
+        AND shangji.id = #{deptId}
+        )a
+        left join(
+        select dept_id,COUNT(DISTINCT id) as shu from anbiao_vehicle
+        where createtime &gt;= CONCAT(SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w')-1),' 00:00:00')
+        and createtime &lt;= CONCAT(SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w')-1),' 23:59:59')
+        and is_deleted = 0
+        GROUP BY
+        dept_id
+        )b on a.id = b.dept_id
+        left join(
+        select dept_id,COUNT(DISTINCT dept_id) as shu from anbiao_organization
+        where createtime &gt;= CONCAT(SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w')-1),' 00:00:00')
+        and createtime &lt;= CONCAT(SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w')-1),' 23:59:59')
+        and isdelete = 0
+        and jigouleixing in ('qiye','geti')
+        GROUP BY
+        dept_id
+        )c on a.id = c.dept_id
+        left join(
+        select dept_id,COUNT(DISTINCT id) as shu from anbiao_jiashiyuan
+        where createtime &gt;= CONCAT(SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w')-1),' 00:00:00')
+        and createtime &lt;= CONCAT(SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w')-1),' 23:59:59')
+        and isdelete = 0
+        GROUP BY
+        dept_id
+        )d on a.id = d.dept_id
+        LEFT JOIN(
+        select dept_id,COUNT(DISTINCT id) as shu from anbiao_vehicle
+        where 1=1
+        and is_deleted = 0
+        GROUP BY
+        dept_id
+        )e on a.id = e.dept_id
+        LEFT JOIN(
+        select dept_id,COUNT(DISTINCT dept_id) as shu from anbiao_organization
+        where  1=1
+        and isdelete = 0
+        and jigouleixing in ('qiye','geti')
+        GROUP BY
+        dept_id
+        )f on a.id = f.dept_id
+        LEFT JOIN(
+        select dept_id,COUNT(DISTINCT id) as shu from anbiao_jiashiyuan
+        where 1=1
+        and isdelete = 0
+        GROUP BY
+        dept_id
+        )g on a.id = g.dept_id
+        left JOIN(
+        select
+        DISTINCT
+        b.dept_id as dept_id,
+        COUNT(DISTINCT b.dept_id) as shu
+        from
+        anbiao_biaozhunhuamuban a
+        inner join
+        (
+        select * from anbiao_organization
+        where jigouleixing in('qiye','geti')
+        )b on a.dept_id = b.dept_id
+        where a.is_deleted = 0 and b.isdelete = 0
+        and b.dept_id is not null
+        GROUP BY
+        b.dept_id
+        )h on a.id = h.dept_id
+        left JOIN(
+        select
+        dept_id,COUNT(DISTINCT dept_id) as shu from anbiao_organization
+        where isdelete = 0
+        and jigouleixing in('qiye','geti')
+        and IFNULL(province,'') = ''
+        GROUP BY
+        dept_id
+        )i on a.id = i.dept_id
+    </select>
+
+
+</mapper>

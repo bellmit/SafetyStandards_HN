@@ -203,8 +203,13 @@ public class OrganizationsController extends BladeController {
 				if(StringUtil.isNotBlank(organization.getProfilePhotoApp())){
 					fileUploadClient.updateCorrelation(organization.getProfilePhotoApp(),str);
 				}
-				organization.setCaozuoren(user.getUserName());
-				organization.setCaozuorenid(user.getUserId());
+				if(user == null){
+					organization.setCaozuoren("admin");
+					organization.setCaozuorenid(1);
+				}else{
+					organization.setCaozuoren(user.getUserName());
+					organization.setCaozuorenid(user.getUserId());
+				}
 				organization.setCaozuoshijian(DateUtil.now());
 				organization.setCreatetime(DateUtil.now());
 				//执行机构表新增

@@ -135,6 +135,13 @@ public interface VehicleMapper extends BaseMapper<Vehicle> {
 	boolean insertSelective(Vehicle vehicle);
 
 	/**
+	 * 根据企业ID、车辆牌照、车牌颜色修改相应车辆信息
+	 * @param vehicle
+	 * @return
+	 */
+	boolean updateSelective(Vehicle vehicle);
+
+	/**
 	 * 验证车辆终端id是否存在
 	 * @param id
 	 * @return

@@ -118,5 +118,10 @@ public interface IQiYeShouYeService extends IService<QiYeShouYe> {
 	 */
 	QiYeAnBiaoSafetyTips selectSafetyTipsNum(@Param("deptId") String deptId,@Param("xiangId") Integer xiangId);
 
-
+	/**
+	 * 查询企业是否有生成安全标准化
+	 * @param deptId
+	 * @return
+	 */
+	int selectGetByIdOnDeptId(@Param("deptId") String deptId);
 }

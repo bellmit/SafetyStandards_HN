@@ -9,6 +9,7 @@ package org.springblade.anbiao.qiyeshouye.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang.StringUtils;
 import org.springblade.anbiao.qiyeshouye.entity.*;
 import org.springblade.anbiao.qiyeshouye.mapper.QiYeTongJiMapper;
 import org.springblade.anbiao.qiyeshouye.page.QiYeInOutAreaPage;
@@ -16,8 +17,12 @@ import org.springblade.anbiao.qiyeshouye.page.QiYeOffLineTongJiPage;
 import org.springblade.anbiao.qiyeshouye.page.QiYeTongJiPage;
 import org.springblade.anbiao.qiyeshouye.page.QiYeTpvehdataPage;
 import org.springblade.anbiao.qiyeshouye.service.IQiYeTongJiService;
+import org.springblade.common.enumconstant.EnmuAlarm;
+import org.springblade.common.tool.GpsToBaiduUtil;
+import org.springblade.common.tool.LatLotForLocation;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -230,6 +235,33 @@ public class QiYeTongJiServiceImpl extends ServiceImpl<QiYeTongJiMapper, QiYeTon
 				return qiYeTpvehdataPage;
 			}else{
 				List<QiYeTpvehdataTongJi> zhengFuBaoJingTongJiList = qiYeTongJiMapper.selecttpvehdataTJ(qiYeTpvehdataPage);
+				zhengFuBaoJingTongJiList.forEach(item->{
+					if("0".equals(item.getCheliangzhuangtai())){
+						item.setAlarm("在用");
+					}
+					if("1".equals(item.getCheliangzhuangtai())){
+						item.setAlarm("停用");
+					}
+
+					if("1".equals(item.getAlarm())){
+						item.setAlarm("报警");
+					}else{
+						item.setAlarm("未报警");
+					}
+
+					if("1".equals(item.getLocate())){
+						item.setLocate("定位");
+					}else{
+						item.setLocate("不定位");
+					}
+					double lat = Double.parseDouble(item.getLatitude().toString());
+					double lon = Double.parseDouble(item.getLongitude().toString());
+					double[] zuobiao = GpsToBaiduUtil.wgs2bd(lat,lon);
+					item.setLatitude(new BigDecimal(zuobiao[0]).setScale(6,BigDecimal.ROUND_HALF_UP));
+					item.setLongitude(new BigDecimal(zuobiao[1]).setScale(6,BigDecimal.ROUND_HALF_UP));
+					String LocalName= LatLotForLocation.getProvince(item.getLatitude().toString(),item.getLongitude().toString());
+					item.setLocalName(LocalName);
+				});
 				qiYeTpvehdataPage.setRecords(zhengFuBaoJingTongJiList);
 				return qiYeTpvehdataPage;
 			}
@@ -251,6 +283,33 @@ public class QiYeTongJiServiceImpl extends ServiceImpl<QiYeTongJiMapper, QiYeTon
 			qiYeTpvehdataPage.setTotal(total);
 			qiYeTpvehdataPage.setOffsetNo(offsetNo);
 			List<QiYeTpvehdataTongJi> zhengFuBaoJingTongJiList = qiYeTongJiMapper.selecttpvehdataTJ(qiYeTpvehdataPage);
+			zhengFuBaoJingTongJiList.forEach(item->{
+				if("0".equals(item.getCheliangzhuangtai())){
+					item.setAlarm("在用");
+				}
+				if("1".equals(item.getCheliangzhuangtai())){
+					item.setAlarm("停用");
+				}
+
+				if("1".equals(item.getAlarm())){
+					item.setAlarm("报警");
+				}else{
+					item.setAlarm("未报警");
+				}
+
+				if("1".equals(item.getLocate())){
+					item.setLocate("定位");
+				}else{
+					item.setLocate("不定位");
+				}
+				double lat = Double.parseDouble(item.getLatitude().toString());
+				double lon = Double.parseDouble(item.getLongitude().toString());
+				double[] zuobiao = GpsToBaiduUtil.wgs2bd(lat,lon);
+				item.setLatitude(new BigDecimal(zuobiao[0]).setScale(6,BigDecimal.ROUND_HALF_UP));
+				item.setLongitude(new BigDecimal(zuobiao[1]).setScale(6,BigDecimal.ROUND_HALF_UP));
+				String LocalName= LatLotForLocation.getProvince(item.getLatitude().toString(),item.getLongitude().toString());
+				item.setLocalName(LocalName);
+			});
 			qiYeTpvehdataPage.setRecords(zhengFuBaoJingTongJiList);
 		}
 		return qiYeTpvehdataPage;

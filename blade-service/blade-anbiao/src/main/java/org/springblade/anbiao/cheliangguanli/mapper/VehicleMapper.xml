@@ -583,6 +583,85 @@
         </trim>
     </insert>
 
+    <!-- 根据企业ID、车辆牌照、车牌颜色修改相应车辆信息 -->
+    <update id="updateSelective" parameterType="org.springblade.anbiao.cheliangguanli.vo.VehicleVO" >
+        update anbiao_vehicle
+        <set>
+
+            <if test="shiyongxingzhi != null">
+                shiyongxingzhi = #{shiyongxingzhi},
+            </if>
+
+            <if test="changpai != null">
+                changpai = #{changpai},
+            </if>
+
+            <if test="chejiahao != null">
+                chejiahao = #{chejiahao},
+            </if>
+
+            <if test="yunyingshang != null">
+                yunyingshang = #{yunyingshang},
+            </if>
+
+            <if test="yunyingshangmingcheng != null">
+                yunyingshangmingcheng = #{yunyingshangmingcheng},
+            </if>
+
+            <if test="zongduanid != null">
+                zongduanid = #{zongduanid},
+            </if>
+
+            <if test="xinghao != null">
+                xinghao = #{xinghao},
+            </if>
+
+            <if test="jiashiyuanxingming != null">
+                jiashiyuanxingming = #{jiashiyuanxingming},
+            </if>
+
+            <if test="jiashiyuandianhua != null">
+                jiashiyuandianhua = #{jiashiyuandianhua},
+            </if>
+
+            <if test="yayunyuanxingming != null">
+                yayunyuanxingming = #{yayunyuanxingming},
+            </if>
+
+            <if test="yayunyuandianhua != null">
+                yayunyuandianhua = #{yayunyuandianhua},
+            </if>
+
+            <if test="chezhu != null">
+                chezhu = #{chezhu},
+            </if>
+
+            <if test="chezhudianhua != null">
+                chezhudianhua = #{chezhudianhua},
+            </if>
+
+            <if test="cheliangzhuangtai != null">
+                cheliangzhuangtai = #{cheliangzhuangtai},
+            </if>
+
+            <if test="caozuoren != null">
+                caozuoren = #{caozuoren},
+            </if>
+
+            <if test="caozuoshijian != null">
+                caozuoshijian = #{caozuoshijian},
+            </if>
+
+            <if test="caozuorenid != null">
+                caozuorenid = #{caozuorenid}
+            </if>
+
+        </set>
+        where dept_id = #{deptId}
+            and cheliangpaizhao = #{cheliangpaizhao}
+            and chepaiyanse = #{chepaiyanse}
+    </update>
+
     <select id="selectByZongDuan" resultMap="vehicleVOResultMap" parameterType="java.lang.String" >
         select zongduanid from anbiao_vehicle
         where is_deleted = 0
@@ -818,8 +897,8 @@
             shiyongxingzhi,
             id,
             CASE
-                WHEN cheliangzhuangtai=0 and ifnull(is_deleted,0) = 0 THEN '在用'
-                WHEN cheliangzhuangtai=1 and ifnull(is_deleted,0) = 0 THEN '停用'
+                WHEN ifnull(cheliangzhuangtai,0) = 0 and ifnull(is_deleted,0) = 0 THEN '在用'
+                WHEN ifnull(cheliangzhuangtai,0) = 1 and ifnull(is_deleted,0) = 0 THEN '停用'
                 WHEN ifnull(is_deleted,1) = 1 THEN '删除'
             END cheliangzhuangtai
         FROM

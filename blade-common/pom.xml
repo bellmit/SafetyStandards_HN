@@ -27,17 +27,17 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>cn.cqmxcx</groupId>
+            <groupId>cn.hyp</groupId>
             <artifactId>utiltool</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>
-            <groupId>cn.cqmxcx</groupId>
+            <groupId>cn.hyp</groupId>
             <artifactId>jxl</artifactId>
             <version>0.0.0</version>
         </dependency>
         <dependency>
-            <groupId>cn.cqmxcx</groupId>
+            <groupId>cn.hyp</groupId>
             <artifactId>jxl-report</artifactId>
             <version>1.0</version>
         </dependency>
@@ -46,7 +46,6 @@
             <artifactId>hutool-all</artifactId>
             <version>4.1.19</version>
         </dependency>
-
 
         <dependency>
             <groupId>com.deepoove</groupId>
@@ -59,6 +58,13 @@
             <artifactId>poi-ooxml-schemas</artifactId>
             <version>3.17</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-scratchpad</artifactId>
+            <version>3.17</version>
+        </dependency>
+
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
@@ -90,34 +96,55 @@
             <artifactId>fontbox</artifactId>
             <version>2.0.1</version>
         </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
+
         <!--        百度识别-->
         <dependency>
             <groupId>com.baidu.aip</groupId>
             <artifactId>java-sdk</artifactId>
             <version>4.12.0</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-            <version>1.2.75</version>
-            <scope>compile</scope>
-        </dependency>
         <!--        <dependency>-->
-<!--            <groupId>org.springblade</groupId>-->
-<!--            <artifactId>blade-core-tool</artifactId>-->
-<!--            <version>2.8.0</version>-->
-<!--            <scope>compile</scope>-->
-<!--        </dependency>-->
+        <!--            <groupId>org.springblade</groupId>-->
+        <!--            <artifactId>blade-core-tool</artifactId>-->
+        <!--            <version>2.8.0</version>-->
+        <!--            <scope>compile</scope>-->
+        <!--        </dependency>-->
         <!--        <dependency>
                     <groupId>com.baomidou</groupId>
                     <artifactId>mybatis-plus-extension</artifactId>
                     <version>3.4.0</version>
                     <scope>compile</scope>
                 </dependency>-->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpmime</artifactId>
+            <version>4.5.13</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.47</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.1</version>
+        </dependency>
+
     </dependencies>
 
     <build>

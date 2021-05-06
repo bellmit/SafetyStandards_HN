@@ -53,4 +53,11 @@ public interface IDepartmentpostService extends IService<Departmentpost> {
 	 */
 	boolean updateByPostId(Departmentpost Departmentpost);
 
+	/**
+	 * 新增岗位信息
+	 * @param Departmentpost
+	 * @return
+	 */
+	boolean insertSelective(Departmentpost departmentpost);
+
 }

@@ -120,7 +120,7 @@ public class PersonnelController extends BladeController {
 	@ApiOperation(value = "新增-人员管理", notes = "传入personnel", position = 3)
 	public R insert(@RequestBody Personnel personnel,BladeUser bladeUser) {
 		R rs = new R();
-		User user=new User();
+			User user=new User();
 		if (Func.isNotEmpty(personnel.getPassword())) {
 			user.setPassword(DigestUtil.encrypt(personnel.getPassword()));
 		}
@@ -147,9 +147,14 @@ public class PersonnelController extends BladeController {
 		Instant instant = date.toInstant();
 		ZoneId zone = ZoneId.systemDefault();
 		LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, zone);
-		user.setCreateUser(bladeUser.getUserId());
+		if(bladeUser == null){
+			user.setCreateUser(1);
+			user.setUpdateUser(1);
+		}else{
+			user.setCreateUser(bladeUser.getUserId());
+			user.setUpdateUser(bladeUser.getUserId());
+		}
 		user.setCreateTime(localDateTime);
-		user.setUpdateUser(bladeUser.getUserId());
 		user.setUpdateTime(localDateTime);
 		user.setBirthday(personnel.getChushengriqi());
 		user.setEmail(personnel.getYouxiang());
@@ -167,15 +172,24 @@ public class PersonnelController extends BladeController {
 			boolean flag=userClient.insertPer(user);
 			//人员基本信息表存储
 			personnel.setUserid(userId);
-			personnel.setCaozuoren(bladeUser.getUserName());
-			personnel.setCaozuorenid(bladeUser.getUserId());
+			if(bladeUser == null){
+				personnel.setCaozuoren("管理员");
+				personnel.setCaozuorenid(1);
+			}else{
+				personnel.setCaozuoren(bladeUser.getUserName());
+				personnel.setCaozuorenid(bladeUser.getUserId());
+			}
+
 			personnel.setCaozuoshijian(DateUtil.now());
 			personnel.setCreatetime(DateUtil.now());
 			personnel.setDeptId(dept.getId());
+			personnel.setPostId(personnel.getPostId());
+			personnel.setIsDeleted(0);
 			if(StringUtil.isNotBlank(personnel.getFujian())){
 				fileUploadClient.updateCorrelation(personnel.getFujian(),"1");
 			}
-			personnelService.saveOrUpdate(personnel);
+//			personnelService.saveOrUpdate(personnel);
+			personnelService.insertSelective(personnel);
 			code=R.status(flag).getCode();
 			obj=R.status(flag).getData();
 			if(flag==true){

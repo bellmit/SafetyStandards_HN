@@ -25,7 +25,7 @@
 
         <spring.boot.version>2.0.8.RELEASE</spring.boot.version>
         <spring.cloud.version>Finchley.SR2</spring.cloud.version>
-        <spring.platform.version>Cairo-SR7</spring.platform.version>
+        <spring.anbiao.version>Cairo-SR7</spring.anbiao.version>
 
         <!-- 推荐使用Harbor -->
         <docker.registry.url>10.211.55.5</docker.registry.url>
@@ -59,12 +59,13 @@
                 <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>io.spring.platform</groupId>
-                <artifactId>platform-bom</artifactId>
-                <version>${spring.platform.version}</version>
+                <groupId>io.spring.anbiao</groupId>
+                <artifactId>anbiao-bom</artifactId>
+                <version>${spring.anbiao.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
         </dependencies>
     </dependencyManagement>
 

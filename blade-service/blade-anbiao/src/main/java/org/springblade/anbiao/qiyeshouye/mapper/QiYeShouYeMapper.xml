@@ -518,6 +518,13 @@
         GROUP BY ids
     </select>
 
+    <!--查询企业是否有生成安全标准化-->
+    <select id="selectGetByIdOnDeptId" resultType="java.lang.Integer">
+        select count(*) as shu from anbiao_biaozhunhuamuban
+        where dept_id = #{deptId}
+            and is_Deleted = 0
+    </select>
+
     <!--安标周期评分达标率-->
     <select id="selectPeriodControlRates" resultType="org.springblade.anbiao.qiyeshouye.entity.QiYeAnBiaoPeriodRate">
         select
@@ -729,7 +736,8 @@
             case when IFNULL(a.parentName,'') = '' and IFNULL(a.erparentName,'') != '' then (
             select name from anbiao_biaozhunhuamuban where id = a.ids and (LENGTH(a.tier) > 10)
             ) else a.parentName end as parentName,
-            case when a.score != a.nowscores then 1 else 0 end as notdabiaonum
+            case when a.score != a.nowscores then 1 else 0 end as notdabiaonum,
+            a.tier
         from(
             SELECT
                 DISTINCT

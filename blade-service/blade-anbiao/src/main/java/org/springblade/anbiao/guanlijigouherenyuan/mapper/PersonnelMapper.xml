@@ -234,5 +234,175 @@
         limit 1
     </select>
 
+    <insert id="insertSelective" parameterType="org.springblade.anbiao.guanlijigouherenyuan.entity.Personnel" >
+        insert into anbiao_personnel
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                id,
+            <if test="deptId != null">
+                dept_id,
+            </if>
+
+            <if test="userid != null">
+                userid,
+            </if>
+
+            <if test="caozuoren != null">
+                caozuoren,
+            </if>
+
+            <if test="caozuorenid != null">
+                caozuorenid,
+            </if>
+
+            <if test="caozuoshijian != null">
+                caozuoshijian,
+            </if>
+
+            <if test="xingming != null">
+                xingming,
+            </if>
+
+            <if test="shenfenzheng != null">
+                shenfenzheng,
+            </if>
+
+            <if test="shoujihao != null">
+                shoujihao,
+            </if>
+
+            <if test="chushengriqi != null">
+                chushengriqi,
+            </if>
+
+            <if test="qitalianxifangshi != null">
+                qitalianxifangshi,
+            </if>
+
+            <if test="youxiang != null">
+                youxiang,
+            </if>
+
+            <if test="jiatingdizhi != null">
+                jiatingdizhi,
+            </if>
+
+            <if test="gonghao != null">
+                gonghao,
+            </if>
+
+            <if test="ruzhiriqi != null">
+                ruzhiriqi,
+            </if>
+
+            <if test="gongzuojingli != null">
+                gongzuojingli,
+            </if>
+
+            <if test="beizhu != null">
+                beizhu,
+            </if>
+
+            <if test="fujian != null">
+                fujian,
+            </if>
+
+            <if test="isDeleted != null">
+                is_deleted,
+            </if>
+
+            <if test="createtime != null">
+                createtime,
+            </if>
+
+            <if test="postId != null">
+                post_id
+            </if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            UUID(),
+            <if test="deptId != null">
+                #{deptId},
+            </if>
+
+            <if test="userid != null">
+                #{userid},
+            </if>
+
+            <if test="caozuoren != null">
+                #{caozuoren},
+            </if>
+
+            <if test="caozuorenid != null">
+                #{caozuorenid},
+            </if>
+
+            <if test="caozuoshijian != null">
+                #{caozuoshijian},
+            </if>
+
+            <if test="xingming != null">
+                #{xingming},
+            </if>
+
+            <if test="shenfenzheng != null">
+                #{shenfenzheng},
+            </if>
+
+            <if test="shoujihao != null">
+                #{shoujihao},
+            </if>
+
+            <if test="chushengriqi != null">
+                #{chushengriqi},
+            </if>
+
+            <if test="qitalianxifangshi != null">
+                #{qitalianxifangshi},
+            </if>
+
+            <if test="youxiang != null">
+                #{youxiang},
+            </if>
+
+            <if test="jiatingdizhi != null">
+                #{jiatingdizhi},
+            </if>
+
+            <if test="gonghao != null">
+                #{gonghao},
+            </if>
+
+            <if test="ruzhiriqi != null">
+                #{ruzhiriqi},
+            </if>
+
+            <if test="gongzuojingli != null">
+                #{gongzuojingli},
+            </if>
+
+            <if test="beizhu != null">
+                #{beizhu},
+            </if>
+
+            <if test="fujian != null">
+                #{fujian},
+            </if>
+
+            <if test="isDeleted != null">
+                #{isDeleted},
+            </if>
+
+            <if test="createtime != null">
+                #{createtime},
+            </if>
+
+            <if test="postId != null">
+                #{postId}
+            </if>
+
+        </trim>
+    </insert>
+
 
 </mapper>

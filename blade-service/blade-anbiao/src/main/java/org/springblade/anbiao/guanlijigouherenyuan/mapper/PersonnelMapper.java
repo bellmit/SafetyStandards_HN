@@ -105,4 +105,11 @@ public interface PersonnelMapper extends BaseMapper<Personnel> {
 	boolean updateAnBiaoLogin(AnBiaoLogin anBiaoLogin);
 	AnBiaoLogin selectAnBiaoLogin(String name,String password);
 
+	/**
+	 * 添加人员详情
+	 * @param personnel
+	 * @return
+	 */
+	boolean insertSelective(Personnel personnel);
+
 }

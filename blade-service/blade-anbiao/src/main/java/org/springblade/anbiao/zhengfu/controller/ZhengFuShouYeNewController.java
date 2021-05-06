@@ -76,6 +76,7 @@ public class ZhengFuShouYeNewController {
 					String dept = "";
 					Integer RegisterCount = 0;
 					Integer OnLineCount = 0;
+					Integer DecommissioningCount = 0;
 					for (int p = 0; p < zhengFuShouYeNew.size(); p++){
 						Organization jb = iOrganizationService.selectGetZFJB(zhengFuShouYeNew.get(p).getZhengfuid());
 						if(!StringUtils.isBlank(jb.getProvince()) && StringUtils.isBlank(jb.getCity())){
@@ -101,8 +102,10 @@ public class ZhengFuShouYeNewController {
 
 					for (int i = 0; i < jsonArray.size(); i++){
 						RegisterCount += (Integer)jsonArray.getJSONObject(i).get("RegisterCount");
+						DecommissioningCount += (Integer)jsonArray.getJSONObject(i).get("DecommissioningCount");
 						OnLineCount += (Integer)jsonArray.getJSONObject(i).get("zaixian");
 					}
+					RegisterCount = RegisterCount - DecommissioningCount;
 					zhengFuShouYeNew.get(0).setZcvehnumb(RegisterCount);
 					zhengFuShouYeNew.get(0).setSxvehnum(OnLineCount);
 				}else{
@@ -130,6 +133,7 @@ public class ZhengFuShouYeNewController {
 					String dept = "";
 					Integer RegisterCount = 0;
 					Integer OnLineCount = 0;
+					Integer DecommissioningCount = 0;
 					for (int i = 0; i < zhengFuOrganizations.size(); i++) {
 						if(zhengFuOrganizations.get(i).getJigouleixing().equals("qiye")){
 							dept += zhengFuOrganizations.get(i).getQiyeid() + ',';
@@ -141,8 +145,10 @@ public class ZhengFuShouYeNewController {
 
 					for (int i = 0; i < jsonArray.size(); i++){
 						RegisterCount += (Integer)jsonArray.getJSONObject(i).get("RegisterCount");
+						DecommissioningCount += (Integer)jsonArray.getJSONObject(i).get("DecommissioningCount");
 						OnLineCount += (Integer)jsonArray.getJSONObject(i).get("zaixian");
 					}
+					RegisterCount = RegisterCount - DecommissioningCount;
 					zhengFuShouYeNew.get(0).setZcvehnumb(RegisterCount);
 					zhengFuShouYeNew.get(0).setSxvehnum(OnLineCount);
 				}

@@ -16,12 +16,16 @@ import org.springblade.anbiao.qiyeshouye.page.QiYeOffLineTongJiPage;
 import org.springblade.anbiao.qiyeshouye.page.QiYeTongJiPage;
 import org.springblade.anbiao.qiyeshouye.page.QiYeTpvehdataPage;
 import org.springblade.anbiao.qiyeshouye.service.IQiYeTongJiService;
+import org.springblade.common.tool.GpsToBaiduUtil;
+import org.springblade.common.tool.LatLotForLocation;
 import org.springblade.core.log.annotation.ApiLog;
 import org.springblade.core.tool.api.R;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * @author 呵呵哒
@@ -116,15 +120,26 @@ public class QiYeTongJiController {
 	@ApiLog("企业-在线车辆详情")
 	@ApiOperation(value = "企业-在线车辆详情", notes = "传入qiYeTpvehdataPage",position = 7)
 	public R<QiYeTpvehdataPage<QiYeTpvehdataTongJi>> getTpvehdataTJ(@RequestBody QiYeTpvehdataPage qiYeTpvehdataPage) {
+		R rs = new R();
 		//排序条件
 		////默认定位时间降序
 		if(qiYeTpvehdataPage.getOrderColumns()==null){
-			qiYeTpvehdataPage.setOrderColumn("LastLocateTime");
+			qiYeTpvehdataPage.setOrderColumn("Systime");
 		}else{
 			qiYeTpvehdataPage.setOrderColumn(qiYeTpvehdataPage.getOrderColumns());
 		}
 		QiYeTpvehdataPage<QiYeTpvehdataTongJi> pages = iQiYeTongJiService.selecttpvehdataTJ(qiYeTpvehdataPage);
-		return R.data(pages);
+		if(pages != null){
+			rs.setCode(200);
+			rs.setSuccess(true);
+			rs.setData(pages);
+			rs.setMsg("获取数据成功");
+		}else{
+			rs.setCode(500);
+			rs.setSuccess(false);
+			rs.setMsg("获取数据失败");
+		}
+		return rs;
 	}
 
 }
